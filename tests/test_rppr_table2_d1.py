@@ -118,7 +118,11 @@ def test_table2_and_d1_on_rppr_tab_and_csv(client, center):
     login(client, "mwills")
     gy = center.grant_year
     html = client.get(f"/manage/outcomes/?tab=rppr&year={gy}").content.decode()
-    assert "Table 2: COBRE Core Users" in html and "2A. Behavioral Neuroscience Core" in html and "D.1 Participants" in html
+    assert (
+        "Table 2: COBRE Core Users" in html
+        and "2A. Behavioral Neuroscience Core" in html
+        and "D.1 Participants" in html
+    )
     assert "not reported yet" in html
     csv2 = client.get(f"/manage/outcomes/export/table2/?year={gy}").content.decode("utf-8-sig")
     assert "Number of individual users per project (exclude student users)" in csv2

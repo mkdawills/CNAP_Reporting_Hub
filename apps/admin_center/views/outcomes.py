@@ -1238,7 +1238,9 @@ def _rppr_ctx(request):
                 "label": cat,
                 "n": sum(1 for x in d1["rows"] if x["category"] == cat),
                 "no_id": sum(1 for x in d1["rows"] if x["category"] == cat and not x["commons"]),
-                "no_months": sum(1 for x in d1["rows"] if x["category"] == cat and x["months"] is None),
+                "no_months": sum(
+                    1 for x in d1["rows"] if x["category"] == cat and x["months"] is None
+                ),
             }
             for cat in rppr.D1_ORDER
             if any(x["category"] == cat for x in d1["rows"])
