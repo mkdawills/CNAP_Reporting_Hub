@@ -198,3 +198,139 @@ def test_turn_off_sign_in_ends_open_sessions(client, center):
     client.post(f"/manage/people/{okafor.person.pk}/account/", {"enable": "1"})
     okafor.refresh_from_db()
     assert okafor.is_enabled is True
+
+
+# ---------------------------------------------------------------- independent security review (2026-10-26)
+
+
+def _link_session(client, person):
+    url = signin.make_link(person, person.primary_email)
+    client.post(url.replace("http://testserver", ""))
+
+
+def _mentoring(person, period):
+    return Assignment.objects.filter(
+        person=person, form_definition__confidentiality_class="mentoring", reporting_period=period
+    ).first()
+
+
+def test_preview_and_opt_out_need_the_code_too(client, center):
+    santos = User.objects.get(username="santos").person
+    a = _mentoring(santos, center)
+    _link_session(client, santos)
+    r = client.get(f"/tasks/{a.pk}/preview/")
+    assert r.status_code == 302 and r["Location"].startswith("/accounts/code/")
+    r = client.post(f"/tasks/{a.pk}/opt-out/", {})
+    assert r.status_code == 302 and r["Location"].startswith("/accounts/code/")
+
+
+def test_admin_login_goes_through_the_throttled_page(client, center):
+    r = client.get("/admin/login/?next=/admin/")
+    assert r.status_code == 302 and r["Location"].startswith("/accounts/login/")
+    r = client.post("/admin/login/", {"username": "mwills", "password": "x"})
+    assert r.status_code == 302 and "_auth_user_id" not in client.session
+
+
+def test_username_variants_share_one_failure_count(client, center):
+    for _ in range(signin.FAILED_LOGIN_LIMIT):
+        client.post("/accounts/login/", {"username": "okafor", "password": "wrong"})
+    for variant in ("okafor ", " OKAFOR", "ｏｋａｆｏｒ"):
+        r = client.post("/accounts/login/", {"username": variant, "password": "Demo-Password-2026"})
+        assert "Too many sign-in attempts" in r.content.decode(), variant
+        assert "_auth_user_id" not in client.session
+
+
+def test_forwarded_for_is_validated(client, center, settings):
+    settings.TRUST_X_FORWARDED_FOR = True
+    r = client.post(
+        "/accounts/login/", {"username": "x", "password": "y"}, HTTP_X_FORWARDED_FOR="nope"
+    )
+    assert r.status_code == 200  # a bad header no longer breaks the page
+    r = client.post("/accounts/link/", {"email": "a@b.org"}, HTTP_X_FORWARDED_FOR="nope")
+    assert r.status_code == 200
+    rf = __import__("django.test", fromlist=["RequestFactory"]).RequestFactory()
+    req = rf.get("/", HTTP_X_FORWARDED_FOR="203.0.113.9", REMOTE_ADDR="127.0.0.1")
+    assert signin.client_ip(req) == "203.0.113.9"
+    req = rf.get("/", HTTP_X_FORWARDED_FOR="garbage", REMOTE_ADDR="127.0.0.1")
+    assert signin.client_ip(req) == "127.0.0.1"
+
+
+def test_link_requests_limited_per_address_of_origin(client, center):
+    for i in range(signin.LINK_REQUESTS_PER_IP_HOUR + 2):
+        client.post("/accounts/link/", {"email": f"nobody{i}@example.org"})
+    outside_person()
+    client.post("/accounts/link/", {"email": "ada@example.org"})
+    assert len(mail.outbox) == 0  # this address of origin is over its hourly limit
+
+
+def test_staff_never_get_links(center):
+    p = outside_person()
+    u = User.objects.create_user(username="staffer", email="ada@example.org", is_staff=True)
+    assert u.person == p
+    assert not signin.may_use_link(p)
+
+
+def test_link_session_ends_when_made_administrator(client, center):
+    from apps.accounts.models import ApplicationRole, UserRole
+
+    santos = User.objects.get(username="santos")
+    _link_session(client, santos.person)
+    assert client.get("/tasks/").status_code == 200
+    UserRole.objects.create(user=santos, role=ApplicationRole.objects.get(code="administrator"))
+    r = client.get("/manage/")
+    assert r.status_code == 302 and "/accounts/login/" in r["Location"]
+    assert "_auth_user_id" not in client.session
+
+
+def test_link_stops_working_when_its_address_is_removed(client, center):
+    p = outside_person()
+    url = signin.make_link(p, "ada@example.org")
+    PersonEmail.objects.filter(person=p).update(email="ada-correct@example.org")
+    r = client.post(url.replace("http://testserver", ""))
+    assert "already been used or has expired" in r.content.decode()
+    assert not User.objects.filter(person=p).exists()
+
+
+def test_kstate_people_refused_links_when_sso_is_on(center, settings):
+    p = Person.objects.create(
+        first_name="K", last_name="Stater", institution="kansas state university"
+    )
+    PersonEmail.objects.create(person=p, email="k@ksu.edu", is_primary=True)
+    settings.SIGNIN_LINKS_FOR_KSTATE = False
+    assert not signin.may_use_link(p)
+    p.institution = "Example University"
+    p.save()
+    assert signin.may_use_link(p)
+
+
+def test_code_sends_limited(center):
+    p = outside_person()
+    assert all(signin.send_code(p) for _ in range(signin.CODES_PER_15_MIN))
+    assert not signin.send_code(p)
+
+
+def test_code_page_only_for_link_sessions(client, center):
+    client.force_login(User.objects.get(username="santos"))
+    r = client.get("/accounts/code/?next=/tasks/")
+    assert r.status_code == 302 and r["Location"] == "/tasks/"
+    assert len(mail.outbox) == 0
+
+
+def test_code_goes_to_the_address_the_link_used(client, center):
+    santos = User.objects.get(username="santos").person
+    PersonEmail.objects.create(person=santos, email="santos-other@example.org", is_primary=False)
+    url = signin.make_link(santos, "santos-other@example.org")
+    client.post(url.replace("http://testserver", ""))
+    a = _mentoring(santos, center)
+    client.get(f"/accounts/code/?next=/tasks/{a.pk}/")
+    assert mail.outbox[-1].to == ["santos-other@example.org"]
+
+
+def test_turning_off_someone_without_an_account_explains_how(client, center):
+    p = outside_person()
+    client.force_login(User.objects.get(username="mwills"))
+    r = client.post(f"/manage/people/{p.pk}/account/", {"enable": "0"}, follow=True)
+    assert "untick “Active”" in r.content.decode()
+    p.is_active = False
+    p.save()
+    assert not signin.may_use_link(p)

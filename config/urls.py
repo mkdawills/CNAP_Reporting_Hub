@@ -12,6 +12,7 @@ admin.site.site_title = "CNAP Reporting Hub"
 admin.site.index_title = "Administration"
 
 urlpatterns = [
+    path("admin/login/", account_views.admin_login),
     path("admin/", admin.site.urls),
     path("accounts/login/", account_views.LoginView.as_view(), name="login"),
     path("accounts/link/", account_views.link_request, name="link_request"),

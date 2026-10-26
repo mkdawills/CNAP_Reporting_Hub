@@ -197,3 +197,14 @@ class FailedLogin(models.Model):
     class Meta:
         db_table = "failed_logins"
         indexes = [models.Index(fields=["username", "at"]), models.Index(fields=["ip", "at"])]
+
+
+class LinkRequest(models.Model):
+    """Sign-in link requests by address of origin, for throttling (kept 1 day)."""
+
+    ip = models.GenericIPAddressField()
+    at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "link_requests"
+        indexes = [models.Index(fields=["ip", "at"])]

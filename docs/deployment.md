@@ -6,7 +6,23 @@ One Linux VM, Docker Compose, nginx in front for TLS. No other infrastructure.
 2. `git clone` the repository; `cp .env.example .env`; set `SECRET_KEY`, `DEBUG=false`, `DJANGO_SETTINGS_MODULE=config.settings.prod`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, a real database password (also in `docker-compose.yml`), `MEDIA_ROOT=/data/media`.
 3. `make up` — the web container applies migrations and collects static files on start.
 4. `make seed`, `make superuser`.
-5. nginx: proxy `https://<host>/` to `http://127.0.0.1:8000/`, forward `X-Forwarded-Proto`, serve TLS with a K-State certificate. The application sets secure cookies and HSTS in `prod.py`.
+5. nginx: proxy `https://<host>/` to `http://127.0.0.1:8000/` (the app listens only on 127.0.0.1), serve TLS with a K-State certificate. The application sets secure cookies and HSTS in `prod.py`. Required headers and logging:
+
+   ```nginx
+   location / {
+       proxy_pass http://127.0.0.1:8000;
+       proxy_set_header Host $host;
+       proxy_set_header X-Forwarded-Proto $scheme;
+       proxy_set_header X-Forwarded-For $remote_addr;   # replace, don't append: sign-in throttling relies on it
+   }
+   location /accounts/link/ {                          # sign-in links carry a token in the path
+       access_log off;
+       proxy_pass http://127.0.0.1:8000;
+       proxy_set_header Host $host;
+       proxy_set_header X-Forwarded-Proto $scheme;
+       proxy_set_header X-Forwarded-For $remote_addr;
+   }
+   ```
 6. Schedule `make backup` nightly (docs/backup-and-restore.md).
 
 Upgrades: `git pull && docker compose build && make up && make test`.
@@ -24,7 +40,7 @@ Run once a day (cron, systemd timer, or the host's scheduler), from the project 
 0 3 * * *  python manage.py clearsessions
 ```
 
-Settings in `.env`: `OUTCOME_STALE_DAYS` (default 120), `OUTCOME_REMINDER_EVERY_DAYS` (default 30), `SITE_URL` (links in the e-mail), `DEFAULT_FROM_EMAIL`, and the mail server (`EMAIL_HOST` and friends, K-State's SMTP relay). Use `--dry-run` to see who would be reminded.
+Settings in `.env`: `OUTCOME_STALE_DAYS` (default 120), `OUTCOME_REMINDER_EVERY_DAYS` (default 30), `SITE_URL` (links in the e-mail), `DEFAULT_FROM_EMAIL`, and the mail server as one URL, `EMAIL_URL` (e.g. `smtp+tls://user:password@relay:587`, K-State's SMTP relay). Production refuses to start without an SMTP `EMAIL_URL`, and the development settings refuse to run when `.env` says `DEBUG=false`. Use `--dry-run` to see who would be reminded.
 
 PubMed look-ups ("Fill in from PubMed") call `https://eutils.ncbi.nlm.nih.gov`; the server needs outbound HTTPS to that host. Set `PUBMED_CONTACT_EMAIL` (NCBI asks for one) and `CNAP_GRANT_NUMBERS` (CNAP's COBRE award, `P20GM113109`, is the default) so the form can tell people whether PubMed lists CNAP in the paper's grant index.
 

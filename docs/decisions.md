@@ -344,3 +344,21 @@ MW shared her Year 9 site-visit workbooks for Publications, Presentations and Aw
 - New **Site visit** tab (Publications and grants): publications by core × type × status in the workbooks' words (Submitted, Under Review, Accepted, Awaiting Publication, In Pre-Print, Published, Not Published); presentations by core × type; grants by core × Awarded/Pending/Declined with counts and dollars, and by funder (NIH / NSF / Other). Cores: BN, CN, NI, Admin, No core; an item crediting two cores counts under each ("duplicates counted") and each section states the number of distinct items. A date marks entries added after it (the workbooks' peach rows); the CSV flags items using two or more cores (the sand rows) and lists every item.
 - Choices to confirm with MW: a year includes anything submitted, published, declined, presented, awarded or decided in it, plus papers and proposals still under review at its end (her Year 9 awards list carried Year 7–8 proposals); dollars are total costs (award total for awards, requested total otherwise); Admin Core counts only when "Administrative Core" is ticked as a resource (respondents can't pick it today).
 - Told MW about three formula issues in the workbooks (swapped arguments in one publications count; "Total Awards" and "Total Pending" dollar cells that add every status; a column of always-zero counts and #REF! cells in the awards summary).
+
+## 2026-10-26 — Independent security review of sign-in and e-mail (all findings fixed)
+
+A separate reviewer, who hadn't seen the build reasoning, reviewed the sign-in and e-mail code against the sign-in plan. Fixed:
+- The 6-digit code now also guards Preview, opt-out and file downloads of confidential mentoring forms (before, only the form page did; Preview showed submitted answers).
+- `/admin/login/` (Django's database admin) now goes through the same throttled sign-in page.
+- Failure counting uses the username as Django's login form sees it (Unicode-normalised, trimmed, any case), so "okafor " no longer dodges the limit.
+- The client address is taken from X-Forwarded-For only if it's a valid address (a bad value used to cause an error page); nginx must replace that header with `$remote_addr` (deployment.md shows the config); the app container listens only on 127.0.0.1.
+- Staff accounts can't get links; a link session ends at once if the account becomes an administrator, staff or superuser, or is disabled (middleware).
+- A link stops working if its address no longer belongs to that person (corrected or moved address).
+- Code tries are counted atomically (parallel guesses can't share a count); two links used at once can't cause an error when creating the account.
+- The code goes to the address the person signed in with.
+- Link requests: at most 20 per address of origin per hour, and the e-mail is sent off the request so a known address doesn't answer more slowly than an unknown one.
+- Production refuses any mail backend except SMTP; the development settings refuse to run when `.env` says `DEBUG=false`; docs corrected (`EMAIL_URL`, not `EMAIL_HOST`); nginx doesn't log sign-in link paths.
+- K-State is recognised however the institution is spelled ("kansas state university", "KSU", "K-State").
+- "Turn off sign-in" for someone who has never signed in explains how to stop them (untick Active: inactive people can't use any link).
+- Tests added for each.
+Known trade-off kept: anyone can pause password sign-in for a username for 15 minutes with 10 wrong tries. Respondents can still use a link; administrators will use single sign-on, which this doesn't affect.

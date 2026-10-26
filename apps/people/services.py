@@ -30,9 +30,14 @@ def _today():
     return timezone.localdate()
 
 
+# Spellings of K-State that mean "internal" (empty also counts as K-State: the add-person form defaults to it).
+KSU_NAMES = {"", "kansas state university", "kansas state", "k-state", "ksu", "kansas state univ"}
+
+
 def is_external(person):
     """Outside K-State: signs in by emailed link rather than K-State single sign-on."""
-    return (person.institution or "").strip() not in ("", KSU_INSTITUTION, "K-State")
+    name = " ".join((person.institution or "").replace(".", "").split()).casefold()
+    return name not in KSU_NAMES
 
 
 def current_relationships(person, on=None):

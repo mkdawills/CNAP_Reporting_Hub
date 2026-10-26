@@ -129,6 +129,9 @@ def form(request, pk):
 @login_required
 def preview(request, pk):
     a = _own_assignment(request, pk)
+    gate = presenters.confidential_gate(request, a)
+    if gate:
+        return gate
     ctx = presenters.form_page(request, a, editable=False, preview=True)
     return render(request, "portal/form.html", ctx)
 
@@ -137,6 +140,9 @@ def preview(request, pk):
 @require_POST
 def opt_out(request, pk):
     a = _own_assignment(request, pk)
+    gate = presenters.confidential_gate(request, a)
+    if gate:
+        return gate
     try:
         result = rs.quick_opt_out(a, request.user)
     except (rs.LockedError, ValueError) as exc:
@@ -253,4 +259,8 @@ def download(request, file_pk):
         and response_access(request.user, assignment) != "identified"
     ):
         raise PermissionDenied
+    if assignment.person_id == request.user.person_id:
+        gate = presenters.confidential_gate(request, assignment)
+        if gate:
+            return gate
     return FileResponse(f.storage_key.open("rb"), as_attachment=True, filename=f.original_filename)

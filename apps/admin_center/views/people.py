@@ -397,7 +397,11 @@ def person_account(request, pk):
     p = get_object_or_404(Person, pk=pk)
     user = getattr(p, "user", None)
     if user is None:
-        messages.error(request, "This person has no account yet.")
+        messages.error(
+            request,
+            f"{p} has never signed in, so there's no account to turn off. To stop them, untick “Active” under "
+            "Edit details: an inactive person can't use any sign-in link, including ones already sent.",
+        )
     elif user == request.user:
         messages.error(request, "You can’t turn off your own sign-in.")
     else:

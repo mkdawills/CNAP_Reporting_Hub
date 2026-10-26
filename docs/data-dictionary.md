@@ -247,6 +247,16 @@ Failed password sign-ins, for throttling (kept 1 day).
 | ip | GenericIPAddressField | yes |  |
 | at | DateTimeField | no |  |
 
+### `link_requests` — LinkRequest
+
+Sign-in link requests by address of origin, for throttling (kept 1 day).
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| ip | GenericIPAddressField | no |  |
+| at | DateTimeField | no |  |
+
 ## Forms_Engine (`forms_engine`)
 
 ### `measures` — Measure
