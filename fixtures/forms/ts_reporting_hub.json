@@ -1,0 +1,80 @@
+{
+  "code": "ts_reporting_hub",
+  "name": "CNAP Reporting Hub Survey",
+  "category": "survey",
+  "context_kind": "none",
+  "confidentiality": "standard",
+  "display": {
+    "task_group": "hub",
+    "short_name": "Reporting Hub",
+    "about": [
+      "The CNAP Reporting Hub is this site, where you complete your Center surveys and reports.",
+      "Tell us what makes reporting easy or hard, so we can improve it."
+    ]
+  },
+  "sections": [
+    {
+      "code": "reporting_hub",
+      "title": "CNAP Reporting Hub Items",
+      "instructions": "Please indicate your level of agreement with each of the following statements regarding the CNAP Reporting Hub:",
+      "questions": [
+        {
+          "code": "item_01",
+          "prompt": "It is easy to report things within the CNAP Reporting Hub.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_reporting_hub_01",
+          "required": true
+        },
+        {
+          "code": "item_02",
+          "prompt": "The communications sent by the CNAP Reporting Hub are informative.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_reporting_hub_02",
+          "required": true
+        },
+        {
+          "code": "item_03",
+          "prompt": "Information is clearly labeled within the CNAP Reporting Hub.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_reporting_hub_03",
+          "required": true
+        }
+      ]
+    },
+    {
+      "code": "open",
+      "title": "Open-ended questions",
+      "questions": [
+        {
+          "code": "open_1",
+          "prompt": "What are things that are functioning well regarding the CNAP Reporting Hub?",
+          "type": "long_text",
+          "required": true
+        },
+        {
+          "code": "open_2",
+          "prompt": "What are things that could be improved regarding the CNAP Reporting Hub?",
+          "type": "long_text",
+          "required": true
+        },
+        {
+          "code": "open_3",
+          "prompt": "Please provide any additional comments.",
+          "type": "long_text",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "assignment_rules": [
+    {
+      "scope": "universal"
+    }
+  ],
+  "_source": "Team_Science.pdf (Piestar export), split into four surveys (MW, 2026-10-24); open-ended prompts reworded per topic.",
+  "sort_order": 8
+}

@@ -1,0 +1,197 @@
+{
+  "code": "neurosync_survey",
+  "name": "Weekly NeuroSync Speaker Series Survey",
+  "category": "survey",
+  "context_kind": "none",
+  "confidentiality": "standard",
+  "sort_order": 4,
+  "intro_text": "Please rate on a 1 to 5 scale how much you agree with the following statements.",
+  "display": {
+    "task_group": "other",
+    "short_name": "NeuroSync",
+    "about": [
+      "NeuroSync is the Center’s weekly speaker series.",
+      "Your ratings help choose speakers and topics, and decide how the series is run."
+    ],
+    "opt_out": {
+      "question": "optout",
+      "short": "Didn’t attend"
+    }
+  },
+  "sections": [
+    {
+      "code": "optout",
+      "title": "",
+      "questions": [
+        {
+          "code": "optout",
+          "prompt": "I have not attended NeuroSync since the last reporting period.",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "config": {
+            "widget": "optout_checkbox"
+          }
+        }
+      ]
+    },
+    {
+      "code": "ratings",
+      "title": "Ratings",
+      "questions": [
+        {
+          "code": "item_01",
+          "prompt": "The NeuroSync was well organized.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "neurosync_01",
+          "required": false
+        },
+        {
+          "code": "item_02",
+          "prompt": "The topics were interesting.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "neurosync_02",
+          "required": false
+        },
+        {
+          "code": "item_03",
+          "prompt": "The topics were novel.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "neurosync_03",
+          "required": false
+        },
+        {
+          "code": "item_04",
+          "prompt": "The content was useful.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "neurosync_04",
+          "required": false
+        },
+        {
+          "code": "item_05",
+          "prompt": "The NeuroSync was enjoyable.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "neurosync_05",
+          "required": false
+        },
+        {
+          "code": "item_06",
+          "prompt": "I will plan to continue attending.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "neurosync_06",
+          "required": false
+        },
+        {
+          "code": "item_07",
+          "prompt": "I would recommend the NeuroSync to others.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "neurosync_07",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "open",
+      "title": "Open-ended questions",
+      "questions": [
+        {
+          "code": "open_1",
+          "prompt": "Beneficial Aspects",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_2",
+          "prompt": "Aspects Needing Improvement",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_3",
+          "prompt": "Additional Topics",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_4",
+          "prompt": "Additional Comments",
+          "type": "long_text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "nonattend",
+      "title": "Thanks for letting us know.",
+      "questions": [
+        {
+          "code": "nonattend_reason",
+          "prompt": "Why have you not attended?",
+          "type": "single_select",
+          "options": [
+            "Schedule conflict",
+            "Topics not relevant to my work",
+            "Did not know about NeuroSync",
+            "On leave or away",
+            "Other"
+          ],
+          "measure": "neurosync_nonattend_reason"
+        },
+        {
+          "code": "nonattend_future",
+          "prompt": "Do you anticipate attending in a future semester?",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "measure": "neurosync_nonattend_future"
+        },
+        {
+          "code": "nonattend_comments",
+          "prompt": "Optional comments",
+          "type": "long_text"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "set_pathway",
+      "pathway": "non_attendance"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "ratings"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "open"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "show",
+      "target_section": "nonattend"
+    }
+  ],
+  "assignment_rules": [
+    {
+      "scope": "universal"
+    }
+  ],
+  "_source": "CNAP_Forms_Reconstructed.md section 4; non-attendance path from the appendix."
+}

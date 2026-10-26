@@ -156,9 +156,16 @@ class FormDefinition(ArchivableModel):
         max_length=10, choices=ConfidentialityClass.choices, default=ConfidentialityClass.STANDARD
     )
     respondent_can_view_own = models.BooleanField(default=True)
-    evaluation_staff_can_view = models.BooleanField(default=True)
-    reviewer_can_view = models.BooleanField(default=True)
     description = models.TextField(blank=True)
+    display = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text=(
+            "How the form appears on My tasks: task_group, short_name, about (paragraphs), "
+            "time_label, opt_out {question, short}, prefill [[label, key]], holder_type. "
+            "Loaded from fixtures/forms; not source wording."
+        ),
+    )
     sort_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
@@ -203,6 +210,11 @@ class FormVersion(TimestampedModel):
         blank=True, help_text="What changed from the previous version and why."
     )
     intro_text = models.TextField(blank=True)
+    source_hash = models.CharField(
+        max_length=64,
+        blank=True,
+        help_text="Fingerprint of the fixture this version was built from (load_forms).",
+    )
 
     class Meta:
         db_table = "form_versions"

@@ -145,3 +145,7 @@ To confirm with K-State IT: approval of emailed links for outside users, and whe
 **Roster import** accepts .csv or .xlsx with first name, last name and e-mail columns (institution, department, position optional). Every row is reviewed before commit; possible duplicates (same name, different e-mail) need an explicit merge, add or skip; people on the roster but missing from the file stay unless their membership is ended. Committing is audited.
 
 **Visual design carried from the prototype** into `static/css/app.css`: K-State purple, vertical dividers between columns and parts, sentences of every direction stacked one per line (the `stack` template filter), uppercase gray group bands, quiet rating scales with larger question text.
+
+## 2026-10-25 — Center results: small items left out, with a note
+
+On the respondent-facing Center results page, any item rated by fewer than 5 people is left out, and a short note under that survey says some items aren't shown because fewer than 5 people rated them. Administrators see every item on their own Results page.

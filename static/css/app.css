@@ -37,15 +37,17 @@ button, select, input, textarea { font: inherit; color: inherit; }
 
 /* ---------- layout ---------- */
 .app { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
-.side { background: var(--side); color: #f3eefb; padding: 20px 16px; display: flex; flex-direction: column;
-  gap: 18px; position: sticky; top: 0; height: 100vh; overflow: auto; }
-.brand { font-family: Literata, Georgia, serif; font-size: 1.3rem; line-height: 1.15; color: #fff; text-decoration: none; }
-.brand small { display: block; font-family: "Public Sans", system-ui, sans-serif; font-size: .78rem; opacity: .75; margin-top: 4px; }
+.side { background: var(--side); color: #f3eefb; padding: 30px 20px; display: flex; flex-direction: column;
+  gap: 34px; position: sticky; top: 0; height: 100vh; overflow: auto; }
+.brand { font-family: Literata, Georgia, serif; font-size: 1.3rem; line-height: 1.15; color: #fff; text-decoration: none;
+  display: block; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.22); }
+.brand small { display: block; font-family: "Public Sans", system-ui, sans-serif; font-size: .78rem; opacity: .75; margin-top: 10px; line-height: 1.4; }
 .side .who { font-size: .85rem; border-left: 2px solid rgba(255,255,255,.3); padding-left: 10px; }
-.side .who span { display: block; opacity: .8; font-size: .78rem; }
-.side nav { display: flex; flex-direction: column; gap: 2px; border-left: 1px solid rgba(255,255,255,.22); padding-left: 8px; }
-.side nav .navhead { font-size: .7rem; letter-spacing: .09em; text-transform: uppercase; opacity: .65; margin: 10px 0 4px 10px; }
-.side nav a { color: #f3eefb; text-decoration: none; padding: 7px 10px; border-radius: 6px; }
+.side .who span { display: block; opacity: .8; font-size: .78rem; margin-top: 6px; }
+.side nav { display: flex; flex-direction: column; gap: 8px; border-left: 1px solid rgba(255,255,255,.22); padding-left: 12px; }
+.side nav .navhead { font-size: .7rem; letter-spacing: .09em; text-transform: uppercase; opacity: .65; margin: 18px 0 2px 12px; }
+.side nav .navhead:first-child { margin-top: 0; }
+.side nav a { color: #f3eefb; text-decoration: none; padding: 10px 12px; border-radius: 6px; }
 .side nav a:hover { background: rgba(255,255,255,.08); }
 .side nav a[aria-current="page"] { background: rgba(255,255,255,.16); font-weight: 600; }
 .side .foot { margin-top: auto; font-size: .8rem; opacity: .85; }

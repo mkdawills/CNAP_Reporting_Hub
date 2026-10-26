@@ -1,6 +1,7 @@
 """
 manage.py seed            -> reference data (roles, cores, resources, relationship
-                             types, shared scales, completion pathways). Idempotent.
+                             types, shared scales, completion pathways) and the CNAP
+                             instruments from fixtures/forms. Idempotent.
 manage.py seed --fictional -> also the fictional sample center (Milestone 9).
 """
 
@@ -19,6 +20,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         seed_reference_data(self.stdout)
+        from apps.forms_engine.loader import load_all
+
+        load_all(stdout=self.stdout)
         if options["fictional"]:
             self.stdout.write(
                 "Fictional sample data arrives in Milestone 9; reference data is loaded."

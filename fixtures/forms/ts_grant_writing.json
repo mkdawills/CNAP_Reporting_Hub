@@ -1,0 +1,121 @@
+{
+  "code": "ts_grant_writing",
+  "name": "Grant Writing Program Survey",
+  "category": "survey",
+  "context_kind": "none",
+  "confidentiality": "standard",
+  "display": {
+    "task_group": "other",
+    "short_name": "Grant Writing",
+    "about": [
+      "The grant writing program includes reviewer analysis, help preparing proposal materials, and grantsmanship training.",
+      "This survey asks whether it is helping you write and submit grants."
+    ],
+    "opt_out": {
+      "question": "optout",
+      "short": "Didn’t use the grant writing program"
+    }
+  },
+  "sections": [
+    {
+      "code": "optout",
+      "title": "",
+      "questions": [
+        {
+          "code": "optout",
+          "prompt": "I haven’t used the grant writing program since the last reporting period.",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "config": {
+            "widget": "optout_checkbox"
+          }
+        }
+      ]
+    },
+    {
+      "code": "grant_writing",
+      "title": "The Grant Writing Program",
+      "instructions": "Please indicate your level of agreement with each of the following statements regarding the grant writing program. (The grant writing program includes activities such as reviewer analysis, support preparing proposal materials, and grantsmanship training.):",
+      "questions": [
+        {
+          "code": "item_01",
+          "prompt": "Provides helpful feedback on my proposal documents when requested.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_grant_writing_01",
+          "required": true
+        },
+        {
+          "code": "item_02",
+          "prompt": "Has given me tools to improve my grant writing skills.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_grant_writing_02",
+          "required": true
+        },
+        {
+          "code": "item_03",
+          "prompt": "Has made the process of submitting grant proposals easier.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_grant_writing_03",
+          "required": true
+        }
+      ]
+    },
+    {
+      "code": "open",
+      "title": "Open-ended questions",
+      "questions": [
+        {
+          "code": "open_1",
+          "prompt": "What are things that are functioning well regarding the grant writing program?",
+          "type": "long_text",
+          "required": true
+        },
+        {
+          "code": "open_2",
+          "prompt": "What are things that could be improved regarding the grant writing program?",
+          "type": "long_text",
+          "required": true
+        },
+        {
+          "code": "open_3",
+          "prompt": "Please provide any additional comments.",
+          "type": "long_text",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "set_pathway",
+      "pathway": "ts_no_gw"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "grant_writing"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "open"
+    }
+  ],
+  "assignment_rules": [
+    {
+      "scope": "universal"
+    }
+  ],
+  "_source": "Team_Science.pdf (Piestar export), split into four surveys (MW, 2026-10-24); open-ended prompts reworded per topic.",
+  "sort_order": 7
+}

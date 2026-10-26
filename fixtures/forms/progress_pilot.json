@@ -1,0 +1,61 @@
+{
+  "code": "progress_pilot",
+  "name": "Pilot Project Semiannual Progress Report",
+  "category": "report",
+  "context_kind": "project",
+  "confidentiality": "standard",
+  "sort_order": 15,
+  "intro_text": "Provide a 1-2 page summary of your accomplishments toward achieving your aims, your plans for the next reporting period, and any actual or anticipated plans for changes. You can use the file upload below to upload a MS Word document. Please use the following file naming convention: Last Name + File Designation + Date (e.g., Cain_Accomplishments_3-20-20, Bailey_ProjectGrantReviews_6-1-19, etc.). Your document should contain the following:",
+  "display": {
+    "task_group": "grant",
+    "short_name": "Progress Report (PPL)",
+    "time_label": "1–2 page upload",
+    "about": [
+      "Your semiannual progress report summarizes your pilot project’s accomplishments, plans and changes, including plans for grant submissions.",
+      "It feeds directly into the Center’s progress report to NIH."
+    ]
+  },
+  "sections": [
+    {
+      "code": "accomplishments",
+      "title": "Accomplishments",
+      "questions": [],
+      "instructions": "- Activities\n- Objectives\n- Significant Results\n- Key Outcomes\n- Unmet Goals\n- What experiments you completed (give reference to aims/milestones/timeline)\n- What you found\n- Dissemination of information"
+    },
+    {
+      "code": "plans",
+      "title": "Plans",
+      "questions": [],
+      "instructions": "Provide a summary of what you plan to do during the next reporting period to accomplish the goals and objectives. Discuss efforts to ensure that the approach is scientifically rigorous and results are robust and unbiased.\nRemember that significant changes in objectives and scope require prior approval of the agency (e.g., NIH Grants Policy Statement, 8.1.2.). Include any important modifications to the original plans. Provide a scientific justification for any changes involving research with human subjects or vertebrate animals. A detailed description of such changes must be provided under Changes. Also discuss specific plans for any grant submissions stemming from the pilot grant."
+    },
+    {
+      "code": "changes",
+      "title": "Changes",
+      "instructions": "Describe challenges or delays encountered during the reporting period and actions or plans to resolve them. Describe only significant challenges that may impede the research (e.g., accrual of patients, hiring of personnel, need for resources or research tools) and emphasize their resolution.",
+      "questions": [
+        {
+          "code": "file",
+          "prompt": "File",
+          "type": "file",
+          "required": true,
+          "help_text": "Please upload your file here. Word documents only (.docx or .doc).",
+          "config": {
+            "accept": [
+              ".docx",
+              ".doc"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "assignment_rules": [
+    {
+      "scope": "relationship",
+      "relationship_type": "pilot_awardee",
+      "per_context": true
+    }
+  ],
+  "_source": "Pilot_Project_Semiannual_Progress_Report.pdf (Piestar export). Word only (MW, 2026-10-24)."
+}

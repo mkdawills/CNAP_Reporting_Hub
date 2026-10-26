@@ -1,0 +1,169 @@
+{
+  "code": "ts_synergy",
+  "name": "Team Synergy Survey",
+  "category": "survey",
+  "context_kind": "none",
+  "confidentiality": "standard",
+  "display": {
+    "task_group": "other",
+    "short_name": "Team Synergy",
+    "about": [
+      "This survey asks how well CNAP members work together across disciplines: communication, trust, clear roles, and whether CNAP has helped your research.",
+      "The Center reports on team science to NIH each year."
+    ],
+    "opt_out": {
+      "question": "optout",
+      "short": "Not involved enough to answer"
+    }
+  },
+  "sections": [
+    {
+      "code": "optout",
+      "title": "",
+      "questions": [
+        {
+          "code": "optout",
+          "prompt": "I haven’t been involved enough with CNAP since the last reporting period to answer.",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "config": {
+            "widget": "optout_checkbox"
+          }
+        }
+      ]
+    },
+    {
+      "code": "synergy",
+      "title": "Collaboration and synergy",
+      "instructions": "Please indicate your level of agreement with each of the following statements regarding the quality of collaboration and synergy across the CNAP center and its members:",
+      "questions": [
+        {
+          "code": "item_01",
+          "prompt": "The various roles of CNAP team members are clear.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_01",
+          "required": true
+        },
+        {
+          "code": "item_02",
+          "prompt": "I am comfortable communicating with team members whose disciplines or research approaches are different from my own.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_02",
+          "required": true
+        },
+        {
+          "code": "item_03",
+          "prompt": "Information flows freely across CNAP.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_03",
+          "required": true
+        },
+        {
+          "code": "item_04",
+          "prompt": "I feel that I am an important part of the CNAP team.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_04",
+          "required": true
+        },
+        {
+          "code": "item_05",
+          "prompt": "Trust among CNAP members does not need to be improved.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_05",
+          "required": true
+        },
+        {
+          "code": "item_06",
+          "prompt": "CNAP members seem receptive to critical feedback.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_06",
+          "required": true
+        },
+        {
+          "code": "item_07",
+          "prompt": "I find it easy to speak up in the business meetings.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_07",
+          "required": true
+        },
+        {
+          "code": "item_08",
+          "prompt": "Being a part of CNAP has enhanced my level of research productivity.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_08",
+          "required": true
+        },
+        {
+          "code": "item_09",
+          "prompt": "My expectations for CNAP fit well with the expectations of other team members.",
+          "type": "likert",
+          "answer_set": "Agreement (Team Science)",
+          "measure": "ts_synergy_09",
+          "required": true
+        }
+      ]
+    },
+    {
+      "code": "open",
+      "title": "Open-ended questions",
+      "questions": [
+        {
+          "code": "open_1",
+          "prompt": "What are things that are functioning well regarding team synergy?",
+          "type": "long_text",
+          "required": true
+        },
+        {
+          "code": "open_2",
+          "prompt": "What are things that could be improved regarding team synergy?",
+          "type": "long_text",
+          "required": true
+        },
+        {
+          "code": "open_3",
+          "prompt": "Please provide any additional comments.",
+          "type": "long_text",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "set_pathway",
+      "pathway": "ts_not_involved"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "synergy"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "open"
+    }
+  ],
+  "assignment_rules": [
+    {
+      "scope": "universal"
+    }
+  ],
+  "_source": "Team_Science.pdf (Piestar export), split into four surveys (MW, 2026-10-24); open-ended prompts reworded per topic.",
+  "sort_order": 5
+}

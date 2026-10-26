@@ -1,0 +1,114 @@
+{
+  "code": "pilot_mentor_report",
+  "name": "Pilot Grant Mentor Report",
+  "category": "report",
+  "context_kind": "project",
+  "confidentiality": "mentoring",
+  "sort_order": 11,
+  "display": {
+    "task_group": "mentoring",
+    "short_name": "Pilot Mentor Report",
+    "prefill": [
+      [
+        "Mentor name",
+        "mentor"
+      ],
+      [
+        "Institution",
+        "institution"
+      ],
+      [
+        "Project title",
+        "project"
+      ],
+      [
+        "Pilot Grantee",
+        "holder"
+      ],
+      [
+        "Reporting period",
+        "period"
+      ]
+    ],
+    "holder_type": "pilot_awardee",
+    "about": [
+      "This report records your meetings with your Pilot Project Leader and your view of their progress toward the pilot program milestones.",
+      "It is used to support the mentee and in the Center’s reporting to NIH."
+    ]
+  },
+  "sections": [
+    {
+      "code": "meetings",
+      "title": "Meetings",
+      "repeatable": true,
+      "repeat_label": "Add a meeting",
+      "instructions": "Add one entry for each meeting during the reporting period.",
+      "questions": [
+        {
+          "code": "meeting_date",
+          "prompt": "Meeting date",
+          "type": "date"
+        },
+        {
+          "code": "meeting_summary",
+          "prompt": "Summary",
+          "type": "long_text"
+        }
+      ]
+    },
+    {
+      "code": "evaluation",
+      "title": "Evaluation of Pilot Grant Progress",
+      "questions": [
+        {
+          "code": "evaluation",
+          "prompt": "Evaluation of Pilot Grant Progress",
+          "type": "long_text",
+          "help_text": "Program milestones: national/international presentation citing CNAP; manuscript submission within six months of project completion; extramural grant submission as lead PI within one year of pilot completion.",
+          "config": {
+            "narrative": true
+          }
+        }
+      ]
+    },
+    {
+      "code": "challenges",
+      "title": "Challenges Encountered",
+      "questions": [
+        {
+          "code": "challenges",
+          "prompt": "Challenges Encountered",
+          "type": "long_text",
+          "help_text": "",
+          "config": {
+            "narrative": true
+          }
+        }
+      ]
+    },
+    {
+      "code": "funding",
+      "title": "Progress Towards Funding",
+      "questions": [
+        {
+          "code": "funding",
+          "prompt": "Progress Towards Funding",
+          "type": "long_text",
+          "help_text": "",
+          "config": {
+            "narrative": true
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "assignment_rules": [
+    {
+      "scope": "relationship",
+      "relationship_type": "pilot_mentor",
+      "per_context": true
+    }
+  ],
+  "_source": "CNAP_Forms_Reconstructed.md section 8."
+}

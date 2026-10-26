@@ -1,0 +1,213 @@
+{
+  "code": "mentor_questionnaire",
+  "name": "Mentor Questionnaire",
+  "category": "survey",
+  "context_kind": "none",
+  "confidentiality": "mentoring",
+  "sort_order": 10,
+  "intro_text": "Think about the mentoring relationship you have with your mentee. Please indicate your level of agreement/disagreement with the following statements about the CNAP Center mentoring program. For those of you with more than one mentee, please consider these multiple mentees when responding to the statements rather than just focusing on a single mentee. As a reminder, this mentoring questionnaire is meant to evaluate the mentoring program more broadly, not necessarily specific individuals within the program.",
+  "display": {
+    "task_group": "mentoring",
+    "short_name": "Mentor Questionnaire",
+    "about": [
+      "This questionnaire asks about your role as a CNAP mentor, considering all of your mentees together.",
+      "It evaluates the mentoring program as a whole, not individual people."
+    ]
+  },
+  "sections": [
+    {
+      "code": "mentoring",
+      "title": "Mentoring",
+      "questions": [
+        {
+          "code": "item_01",
+          "prompt": "I respond to communications with my mentee(s) in a timely manner.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_01",
+          "required": false
+        },
+        {
+          "code": "item_02",
+          "prompt": "I make myself accessible to my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_02",
+          "required": false
+        },
+        {
+          "code": "item_03",
+          "prompt": "I help my mentee(s) achieve goals.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_03",
+          "required": false
+        },
+        {
+          "code": "item_04",
+          "prompt": "I support the career development of my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_04",
+          "required": false
+        },
+        {
+          "code": "item_05",
+          "prompt": "I enhance the performance of my mentee(s) within the grant program.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_05",
+          "required": false
+        },
+        {
+          "code": "item_06",
+          "prompt": "I make time to regularly meet with my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_06",
+          "required": false
+        },
+        {
+          "code": "item_07",
+          "prompt": "I provide my mentee(s) with high quality feedback.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_07",
+          "required": false
+        },
+        {
+          "code": "item_08",
+          "prompt": "I add value to my mentees' work.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_08",
+          "required": false
+        },
+        {
+          "code": "item_09",
+          "prompt": "I demonstrate professional integrity with my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_09",
+          "required": false
+        },
+        {
+          "code": "item_10",
+          "prompt": "I am someone that my mentee(s) can trust.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_10",
+          "required": false
+        },
+        {
+          "code": "item_11",
+          "prompt": "I am committed to the success of my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_11",
+          "required": false
+        },
+        {
+          "code": "item_12",
+          "prompt": "I have a sufficient level of expertise for my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_12",
+          "required": false
+        },
+        {
+          "code": "item_13",
+          "prompt": "I focus on the work of mentee(s) during meetings.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_13",
+          "required": false
+        },
+        {
+          "code": "item_14",
+          "prompt": "I provide my mentee(s) with feedback in a timely manner.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_14",
+          "required": false
+        },
+        {
+          "code": "item_15",
+          "prompt": "I am willing to invest time in the relationship with my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_15",
+          "required": false
+        },
+        {
+          "code": "item_16",
+          "prompt": "I discuss with my mentee(s) challenges they are facing.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_16",
+          "required": false
+        },
+        {
+          "code": "item_17",
+          "prompt": "I provide my mentee(s) with useful critiques of their work.",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_17",
+          "required": false
+        },
+        {
+          "code": "item_18",
+          "prompt": "I attempt to be as objective as possible when evaluating the work of my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_18",
+          "required": false
+        },
+        {
+          "code": "item_19",
+          "prompt": "I am willing to have candid discussions with my mentee(s).",
+          "type": "likert",
+          "answer_set": "Agreement",
+          "measure": "mentor_19",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "open",
+      "title": "Open-ended questions",
+      "questions": [
+        {
+          "code": "open_1",
+          "prompt": "Strengths and Weaknesses",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_2",
+          "prompt": "Improvements",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_3",
+          "prompt": "Additional Comments",
+          "type": "long_text",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "assignment_rules": [
+    {
+      "scope": "relationship",
+      "relationship_type": "pilot_mentor"
+    },
+    {
+      "scope": "relationship",
+      "relationship_type": "primary_mentor"
+    }
+  ],
+  "_source": "CNAP_Forms_Reconstructed.md section 6. Assigned once per mentor per period (decisions.md 2026-10-22)."
+}

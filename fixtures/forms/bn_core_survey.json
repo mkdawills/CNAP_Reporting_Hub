@@ -1,0 +1,368 @@
+{
+  "code": "bn_core_survey",
+  "name": "Behavioral Neuroscience (BN) Core Facility User Survey",
+  "category": "survey",
+  "context_kind": "none",
+  "about_core": "BN",
+  "confidentiality": "standard",
+  "sort_order": 1,
+  "intro_text": "Please rate on a 1 to 5 scale the quality of the following services and functions. Select N/A for any you did not use. Then, indicate the frequency you've used each service or function.",
+  "display": {
+    "task_group": "cores",
+    "short_name": "BN Core",
+    "about": [
+      "The Behavioral Neuroscience Core provides shared behavioral testing and animal research space, a core technician, and connections to campus services such as IACUC, Comparative Medicine, and Environmental Health and Safety.",
+      "This survey asks how well those facilities and services worked for you, and how often you used them."
+    ],
+    "opt_out": {
+      "question": "optout",
+      "short": "Didn’t use this core"
+    }
+  },
+  "sections": [
+    {
+      "code": "optout",
+      "title": "",
+      "questions": [
+        {
+          "code": "optout",
+          "prompt": "I did not use the Behavioral Neuroscience Core since the last reporting period.",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "config": {
+            "widget": "optout_checkbox"
+          }
+        }
+      ]
+    },
+    {
+      "code": "quality",
+      "title": "Quality of services and functions",
+      "questions": [
+        {
+          "code": "qual_01",
+          "prompt": "Booking of shared facilities",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_01",
+          "required": false
+        },
+        {
+          "code": "qual_02",
+          "prompt": "Access to facility functions",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_02",
+          "required": false
+        },
+        {
+          "code": "qual_03",
+          "prompt": "Space allocation",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_03",
+          "required": false
+        },
+        {
+          "code": "qual_04",
+          "prompt": "Enhancement of research productivity",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_04",
+          "required": false
+        },
+        {
+          "code": "qual_05",
+          "prompt": "Collaborative environment",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_05",
+          "required": false
+        },
+        {
+          "code": "qual_06",
+          "prompt": "Communication with core facility users",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_06",
+          "required": false
+        },
+        {
+          "code": "qual_07",
+          "prompt": "Response to problems with core facility functions or services",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_07",
+          "required": false
+        },
+        {
+          "code": "qual_08",
+          "prompt": "Environmental Health and Safety services",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_08",
+          "required": false
+        },
+        {
+          "code": "qual_09",
+          "prompt": "Institutional Animal Care and Use Committee semi-annual inspections",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_09",
+          "required": false
+        },
+        {
+          "code": "qual_10",
+          "prompt": "Institutional Animal Care and Use Committee approval of research protocols",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_10",
+          "required": false
+        },
+        {
+          "code": "qual_11",
+          "prompt": "Comparative Medicine Group veterinary services",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_11",
+          "required": false
+        },
+        {
+          "code": "qual_12",
+          "prompt": "Comparative Medicine Group technician and cage washing services",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_12",
+          "required": false
+        },
+        {
+          "code": "qual_13",
+          "prompt": "Occupational Health and Safety program",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_13",
+          "required": false
+        },
+        {
+          "code": "qual_14",
+          "prompt": "Division of Facilities (e.g., minor repairs, HVAC problems)",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_14",
+          "required": false
+        },
+        {
+          "code": "qual_15",
+          "prompt": "Behavioral Neuroscience Core technician",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "bn_quality_15",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "frequency",
+      "title": "Frequency of use",
+      "questions": [
+        {
+          "code": "freq_01",
+          "prompt": "Online booking tool",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_01",
+          "required": false
+        },
+        {
+          "code": "freq_02",
+          "prompt": "Shared facility spaces",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_02",
+          "required": false
+        },
+        {
+          "code": "freq_03",
+          "prompt": "Lab-specific facility spaces",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_03",
+          "required": false
+        },
+        {
+          "code": "freq_04",
+          "prompt": "Office spaces",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_04",
+          "required": false
+        },
+        {
+          "code": "freq_05",
+          "prompt": "Environmental Health and Safety services",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_05",
+          "required": false
+        },
+        {
+          "code": "freq_06",
+          "prompt": "Institutional Animal Care and Use Committee",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_06",
+          "required": false
+        },
+        {
+          "code": "freq_07",
+          "prompt": "Comparative Medicine Group veterinary services",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_07",
+          "required": false
+        },
+        {
+          "code": "freq_08",
+          "prompt": "Comparative Medicine Group technician and cage washing services",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_08",
+          "required": false
+        },
+        {
+          "code": "freq_09",
+          "prompt": "Occupational Health and Safety program",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_09",
+          "required": false
+        },
+        {
+          "code": "freq_10",
+          "prompt": "Division of Facilities",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_10",
+          "required": false
+        },
+        {
+          "code": "freq_11",
+          "prompt": "Behavioral Neuroscience Core technician",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "bn_frequency_11",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "open",
+      "title": "Open-ended questions",
+      "questions": [
+        {
+          "code": "open_1",
+          "prompt": "Beneficial Aspects",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_2",
+          "prompt": "Aspects Needing Improvement",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_3",
+          "prompt": "Changes",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_4",
+          "prompt": "Additions",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_5",
+          "prompt": "Additional Comments",
+          "type": "long_text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "nonuse",
+      "title": "Thanks for letting us know.",
+      "questions": [
+        {
+          "code": "nonuse_reason",
+          "prompt": "Could you share briefly why you didn’t use the core?",
+          "type": "long_text"
+        },
+        {
+          "code": "nonuse_anticipate",
+          "prompt": "Do you expect to need the core in the coming weeks or months?",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "measure": "bn_nonuse_anticipate"
+        },
+        {
+          "code": "nonuse_contact",
+          "prompt": "Would you like someone from the core to reach out about what it offers?",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "measure": "bn_nonuse_contact",
+          "help_text": "If you choose Yes, we’ll share your name and email with the core’s staff so they can get in touch.",
+          "config": {
+            "contact_request": true
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "set_pathway",
+      "pathway": "core_non_use"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "quality"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "frequency"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "open"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "show",
+      "target_section": "nonuse"
+    }
+  ],
+  "assignment_rules": [
+    {
+      "scope": "universal",
+      "excluded": "core_director"
+    }
+  ],
+  "_source": "CNAP_Forms_Reconstructed.md sections 1-3; opt-out follow-ups are MW's wording (2026-10-22)."
+}

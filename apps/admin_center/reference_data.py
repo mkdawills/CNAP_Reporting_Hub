@@ -144,12 +144,38 @@ ANSWER_SETS = {
             ("no", "No", 0, False),
         ],
     ),
+    # NeuroSync rates on the agreement scale without N/A (source form).
+    "Agreement (no N/A)": (
+        ScaleKind.AGREEMENT,
+        [
+            ("strongly_disagree", "1 - Strongly Disagree", 1, False),
+            ("disagree", "2 - Disagree", 2, False),
+            ("neither", "3 - Neither Agree nor Disagree", 3, False),
+            ("agree", "4 - Agree", 4, False),
+            ("strongly_agree", "5 - Strongly Agree", 5, False),
+        ],
+    ),
+    # Team Science / Synergy wording differs at the midpoint and N/A (Piestar export).
+    "Agreement (Team Science)": (
+        ScaleKind.AGREEMENT,
+        [
+            ("strongly_disagree", "1 - Strongly Disagree", 1, False),
+            ("disagree", "2 - Disagree", 2, False),
+            ("neither", "3 - Neither Disagree nor Agree", 3, False),
+            ("agree", "4 - Agree", 4, False),
+            ("strongly_agree", "5 - Strongly Agree", 5, False),
+            ("na", "N/A", None, True),
+        ],
+    ),
 }
 
 COMPLETION_PATHWAYS = [
     ("full_response", "Full response", False, 1),
     ("non_attendance", "Did not attend (NeuroSync)", True, 2),
     ("core_non_use", "Did not use this core", True, 3),
+    ("ts_not_involved", "Not involved enough to answer (Team Synergy)", True, 4),
+    ("ts_no_admin", "Did not work with the Administrative Core", True, 5),
+    ("ts_no_gw", "Did not use the grant writing program", True, 6),
 ]
 
 ROLES = {

@@ -1,0 +1,344 @@
+{
+  "code": "cn_core_survey",
+  "name": "Cognitive Neuroscience (CN) Core User Survey",
+  "category": "survey",
+  "context_kind": "none",
+  "about_core": "CN",
+  "confidentiality": "standard",
+  "sort_order": 3,
+  "intro_text": "Please rate on a 1 to 5 scale the quality of the following services and functions. Select N/A for any you did not use. Then, indicate the frequency you've used each service or function.",
+  "display": {
+    "task_group": "cores",
+    "short_name": "CN Core",
+    "about": [
+      "The Cognitive Neuroscience Core provides EEG labs (Magstim/EGI and BioSemi), analysis computers and software, participant recruitment support, and a graduate research assistant.",
+      "This survey asks how well the core’s spaces, equipment and support worked for you, and how often you used them."
+    ],
+    "opt_out": {
+      "question": "optout",
+      "short": "Didn’t use this core"
+    }
+  },
+  "sections": [
+    {
+      "code": "optout",
+      "title": "",
+      "questions": [
+        {
+          "code": "optout",
+          "prompt": "I did not use the Cognitive Neuroscience Core since the last reporting period.",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "config": {
+            "widget": "optout_checkbox"
+          }
+        }
+      ]
+    },
+    {
+      "code": "quality",
+      "title": "Quality of services and functions",
+      "questions": [
+        {
+          "code": "qual_01",
+          "prompt": "Booking of shared CN Core Facilities",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_01",
+          "required": false
+        },
+        {
+          "code": "qual_02",
+          "prompt": "Access to CN Core facility functions",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_02",
+          "required": false
+        },
+        {
+          "code": "qual_03",
+          "prompt": "CN Core space allocation",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_03",
+          "required": false
+        },
+        {
+          "code": "qual_04",
+          "prompt": "CN Core security",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_04",
+          "required": false
+        },
+        {
+          "code": "qual_05",
+          "prompt": "Enhancement of research productivity by the CN Core",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_05",
+          "required": false
+        },
+        {
+          "code": "qual_06",
+          "prompt": "Collaborative Environment of the CN Core",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_06",
+          "required": false
+        },
+        {
+          "code": "qual_07",
+          "prompt": "CN Core Clean up space (sink and counter)",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_07",
+          "required": false
+        },
+        {
+          "code": "qual_08",
+          "prompt": "Participant recruitment for the CN Core",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_08",
+          "required": false
+        },
+        {
+          "code": "qual_09",
+          "prompt": "Ease of use: Magstim/EGI EEG data collection (Net Station Acquisition)",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_09",
+          "required": false
+        },
+        {
+          "code": "qual_10",
+          "prompt": "Ease of use: BioSemi EEG data collection (ActiveTwo)",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_10",
+          "required": false
+        },
+        {
+          "code": "qual_11",
+          "prompt": "EEG data analysis software (EEGLAB, Net Station Tools, etc.)",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_11",
+          "required": false
+        },
+        {
+          "code": "qual_12",
+          "prompt": "Communication with CN Core facility users",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_12",
+          "required": false
+        },
+        {
+          "code": "qual_13",
+          "prompt": "Response to problems with CN Core facility functions or services",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_13",
+          "required": false
+        },
+        {
+          "code": "qual_14",
+          "prompt": "Human Participant Protection, Safety, and Ethic Compliance",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_14",
+          "required": false
+        },
+        {
+          "code": "qual_15",
+          "prompt": "Institutional Review Board (IRB)",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_15",
+          "required": false
+        },
+        {
+          "code": "qual_16",
+          "prompt": "Planning and execution of alterations and renovations to the CN Core",
+          "type": "likert",
+          "answer_set": "Quality",
+          "measure": "cn_quality_16",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "frequency",
+      "title": "Frequency of use",
+      "questions": [
+        {
+          "code": "freq_01",
+          "prompt": "CN Core Online booking tool/calendar",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "cn_frequency_01",
+          "required": false
+        },
+        {
+          "code": "freq_02",
+          "prompt": "CN Core Shared facility space",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "cn_frequency_02",
+          "required": false
+        },
+        {
+          "code": "freq_03",
+          "prompt": "Shared Magstim/EGI EEG lab",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "cn_frequency_03",
+          "required": false
+        },
+        {
+          "code": "freq_04",
+          "prompt": "Biosemi EEG lab",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "cn_frequency_04",
+          "required": false
+        },
+        {
+          "code": "freq_05",
+          "prompt": "CN Core Computers for analysis",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "cn_frequency_05",
+          "required": false
+        },
+        {
+          "code": "freq_06",
+          "prompt": "Institutional Review Board (IRB)",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "cn_frequency_06",
+          "required": false
+        },
+        {
+          "code": "freq_07",
+          "prompt": "CN Core Graduate Research Assistant",
+          "type": "likert",
+          "answer_set": "Frequency",
+          "measure": "cn_frequency_07",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "open",
+      "title": "Open-ended questions",
+      "questions": [
+        {
+          "code": "open_1",
+          "prompt": "Beneficial Aspects",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_2",
+          "prompt": "Aspects Needing Improvement",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_3",
+          "prompt": "Changes",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_4",
+          "prompt": "Additions",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_5",
+          "prompt": "Additional Comments",
+          "type": "long_text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "code": "nonuse",
+      "title": "Thanks for letting us know.",
+      "questions": [
+        {
+          "code": "nonuse_reason",
+          "prompt": "Could you share briefly why you didn’t use the core?",
+          "type": "long_text"
+        },
+        {
+          "code": "nonuse_anticipate",
+          "prompt": "Do you expect to need the core in the coming weeks or months?",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "measure": "cn_nonuse_anticipate"
+        },
+        {
+          "code": "nonuse_contact",
+          "prompt": "Would you like someone from the core to reach out about what it offers?",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "measure": "cn_nonuse_contact",
+          "help_text": "If you choose Yes, we’ll share your name and email with the core’s staff so they can get in touch.",
+          "config": {
+            "contact_request": true
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "set_pathway",
+      "pathway": "core_non_use"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "quality"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "frequency"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "open"
+    },
+    {
+      "source": "optout",
+      "operator": "equals",
+      "value": "yes",
+      "action": "show",
+      "target_section": "nonuse"
+    }
+  ],
+  "assignment_rules": [
+    {
+      "scope": "universal",
+      "excluded": "core_director"
+    }
+  ],
+  "_source": "CNAP_Forms_Reconstructed.md sections 1-3; opt-out follow-ups are MW's wording (2026-10-22)."
+}
