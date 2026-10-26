@@ -24,4 +24,4 @@ Run once a day (cron, systemd timer, or the host's scheduler), from the project 
 
 Settings in `.env`: `OUTCOME_STALE_DAYS` (default 120), `OUTCOME_REMINDER_EVERY_DAYS` (default 30), `SITE_URL` (links in the e-mail), `DEFAULT_FROM_EMAIL`, and the mail server (`EMAIL_HOST` and friends, K-State's SMTP relay). Use `--dry-run` to see who would be reminded.
 
-PubMed look-ups ("Fill in from PubMed") call `https://eutils.ncbi.nlm.nih.gov`; the server needs outbound HTTPS to that host. Set `PUBMED_CONTACT_EMAIL` (NCBI asks for one) and `CNAP_GRANT_NUMBERS` (e.g. `P20GM000000`) so the form can tell people whether PubMed lists CNAP in the paper's grant index.
+PubMed look-ups ("Fill in from PubMed") call `https://eutils.ncbi.nlm.nih.gov`; the server needs outbound HTTPS to that host. Set `PUBMED_CONTACT_EMAIL` (NCBI asks for one) and `CNAP_GRANT_NUMBERS` (CNAP's COBRE award, `P20GM113109`, is the default) so the form can tell people whether PubMed lists CNAP in the paper's grant index.

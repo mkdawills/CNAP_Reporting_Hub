@@ -32,6 +32,21 @@ def test_pmid_parsing():
     assert pubmed.doi_from("https://doi.org/10.1000/xyz.123") == "10.1000/xyz.123"
 
 
+@override_settings(CNAP_GRANT_NUMBERS=["P20GM113109"])
+def test_grant_number_forms():
+    for form, hit in [
+        ("P20 GM113109", True),
+        ("P20GM113109/GM/NIGMS NIH HHS/United States", True),
+        ("GM113109", True),
+        ("R01 GM113110", False),
+    ]:
+        x = EFETCH.replace(b"P20 GM000000", form.encode())
+        assert (
+            pubmed.lookup("31234567", get=lambda url, timeout=8, x=x: x)["cnap_in_grant_index"]
+            is hit
+        ), form
+
+
 @override_settings(CNAP_GRANT_NUMBERS=["P20GM000000"])
 def test_lookup_parses_details_and_grant_index():
     out = pubmed.lookup(

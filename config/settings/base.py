@@ -24,7 +24,7 @@ env = environ.Env(
     OUTCOME_STALE_DAYS=(int, 120),
     OUTCOME_REMINDER_EVERY_DAYS=(int, 30),
     OUTCOME_REOPEN_DAYS=(int, 7),
-    CNAP_GRANT_NUMBERS=(list, []),
+    CNAP_GRANT_NUMBERS=(list, ["P20GM113109"]),
     PUBMED_CONTACT_EMAIL=(str, ""),
 )
 environ.Env.read_env(BASE_DIR / ".env")
@@ -159,7 +159,7 @@ OUTCOME_REMINDER_EVERY_DAYS = env("OUTCOME_REMINDER_EVERY_DAYS")
 # After a reporting period closes, people can add or update outcomes again this many days later (entry is open
 # all year otherwise), so the Center can finish that period's numbers first.
 OUTCOME_REOPEN_DAYS = env("OUTCOME_REOPEN_DAYS")
-# CNAP's grant number(s), e.g. P20GM000000: used to tell whether a PubMed entry lists CNAP in its grant index.
+# CNAP's grant number(s) (the COBRE award is P20GM113109): used to tell whether a PubMed entry lists CNAP in its grant index.
 CNAP_GRANT_NUMBERS = env("CNAP_GRANT_NUMBERS")
 # Sent to NCBI with PubMed look-ups, as their usage policy asks.
 PUBMED_CONTACT_EMAIL = env("PUBMED_CONTACT_EMAIL")

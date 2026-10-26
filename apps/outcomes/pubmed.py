@@ -163,7 +163,12 @@ def lookup(link, get=None):
         raise
     except Exception as exc:
         raise LookupError_("Couldn’t reach PubMed right now. Please type the details in.") from exc
-    cnap = {_norm_grant(g) for g in getattr(settings, "CNAP_GRANT_NUMBERS", []) if g}
+    cnap = set()
+    for g in getattr(settings, "CNAP_GRANT_NUMBERS", []):
+        n = _norm_grant(g)
+        if n:
+            # PubMed writes it many ways ("P20 GM113109", "GM113109", "P20GM113109/GM/NIGMS NIH HHS"): match the core part.
+            cnap.add(re.sub(r"^[A-Z]\d{2}(?=[A-Z]{2}\d)", "", n))
     out["cnap_in_grant_index"] = (
         any(any(c in _norm_grant(g) for c in cnap) for g in out["grants"]) if cnap else None
     )
