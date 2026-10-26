@@ -12,14 +12,14 @@ Y9 = Path("/tmp/claude-0/y9")
 FIX = Path("/home/claude/cnap-platform/fixtures/forms")
 OUT = Path("/home/claude/cnap-platform/fixtures/historical/aggregates_y6_y9.csv")
 PERIODS = [
-    ("Y6 Jan", 6, 1),
-    ("Y6 June", 6, 2),
-    ("Y7 Jan", 7, 1),
-    ("Y7 June", 7, 2),
-    ("Y8 Jan", 8, 1),
-    ("Y8 June", 8, 2),
-    ("Y9 Jan", 9, 1),
-    ("Y9 May", 9, 2),
+    ("Y6 Fall", 6, 1),
+    ("Y6 Spring", 6, 2),
+    ("Y7 Fall", 7, 1),
+    ("Y7 Spring", 7, 2),
+    ("Y8 Fall", 8, 1),
+    ("Y8 Spring", 8, 2),
+    ("Y9 Fall", 9, 1),
+    ("Y9 Spring", 9, 2),
 ]
 
 

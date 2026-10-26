@@ -352,11 +352,19 @@ def center_results(period):
     from apps.analytics.report import build
 
     cards = []
-    forms = (
-        FormDefinition.objects.filter(
+    if period.assignments.exists():
+        forms = FormDefinition.objects.filter(
             category=FormCategory.SURVEY, assignments__reporting_period=period
         )
-        .exclude(confidentiality_class=ConfidentialityClass.MENTORING)
+    else:  # imported prior-year averages only (decisions.md: prior-year averages)
+        codes = period.snapshots.filter(provenance="aggregate_import").values_list(
+            "results__group_key", flat=True
+        )
+        forms = FormDefinition.objects.filter(
+            category=FormCategory.SURVEY, code__in=[c for c in codes if c]
+        )
+    forms = (
+        forms.exclude(confidentiality_class=ConfidentialityClass.MENTORING)
         .distinct()
         .order_by("sort_order")
     )

@@ -187,6 +187,20 @@ def export_report(request, label, code):
     buf = io.StringIO()
     w = csv.writer(buf)
     w.writerow([fd.name, p.name])
+    if data["tables"]:
+        t0 = data["tables"][0]
+        line = f"Table {t0['no']} data captures {t0['section'].title.rstrip(':').lower()} for the {fd.name}. "
+        line += (
+            f"{data['opened']} individual{'s' if data['opened'] != 1 else ''} completed the survey."
+        )
+        if data["opted_out"]:
+            line += f" Once inside, {data['opted_out']} of the {data['opened']} opted out by selecting “{data['optout_label']}”."
+        if t0["has_na"]:
+            line += (
+                " Occasionally, respondents selected N/A in response to individual survey items"
+                f" (observable when the Total column is less than {data['full']})."
+            )
+        w.writerow(["Report wording", line])
     for t in data["tables"]:
         w.writerow([])
         w.writerow([f"Table {t['no']}. {t['section'].title}"])

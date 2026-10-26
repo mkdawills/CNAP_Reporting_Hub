@@ -37,19 +37,21 @@ SCALES = {
     "Frequency": ScaleKind.FREQUENCY,
     "Agreement": ScaleKind.AGREEMENT,
 }
-MONTHS = {"Jan": (1, "January"), "June": (6, "June"), "May": (5, "May")}
 
 
 def _period(label, grant_year, sequence):
     """
     Grant Year N runs June (2015+N) to May (2016+N): Year 6 is June 2022 - May 2023.
-    The first semiannual period covers June-November and is surveyed in January;
-    the second covers December-May and is surveyed in May or June.
+    The first semiannual period (Fall) covers June-November and is surveyed in January;
+    the second (Spring) covers December-May and is surveyed in May or June.
+    The Year 9 site-visit reports called these "Jan" and "May"/"June"; the Center calls them Fall and Spring.
     """
     p = ReportingPeriod.objects.filter(grant_year=grant_year, sequence=sequence).first()
     if p:
         return p
-    month, month_name = MONTHS.get(label.split()[-1], (6, "June"))
+    season = "Fall" if sequence == 1 else "Spring"
+    label = f"Y{grant_year} {season}"
+    month = 1 if sequence == 1 else 5
     survey_year = 2017 + grant_year
     if sequence == 1:
         start, end = dt.date(survey_year - 1, 6, 1), dt.date(survey_year - 1, 11, 30)
@@ -57,7 +59,7 @@ def _period(label, grant_year, sequence):
         start, end = dt.date(survey_year - 1, 12, 1), dt.date(survey_year, 5, 31)
     opens = dt.datetime(survey_year, month, 1, 9, tzinfo=timezone.get_current_timezone())
     return ReportingPeriod.objects.create(
-        name=f"Year {grant_year}, {month_name} {survey_year}",
+        name=f"Year {grant_year} {season}",
         short_label=label,
         period_type=PeriodType.SEMIANNUAL,
         grant_year=grant_year,

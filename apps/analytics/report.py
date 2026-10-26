@@ -255,7 +255,7 @@ def build(form_definition, period, *, audience="admin"):
             vals = by_key.get(q.measure_id or q.code, [])
             nums = [v for v in vals if v is not None]
             n = len(nums)
-            if respondent and n < min_n:
+            if respondent and n < min_n and any_assignment is not None:
                 left_out += 1
                 continue
             counts = [sum(1 for v in nums if v == s["value"]) for s in scale]
@@ -282,9 +282,12 @@ def build(form_definition, period, *, audience="admin"):
         total = len(all_nums)
         totals = [sum(r["cells"][j]["count"] for r in rows) for j in range(len(scale))]
         top = max(totals) if totals and max(totals) else 1
-        tno += 1
+        skip_main = any_assignment is None  # averages-only period (imported): no Table 1
+        if not skip_main:
+            tno += 1
         table = {
             "no": tno,
+            "skip_main": skip_main,
             "title": f"{period_title(period)} {title_case(sec.title)} Survey Responses",
             "lon_title": f"{title_case(sec.title)} Over Time",
             "section": sec,
@@ -327,7 +330,11 @@ def build(form_definition, period, *, audience="admin"):
                 )
             )
         if cols or rows:
-            live = {r["q"].measure_id: r["mean"] for r in rows if r["q"].measure_id}
+            live = (
+                upto_means.get(period, {})
+                if skip_main
+                else {r["q"].measure_id: r["mean"] for r in rows if r["q"].measure_id}
+            )
             col_objs = cols + [period]
             lon_rows = []
             for r in rows:

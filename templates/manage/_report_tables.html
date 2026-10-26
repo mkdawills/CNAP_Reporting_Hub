@@ -1,5 +1,5 @@
 {% load cnap %}{% for t in tables %}
-<div class="tcard">
+{% if not t.skip_main %}<div class="tcard">
 <div class="teyebrow">Table {{ t.no }}</div>
 <h3 class="ttitle2">{{ t.title }}</h3>
 {% with g=t.glance %}{% if g %}
@@ -55,6 +55,7 @@
 </details>
 {% if t.left_out %}<p class="small muted mt">{{ t.left_out }} item{{ t.left_out|pluralize }} aren’t shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"it,them" }}. {{ "This keeps anyone’s answers from being worked out."|stack }}</p>{% endif %}
 </div>
+{% endif %}
 {% if t.lon and t.lon.periods|length > 1 %}
 <div class="tcard">
 <div class="teyebrow">Table {{ t.lon.no }}</div>

@@ -207,8 +207,8 @@ def seed_demo(stdout=None):
         grant_year=10,
         sequence=1,
         defaults=dict(
-            name="Year 10, January 2027",
-            short_label="Y10 Jan",
+            name="Year 10 Fall",
+            short_label="Y10 Fall",
             start_date=dt.date(2026, 6, 1),
             end_date=dt.date(2026, 11, 30),
             opens_at=now - dt.timedelta(days=10),
@@ -220,8 +220,8 @@ def seed_demo(stdout=None):
         grant_year=10,
         sequence=2,
         defaults=dict(
-            name="Year 10, June 2027",
-            short_label="Y10 June",
+            name="Year 10 Spring",
+            short_label="Y10 Spring",
             start_date=dt.date(2026, 12, 1),
             end_date=dt.date(2027, 5, 31),
             opens_at=dt.datetime(2027, 5, 1, 8, tzinfo=tz),
@@ -230,7 +230,7 @@ def seed_demo(stdout=None):
         ),
     )
     created = asg.generate(y10a).created
-    log(f"Y10 Jan: {created} assignments")
+    log(f"Y10 Fall: {created} assignments")
     if not Response.objects.filter(assignment__reporting_period=y10a).exists():
         rng = random.Random(2026)
         for a in Assignment.objects.filter(reporting_period=y10a).select_related(

@@ -223,3 +223,12 @@ MW: "make it possible to instantly understand." The summary now answers three qu
 - (same day) One spacing rhythm inside result cards: 40px at every break (title → tiles → rule → bars, note → button, card → card). The note under the bars sits 14px below them because it explains them.
 - (same day) Headline tiles shrunk to compact chips (small ring left, number and label right) sitting 12px under the title, so they read as title information. 40px rhythm resumes below them.
 - (same day) Every Table 2 shows all three call-out cards. When nothing rose or fell since the previous period the card says so quietly ("No item went up" / "No item went down") instead of disappearing.
+
+## 2026-10-25 — Period names: Fall and Spring
+
+MW: the two collections are Fall (surveyed in January) and Spring (surveyed in May/June); the latest real data is Year 9 Spring; nothing should be labelled Year 10 Spring.
+- Imported periods renamed Y6 Fall … Y9 Spring (migration reporting 0004 relabels existing databases; the prior-year CSV and the importer use the new names; the Year 9 reports' "Jan"/"May"/"June" map to Fall/Spring). Period names read "Year 9 Spring".
+- The next collection is Year 10 Fall (surveyed January 2027). The fictional demo seed (development only) uses Y10 Fall (open) and Y10 Spring (draft, no data).
+- An averages-only period has no Table 1; its results page opens with the trend, ending at that period. Center results lists every finalized period, imported ones included; the small-group rule doesn't hide imported averages (they have no per-person counts).
+- Prototype: no made-up results at all (MW's choice). The fake finished period is gone; Results and Center results list Y6 Fall … Y9 Spring (real averages), default Y9 Spring. Fictional answers exist only in the open Y10 Fall period so the tasks and dashboard screens work, and never appear in results.
+- The site-visit report sentence ("Table 1 data captures …") moved off the page into the CSV download's second line; the sentence at the top of the page covers it for readers.
