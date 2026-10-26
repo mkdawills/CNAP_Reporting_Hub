@@ -47,3 +47,13 @@ def test_profile_help_and_evaluator_contact(client, center):
     assert (
         "Contact your institution’s research office" in html and "research@k-state.edu" not in html
     )
+
+
+def test_also_use_heading_matches_number_of_cores(client, center):
+    from apps.reporting.models import ReportingPeriod
+    from apps.reporting.services import assignments as asg
+
+    asg.generate(ReportingPeriod.objects.get(status="open"))
+    client.force_login(User.objects.get(username="okafor"))  # uses BN and NI: one core left (CN)
+    html = client.get("/tasks/").content.decode()
+    assert "Did you also use this core?" in html and "Did you also use these?" not in html

@@ -30,7 +30,7 @@
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
     <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div><span class="ghcount">{{ g.count }} to do</span></div></td></tr>
     {% for r in g.used %}{% include "portal/_task_row.html" %}{% endfor %}
-    {% if g.used and g.rows %}<tr class="subhead"><td colspan="5">Did you also use these?</td></tr>{% endif %}
+    {% if g.used and g.rows %}<tr class="subhead"><td colspan="5">{% if g.rows|length == 1 %}Did you also use this core?{% else %}Did you also use these cores?{% endif %}</td></tr>{% endif %}
     {% for r in g.rows %}{% include "portal/_task_row.html" %}{% endfor %}
   {% endfor %}
   {% if outcome and not outcome.done %}
