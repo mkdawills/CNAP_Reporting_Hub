@@ -145,6 +145,12 @@ def test_grants_by_core_and_funder(center):
         "carried_dollars"
     ] == 100000.0
     assert t["status_counts"] == {"Awarded": 1, "Pending": 1, "Declined": 1}
+    assert t["carried"][0]["submitted_year"] == 8 and t["carried"][0]["entered"]
+    assert [(r["label"], r["n"], r["dollars"]) for r in t["pending"]] == [
+        ("Submitted this year", 1, 200000.0),
+        ("Submitted in earlier years", 1, 100000.0),
+        ("All pending", 2, 300000.0),
+    ]
     bn = next(r for r in t["rows"] if r["label"] == "BN Core")
     assert bn["cells"][0] == {"n": 1, "dollars": 300000.0} and bn["cells"][1]["n"] == 0
     f = {r["label"]: r for r in t["by_funder"]}
@@ -170,3 +176,4 @@ def test_site_visit_tab_and_csv(client, center):
         and "Awarded total $" in csv
         and "Publication,A," in csv
     )
+    assert "Pending proposals,Count,Requested $" in csv

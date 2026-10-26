@@ -138,7 +138,15 @@ def publications(gy, since=None):
             and p.submission_date
             and p.submission_date < start
         ):
-            carried.append({"obj": p, "cores": cores_of(p), "status": st})
+            carried.append(
+                {
+                    "obj": p,
+                    "cores": cores_of(p),
+                    "status": st,
+                    "submitted_year": grant_year(p.submission_date),
+                    "entered": p.created_at,
+                }
+            )
         elif active and st:
             items.append(
                 {
@@ -219,7 +227,14 @@ def grants(gy, since=None):
             and g.submission_date < start
         ):
             carried.append(
-                {"obj": g, "cores": cores_of(g), "funder": funder(g), "dollars": grant_dollars(g)}
+                {
+                    "obj": g,
+                    "cores": cores_of(g),
+                    "funder": funder(g),
+                    "dollars": grant_dollars(g),
+                    "submitted_year": grant_year(g.submission_date),
+                    "entered": g.created_at,
+                }
             )
         elif active and st:
             items.append(
@@ -278,8 +293,27 @@ def grants(gy, since=None):
         status_counts={s: sum(1 for it in items if it["status"] == s) for s in GRANT_STATUSES},
         carried=carried,
         carried_dollars=sum(it["dollars"] for it in carried),
+        pending=_pending_tally(items, carried),
     )
     return out
+
+
+def _pending_tally(items, carried):
+    """Pending proposals: submitted this year, from earlier years, and all together (MW 2026-10-26)."""
+    now = [it for it in items if it["status"] == "Pending"]
+    rows = [
+        ("Submitted this year", len(now), sum(it["dollars"] for it in now)),
+        ("Submitted in earlier years", len(carried), sum(it["dollars"] for it in carried)),
+    ]
+    rows.append(("All pending", rows[0][1] + rows[1][1], rows[0][2] + rows[1][2]))
+    return [{"label": a, "n": n, "dollars": d} for a, n, d in rows]
+
+
+def grant_year(d):
+    """Grant Year N runs June 1 to May 31: June 2025 - May 2026 is Year 9."""
+    if not d:
+        return None
+    return d.year - 2016 if d.month >= 6 else d.year - 2017
 
 
 def _wrap(items, rows, cols):

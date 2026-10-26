@@ -100,7 +100,7 @@
         <tr><td><strong>Total</strong></td>{% for x in t.col_totals %}<td class="num"><strong>{{ x }}</strong></td>{% endfor %}<td class="num"><strong>{{ t.total }}</strong></td></tr>
       </tbody></table></div>{% endif %}{% empty %}{% endfor %}
     {% if not v.pubs.n_items %}<p class="muted">No publications in this year.</p>{% endif %}
-    {% if v.pubs.carried %}<details class="mt"><summary class="small">Still under review from earlier years: {{ v.pubs.carried|length }} (not in the numbers above)</summary><ul class="small">{% for it in v.pubs.carried %}<li>{{ it.obj.title }} · {{ it.status }} · submitted {{ it.obj.submission_date|date:"M j, Y" }}</li>{% endfor %}</ul></details>{% endif %}
+    {% if v.pubs.carried %}<details class="mt"><summary class="small">Still under review from earlier years: {{ v.pubs.carried|length }} (not in the numbers above)</summary><ul class="small">{% for it in v.pubs.carried %}<li><strong>{{ it.obj.title }}</strong> · {{ it.status }}<div class="muted">Submitted {{ it.obj.submission_date|date:"M j, Y" }} (Year {{ it.submitted_year }}) · first entered on the site {{ it.entered|date:"M j, Y" }}</div></li>{% endfor %}</ul></details>{% endif %}
 
     <h2 class="sectionhead" style="margin-top:22px">Presentations</h2>
     <p class="small">{{ v.talks.n_items }} presentation{{ v.talks.n_items|pluralize }} · {{ v.talks.n_counted }} counted across cores{% if v.talks.multi_core %} ({{ v.talks.multi_core|length }} used two or more cores){% endif %}{% if v.since %} · <span class="gap">{{ v.talks.new|length }} added after {{ v.since|date:"M j, Y" }}</span>{% endif %}</p>
@@ -123,7 +123,12 @@
     </tbody></table></div>
     <p class="small muted">{{ "Dollars are total costs: the award total for awards, the amount requested for pending and declined proposals. Funder is read from the agency name (NIH and its institutes, NSF, everything else Other)."|stack }}</p>
     {% endif %}
-    {% if v.grants.carried %}<details class="mt"><summary class="small">Still pending from earlier years: {{ v.grants.carried|length }}, ${{ v.grants.carried_dollars|floatformat:"0g" }} requested (not in the numbers above)</summary><ul class="small">{% for it in v.grants.carried %}<li>{{ it.obj.project_title }} · {{ it.funder }} · submitted {{ it.obj.submission_date|date:"M j, Y" }}{% if it.dollars %} · ${{ it.dollars|floatformat:"0g" }}{% endif %}</li>{% endfor %}</ul></details>{% endif %}
+    {% if v.grants.pending.2.n %}<h3 style="margin:18px 0 4px">Pending proposals</h3>
+    <div class="scroll"><table class="cnttab" style="max-width:520px"><thead><tr><th>Pending</th><th class="num">Count</th><th class="num">Requested $</th></tr></thead><tbody>
+      {% for r in v.grants.pending %}<tr><td>{% if forloop.last %}<strong>{{ r.label }}</strong>{% else %}{{ r.label }}{% endif %}</td><td class="num">{% if forloop.last %}<strong>{{ r.n }}</strong>{% else %}{{ r.n|default:"–" }}{% endif %}</td><td class="num">{% if r.dollars %}{% if forloop.last %}<strong>${{ r.dollars|floatformat:"0g" }}</strong>{% else %}${{ r.dollars|floatformat:"0g" }}{% endif %}{% else %}–{% endif %}</td></tr>{% endfor %}
+    </tbody></table></div>
+    <p class="small muted">{{ "Only “Submitted this year” is in the tables above. The earlier ones are listed below."|stack }}</p>{% endif %}
+    {% if v.grants.carried %}<details class="mt"><summary class="small">Still pending from earlier years: {{ v.grants.carried|length }}, ${{ v.grants.carried_dollars|floatformat:"0g" }} requested (not in the numbers above)</summary><ul class="small">{% for it in v.grants.carried %}<li><strong>{{ it.obj.project_title }}</strong> · {{ it.funder }}{% if it.dollars %} · ${{ it.dollars|floatformat:"0g" }} requested{% endif %}<div class="muted">Submitted {{ it.obj.submission_date|date:"M j, Y" }} (Year {{ it.submitted_year }}) · first entered on the site {{ it.entered|date:"M j, Y" }}</div></li>{% endfor %}</ul></details>{% endif %}
     {% if not v.grants.n_items %}<p class="muted">No proposals in this year.</p>{% endif %}
     <p class="small mt"><a href="{% url 'manage:outcomes_export' 'sitevisit' %}?year={{ v.year }}{% if v.since %}&amp;since={{ v.since|date:'Y-m-d' }}{% endif %}">Download these tables and the item lists (CSV)</a></p>
   {% endwith %}

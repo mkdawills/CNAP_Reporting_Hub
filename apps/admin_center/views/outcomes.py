@@ -767,6 +767,11 @@ def export(request, kind):
                 + [r["n"]]
             )
         w.writerow([])
+        w.writerow(["Pending proposals", "Count", "Requested $"])
+        for r in grants["pending"]:
+            w.writerow([r["label"], r["n"], round(r["dollars"], 2)])
+        w.writerow(["Only 'Submitted this year' is in the tables above."])
+        w.writerow([])
         w.writerow(
             [
                 "Items",
@@ -827,6 +832,44 @@ def export(request, kind):
                     "yes" if it["new"] else "",
                 ]
             )
+        w.writerow([])
+        w.writerow(
+            [
+                "Still waiting from earlier years (not in the numbers above)",
+                "Kind",
+                "Title",
+                "Funder",
+                "Status",
+                "Cores",
+                "Submitted",
+                "Submitted in year",
+                "First entered on the site",
+                "Requested $",
+            ]
+        )
+        for kind_label, lst, title in (
+            ("Publication", pubs["carried"], lambda o: o.title),
+            ("Grant", grants["carried"], lambda o: o.project_title),
+        ):
+            for it in lst:
+                o = it["obj"]
+                w.writerow(
+                    [
+                        "",
+                        kind_label,
+                        title(o),
+                        it.get("funder", ""),
+                        it.get("status", "Pending"),
+                        "; ".join(
+                            core_names[[c for c, _ in sitevisit.CORES].index(c)]
+                            for c in it["cores"]
+                        ),
+                        o.submission_date,
+                        f"Year {it['submitted_year']}",
+                        timezone.localtime(it["entered"]).date(),
+                        round(it["dollars"], 2) if "dollars" in it else "",
+                    ]
+                )
     elif kind in ("table2", "d1"):
         from apps.outcomes import rppr
 
