@@ -509,3 +509,11 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .ttitle2 { margin-bottom: 28px; }
 .ttitle2 { margin-bottom: 44px; }
 .kpis { justify-content: flex-start; gap: 16px 28px; }
+/* rings on tiles, smaller */
+.kpis { gap: 12px; }
+.kpi { width: 148px; padding: 14px 10px 12px; background: #f4f4f7; border-radius: 12px; gap: 8px; }
+.ring { width: 76px; height: 76px; }
+.ring::before { inset: 7px; background: #f4f4f7; }
+.ring-v { font-size: 1.25rem; }
+.ring-v small { font-size: .7rem; }
+.kpi .kpi-l { font-size: .8rem; }

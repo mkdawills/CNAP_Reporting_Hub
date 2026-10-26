@@ -219,3 +219,4 @@ MW: "make it possible to instantly understand." The summary now answers three qu
 - (same day) Rings spaced evenly across the card; the answer bars always span the card's full width (equal columns, bar width capped at 140px).
 - (same day) Headline rings left-aligned and closer together so they read as a summary, not as labels for the bars below.
 - (same day) Table titles: "Year 10 January Quality of Services and Functions Survey Responses" (period in words + section in title case); the trend table is "Quality of Services and Functions Over Time".
+- (same day) Each ring sits on its own light grey square tile (so the rings read as summary cards, not chart marks) and is smaller (76px).
