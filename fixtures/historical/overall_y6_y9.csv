@@ -1,0 +1,9 @@
+form_code,section_code,period,grant_year,sequence,mean,sd,source
+neurosync_survey,ratings,Y6 Fall,6,1,4.2,0.7,Neurosync Survey Data - Year 9 Site Visit.docx (Table 2 Overall Means)
+neurosync_survey,ratings,Y6 Spring,6,2,4.2,0.5,Neurosync Survey Data - Year 9 Site Visit.docx (Table 2 Overall Means)
+neurosync_survey,ratings,Y7 Fall,7,1,3.9,0.8,Neurosync Survey Data - Year 9 Site Visit.docx (Table 2 Overall Means)
+neurosync_survey,ratings,Y7 Spring,7,2,4.2,0.6,Neurosync Survey Data - Year 9 Site Visit.docx (Table 2 Overall Means)
+neurosync_survey,ratings,Y8 Fall,8,1,4.4,0.6,Neurosync Survey Data - Year 9 Site Visit.docx (Table 2 Overall Means)
+neurosync_survey,ratings,Y8 Spring,8,2,4.3,0.7,Neurosync Survey Data - Year 9 Site Visit.docx (Table 2 Overall Means)
+neurosync_survey,ratings,Y9 Fall,9,1,4.5,0.6,Neurosync Survey Data - Year 9 Site Visit.docx (Table 2 Overall Means)
+neurosync_survey,ratings,Y9 Spring,9,2,4.5,0.6,Neurosync Survey Data - Year 9 Site Visit.docx (Table 2 Overall Means)

@@ -57,3 +57,28 @@ def test_also_use_heading_matches_number_of_cores(client, center):
     client.force_login(User.objects.get(username="okafor"))  # uses BN and NI: one core left (CN)
     html = client.get("/tasks/").content.decode()
     assert "Did you also use this core?" in html and "Did you also use these?" not in html
+
+
+def test_prior_year_overall_sd_from_the_report(center):
+    from apps.analytics.report import build
+    from apps.forms_engine.models import FormDefinition
+    from apps.reporting.models import ReportingPeriod
+
+    d = build(
+        FormDefinition.objects.get(code="neurosync_survey"),
+        ReportingPeriod.objects.get(short_label="Y9 Spring"),
+        audience="staff",
+    )
+    t = next(t for t in d["tables"] if t.get("lon"))
+    got = [(round(c["mean"], 1), c["sd"]) for c in t["lon"]["overall"]]
+    # NeuroSync Year 9 site-visit report, Table 2 "Overall Means"
+    assert got == [
+        (4.2, 0.7),
+        (4.2, 0.5),
+        (3.9, 0.8),
+        (4.2, 0.6),
+        (4.4, 0.6),
+        (4.3, 0.7),
+        (4.5, 0.6),
+        (4.5, 0.6),
+    ]

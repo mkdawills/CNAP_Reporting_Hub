@@ -670,3 +670,10 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 .helpbox dl.qa dd { margin-top: 4px; }
 .helpbox .btn.small { font-size: .74rem; }
 .helpbox .ok-note { font-size: .74rem; }
+/* open-ended questions: quieter (MW, 2026-10-26) */
+.runner .q:has(textarea) .qt { font-size: .98rem; font-weight: 500; line-height: 1.45; margin-bottom: 8px; }
+.runner .q:has(textarea) .qt::before { color: var(--muted); font-weight: 400; }
+.runner .q:has(textarea) .req { font-size: .85em; }
+.runner .q:has(textarea) textarea { min-height: 84px; border-color: var(--line); box-shadow: none; }
+.runner .q:has(textarea) textarea:focus { border-color: var(--focus); }
+.runner .q:has(textarea) + .q:has(textarea) { border-top: 0; padding-top: 10px; }

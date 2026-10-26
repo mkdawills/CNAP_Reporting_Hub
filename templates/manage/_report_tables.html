@@ -79,7 +79,7 @@
 </div>
 {% endif %}{% endwith %}
 <details class="tmore"><summary><span class="tmore-open">Show item-by-item trends</span><span class="tmore-close">Hide item-by-item trends</span></summary>
-{% if t.lon.has_sd %}<div class="nview sdview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-sdview="mean" class="on">Means</button><button type="button" data-sdview="sd">Means and SD</button></div>{% endif %}
+{% if t.lon.has_sd %}<div class="nview sdview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-sdview="mean">Means</button><button type="button" data-sdview="sd" class="on">Means and SD</button></div>{% endif %}
 <div class="scroll"><table class="lontab">
   <thead>
     <tr><th rowspan="3" style="text-align:left">Item</th>{% for y in t.lon.years %}<th colspan="{{ y.span }}" data-span="{{ y.span }}" class="num ygstart sdgrp">{{ y.school }}</th>{% endfor %}</tr>

@@ -18,7 +18,7 @@ from collections import defaultdict
 
 from django.conf import settings
 
-from apps.common.enums import AssignmentStatus, QuestionType, SnapshotStatus
+from apps.common.enums import AssignmentStatus, QuestionType, SnapshotKind, SnapshotStatus
 from apps.forms_engine.models import Measure
 from apps.forms_engine.runtime import FormSchema
 from apps.reporting.models import Answer, ReportingPeriod
@@ -426,6 +426,11 @@ def build(form_definition, period, *, audience="admin"):
             }
             if not skip_main and table["lon"]["overall"]:
                 table["lon"]["overall"][-1]["sd"] = table["grand_sd"] if total >= 2 else None
+            # prior years: the overall SD printed in the site-visit report, where there is one
+            hist = _hist_overall(form_definition.code, sec.code, col_objs)
+            for p, cell in zip(col_objs, table["lon"]["overall"], strict=True):
+                if cell.get("sd") is None and p.pk in hist:
+                    cell["sd"] = hist[p.pk]
             table["lon"]["has_sd"] = any(
                 c.get("sd") is not None for r in lon_rows for c in r["cells"]
             )
@@ -574,6 +579,21 @@ def _trend(lon, w=640, h=170, pad_l=34, pad_r=16, pad_t=22, pad_b=34):
         "gain": gain,
         "drop": drop,
         "low": low,
+    }
+
+
+def _hist_overall(form_code, section_code, periods):
+    """{period pk: SD} from imported "Overall Means" rows of the site-visit reports."""
+    rows = SnapshotResult.objects.filter(
+        snapshot__reporting_period__in=periods,
+        snapshot__kind=SnapshotKind.IMPORTED_AGGREGATE,
+        metric_code="historical_section_overall",
+        group_key=f"{form_code}|{section_code}",
+    ).select_related("snapshot")
+    return {
+        r.snapshot.reporting_period_id: (r.detail or {}).get("sd")
+        for r in rows
+        if (r.detail or {}).get("sd") is not None
     }
 
 

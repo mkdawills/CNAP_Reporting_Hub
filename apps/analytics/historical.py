@@ -141,3 +141,36 @@ def import_file(path, actor=None):
         new={"values": n, "periods": len(snaps), "removed": removed, "file": Path(path).name},
     )
     return n, len(snaps)
+
+
+def import_overall(path, actor=None):
+    """Prior-year section overall means and SDs as printed in the site-visit reports ("Overall Means" rows).
+    Only the reports' own overall SDs: they can't be rebuilt from item SDs without each period's n."""
+    rows = list(csv.DictReader(Path(path).open()))
+    n = 0
+    for r in rows:
+        period = _period(r["period"], int(r["grant_year"]), int(r["sequence"]))
+        snap = period.snapshots.filter(kind=SnapshotKind.IMPORTED_AGGREGATE).first()
+        if not snap:
+            continue  # item means come first (import_file); overall rows only add to those periods
+        SnapshotResult.objects.update_or_create(
+            snapshot=snap,
+            metric_code="historical_section_overall",
+            subject_type="section",
+            subject_id=0,
+            group_key=f"{r['form_code']}|{r['section_code']}",
+            defaults={
+                "value": float(r["mean"]),
+                "n": None,
+                "detail": {"sd": float(r["sd"]) if r.get("sd") else None, "source": r["source"]},
+                "is_confidential": False,
+            },
+        )
+        n += 1
+    record_event(
+        actor,
+        AuditLog.Action.IMPORT,
+        "analytics.historical_overall",
+        new={"values": n, "file": Path(path).name},
+    )
+    return n

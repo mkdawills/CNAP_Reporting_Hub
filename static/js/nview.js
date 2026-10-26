@@ -32,8 +32,8 @@
     apply(b.dataset.sdview);
     try { localStorage.setItem("cnap-sdview", b.dataset.sdview); } catch (err) {}
   });
-  var saved = "mean";
-  try { saved = localStorage.getItem("cnap-sdview") || "mean"; } catch (err) {}
+  var saved = "sd";
+  try { saved = localStorage.getItem("cnap-sdview") || "sd"; } catch (err) {}
   if (document.querySelector(".sdview")) apply(saved);
 })();
 // "Show all / Collapse all" for the item-by-item tables on results pages (MW, 2026-10-26).
