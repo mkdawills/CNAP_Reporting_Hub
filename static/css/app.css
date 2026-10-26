@@ -650,3 +650,6 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 /* results pages: one button opens or closes every item-by-item table */
 .restools { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 4px 0 14px; }
 .restools h2 { margin: 0; }
+/* one column everywhere (MW, 2026-10-26: avoid two-column layouts): panels stack in reading order */
+.grid2 { grid-template-columns: minmax(0, 1fr); max-width: 820px; gap: 0; }
+.grid2 > * + *::before { display: none; }

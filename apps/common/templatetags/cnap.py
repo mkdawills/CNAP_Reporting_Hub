@@ -100,7 +100,8 @@ def get_item(mapping, key):
 @register.simple_tag(takes_context=True)
 def nav_current(context, *names):
     match = getattr(context.get("request"), "resolver_match", None)
-    return 'aria-current="page"' if match and match.url_name in names else ""
+    # mark_safe: simple_tag output is escaped, which turned the quotes into &quot; and broke the highlight
+    return mark_safe('aria-current="page"') if match and match.url_name in names else ""
 
 
 @register.filter(is_safe=True)

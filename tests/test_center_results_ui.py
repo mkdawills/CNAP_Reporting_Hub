@@ -24,3 +24,10 @@ def test_expand_all_and_prior_year_wording(client, center):
     assert "data-expand-all" in html and "Show all tables" in html
     assert "site-visit report" in html
     assert "0</b> people answered" not in html
+
+
+def test_menu_highlights_the_current_page(client, center):
+    client.force_login(User.objects.get(username="okafor"))
+    html = client.get("/profile/").content.decode()
+    assert '<a href="/profile/" aria-current="page">' in html
+    assert "&quot;page&quot;" not in html
