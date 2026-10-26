@@ -131,3 +131,17 @@ To confirm with K-State IT: approval of emailed links for outside users, and whe
 **Review before launch** is the first period stage. It lists everyone who will receive forms, grouped as General members, RPLs, PPLs, Mentors, Core directors and External core users (people can appear in several groups), with each person's forms, per-form totals, and warnings (project with no leader or mentor, outside person with no email). Nothing is sent until the evaluator approves. External people show whether they are on the roster, with an "Add to roster" action. The Director and Associate Director see this screen view-only.
 
 **Groups follow relationships, not manual placement.** A person's group comes from their CNAP relationships, which is what decides their forms, so groups are changed by editing relationships rather than by dragging names between groups.
+
+## 2026-10-25 — Milestone 2: people, relationships, roster import, roles
+
+**Roles as built.** Three application roles: Administrator (manages everything), "Administrator, view only" (code `center_leadership`; the Director and Associate Director) and Standard User. The Evaluation Staff and Reviewer roles are removed, and so is the unused `review_responses` permission. Two permissions are direct grants only, never part of a role: `view_confidential_mentoring_data` (all three Administrators) and the new `view_identified_survey_responses` (the evaluator only; without it, core, NeuroSync and Team Science responses are shown de-identified). `apps/accounts/access.py` is the one place every screen asks who may see or change what.
+
+**View-only is enforced on the server.** Every change is a POST through `@manage_action` (or a GET form page through `@manage_page`), which refuses anyone without the Administrator role and `manage_center`. View-only administrators see the same screens with no edit controls and a "View only" banner; tests post changes as the Director and expect 403.
+
+**Ending a relationship "now" means it was held through yesterday.** Relationship dates are inclusive, so a relationship ending today would still count today. "End" with no date sets the end to yesterday (or the start date if it began today), matching handoffs, where the old holder ends the day before the new one starts.
+
+**External means not at Kansas State University.** A person whose institution is anything other than Kansas State University (or empty) is external: they sign in by emailed link. The institution field is the switch; it defaults to Kansas State University when adding a person.
+
+**Roster import** accepts .csv or .xlsx with first name, last name and e-mail columns (institution, department, position optional). Every row is reviewed before commit; possible duplicates (same name, different e-mail) need an explicit merge, add or skip; people on the roster but missing from the file stay unless their membership is ended. Committing is audited.
+
+**Visual design carried from the prototype** into `static/css/app.css`: K-State purple, vertical dividers between columns and parts, sentences of every direction stacked one per line (the `stack` template filter), uppercase gray group bands, quiet rating scales with larger question text.

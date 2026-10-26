@@ -232,8 +232,9 @@ class Assignment(TimestampedModel):
         db_table = "assignments"
         ordering = ["-reporting_period__display_order", "person__last_name"]
         permissions = [
-            ("view_operational_dashboard", "Can view the administrator home dashboard"),
+            ("view_operational_dashboard", "Can view the administrator screens"),
             ("generate_assignments", "Can generate and exempt assignments"),
+            ("manage_center", "Can change Center setup: people, periods, assignments, snapshots"),
         ]
         constraints = [
             models.CheckConstraint(
@@ -333,7 +334,10 @@ class Response(TimestampedModel):
                 "view_confidential_mentoring_data",
                 "Can view individual mentor and mentee responses, verbatims and exports",
             ),
-            ("review_responses", "Can review other people's responses subject to form policy"),
+            (
+                "view_identified_survey_responses",
+                "Can read core, NeuroSync and Team Science responses with names (evaluator)",
+            ),
         ]
         constraints = [
             models.UniqueConstraint(

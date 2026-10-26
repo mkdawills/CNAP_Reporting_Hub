@@ -14,6 +14,8 @@ from apps.forms_engine.models import AnswerSet, CompletionPathway, QuestionOptio
 from apps.people.models import Core, RelationshipType, RelationshipTypeProjectKind, Resource
 
 CONFIDENTIAL_CODENAME = "view_confidential_mentoring_data"
+IDENTIFIED_CODENAME = "view_identified_survey_responses"
+DIRECT_GRANT_CODENAMES = (CONFIDENTIAL_CODENAME, IDENTIFIED_CODENAME)
 
 CORES = [
     ("BN", "Behavioral Neuroscience Core", 1),
@@ -38,14 +40,22 @@ RESOURCES = [
 RELATIONSHIP_TYPES = [
     (
         "project_leader",
-        "Primary Project Leader",
+        "Research Project Leader (RPL)",
         ContextKind.PROJECT,
         [ProjectKind.PRIMARY],
         True,
         True,
         1,
     ),
-    ("pilot_awardee", "Pilot Awardee", ContextKind.PROJECT, [ProjectKind.PILOT], True, True, 2),
+    (
+        "pilot_awardee",
+        "Pilot Project Leader (PPL)",
+        ContextKind.PROJECT,
+        [ProjectKind.PILOT],
+        True,
+        True,
+        2,
+    ),
     (
         "primary_mentor",
         "Primary Mentor",
@@ -145,20 +155,18 @@ COMPLETION_PATHWAYS = [
 ROLES = {
     ApplicationRole.Code.ADMINISTRATOR: (
         "Administrator",
-        "Manages people, forms, periods, assignments, corrections and exports. "
-        "Does not automatically hold the confidential mentoring permission.",
+        "Manages people, relationships, forms, periods, assignments, corrections and exports. "
+        "Reading confidential mentoring data and identified survey responses needs separate, "
+        "named grants.",
     ),
-    ApplicationRole.Code.EVALUATION_STAFF: (
-        "Evaluation / Reporting Staff",
-        "Sees the operational dashboard and reviews non-confidential responses and results.",
+    ApplicationRole.Code.CENTER_LEADERSHIP: (
+        "Administrator, view only",
+        "Opens every administrator screen but changes nothing. Held by the Center Director "
+        "and Associate Director.",
     ),
     ApplicationRole.Code.STANDARD_USER: (
         "Standard User",
         "Completes assigned forms; sees own tasks and history.",
-    ),
-    ApplicationRole.Code.REVIEWER: (
-        "Reviewer",
-        "Read-only access to non-confidential results, optionally limited to one core.",
     ),
 }
 
@@ -166,21 +174,14 @@ CNAP_APPS = {"people", "accounts", "forms_engine", "reporting", "analytics", "ou
 
 
 def _role_permissions(code):
-    """Which permissions each role bundles. The confidential permission is never included."""
+    """Which permissions each role bundles. The direct-grant permissions are never included."""
     perms = Permission.objects.filter(content_type__app_label__in=CNAP_APPS).exclude(
-        codename=CONFIDENTIAL_CODENAME
+        codename__in=DIRECT_GRANT_CODENAMES
     )
     if code == ApplicationRole.Code.ADMINISTRATOR:
         return perms
-    if code == ApplicationRole.Code.EVALUATION_STAFF:
-        return perms.filter(codename__startswith="view_") | perms.filter(
-            codename__in=["review_responses", "view_operational_dashboard"]
-        )
-    if code == ApplicationRole.Code.REVIEWER:
-        return perms.filter(
-            codename__startswith="view_",
-            content_type__app_label__in={"reporting", "analytics", "outcomes"},
-        )
+    if code == ApplicationRole.Code.CENTER_LEADERSHIP:
+        return perms.filter(codename__startswith="view_")
     return Permission.objects.none()
 
 

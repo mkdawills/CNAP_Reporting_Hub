@@ -1,0 +1,97 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}{{ p }} · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head">
+  <div><h1>{{ p }}</h1>
+    <p>{{ p.institution|default:"No institution recorded" }}{% if p.department %} · {{ p.department }}{% endif %}{% if p.position_title %} · {{ p.position_title }}{% endif %}</p>
+    <p class="small">{% if external %}Outside K-State: signs in with an emailed link.{% else %}K-State: signs in with K-State single sign-on.{% endif %}</p>
+  </div>
+  <div class="small">
+    {% if on_roster %}On the CNAP roster{% else %}Not on the CNAP roster{% endif %}
+    {% if can_manage %}<form method="post" action="{% url 'manage:person_roster' p.pk %}" class="mt">{% csrf_token %}
+      {% if on_roster %}<input type="hidden" name="action" value="remove"><button class="btn small ghost" type="submit">Remove from roster</button>
+      {% else %}<button class="btn small" type="submit">Add to roster</button>{% endif %}</form>{% endif %}
+  </div>
+</div>
+
+<div class="grid2">
+  <div>
+    <div class="panel">
+      <h2 class="sectionhead">E-mail</h2>
+      {% for e in emails %}
+        <div class="fieldrow" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)">
+          <span>{{ e.email }}{% if e.is_primary %} <span class="chip st-submitted">Main</span>{% endif %}</span>
+          {% if can_manage %}<span>{% if not e.is_primary %}<form class="inline" method="post" action="{% url 'manage:person_email_primary' p.pk e.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit">Make main</button></form>{% endif %}
+          <form class="inline" method="post" action="{% url 'manage:person_email_remove' p.pk e.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit">Remove</button></form></span>{% endif %}
+        </div>
+      {% empty %}<p class="error">{{ "No e-mail on file. This person can’t receive sign-in links or reminders."|stack }}</p>{% endfor %}
+      {% if can_manage %}
+      <form method="post" action="{% url 'manage:person_email_add' p.pk %}" class="fieldrow mt">{% csrf_token %}
+        <label>Add an address<input type="email" name="email" required></label>
+        <label style="flex-direction:row;gap:6px;align-items:center"><input type="checkbox" name="make_primary"> Main</label>
+        <button class="btn small ghost" type="submit">Add</button>
+      </form>{% endif %}
+    </div>
+    {% if can_manage %}
+    <details class="panel">
+      <summary><strong>Edit details</strong></summary>
+      <form method="post" action="{% url 'manage:person_edit' p.pk %}" class="mt">{% csrf_token %}
+        {% for field in edit_form %}<div class="field"><label>{{ field.label }}{{ field }}</label></div>{% endfor %}
+        <div class="actions"><button class="btn" type="submit">Save</button></div>
+      </form>
+    </details>{% endif %}
+    <div class="panel small">
+      <h2 class="sectionhead">Sign-in</h2>
+      {% if user_account %}<p>Account: {{ user_account.username }}{% if not user_account.is_enabled %} (disabled){% endif %}</p>
+      {% else %}<p class="muted">{{ "No account yet. One is created the first time they sign in with an emailed link."|stack }}</p>{% endif %}
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <h2 class="sectionhead">Current CNAP relationships</h2>
+      {% for r in current %}
+        <div class="fieldrow" style="justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)">
+          <div><strong>{{ r.relationship_type.name }}</strong>
+            <div class="small muted">{% if r.project %}{{ r.project.title }}{% elif r.core %}{{ r.core.name }}{% else %}Center-level{% endif %} · since {{ r.effective_from|date:"M j, Y" }}{% if r.effective_to %} · ends {{ r.effective_to|date:"M j, Y" }}{% endif %}</div></div>
+          {% if can_manage and not r.effective_to %}<div style="border-left:1px solid var(--line);padding-left:12px">
+            <a class="btn small ghost" href="?handoff={{ r.pk }}#handoff">Hand off</a>
+            <form class="inline" method="post" action="{% url 'manage:relationship_end' p.pk r.pk %}" onsubmit="return confirm('End this relationship now? The record is kept with its dates.')">{% csrf_token %}<button class="btn small ghost" type="submit">End</button></form>
+          </div>{% endif %}
+        </div>
+      {% empty %}<p class="muted">{{ "No current relationships. Add one below so this person receives the right forms."|stack }}</p>{% endfor %}
+      {% if handoff_rel %}
+      <div id="handoff" class="panel" style="background:var(--purple-wash);margin-top:14px">
+        <h3>Hand off {{ handoff_rel.relationship_type.name }}{% if handoff_rel.project %} · {{ handoff_rel.project.title }}{% elif handoff_rel.core %} · {{ handoff_rel.core.name }}{% endif %}</h3>
+        <p class="small mt">{{ "The current holder’s relationship ends the day before the new holder starts. Forms already sent stay with the person who received them."|stack }}</p>
+        <form method="post" action="{% url 'manage:relationship_handoff' p.pk handoff_rel.pk %}" class="fieldrow">{% csrf_token %}
+          <label>New holder{{ handoff_form.new_person }}</label><label>Starts{{ handoff_form.start }}</label>
+          <button class="btn" type="submit">Hand off</button><a href="{% url 'manage:person' p.pk %}">Cancel</a>
+        </form>
+      </div>{% endif %}
+    </div>
+    {% if can_manage %}
+    <div class="panel">
+      <h2 class="sectionhead">Add a relationship</h2>
+      <form method="post" action="{% url 'manage:relationship_add' p.pk %}">{% csrf_token %}
+        <div class="fieldrow">
+          <label>Relationship{{ rel_form.relationship_type }}</label>
+          <label>Project{{ rel_form.project }}</label>
+          <label>Core{{ rel_form.core }}</label>
+          <label>Starts{{ rel_form.start }}</label>
+        </div>
+        <p class="small muted mt">{{ "Project relationships need a project. Core relationships need a core. Center-level ones (roster member, student, event participant) need neither."|stack }}</p>
+        <div class="actions"><button class="btn" type="submit">Add relationship</button></div>
+      </form>
+    </div>{% endif %}
+    {% if past %}
+    <details class="panel"><summary><strong>Past relationships ({{ past|length }})</strong></summary>
+      {% for r in past %}<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)">{{ r.relationship_type.name }}{% if r.project %} · {{ r.project.title }}{% elif r.core %} · {{ r.core.name }}{% endif %} · {{ r.effective_from|date:"M j, Y" }} to {{ r.effective_to|date:"M j, Y" }}</div>{% endfor %}
+    </details>{% endif %}
+    {% if assignments %}
+    <div class="panel scroll"><h2 class="sectionhead">Recent forms</h2>
+      <table><tbody>{% for a in assignments %}<tr><td>{{ a.reporting_period.short_label }}</td><td>{{ a.form_definition.name }}{% if a.project %} · {{ a.project.title }}{% elif a.core and a.context_kind == 'core' %} · {{ a.core.code }} Core{% endif %}</td><td>{% status_chip a.status %}</td></tr>{% endfor %}</tbody></table>
+    </div>{% endif %}
+  </div>
+</div>
+{% endblock %}

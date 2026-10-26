@@ -35,22 +35,24 @@ def test_one_user_per_person(reference):
 
 
 def test_roles_grant_permissions_through_backend(reference):
-    p = make_person("Eve", "Staff")
-    u = make_user(p, role=reference["roles"]["evaluation_staff"])
+    p = make_person("Vee", "Viewer")
+    u = make_user(p, role=reference["roles"]["center_leadership"])
     assert u.has_perm("reporting.view_operational_dashboard")
-    assert u.has_perm("reporting.review_responses")
+    assert u.has_perm("people.view_person")
     assert not u.has_perm("reporting.generate_assignments")
+    assert not u.has_perm("reporting.manage_center")
+    assert not u.has_perm("people.change_person")
     admin = make_user(
         make_person("Ann", "Admin"), username="ann", role=reference["roles"]["administrator"]
     )
     assert admin.has_perm("reporting.generate_assignments")
+    assert admin.has_perm("reporting.manage_center")
 
 
-def test_no_role_carries_the_confidential_permission(reference):
+def test_no_role_carries_a_direct_grant_permission(reference):
     for role in ApplicationRole.objects.all():
-        assert not role.permissions.filter(codename="view_confidential_mentoring_data").exists(), (
-            role.code
-        )
+        for codename in ("view_confidential_mentoring_data", "view_identified_survey_responses"):
+            assert not role.permissions.filter(codename=codename).exists(), (role.code, codename)
 
 
 def test_confidential_access_requires_explicit_grant(reference):
@@ -69,11 +71,12 @@ def test_confidential_access_requires_explicit_grant(reference):
         Permission.objects.get(content_type__app_label=app_label, codename=codename)
     )
     assert User.objects.get(pk=admin.pk).has_confidential_mentoring_access() is True
+    assert User.objects.get(pk=admin.pk).has_identified_survey_access() is False
 
 
-def test_scoped_reviewer_role_unique(reference):
+def test_scoped_role_unique(reference):
     u = make_user(make_person("Rae", "Viewer"), username="rae")
-    reviewer = reference["roles"]["reviewer"]
+    reviewer = reference["roles"]["center_leadership"]
     ni = reference["cores"]["NI"]
     UserRole.objects.create(user=u, role=reviewer, scope_core=ni)
     UserRole.objects.create(user=u, role=reviewer)  # unscoped as well is a different row

@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Add a person · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Add a person</h1><p>{{ "Add their name and main e-mail. You’ll give them CNAP relationships on the next screen."|stack }}</p></div></div>
+<div class="panel" style="max-width:640px">
+  <form method="post">{% csrf_token %}
+    {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+    {% for field in form %}
+      <div class="field"><label>{{ field.label }}{{ field }}</label>{% if field.help_text %}<div class="help">{{ field.help_text|stack }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>
+    {% endfor %}
+    <div class="field"><label style="flex-direction:row;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" name="roster" value="1" checked> Put them on the CNAP roster</label></div>
+    <div class="actions"><button class="btn" type="submit">Add person</button><a href="{% url 'manage:people' %}">Cancel</a></div>
+  </form>
+</div>
+{% endblock %}

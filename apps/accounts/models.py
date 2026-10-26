@@ -15,6 +15,9 @@ from apps.common.models import TimestampedModel
 from apps.people.models import Core, Person
 
 CONFIDENTIAL_MENTORING_PERM = "reporting.view_confidential_mentoring_data"
+IDENTIFIED_SURVEYS_PERM = "reporting.view_identified_survey_responses"
+# Permissions that are only ever granted to a named user, never through a role.
+DIRECT_GRANT_PERMS = (CONFIDENTIAL_MENTORING_PERM, IDENTIFIED_SURVEYS_PERM)
 
 
 class CnapUserManager(UserManager):
@@ -71,26 +74,39 @@ class User(AbstractUser):
     def role_codes(self):
         return list(self.user_roles.values_list("role__code", flat=True))
 
+    def _has_direct_grant(self, perm):
+        if not self.is_active or not self.is_enabled:
+            return False
+        cache = self.__dict__.setdefault("_direct_grant_cache", {})
+        if perm not in cache:
+            app_label, codename = perm.split(".")
+            cache[perm] = self.user_permissions.filter(
+                content_type__app_label=app_label, codename=codename
+            ).exists()
+        return cache[perm]
+
     def has_confidential_mentoring_access(self):
         """
         True only for an explicit, direct grant on this user. Roles never carry
         it, and being a superuser does not imply it: the data-access layer calls
         this method, not has_perm(), so nothing bypasses the rule by accident.
         """
-        if not self.is_active or not self.is_enabled:
-            return False
-        app_label, codename = CONFIDENTIAL_MENTORING_PERM.split(".")
-        return self.user_permissions.filter(
-            content_type__app_label=app_label, codename=codename
-        ).exists()
+        return self._has_direct_grant(CONFIDENTIAL_MENTORING_PERM)
+
+    def has_identified_survey_access(self):
+        """
+        The evaluator's grant: read core, NeuroSync and Team Science responses
+        with the respondent's name. Direct grant only, like the confidential one.
+        Without it, administrators see those surveys de-identified.
+        """
+        return self._has_direct_grant(IDENTIFIED_SURVEYS_PERM)
 
 
 class ApplicationRole(TimestampedModel):
     class Code(models.TextChoices):
-        ADMINISTRATOR = "administrator", "Administrator"
-        EVALUATION_STAFF = "evaluation_staff", "Evaluation / Reporting Staff"
+        ADMINISTRATOR = "administrator", "Administrator (manages the Center)"
+        CENTER_LEADERSHIP = "center_leadership", "Administrator, view only"
         STANDARD_USER = "standard_user", "Standard User"
-        REVIEWER = "reviewer", "Reviewer (read-only, optionally core-scoped)"
 
     code = models.CharField(max_length=40, unique=True, choices=Code.choices)
     name = models.CharField(max_length=120)
@@ -114,7 +130,7 @@ class UserRole(TimestampedModel):
         blank=True,
         on_delete=models.PROTECT,
         related_name="+",
-        help_text="Limits a Reviewer to one core's survey data. Empty means no scope.",
+        help_text="Reserved for a future core-scoped role. Empty means no scope.",
     )
     granted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"

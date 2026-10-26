@@ -1,11 +1,13 @@
-"""URL configuration. Portal and admin-center routes are added by their milestones."""
+"""URL configuration: respondent portal at /, administrator screens at /manage/, Django admin at /admin/."""
 
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-admin.site.site_header = "CNAP Platform administration"
-admin.site.site_title = "CNAP Platform"
+from apps.portal.views import home
+
+admin.site.site_header = "CNAP Reporting Hub: database administration"
+admin.site.site_title = "CNAP Reporting Hub"
 admin.site.index_title = "Administration"
 
 urlpatterns = [
@@ -22,5 +24,7 @@ urlpatterns = [
         auth_views.PasswordChangeDoneView.as_view(),
         name="password_change_done",
     ),
+    path("manage/", include("apps.admin_center.urls")),
     path("", include("apps.portal.urls")),
+    path("", home, name="home"),
 ]

@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="card">
-  <h1>Welcome, {{ user.first_name|default:user.username }}</h1>
-  <p>This is the CNAP Evaluation and Reporting Platform, Build 1, Milestone 1.</p>
-  <p class="quiet">My Tasks and My History arrive in Milestone 5 and 6. Administrators can use the <a href="{% url 'admin:index' %}">administration</a> area now.</p>
-</div>
-{% endblock %}

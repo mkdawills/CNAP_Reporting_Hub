@@ -1,42 +1,60 @@
-<!doctype html>
+{% load static cnap %}<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}CNAP Platform{% endblock %}</title>
-  <style>
-    :root { --ink: #1f1e1b; --quiet: #5f5c56; --line: #d9d5cb; --accent: #4a2f8f; --bg: #fbfaf7; }
-    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
-    header { background: #ffffff; border-bottom: 1px solid var(--line); }
-    header .bar { max-width: 1100px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-    header a { color: var(--accent); text-decoration: none; font-weight: 600; }
-    header nav a { margin-left: 16px; font-weight: 500; }
-    main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
-    .card { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
-    label { display: block; margin: 12px 0 4px; font-weight: 600; }
-    input[type=text], input[type=password], input[type=email] { width: 100%; max-width: 360px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 16px; }
-    button { background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 10px 16px; font-size: 16px; cursor: pointer; margin-top: 12px; }
-    .errorlist { color: #a0261b; padding-left: 18px; }
-    .quiet { color: var(--quiet); }
-  </style>
+  <title>{% block title %}{{ platform_name }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body>
-<header>
-  <div class="bar">
-    <a href="{% url 'home' %}">CNAP Evaluation and Reporting Platform</a>
-    <nav>
-      {% if user.is_authenticated %}
-        <span class="quiet">{{ user.get_full_name|default:user.username }}</span>
-        {% if user.is_staff %}<a href="{% url 'admin:index' %}">Administration</a>{% endif %}
-        <a href="{% url 'password_change' %}">Password</a>
-        <form method="post" action="{% url 'logout' %}" style="display:inline">{% csrf_token %}<button type="submit" style="margin:0 0 0 16px;padding:6px 12px">Log out</button></form>
+{% if user.is_authenticated %}
+<div class="app">
+  <aside class="side">
+    <a class="brand" href="{% url 'home' %}">CNAP<br>Reporting Hub<small>Kansas State University</small></a>
+    <div class="who">{{ user.person.first_name|default:user.username }} {{ user.person.last_name }}<span>{{ access_label }}</span></div>
+    <nav aria-label="Main">
+      {% if has_cnap_roles %}
+        <div class="navhead">My work</div>
+        <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %}>My tasks</a>
+        <a href="{% url 'portal:history' %}" {% nav_current 'history' %}>My history</a>
+        <a href="{% url 'portal:center_results' %}" {% nav_current 'center_results' %}>Center results</a>
+        <a href="{% url 'portal:profile' %}" {% nav_current 'profile' %}>Profile</a>
+      {% endif %}
+      {% if can_view_admin %}
+        <div class="navhead">Administration</div>
+        <a href="{% url 'manage:home' %}" {% nav_current 'home' %}>Home</a>
+        {% url 'manage:periods' as u_periods %}{% if u_periods %}<a href="{{ u_periods }}" {% nav_current 'periods' 'period' 'period_new' 'launch' %}>Reporting periods</a>{% endif %}
+        {% url 'manage:dashboard' as u_dash %}{% if u_dash %}<a href="{{ u_dash }}" {% nav_current 'dashboard' %}>Period dashboard</a>{% endif %}
+        {% url 'manage:results' as u_res %}{% if u_res %}<a href="{{ u_res }}" {% nav_current 'results' 'form_results' 'response' %}>Results</a>{% endif %}
+        {% url 'manage:longitudinal' as u_long %}{% if u_long %}<a href="{{ u_long }}" {% nav_current 'longitudinal' 'snapshot' %}>Year over year</a>{% endif %}
+        <a href="{% url 'manage:people' %}" {% nav_current 'people' 'person' 'person_new' %}>People</a>
+        <a href="{% url 'manage:projects' %}" {% nav_current 'projects' 'project' 'project_new' %}>Projects and cores</a>
+        <a href="{% url 'manage:roster_imports' %}" {% nav_current 'roster_imports' 'roster_import' %}>Roster import</a>
+        {% url 'manage:forms' as u_forms %}{% if u_forms %}<a href="{{ u_forms }}" {% nav_current 'forms' 'form_detail' %}>Forms</a>{% endif %}
+        {% url 'manage:quality' as u_q %}{% if u_q %}<a href="{{ u_q }}" {% nav_current 'quality' %}>Data checks</a>{% endif %}
+        <a href="{% url 'manage:audit' %}" {% nav_current 'audit' %}>Audit log</a>
       {% endif %}
     </nav>
-  </div>
-</header>
-<main>
-  {% if messages %}{% for m in messages %}<div class="card">{{ m }}</div>{% endfor %}{% endif %}
-  {% block content %}{% endblock %}
-</main>
+    <div class="foot">
+      {% if user.has_usable_password %}<a href="{% url 'password_change' %}">Password</a> · {% endif %}
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">Log out</button></form>
+    </div>
+  </aside>
+  <main id="main">
+    {% if is_view_only_admin and request.resolver_match.namespace == 'manage' %}<div class="banner">View only. You can open every screen; changes are made by the evaluator.</div>{% endif %}
+    {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{{ m|stack }}</li>{% endfor %}</ul>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% else %}
+<div class="anon"><main id="main">
+  {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{{ m|stack }}</li>{% endfor %}</ul>{% endif %}
+  {% block anon %}{% endblock %}
+</main></div>
+{% endif %}
+{% block scripts %}{% endblock %}
 </body>
 </html>

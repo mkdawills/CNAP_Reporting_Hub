@@ -1,4 +1,4 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="card"><h1>Logged out</h1><p><a href="{% url 'login' %}">Log in again</a></p></div>
+{% block anon %}
+<div class="panel"><h1 class="sectionhead">You’re signed out</h1><p><a href="{% url 'login' %}">Sign in again</a></p></div>
 {% endblock %}

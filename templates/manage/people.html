@@ -1,0 +1,38 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}People · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head">
+  <div><h1>People</h1><p>{{ "Everyone the Center works with. CNAP relationships decide which forms a person receives. They never grant access to administrator screens."|stack }}</p></div>
+  {% if can_manage %}<div><a class="btn" href="{% url 'manage:person_new' %}">Add a person</a></div>{% endif %}
+</div>
+<div class="panel">
+  <form method="get" class="fieldrow">
+    <label>Search<input type="search" name="q" value="{{ q }}" placeholder="Name, e-mail or institution"></label>
+    <label>Show<select name="show">
+      <option value="all" {% if show == 'all' %}selected{% endif %}>Everyone</option>
+      <option value="roster" {% if show == 'roster' %}selected{% endif %}>On the CNAP roster</option>
+      <option value="external" {% if show == 'external' %}selected{% endif %}>Outside K-State</option>
+      <option value="none" {% if show == 'none' %}selected{% endif %}>No current relationships</option>
+    </select></label>
+    <button class="btn ghost" type="submit">Filter</button>
+  </form>
+</div>
+<div class="panel scroll">
+  <h2 class="sectionhead">{{ rows|length }} {% if rows|length == 1 %}person{% else %}people{% endif %}</h2>
+  <table>
+    <thead><tr><th>Name</th><th>CNAP relationships</th><th>Roster</th><th>E-mail</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td><a href="{% url 'manage:person' r.person.pk %}"><strong>{{ r.person }}</strong></a>{% if r.external %}<div class="small muted">{{ r.person.institution }}</div>{% endif %}{% if not r.person.is_active %}<div class="small muted">Inactive</div>{% endif %}</td>
+        <td>{% for rel in r.roles %}<div>{{ rel.relationship_type.name }}{% if rel.project %} · {{ rel.project.title }}{% elif rel.core %} · {{ rel.core.code }} Core{% endif %}</div>{% empty %}<span class="muted">None</span>{% endfor %}</td>
+        <td>{% if r.on_roster %}On the roster{% else %}<span class="muted">Not on the roster</span>{% endif %}</td>
+        <td class="small">{{ r.email|default:"—" }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4" class="muted">No one matches. Clear the search or add a person.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

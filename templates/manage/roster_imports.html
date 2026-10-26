@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Roster import · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Roster import</h1><p>{{ "Upload the CNAP member list. You’ll review every row before anything changes."|stack }}</p></div></div>
+{% if can_manage %}
+<div class="panel" style="max-width:640px">
+  <h2 class="sectionhead">Upload a list</h2>
+  <form method="post" enctype="multipart/form-data" action="{% url 'manage:roster_upload' %}">{% csrf_token %}
+    <div class="field"><label>File{{ form.file }}</label><div class="help">{{ form.file.help_text|stack }}</div></div>
+    <p class="small muted">{{ "Optional columns: institution, department, position. Only use real member data once the Reporting Hub is on K-State hosting."|stack }}</p>
+    <div class="actions"><button class="btn" type="submit">Upload and review</button></div>
+  </form>
+</div>{% endif %}
+<div class="panel scroll">
+  <h2 class="sectionhead">Past imports</h2>
+  <table><thead><tr><th>Uploaded</th><th>File</th><th>Status</th><th>By</th></tr></thead><tbody>
+  {% for i in imports %}<tr><td class="nowrap"><a href="{% url 'manage:roster_import' i.pk %}">{{ i.created_at|date:"M j, Y g:i a" }}</a></td><td>{{ i.original_filename }}</td><td>{{ i.get_status_display }}</td><td>{{ i.uploaded_by }}</td></tr>
+  {% empty %}<tr><td colspan="4" class="muted">No imports yet.</td></tr>{% endfor %}
+  </tbody></table>
+</div>
+{% endblock %}

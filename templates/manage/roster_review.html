@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Review roster import · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Review roster import</h1>
+  <p>{{ imp.original_filename }} · uploaded {{ imp.created_at|date:"M j, Y g:i a" }} · {{ imp.get_status_display }}</p></div></div>
+{% if parsed and undecided %}<div class="banner">{{ undecided }} row{{ undecided|pluralize }} need{{ undecided|pluralize:"s," }} a choice before you can commit.</div>{% endif %}
+{% if imp.summary.result %}<div class="okmsg">Committed: {{ imp.summary.result.created }} created, {{ imp.summary.result.added_to_roster }} added to the roster, {{ imp.summary.result.merged }} merged, {{ imp.summary.result.ended }} memberships ended.</div>{% endif %}
+<form method="post" action="{% url 'manage:roster_decide' imp.pk %}">{% csrf_token %}
+{% for g in groups %}
+  <details class="panel lgroup" open>
+    <summary><span>{{ g.title }}</span><span>{{ g.rows|length }}</span></summary>
+    <p class="small muted mt">{{ g.note|stack }}</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Row</th><th>Name</th><th>E-mail</th><th>Notes</th><th>Decision</th></tr></thead>
+      <tbody>{% for r in g.rows %}
+        <tr><td class="num">{{ r.row_number }}</td>
+          <td>{{ r.first_name }} {{ r.last_name }}{% if r.matched_person %}<div class="small"><a href="{% url 'manage:person' r.matched_person.pk %}">Existing: {{ r.matched_person }}</a></div>{% endif %}</td>
+          <td class="small">{{ r.email|default:"—" }}</td>
+          <td class="small">{{ r.note }}</td>
+          <td>{% if parsed and can_manage %}<select name="row-{{ r.pk }}">
+            {% if not r.decision %}<option value="">Choose…</option>{% endif %}
+            {% for c in g.choices %}<option value="{{ c }}" {% if r.decision == c %}selected{% endif %}>{% if c == 'accept' %}Put on roster{% elif c == 'skip' %}Skip{% elif c == 'merge' %}Same person: merge{% elif c == 'new' %}Different person: add{% elif c == 'keep' %}Keep on roster{% elif c == 'end-membership' %}End membership{% endif %}</option>{% endfor %}
+          </select>{% else %}{{ r.decision|default:"—" }}{% endif %}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+  </details>
+{% endfor %}
+{% if parsed and can_manage %}
+<div class="actions">
+  <button class="btn ghost" type="submit">Save choices</button>
+  <button class="btn" type="submit" name="commit" value="1" onclick="return confirm('Commit this import? People will be created and roster memberships changed.')">Commit import</button>
+  <button class="btn ghost" type="submit" name="discard" value="1">Discard</button>
+</div>{% endif %}
+</form>
+{% endblock %}
