@@ -198,6 +198,10 @@ def build(form_definition, period, *, audience="admin"):
             "left_out": left_out,
             "grand_mean": (sum(all_nums) / total) if total else None,
             "grand_sd": _sd(all_nums),
+            "scale_top": len(scale),
+            "gm_pos": round(100 * ((sum(all_nums) / total) - 1) / max(1, len(scale) - 1))
+            if total
+            else None,
             "total": total,
             "totals": [
                 {
@@ -280,6 +284,7 @@ def build(form_definition, period, *, audience="admin"):
                 ],
             }
             _restyle(table["lon"])
+            table["lon"]["trend"] = _trend(table["lon"])
             tno += 1
         tables.append(table)
 
@@ -341,6 +346,76 @@ def build(form_definition, period, *, audience="admin"):
         "themes": themes,
         "min_n": min_n,
         "is_report": form_definition.category == "report",
+    }
+
+
+def _trend(lon, w=640, h=170, pad_l=34, pad_r=16, pad_t=22, pad_b=34):
+    """Overall-mean line (SVG coordinates) plus call-outs: biggest gain, biggest drop, lowest item now."""
+    pts = [(p, c["mean"]) for p, c in zip(lon["periods"], lon["overall"], strict=True)]
+    vals = [m for _, m in pts if m is not None]
+    if not vals:
+        return None
+    lo, hi = min(vals), max(vals)
+    lo, hi = (lo - 0.25, hi + 0.25) if hi - lo >= 0.2 else (lo - 0.5, hi + 0.5)
+    step = (w - pad_l - pad_r) / max(1, len(pts) - 1)
+
+    def y(m):
+        return pad_t + (hi - m) / (hi - lo) * (h - pad_t - pad_b)
+
+    points = []
+    for i, (p, m) in enumerate(pts):
+        x = pad_l + i * step if len(pts) > 1 else w / 2
+        points.append(
+            {
+                "x": round(x, 1),
+                "y": round(y(m), 1) if m is not None else None,
+                "mean": m,
+                "label": p.short_label,
+                "latest": i == len(pts) - 1,
+            }
+        )
+    path = " ".join(f"{pt['x']},{pt['y']}" for pt in points if pt["y"] is not None)
+    grid = []
+    g = math.ceil(lo * 2) / 2
+    while g <= hi:
+        grid.append({"y": round(y(g), 1), "v": f"{g:.1f}"})
+        g += 0.5
+    # Call-outs compare the last two columns, current items only (retired rows have no number).
+    gain = drop = low = None
+    if len(lon["periods"]) >= 2:
+        prev_label = lon["periods"][-2].short_label
+        deltas = []
+        for r in lon["rows"]:
+            if not r["no"]:
+                continue
+            a, b = r["cells"][-2]["mean"], r["cells"][-1]["mean"]
+            if a is not None and b is not None:
+                deltas.append((round(b - a, 1), r["prompt"]))
+        if deltas:
+            up = max(deltas)
+            dn = min(deltas)
+            gain = {"d": up[0], "prompt": up[1], "since": prev_label} if up[0] > 0 else None
+            drop = {"d": dn[0], "prompt": dn[1], "since": prev_label} if dn[0] < 0 else None
+    now = [
+        (r["cells"][-1]["mean"], r["prompt"])
+        for r in lon["rows"]
+        if r["no"] and r["cells"][-1]["mean"] is not None
+    ]
+    if now:
+        m, prompt = min(now)
+        low = {"mean": m, "prompt": prompt}
+    return {
+        "w": w,
+        "h": h,
+        "points": points,
+        "path": path,
+        "grid": grid,
+        "base": h - pad_b,
+        "pad_l": pad_l,
+        "right": w - pad_r,
+        "gain": gain,
+        "drop": drop,
+        "low": low,
     }
 
 

@@ -2,10 +2,16 @@
 <div class="tcard">
 <h3 class="ttitle">Table {{ t.no }}. {{ t.section.title|cut:":" }}</h3>
 <div class="tsum">
-  <div class="tsum-gm"><span class="tsum-big">{% if t.grand_mean is not None %}{{ t.grand_mean|floatformat:1 }}{% else %}—{% endif %}</span><span class="small muted">grand mean (SD {{ t.grand_sd|floatformat:1 }})<br>{{ t.total }} rating{{ t.total|pluralize }} across {{ t.rows|length }} item{{ t.rows|length|pluralize }}</span></div>
-  <div class="tsum-chart" role="img" aria-label="Response counts across all items">{% for c in t.totals %}
-    <div class="tsum-col"><span class="ccv">{{ c.count }} <span class="muted">· {{ c.pct }}%</span></span><span class="tsum-bar" style="height:{{ c.bar }}%"></span><span class="tsum-lab">({{ c.num }}) {{ c.text }}</span></div>{% endfor %}
+  <div class="tsum-gm">
+    <span class="tsum-k">Grand mean</span>
+    <span class="tsum-big">{% if t.grand_mean is not None %}{{ t.grand_mean|floatformat:1 }}{% else %}—{% endif %}<span class="tsum-of">/ {{ t.scale_top }}</span></span>
+    {% if t.gm_pos is not None %}<span class="tsum-track" aria-hidden="true"><span class="tsum-mark" style="left:{{ t.gm_pos }}%"></span>{% for s in t.scale %}<span class="tsum-tick">{{ s.num }}</span>{% endfor %}</span>{% endif %}
+    <span class="tsum-meta">SD {{ t.grand_sd|floatformat:1 }} · {{ t.total }} rating{{ t.total|pluralize }} · {{ t.rows|length }} item{{ t.rows|length|pluralize }}</span>
   </div>
+  <figure class="tsum-fig"><figcaption class="small muted">Share of all ratings for each answer (all items combined)</figcaption>
+  <div class="tsum-chart" role="img" aria-label="Response counts across all items">{% for c in t.totals %}
+    <div class="tsum-col"><span class="ccv"><b>{{ c.pct }}%</b><small>{{ c.count }} rating{{ c.count|pluralize }}</small></span><span class="tsum-bar" style="height:calc((100% - 70px) * {{ c.bar }} / 100)"></span><span class="tsum-lab">({{ c.num }}) {{ c.text }}</span></div>{% endfor %}
+  </div></figure>
 </div>
 <details class="tmore"><summary><span class="tmore-open">Show item-by-item table</span><span class="tmore-close">Hide item-by-item table</span></summary>
 <div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on">n and %</button><button type="button" data-nview="n">n only</button><button type="button" data-nview="p">% only</button></div>
@@ -51,6 +57,25 @@
 {% if t.lon and t.lon.periods|length > 1 %}
 <div class="tcard">
 <h3 class="ttitle">Table {{ t.lon.no }}. Mean ratings of {{ t.section.title|cut:":"|lower }}, by reporting period</h3>
+{% with tr=t.lon.trend %}{% if tr %}
+<div class="trend">
+  <figure class="trend-fig">
+    <figcaption class="small muted">Overall mean rating, each reporting period</figcaption>
+    <svg viewBox="0 0 {{ tr.w }} {{ tr.h }}" role="img" aria-label="Overall mean rating by reporting period">
+      {% for g in tr.grid %}<line x1="{{ tr.pad_l }}" x2="{{ tr.right }}" y1="{{ g.y }}" y2="{{ g.y }}" class="tg"/><text x="{{ tr.pad_l|add:-6 }}" y="{{ g.y }}" class="tgl">{{ g.v }}</text>{% endfor %}
+      <polyline points="{{ tr.path }}" class="tl"/>
+      {% for p in tr.points %}{% if p.y is not None %}<circle cx="{{ p.x }}" cy="{{ p.y }}" r="{% if p.latest %}5{% else %}3.5{% endif %}" class="tp{% if p.latest %} now{% endif %}"/><text x="{{ p.x }}" y="{{ p.y }}" dy="-9" class="tv{% if p.latest %} now{% endif %}">{{ p.mean|floatformat:1 }}</text>{% endif %}
+      <text x="{{ p.x }}" y="{{ tr.base }}" dy="20" class="tx{% if p.latest %} now{% endif %}">{{ p.label }}</text>{% endfor %}
+    </svg>
+  </figure>
+  <ul class="callouts">
+    {% if tr.gain %}<li><span class="co-k">Biggest gain since {{ tr.gain.since }}</span><span class="co-v up">▲ +{{ tr.gain.d|floatformat:1 }}</span><span class="co-t">{{ tr.gain.prompt }}</span></li>{% endif %}
+    {% if tr.drop %}<li><span class="co-k">Biggest drop since {{ tr.drop.since }}</span><span class="co-v down">▼ −{{ tr.drop.d|floatformat:1|cut:"-" }}</span><span class="co-t">{{ tr.drop.prompt }}</span></li>{% endif %}
+    {% if tr.low %}<li><span class="co-k">Lowest-rated item now</span><span class="co-v">{{ tr.low.mean|floatformat:1 }}</span><span class="co-t">{{ tr.low.prompt }}</span></li>{% endif %}
+  </ul>
+</div>
+{% endif %}{% endwith %}
+<details class="tmore"><summary><span class="tmore-open">Show item-by-item trends</span><span class="tmore-close">Hide item-by-item trends</span></summary>
 <div class="scroll"><table class="lontab">
   <thead>
     <tr><th rowspan="2" style="text-align:left">Item</th>{% for y in t.lon.years %}<th colspan="{{ y.span }}" class="num ygstart">Y{{ y.year }}</th>{% endfor %}</tr>
@@ -62,6 +87,7 @@
     <tr class="totrow"><td style="text-align:right"><strong>Overall mean ratings:</strong></td>{% for c in t.lon.overall %}<td class="num{% if forloop.first %} ygstart{% endif %}" style="{{ c.style }}"><strong>{% if c.mean is not None %}{{ c.mean|floatformat:1 }}{% else %}–{% endif %}</strong></td>{% endfor %}</tr>
   </tbody>
 </table></div>
+</details>
 </div>
 {% endif %}
 {% endfor %}

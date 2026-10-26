@@ -196,3 +196,8 @@ Assumptions to verify: the Year 9 Mentee report's comparison sheet prints mentor
 - Each results table opens as a summary: the grand mean (SD, ratings, items) and the response-count chart with n · % per answer. A "Show item-by-item table" button drops down the full table (native details/summary, no script needed). The n / % switch sits inside the drop-down. Table 2 (year over year) has no chart and stays open.
 - Heat shading follows what's showing: on % in "n and %" and "% only", on the counts in "n only" (same shade, since it is set by each count's share of the item's ratings).
 - In "% only" the bold/double group lines move to the % column so the dividers stay.
+
+## 2026-10-25 — Year-over-year roll-up and grand mean tile
+
+- Table 2 opens as a roll-up: a line of the overall mean rating for every period (labelled points, latest filled and bold) plus three call-outs comparing the last two periods: biggest gain, biggest drop, and lowest-rated item now (current items only). "Show item-by-item trends" drops down the heat-map table.
+- Table 1 summary: grand mean tile ("GRAND MEAN" label, bold value "/ 5", a 1–5 track with a marker at the mean, then SD · ratings · items). Each bar shows the % in bold with "n ratings" under it, captioned "Share of all ratings for each answer (all items combined)".
