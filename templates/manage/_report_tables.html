@@ -12,7 +12,7 @@
 <div class="vbars" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}
   <div class="vb"><span class="vb-v">{{ sg.pct }}%</span><span class="vb-b" style="height:calc((100% - 46px) * {{ sg.h }} / 100);background:{{ sg.color }}"></span><span class="vb-l">{{ sg.text }}</span></div>{% endfor %}
 </div>
-<p class="tnote">These bars combine every answer to the {{ t.rows|length }} survey item{{ t.rows|length|pluralize }} in this section{% if t.rows %}, such as “{{ t.rows.0.q.prompt }}”{% endif %}. <button type="button" class="linkbtn" onclick="this.closest('.tcard').querySelector('.tmore').open=true">See each item</button></p>
+<p class="tnote">{% if fd.about_core %}To see the {{ fd.about_core.code }} Core’s overall {{ t.section.title|cut:":"|lower }}, these bars combine every answer to its {% else %}To see the overall picture, these bars combine every answer to the {% endif %}{{ t.rows|length }} survey item{{ t.rows|length|pluralize }}{% if not fd.about_core %} in this section{% endif %}{% if t.rows %}, such as “{{ t.rows.0.q.prompt|cut_end_period }}”{% endif %}. <button type="button" class="linkbtn" onclick="this.closest('.tcard').querySelector('.tmore').open=true">See each item</button></p>
 {% endif %}{% endwith %}
 <details class="tmore"><summary><span class="tmore-open">Show item-by-item table</span><span class="tmore-close">Hide item-by-item table</span></summary>
 <div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on">n and %</button><button type="button" data-nview="n">n only</button><button type="button" data-nview="p">% only</button></div>

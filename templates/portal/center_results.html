@@ -11,7 +11,7 @@
   <div class="panel">
     <h2 class="sectionhead">{{ c.fd.name }}</h2>
     <p class="facts2"><b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered the survey items.</p>
-    {% include "manage/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False %}
+    {% include "manage/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd %}
   </div>
   {% empty %}<div class="panel"><p class="muted">No survey results for this period.</p></div>{% endfor %}
 {% endif %}

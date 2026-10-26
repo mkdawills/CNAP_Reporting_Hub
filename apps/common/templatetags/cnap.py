@@ -123,3 +123,10 @@ def heatvar(style):
     from apps.analytics.report import heat_var
 
     return heat_var(style or "")
+
+
+@register.filter
+def cut_end_period(text):
+    """Drop one trailing period so a quoted item doesn't end in .”."""
+    text = str(text or "")
+    return text[:-1] if text.endswith(".") else text
