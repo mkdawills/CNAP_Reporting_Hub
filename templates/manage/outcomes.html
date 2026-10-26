@@ -12,9 +12,17 @@
 </div>
 
 <div class="panel">
-  <p class="small" style="float:right;margin:8px 0 0"><a href="{% url 'manage:outcomes_export' tab|default:'pubs' %}">{% if tab == 'grants' %}Download grant list (CSV){% elif tab == 'counts' %}Download counts (CSV){% else %}Download citation list (CSV){% endif %}</a></p>
-  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}">Grants</a><a href="?tab=counts" class="{% if tab == 'counts' %}on{% endif %}">Counts</a></div>
-  {% if tab == 'counts' %}
+  {% if tab != 'reminders' %}<p class="small" style="float:right;margin:8px 0 0"><a href="{% url 'manage:outcomes_export' tab|default:'pubs' %}">{% if tab == 'grants' %}Download grant list (CSV){% elif tab == 'talks' %}Download presentation list (CSV){% elif tab == 'counts' %}Download counts (CSV){% else %}Download citation list (CSV){% endif %}</a></p>{% endif %}
+  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}">Grants</a><a href="?tab=talks" class="{% if tab == 'talks' %}on{% endif %}">Presentations</a><a href="?tab=counts" class="{% if tab == 'counts' %}on{% endif %}">Counts</a><a href="?tab=reminders" class="{% if tab == 'reminders' %}on{% endif %}">Reminders</a></div>
+  {% if tab == 'reminders' %}
+    <p class="small muted">A planned or submitted record that nobody has reviewed for {{ stale_days }} days is stale.<br>Its owner gets one e-mail listing all their stale records, copied to anyone who enters for them, at most once every {{ remind_every }} days.<br>Reminders go out automatically each morning; you can also send them now.</p>
+    <h2 class="sectionhead" style="margin-top:18px">Due now ({{ reminders_due|length }})</h2>
+    {% if reminders_due %}<table><tbody>{% for person, recs, cc in reminders_due %}<tr><td><strong>{{ person }}</strong>{% if not person.primary_email %} <span class="error" style="padding:1px 6px">no e-mail on file</span>{% endif %}{% if cc %}<div class="small muted">Copy to {{ cc|join:", " }}</div>{% endif %}</td><td class="small">{% for k, o, t in recs %}<div>{{ k }}: {{ t }} <span class="muted">· {{ o.get_status_display }}, last reviewed {{ o.confirmed_at|default:o.updated_at|date:"M j, Y" }}</span></div>{% endfor %}</td></tr>{% endfor %}</tbody></table>
+      {% if can_edit %}<form method="post" action="{% url 'manage:outcomes_send_reminders' %}" style="margin-top:12px">{% csrf_token %}<button class="btn">Send reminders now</button></form>{% endif %}
+    {% else %}<p class="muted">Nobody is due a reminder right now.</p>{% endif %}
+    <h2 class="sectionhead" style="margin-top:24px">Recently sent</h2>
+    {% if reminders_sent %}<table><tbody>{% for r in reminders_sent %}<tr><td class="nowrap small">{{ r.sent_at|date:"M j, Y g:i a" }}</td><td>{{ r.person }}</td><td class="small muted">{{ r.records|length }} record{{ r.records|length|pluralize }} · to {{ r.sent_to }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="muted">None yet.</p>{% endif %}
+  {% elif tab == 'counts' %}
     <p class="small muted">{{ "Counted by grant year (June to May). A paper or grant credited to several projects or cores counts once in each, so project and core rows can add up to more than All CNAP. Grants are counted in the year submitted; awards in the year of the award notice."|stack }}</p>
     {% for title, rows in counts_tables %}
     <h2 class="sectionhead" style="margin-top:22px">{{ title }}</h2>
@@ -23,12 +31,20 @@
     {% else %}<p class="muted">Nothing recorded yet.</p>{% endif %}
     {% endfor %}
   {% else %}
-  <p class="small muted filt">Show: {% for k, label in filters %}<a href="?tab={{ tab }}&ack={{ k }}" class="{% if ack == k %}on{% endif %}">{{ label }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}{% if ack != 'all' %} <span>({% if tab == 'pubs' %}published papers{% else %}submitted proposals{% endif %} only)</span>{% endif %}</p>
+  <p class="small muted filt">Show: {% for k, label in filters %}<a href="?tab={{ tab }}&ack={{ k }}" class="{% if ack == k %}on{% endif %}">{{ label }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}{% if ack != 'all' and tab != 'talks' %} <span>({% if tab == 'pubs' %}published papers{% else %}submitted proposals{% endif %} only)</span>{% endif %}</p>
   <div class="scroll"><table class="outtab">
-    <thead><tr><th>{% if tab == 'pubs' %}Publication{% else %}Proposal{% endif %}</th><th>CNAP people</th><th>Credited to</th><th>Status</th><th>Acknowledges CNAP?</th></tr></thead>
+    <thead><tr><th>{% if tab == 'pubs' %}Publication{% elif tab == 'talks' %}Presentation{% else %}Proposal{% endif %}</th><th>CNAP people</th><th>Credited to</th><th>Status</th><th>Acknowledges CNAP?</th></tr></thead>
     <tbody>
     {% for o in rows %}
-      {% if tab == 'pubs' %}{% with ack=o.cnap_cited %}
+      {% if tab == 'talks' %}{% with ack=o.cnap_cited %}
+      <tr>
+        <td><strong>{{ o.title }}</strong><div class="small muted">{{ o.get_presentation_type_display }}{% if o.event %} · {{ o.event }}{% endif %}{% if o.presented_on %} · {{ o.presented_on|date:"M j, Y" }}{% endif %}</div></td>
+        <td class="small">{% for x in o.people.all %}<div>{{ x.person }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
+        <td class="small">{% for x in o.project_links.all %}<div>{{ x.project.title|truncatechars:40 }}</div>{% endfor %}{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% endfor %}</td>
+        <td class="small nowrap">Presented</td>
+        <td>{% include "manage/_ack_cell.html" with kind="presentation" %}</td>
+      </tr>{% endwith %}
+      {% elif tab == 'pubs' %}{% with ack=o.cnap_cited %}
       <tr>
         <td>{% if can_edit %}<a href="{% url 'manage:publication_edit' o.pk %}"><strong>{{ o.title }}</strong></a>{% else %}<strong>{{ o.title }}</strong>{% endif %}
           <div class="small muted">{{ o.journal|default:"" }}{% if o.publication_date %} · {{ o.publication_date|date:"M Y" }}{% endif %}{% if o.pubmed_url %} · <a href="{{ o.pubmed_url }}" target="_blank" rel="noopener">Open</a>{% endif %}</div></td>

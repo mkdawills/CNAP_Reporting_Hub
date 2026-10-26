@@ -72,6 +72,7 @@ urlpatterns = [
     path("outcomes/grants/<int:pk>/", outcomes.grant_edit, name="grant_edit"),
     path("outcomes/<str:kind>/<int:pk>/ack/", outcomes.set_ack, name="set_ack"),
     path("outcomes/export/<slug:kind>/", outcomes.export, name="outcomes_export"),
+    path("outcomes/reminders/send/", outcomes.send_reminders, name="outcomes_send_reminders"),
     path("checks/", quality.checks, name="quality"),
     path("checks/dismiss/", quality.dismiss, name="quality_dismiss"),
     path("audit/", audit.audit, name="audit"),

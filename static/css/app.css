@@ -124,7 +124,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .field label, .fieldrow label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); }
 .fieldrow { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
 .fieldrow > label + label { border-left: 1px solid var(--line); padding-left: 10px; }
-select, input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], input[type=search], textarea {
+select, input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], input[type=search], input[type=url], input[type=month], textarea {
   border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; background: var(--surface); max-width: 100%; }
 textarea { width: 100%; min-height: 110px; line-height: 1.5; }
 .help { font-size: .82rem; color: var(--muted); margin-top: 3px; }
@@ -613,3 +613,6 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 .checkgrid label { flex-direction: row !important; align-items: flex-start; gap: 8px; border: 0 !important; padding: 0 !important; font-weight: 400; }
 .checkgrid label input { margin-top: 3px; flex: none; }
 .oform input[type=number] { max-width: 260px; }
+.affs { margin: 0 0 10px; } .affs ul { margin: 6px 0 0 18px; color: var(--muted); }
+/* encouraging note after a Not funded decision */
+.messages li.encourage { background: #eef6f3; border-left: 4px solid #1f6857; color: var(--ink); padding: 16px 18px; font-size: 1rem; line-height: 1.55; max-width: 760px; }

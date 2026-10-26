@@ -80,6 +80,7 @@ def test_publication_lifecycle(client, center):
             "to": "published",
             "submission_date": "2026-11-01",
             "journal": "J Test",
+            "title": "Test paper",
             "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/1/",
             "cnap_cited": "yes",
             "cnap_in_grant_index": "no",

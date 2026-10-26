@@ -7,7 +7,8 @@
   </div>
   <span class="ostatus s-{{ o.status }}">{% if kind == 'pub' %}{{ o.get_status_display }}{% else %}{{ o.get_status_display }}{% endif %}</span>
   <div class="orow-acts">
-    {% if kind == 'pub' and o.pk in review_pub or kind == 'grant' and o.pk in review_grant %}
+    {% if not window.0 %}
+    {% elif kind == 'pub' and o.pk in review_pub or kind == 'grant' and o.pk in review_grant %}
       <form method="post" action="{% url 'portal:outcome_confirm' kind o.pk %}">{% csrf_token %}<button class="btn small ghost">Confirm no changes</button></form>
       <a class="btn small" href="{% url 'portal:outcome_update' kind o.pk %}?for={{ owner.pk }}">Update status</a>
     {% elif o.status == 'planned' or o.status == 'submitted' %}

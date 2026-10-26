@@ -12,3 +12,16 @@ One Linux VM, Docker Compose, nginx in front for TLS. No other infrastructure.
 Upgrades: `git pull && docker compose build && make up && make test`.
 
 Before real data: the decisions in Architecture Review section 5 (hosting, SSO, data classification, retention, security review) must be settled with K-State IT.
+
+## Scheduled jobs
+
+Run once a day (cron, systemd timer, or the host's scheduler), from the project directory with the production settings:
+
+```
+# 07:00 every day: e-mail people whose publications or grants haven't been reviewed in OUTCOME_STALE_DAYS days
+0 7 * * *  python manage.py send_outcome_reminders
+```
+
+Settings in `.env`: `OUTCOME_STALE_DAYS` (default 120), `OUTCOME_REMINDER_EVERY_DAYS` (default 30), `SITE_URL` (links in the e-mail), `DEFAULT_FROM_EMAIL`, and the mail server (`EMAIL_HOST` and friends, K-State's SMTP relay). Use `--dry-run` to see who would be reminded.
+
+PubMed look-ups ("Fill in from PubMed") call `https://eutils.ncbi.nlm.nih.gov`; the server needs outbound HTTPS to that host. Set `PUBMED_CONTACT_EMAIL` (NCBI asks for one) and `CNAP_GRANT_NUMBERS` (e.g. `P20GM000000`) so the form can tell people whether PubMed lists CNAP in the paper's grant index.

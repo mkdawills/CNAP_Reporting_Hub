@@ -2,7 +2,7 @@
 
 from django import forms
 
-from apps.common.enums import GrantRole, PrimeOrSubaward, PublicationType
+from apps.common.enums import GrantRole, PresentationType, PrimeOrSubaward, PublicationType
 from apps.people.models import Project, Resource
 
 YN = [("yes", "Yes"), ("no", "No")]
@@ -99,7 +99,15 @@ class PubPublished(_Resources):
     resources_required = True
     submission_date = forms.DateField(label="Date of submission", widget=DATE)
     journal = forms.CharField(label="Journal", max_length=300)
-    pubmed_url = forms.URLField(label="PubMed link", max_length=500)
+    pubmed_url = forms.URLField(
+        label="PubMed link",
+        max_length=500,
+        help_text="Paste the link, then use “Fill in from PubMed” to fill the details below.",
+    )
+    title = forms.CharField(label="Title", max_length=500)
+    author_display_text = forms.CharField(
+        label="Authors", widget=forms.Textarea(attrs={"rows": 2}), required=False
+    )
     publication_date = forms.DateField(label="Publication date", widget=DATE, required=False)
     cnap_cited = yn("Did you cite CNAP in your journal article?")
     cnap_in_grant_index = yn("Did you list CNAP in the grant index portion of your PubMed entry?")
@@ -108,6 +116,8 @@ class PubPublished(_Resources):
         "submission_date",
         "journal",
         "pubmed_url",
+        "title",
+        "author_display_text",
         "publication_date",
         "cnap_cited",
         "cnap_in_grant_index",
@@ -244,6 +254,31 @@ class GrantNotFunded(forms.Form):
         "Was reviewer feedback provided to the CNAP project manager for post-analysis support?"
     )
     plans_to_resubmit = yn("Do you plan to resubmit this proposal?")
+
+
+class PresentationForm(_Resources):
+    presentation_type = forms.ChoiceField(
+        label="Type", choices=PresentationType.choices, initial="conference"
+    )
+    title = forms.CharField(label="Title", max_length=500)
+    event = forms.CharField(label="Event or meeting", max_length=300, required=False)
+    location = forms.CharField(label="Location", max_length=300, required=False)
+    presented_on = forms.DateField(label="Date presented", widget=DATE)
+    author_display_text = forms.CharField(
+        label="Presenters and authors (as listed)",
+        widget=forms.Textarea(attrs={"rows": 2}),
+        required=False,
+    )
+    cnap_cited = yn("Did your presentation acknowledge CNAP?")
+    field_order = [
+        "presentation_type",
+        "title",
+        "event",
+        "location",
+        "presented_on",
+        "author_display_text",
+        "cnap_cited",
+    ]
 
 
 PUB_FORMS = {

@@ -8,6 +8,7 @@ or not checked yet (NULL). One outcome can be credited to several projects and c
 """
 
 from django import forms
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
@@ -17,6 +18,7 @@ from django.utils import timezone
 from apps.accounts import access
 from apps.audit.models import AuditLog, record_event
 from apps.common.enums import GrantRole, GrantStatus, PublicationStatus
+from apps.outcomes import reminders as _rem
 from apps.outcomes.models import (
     GrantFamily,
     GrantStatusHistory,
@@ -24,6 +26,7 @@ from apps.outcomes.models import (
     GrantSubmissionPerson,
     GrantSubmissionProject,
     GrantSubmissionResource,
+    OutcomeReminder,
     Publication,
     PublicationPerson,
     PublicationProject,
@@ -79,7 +82,14 @@ def outcomes(request):
     published = pubs.filter(status=PublicationStatus.PUBLISHED)
     sent = grants.exclude(status=GrantStatus.PLANNED)
     summary = {"pubs": _share(published, "cnap_cited"), "grants": _share(sent, "cnap_acknowledged")}
-    if tab == "grants":
+    if tab == "talks":
+        from apps.outcomes.models import Presentation
+
+        rows = Presentation.objects.filter(archived_at__isnull=True).prefetch_related(
+            "people__person", "project_links__project", "resource_links__resource"
+        )
+        rows = rows.filter(_ack_q("cnap_cited", f)).order_by("-presented_on")
+    elif tab == "grants":
         rows = sent.filter(_ack_q("cnap_acknowledged", f)) if f != "all" else grants
         rows = rows.order_by("-submission_date", "-updated_at")
     else:
@@ -89,6 +99,12 @@ def outcomes(request):
         request,
         "manage/outcomes.html",
         {
+            "reminders_due": _rem.due() if tab == "reminders" else None,
+            "reminders_sent": OutcomeReminder.objects.select_related("person")[:20]
+            if tab == "reminders"
+            else None,
+            "stale_days": settings.OUTCOME_STALE_DAYS,
+            "remind_every": settings.OUTCOME_REMINDER_EVERY_DAYS,
             "counts": (c := counts() if tab == "counts" else None),
             "counts_tables": [
                 ("All CNAP", c["all"]),
@@ -200,6 +216,14 @@ def set_ack(request, kind, pk):
         obj.cnap_acknowledged = value
         obj.save(update_fields=["cnap_acknowledged", "updated_at"])
         field = "cnap_acknowledged"
+    elif kind == "presentation":
+        from apps.outcomes.models import Presentation
+
+        obj = get_object_or_404(Presentation, pk=pk)
+        old = obj.cnap_cited
+        obj.cnap_cited = value
+        obj.save(update_fields=["cnap_cited", "updated_at"])
+        field = "cnap_cited"
     else:
         obj = get_object_or_404(Publication, pk=pk)
         old = obj.cnap_cited
@@ -560,6 +584,49 @@ def export(request, kind):
                     "; ".join(str(x.person) for x in p.people.all()),
                 ]
             )
+    elif kind in ("talks", "presentations"):
+        from apps.outcomes.models import Presentation
+
+        w.writerow(
+            [
+                "Project ID",
+                "Type",
+                "Title",
+                "Event",
+                "Location",
+                "Date",
+                "Presenters and authors",
+                "Acknowledges CNAP",
+                "Center Resources Utilized",
+                "CNAP People",
+            ]
+        )
+        for t in (
+            Presentation.objects.filter(archived_at__isnull=True)
+            .prefetch_related(
+                "people__person", "project_links__project", "resource_links__resource"
+            )
+            .order_by("-presented_on")
+        ):
+            w.writerow(
+                [
+                    "; ".join(x.project.title for x in t.project_links.all()),
+                    t.get_presentation_type_display(),
+                    t.title,
+                    t.event,
+                    t.location,
+                    t.presented_on or "",
+                    t.author_display_text,
+                    _yn(t.cnap_cited),
+                    "; ".join(
+                        x.resource.name
+                        if x.resource.code != "other" or not t.resources_other_text
+                        else f"Other: {t.resources_other_text}"
+                        for x in t.resource_links.all()
+                    ),
+                    "; ".join(str(x.person) for x in t.people.all()),
+                ]
+            )
     elif kind == "grants":
         # Columns from MW's Grant flow, section 9 (one submission = one row).
         w.writerow(
@@ -699,3 +766,15 @@ def person_outcomes(person):
         .order_by("-submission_date")
     )
     return {"pubs": pubs, "grants": grants}
+
+
+@manage_action
+def send_reminders(request):
+    sent = _rem.send(actor=request.user)
+    messages.success(
+        request,
+        f"{len(sent)} reminder{'s' if len(sent) != 1 else ''} sent."
+        if sent
+        else "No reminders were due.",
+    )
+    return redirect("/manage/outcomes/?tab=reminders")

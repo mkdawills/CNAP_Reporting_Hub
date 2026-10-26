@@ -206,6 +206,10 @@ class Presentation(ArchivableModel):
     event = models.CharField(max_length=300, blank=True)
     location = models.CharField(max_length=300, blank=True)
     presented_on = models.DateField(null=True, blank=True)
+    cnap_cited = models.BooleanField(
+        null=True, blank=True, help_text="Did the presentation acknowledge CNAP?"
+    )
+    resources_other_text = models.CharField(max_length=300, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -547,3 +551,21 @@ class OutcomeCheckin(models.Model):
                 fields=["person", "reporting_period"], name="outcome_checkins_unique"
             )
         ]
+
+
+class OutcomeReminder(models.Model):
+    """One reminder e-mail about stale publications/grants, so nobody is reminded more often than configured."""
+
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="outcome_reminders")
+    sent_at = models.DateTimeField(auto_now_add=True)
+    sent_to = models.TextField(
+        help_text="Addresses the reminder went to (the person and anyone entering for them)."
+    )
+    records = models.JSONField(
+        default=list,
+        help_text="[{kind, id, title, status, last_reviewed}] at the time it was sent.",
+    )
+
+    class Meta:
+        db_table = "outcome_reminders"
+        ordering = ["-sent_at"]

@@ -15,6 +15,13 @@ from apps.reporting.models import ReportingPeriod
 
 from .outcome_forms import GRANT_FORMS, NEXT, PUB_FORMS
 
+# MW's words (decisions.md 2026-10-26), shown after a proposal is marked Not funded.
+NOT_FUNDED_NOTE = (
+    "Thank you for updating us. Although a not-funded decision is always challenging feedback, please be heartened "
+    "and assured that it is part of the journey all researchers take toward securing funding. We are very proud of you "
+    "and excited for your opportunity to take the free reviewer feedback and incorporate it into the next cycle."
+)
+
 STATUS_WORDS = {
     "pub": {
         "planned": "Planned",
@@ -29,6 +36,25 @@ STATUS_WORDS = {
         "not_funded": "Not funded",
     },
 }
+
+
+def entry_open(view):
+    """Adding or changing outcomes is closed for a few days after a period closes (decisions.md 2026-10-26)."""
+    from functools import wraps
+
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        ok, reopens = os.entry_window()
+        if not ok:
+            messages.info(
+                request,
+                f"Publications, presentations and grants open again on {reopens:%A, %B %-d}, "
+                "once the Center has finished this period’s report.",
+            )
+            return redirect("portal:outcomes")
+        return view(request, *args, **kwargs)
+
+    return wrapper
 
 
 def current_period():
@@ -77,6 +103,8 @@ def home(request):
             "st": st,
             "delegates": delegates,
             "acting_for_other": owner.pk != request.user.person.pk,
+            "presentations": os.presentations_of(owner),
+            "window": os.entry_window(),
             "words": STATUS_WORDS,
             "next": NEXT,
             "review_pub": {p.pk for p in st["review_pubs"]},
@@ -94,6 +122,7 @@ def _initial_resources(obj, actual):
 
 
 @login_required
+@entry_open
 def new(request, kind):
     owner, _ = _owner(request)
     F = PUB_FORMS["planned"] if kind == "pub" else GRANT_FORMS["planned"]
@@ -132,7 +161,10 @@ def new(request, kind):
 
 
 def _obj(kind, pk, request):
-    obj = get_object_or_404(Publication if kind == "pub" else GrantSubmission, pk=pk)
+    from apps.outcomes.models import Presentation
+
+    model = {"pub": Publication, "grant": GrantSubmission, "presentation": Presentation}[kind]
+    obj = get_object_or_404(model, pk=pk)
     people = [x.person for x in obj.people.all()]
     if not any(os.can_act_for(request.user, p) for p in people):
         raise PermissionDenied
@@ -140,6 +172,7 @@ def _obj(kind, pk, request):
 
 
 @login_required
+@entry_open
 def update(request, kind, pk):
     obj, owner = _obj(kind, pk, request)
     to = request.GET.get("to") or request.POST.get("to")
@@ -180,6 +213,54 @@ def update(request, kind, pk):
     if kind == "grant" and "role" in F.base_fields:
         link = obj.people.filter(person=owner).first()
         initial["role"] = link.role if link else None
+    if request.method == "POST" and "lookup" in request.POST and kind == "pub":
+        # "Fill in from PubMed": show the values for checking; nothing is saved yet.
+        from apps.outcomes import pubmed
+
+        data = request.POST.copy()
+        try:
+            found = pubmed.lookup(data.get("pubmed_url", ""))
+        except pubmed.LookupError_ as exc:
+            messages.warning(request, str(exc))
+        else:
+            for f in ("title", "journal"):
+                if found.get(f):
+                    data[f] = found[f]
+            if found.get("authors"):
+                data["author_display_text"] = found["authors"]
+            if found.get("publication_date"):
+                data["publication_date"] = found["publication_date"].isoformat()
+            if found.get("url"):
+                data["pubmed_url"] = found["url"]
+            if found.get("cnap_in_grant_index") is not None and not data.get("cnap_in_grant_index"):
+                data["cnap_in_grant_index"] = "yes" if found["cnap_in_grant_index"] else "no"
+            note = "Filled in from PubMed. Please check the title, journal, date and authors before saving."
+            if found.get("cnap_in_grant_index") is not None:
+                note += (
+                    " CNAP’s grant "
+                    + ("is" if found["cnap_in_grant_index"] else "is not")
+                    + " listed in PubMed’s grant index for this paper."
+                )
+            messages.success(request, note)
+        typed = {
+            k: (data.getlist(k) if k in ("resources", "projects") else data.get(k))
+            for k in F.base_fields
+        }
+        form = F(initial={**initial, **{k: v for k, v in typed.items() if v not in (None, "", [])}})
+        affs = found.get("affiliations", []) if "found" in locals() else []
+        return render(
+            request,
+            "portal/outcome_form.html",
+            {
+                "form": form,
+                "kind": kind,
+                "owner": owner,
+                "stage": to,
+                "obj": obj,
+                "affiliations": affs,
+                "title": f"Mark as {STATUS_WORDS[kind][to].lower()}",
+            },
+        )
     form = F(request.POST or None, initial=initial)
     if request.method == "POST" and form.is_valid():
         d = dict(form.cleaned_data)
@@ -190,6 +271,8 @@ def update(request, kind, pk):
             created = os.update_publication(request.user, obj, to, d, res, prj, other)
         else:
             created = os.update_grant(request.user, obj, to, d, res, prj, other, owner=owner)
+        if kind == "grant" and to == "not_funded":
+            messages.add_message(request, messages.INFO, NOT_FUNDED_NOTE, extra_tags="encourage")
         if created:
             label = "publication" if kind == "pub" else f"proposal ({created.version_label})"
             messages.success(
@@ -215,6 +298,7 @@ def update(request, kind, pk):
 
 @login_required
 @require_POST
+@entry_open
 def confirm(request, kind, pk):
     obj, owner = _obj(kind, pk, request)
     os.confirm(request.user, obj)
@@ -223,6 +307,7 @@ def confirm(request, kind, pk):
 
 @login_required
 @require_POST
+@entry_open
 def plans(request, kind):
     owner, _ = _owner(request)
     period = current_period()
@@ -256,6 +341,49 @@ def delegate_end(request, pk):
     os.end_delegate(request.user, d)
     messages.success(request, f"{d.delegate} can no longer enter for you.")
     return redirect(_url("portal:outcomes", d.owner))
+
+
+@login_required
+@entry_open
+def presentation(request, pk=None):
+    from apps.outcomes.models import Presentation
+
+    from .outcome_forms import PresentationForm
+
+    if pk:
+        obj, owner = _obj("presentation", pk, request)
+    else:
+        obj, (owner, _) = None, _owner(request)
+    initial = {"projects": os.awardee_projects(owner)}
+    if obj:
+        initial = {f: getattr(obj, f) for f in PresentationForm.base_fields if hasattr(obj, f)}
+        initial["cnap_cited"] = (
+            "" if obj.cnap_cited is None else ("yes" if obj.cnap_cited else "no")
+        )
+        initial["resources"] = [x.resource for x in obj.resource_links.all()]
+        initial["projects"] = [x.project for x in obj.project_links.all()]
+    form = PresentationForm(request.POST or None, initial=initial)
+    if request.method == "POST" and form.is_valid():
+        d = dict(form.cleaned_data)
+        res, prj, other = d.pop("resources"), d.pop("projects"), d.pop("resources_other_text")
+        os.save_presentation(request.user, owner, d, res, prj, other, obj=obj)
+        messages.success(request, "Presentation saved.")
+        if request.POST.get("another"):
+            return redirect(_url("portal:presentation_new", owner))
+        return redirect(_url("portal:outcomes", owner))
+    _ = Presentation
+    return render(
+        request,
+        "portal/outcome_form.html",
+        {
+            "form": form,
+            "kind": "presentation",
+            "owner": owner,
+            "stage": "",
+            "obj": obj,
+            "title": "Edit presentation" if obj else "Add a presentation",
+        },
+    )
 
 
 def task_item(person, period):

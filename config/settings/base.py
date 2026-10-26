@@ -19,6 +19,13 @@ env = environ.Env(
     MEDIA_ROOT=(str, str(BASE_DIR / "media")),
     SSO_ENABLED=(bool, False),
     SMALL_N_THRESHOLD=(int, 5),
+    SITE_URL=(str, "http://localhost:8000"),
+    DEFAULT_FROM_EMAIL=(str, "CNAP Reporting Hub <no-reply@localhost>"),
+    OUTCOME_STALE_DAYS=(int, 120),
+    OUTCOME_REMINDER_EVERY_DAYS=(int, 30),
+    OUTCOME_REOPEN_DAYS=(int, 7),
+    CNAP_GRANT_NUMBERS=(list, []),
+    PUBMED_CONTACT_EMAIL=(str, ""),
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
@@ -139,3 +146,20 @@ AUTHENTICATION_BACKENDS = ["apps.accounts.backends.RoleBackend"]
 
 # Django 6 default; set now so link fields assume https.
 FORMS_URLFIELD_ASSUME_HTTPS = True
+
+# Links in e-mails point here (no trailing slash).
+SITE_URL = env("SITE_URL").rstrip("/")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+
+# Publications and grants (decisions.md 2026-10-26).
+# A Planned or Submitted record not reviewed for this many days is "stale" and its owner gets a reminder,
+# at most once every OUTCOME_REMINDER_EVERY_DAYS days.
+OUTCOME_STALE_DAYS = env("OUTCOME_STALE_DAYS")
+OUTCOME_REMINDER_EVERY_DAYS = env("OUTCOME_REMINDER_EVERY_DAYS")
+# After a reporting period closes, people can add or update outcomes again this many days later (entry is open
+# all year otherwise), so the Center can finish that period's numbers first.
+OUTCOME_REOPEN_DAYS = env("OUTCOME_REOPEN_DAYS")
+# CNAP's grant number(s), e.g. P20GM000000: used to tell whether a PubMed entry lists CNAP in its grant index.
+CNAP_GRANT_NUMBERS = env("CNAP_GRANT_NUMBERS")
+# Sent to NCBI with PubMed look-ups, as their usage policy asks.
+PUBMED_CONTACT_EMAIL = env("PUBMED_CONTACT_EMAIL")

@@ -29,6 +29,10 @@ from .models import (
     GrantSubmissionResource,
     OutcomeCheckin,
     OutcomeDelegate,
+    Presentation,
+    PresentationPerson,
+    PresentationProject,
+    PresentationResource,
     Publication,
     PublicationPerson,
     PublicationProject,
@@ -254,6 +258,7 @@ def update_publication(user, p, new_status, data, resources=None, projects=None,
         "anticipated_publication_date",
         "publication_date",
         "pubmed_url",
+        "author_display_text",
         "cnap_cited",
         "cnap_in_grant_index",
         "has_foreign_authors",
@@ -455,3 +460,69 @@ def people_search(q):
         .filter(Q(first_name__icontains=q) | Q(last_name__icontains=q))
         .order_by("last_name")[:20]
     )
+
+
+# --------------------------------------------------------------------------- presentations (no lifecycle: one entry each)
+
+
+def presentations_of(owner):
+    return (
+        Presentation.objects.filter(archived_at__isnull=True, people__person=owner)
+        .distinct()
+        .order_by("-presented_on")
+    )
+
+
+@transaction.atomic
+def save_presentation(user, owner, data, resources=(), projects=(), other_text="", obj=None):
+    fields = (
+        "presentation_type",
+        "title",
+        "event",
+        "location",
+        "presented_on",
+        "author_display_text",
+        "description",
+        "cnap_cited",
+    )
+    created = obj is None
+    obj = obj or Presentation(created_by=user)
+    for f in fields:
+        if f in data:
+            setattr(obj, f, data[f])
+    obj.resources_other_text = other_text
+    obj.save()
+    if created:
+        PresentationPerson.objects.create(presentation=obj, person=owner, is_presenter=True)
+    PresentationResource.objects.filter(presentation=obj).exclude(resource__in=resources).delete()
+    for r in resources:
+        PresentationResource.objects.get_or_create(presentation=obj, resource=r)
+    _set_projects(PresentationProject, "presentation", obj, projects)
+    record_event(
+        user,
+        AuditLog.Action.CREATE if created else AuditLog.Action.UPDATE,
+        obj,
+        new={"owner": owner.pk},
+    )
+    return obj
+
+
+# --------------------------------------------------------------------------- when entry is open
+
+
+def entry_window(now=None):
+    """
+    (open, reopens_on). Entry is open any time, except for OUTCOME_REOPEN_DAYS (default 7) after a reporting
+    period closes while no period is open, so the Center can finish that period's numbers (decisions.md 2026-10-26).
+    """
+    from apps.common.enums import PeriodStatus
+    from apps.reporting.models import ReportingPeriod
+
+    now = now or timezone.now()
+    if ReportingPeriod.objects.filter(status=PeriodStatus.OPEN).exists():
+        return True, None
+    last = ReportingPeriod.objects.filter(closed_at__isnull=False).order_by("-closed_at").first()
+    days = getattr(settings, "OUTCOME_REOPEN_DAYS", 7)
+    if last and last.closed_at + dt.timedelta(days=days) > now:
+        return False, timezone.localtime(last.closed_at + dt.timedelta(days=days)).date()
+    return True, None

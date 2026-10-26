@@ -20,7 +20,7 @@
         <div class="navhead">My work</div>
         <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %}>My tasks</a>
         <a href="{% url 'portal:history' %}" {% nav_current 'history' %}>My history</a>
-        {% if keeps_outcomes %}<a href="{% url 'portal:outcomes' %}" {% nav_current 'outcomes' 'outcome_new' 'outcome_update' %}>Publications and grants</a>{% endif %}
+        {% if keeps_outcomes %}<a href="{% url 'portal:outcomes' %}" {% nav_current 'outcomes' 'outcome_new' 'outcome_update' 'presentation_new' 'presentation_edit' %}>Publications, talks and grants</a>{% endif %}
         <a href="{% url 'portal:center_results' %}" {% nav_current 'center_results' %}>Center results</a>
         <a href="{% url 'portal:profile' %}" {% nav_current 'profile' %}>Profile</a>
       {% endif %}
@@ -47,13 +47,13 @@
   </aside>
   <main id="main">
     {% if is_view_only_admin and request.resolver_match.namespace == 'manage' %}<div class="banner">View only. You can open every screen; changes are made by the evaluator.</div>{% endif %}
-    {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{{ m|stack }}</li>{% endfor %}</ul>{% endif %}
+    {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m }}{% else %}{{ m|stack }}{% endif %}</li>{% endfor %}</ul>{% endif %}
     {% block content %}{% endblock %}
   </main>
 </div>
 {% else %}
 <div class="anon"><main id="main">
-  {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{{ m|stack }}</li>{% endfor %}</ul>{% endif %}
+  {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m }}{% else %}{{ m|stack }}{% endif %}</li>{% endfor %}</ul>{% endif %}
   {% block anon %}{% endblock %}
 </main></div>
 {% endif %}

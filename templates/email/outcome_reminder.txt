@@ -1,0 +1,14 @@
+{% autoescape off %}Dear {{ person.first_name }},
+
+Your CNAP Reporting Hub records below haven't been updated in {{ days }} days or more. Please take a minute to confirm nothing has changed or update their status:
+
+{% for r in records %}  • {{ r.kind }}: {{ r.title }}
+    Now: {{ r.status }} · last reviewed {{ r.last|date:"F j, Y" }}
+{% endfor %}
+Open your publications and grants: {{ url }}
+
+For each one you can choose "Confirm no changes" or "Update status". It usually takes a couple of minutes.
+
+Thank you,
+The CNAP evaluation team
+{% endautoescape %}

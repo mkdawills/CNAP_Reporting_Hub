@@ -778,6 +778,8 @@ Recorded once and linked to every relevant project; never duplicated per project
 | event | CharField | no |  |
 | location | CharField | no |  |
 | presented_on | DateField | yes |  |
+| cnap_cited | BooleanField | yes | Did the presentation acknowledge CNAP? |
+| resources_other_text | CharField | no |  |
 | created_by_id | FK → users | yes |  |
 
 Constraints: `presentations_type_valid`
@@ -971,6 +973,18 @@ One person's publications-and-grants check-in for one reporting period (the task
 | completed_by_id | FK → users | yes |  |
 
 Constraints: `outcome_checkins_unique`
+
+### `outcome_reminders` — OutcomeReminder
+
+One reminder e-mail about stale publications/grants, so nobody is reminded more often than configured.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| person_id | FK → people | no |  |
+| sent_at | DateTimeField | no |  |
+| sent_to | TextField | no | Addresses the reminder went to (the person and anyone entering for them). |
+| records | JSONField | no | [{kind, id, title, status, last_reviewed}] at the time it was sent. |
 
 ## Audit log (`audit`)
 
