@@ -9,7 +9,7 @@
 
 {% if period.assignments.exists %}
 <div class="panel">
-  {% if tables %}<p class="facts2"><b>{{ completion.assigned }}</b> {{ completion.assigned|pluralize:"person,people" }} received the survey and <b>{{ opened }}</b> responded{% if opted_out %}: <b>{{ full }}</b> answered the survey items and <b>{{ opted_out }}</b> skipped them because they {{ optout_name|default:"opted out" }}{% endif %}.</p>
+  {% if tables %}<p class="facts2"><b>{{ completion.assigned }}</b> {{ completion.assigned|pluralize:"person,people" }} received the survey and <b>{{ opened }}</b> responded{% if opted_out %}: <b>{{ full }}</b> answered all the survey items and <b>{{ opted_out }}</b> skipped them because they {{ optout_name|default:"opted out" }}{% endif %}.</p>
   {% else %}<p>{{ completion.complete }} of {{ completion.assigned }} complete.</p>{% endif %}
   {% include "manage/_report_tables.html" with show_codes=True %}
   {% if tables %}<details class="tmore"><summary><span class="tmore-open">Show site-visit report wording</span><span class="tmore-close">Hide site-visit report wording</span></summary><div class="wording"><p class="small">{% with t=tables.0 %}Table {{ t.no }} data captures {{ t.section.title|cut:":"|lower }} for the {{ fd.name }}.{% endwith %} {{ opened }} {% if opened == 1 %}person{% else %}people{% endif %} completed it{% if opted_out %}. {{ "Once inside, " }}{{ opted_out }} of the {{ opened }} opted out by selecting “{{ optout_label }}”{% endif %}.{% if tables.0.has_na %} {{ "Occasionally, respondents selected N/A in response to individual items (observable when the Total column is less than"|stack }} {{ full }}).{% endif %}</p></div></details>{% endif %}
