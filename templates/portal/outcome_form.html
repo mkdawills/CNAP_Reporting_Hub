@@ -1,0 +1,52 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}{{ title }} · {{ platform_name }}<script>
+// Follow-up fields appear only after a Yes (Grant flow, Not Funded stage).
+document.querySelectorAll("[data-show-if]").forEach(function (el) {
+  var name = el.getAttribute("data-show-if");
+  function sync() { var y = document.querySelector('input[name="' + name + '"][value="yes"]'); el.hidden = !(y && y.checked); }
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function (i) { i.addEventListener("change", sync); });
+  sync();
+});
+// "If Other, what?" appears when Other is ticked.
+document.querySelectorAll("[data-show-other]").forEach(function (el) {
+  var other = Array.from(document.querySelectorAll('input[name="resources"]')).find(function (i) { return i.closest("label").textContent.trim() === "Other"; });
+  function sync() { el.hidden = !(other && other.checked); }
+  if (other) other.addEventListener("change", sync);
+  sync();
+});
+</script>
+{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{{ title }}</h1>
+  {% if obj %}<p>{% if kind == 'pub' %}{{ obj.title }}{% else %}{{ obj.project_title }} · {{ obj.version_label }}{% endif %}</p>{% endif %}
+  {% if owner != request.user.person %}<p class="small muted">Entering for {{ owner }}.</p>{% endif %}</div></div>
+<form method="post" class="panel oform" style="max-width:820px">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><input type="hidden" name="to" value="{{ stage }}">
+  {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+  {% for field in form %}
+    {% if field.name == 'resources' or field.name == 'projects' %}
+      <fieldset class="field checks"><legend>{{ field.label }}{% if field.name == 'resources' and form.resources_required %} <span class="req">*</span>{% endif %}</legend><div class="checkgrid">{% for c in field %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</fieldset>
+    {% elif field.field.widget.input_type == 'radio' %}
+      <fieldset class="field yn"><legend>{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</legend><div class="fieldrow">{% for c in field %}<label class="ynopt">{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</fieldset>
+    {% else %}
+      <div class="field" {% if field.name == 'program_officer_name' or field.name == 'discussion_date' %}data-show-if="discussed_with_program_officer"{% elif field.name == 'resources_other_text' %}data-show-other="1"{% endif %}><label><span class="lt">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</span>{{ field }}</label>{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>
+    {% endif %}
+  {% endfor %}
+  <div class="actions"><button class="btn" type="submit">Save</button>{% if not obj %}<button class="btn ghost" type="submit" name="another" value="1">Save and add another</button>{% endif %}<a href="{% url 'portal:outcomes' %}?for={{ owner.pk }}">Cancel</a></div>
+</form>
+<script>
+// Follow-up fields appear only after a Yes (Grant flow, Not Funded stage).
+document.querySelectorAll("[data-show-if]").forEach(function (el) {
+  var name = el.getAttribute("data-show-if");
+  function sync() { var y = document.querySelector('input[name="' + name + '"][value="yes"]'); el.hidden = !(y && y.checked); }
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function (i) { i.addEventListener("change", sync); });
+  sync();
+});
+// "If Other, what?" appears when Other is ticked.
+document.querySelectorAll("[data-show-other]").forEach(function (el) {
+  var other = Array.from(document.querySelectorAll('input[name="resources"]')).find(function (i) { return i.closest("label").textContent.trim() === "Other"; });
+  function sync() { el.hidden = !(other && other.checked); }
+  if (other) other.addEventListener("change", sync);
+  sync();
+});
+</script>
+{% endblock %}

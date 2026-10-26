@@ -20,6 +20,7 @@
         <div class="navhead">My work</div>
         <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %}>My tasks</a>
         <a href="{% url 'portal:history' %}" {% nav_current 'history' %}>My history</a>
+        {% if keeps_outcomes %}<a href="{% url 'portal:outcomes' %}" {% nav_current 'outcomes' 'outcome_new' 'outcome_update' %}>Publications and grants</a>{% endif %}
         <a href="{% url 'portal:center_results' %}" {% nav_current 'center_results' %}>Center results</a>
         <a href="{% url 'portal:profile' %}" {% nav_current 'profile' %}>Profile</a>
       {% endif %}

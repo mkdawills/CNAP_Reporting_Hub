@@ -33,14 +33,21 @@
     {% if g.used and g.rows %}<tr class="subhead"><td colspan="5">Did you also use these?</td></tr>{% endif %}
     {% for r in g.rows %}{% include "portal/_task_row.html" %}{% endfor %}
   {% endfor %}
+  {% if outcome and not outcome.done %}
+    <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>Publications and grants</h3><p>{{ "Keep your papers and grant proposals up to date."|stack }}</p></div><span class="ghcount">1 to do</span></div></td></tr>
+    {% for i in outcome.items %}{% if not i.done %}<tr><td><strong>{% if i.self %}Update your publications and grants{% else %}Update publications and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">{{ i.todo }} thing{{ i.todo|pluralize }} to look at</div></td>
+      <td class="acts">{% if period.in_preview %}<span class="small muted">Opens with the period</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins">About {{ outcome.minutes }} min</td></tr>{% endif %}{% endfor %}
+  {% endif %}
   </tbody></table></div>
   {% if has_optouts %}<p class="small muted footnote">{{ "* Opt out of any survey that doesn’t apply to you since the last reporting period: for example, a core you didn’t use, NeuroSync if you didn’t attend, or the grant writing program if you didn’t use it."|stack }}</p>{% endif %}
 </div>
 {% endif %}
 
-{% if done %}
-<details class="panel donebox" {% if not todo %}open{% endif %}><summary>Done ({{ done|length }})</summary>
-  <div class="scroll"><table class="tasks"><tbody>{% for r in done %}{% include "portal/_task_row.html" %}{% endfor %}</tbody></table></div>
+{% if done or outcome.done %}
+<details class="panel donebox" {% if not todo %}open{% endif %}><summary>Done ({{ done_count }})</summary>
+  <div class="scroll"><table class="tasks"><tbody>{% for r in done %}{% include "portal/_task_row.html" %}{% endfor %}
+  {% if outcome.done %}<tr><td><strong>Publications and grants</strong><div class="small muted">Up to date for this period</div></td><td class="acts"><a class="btn small ghost" href="{% url 'portal:outcomes' %}">View</a></td><td class="acts"></td><td class="acts"></td><td class="mins"></td></tr>{% endif %}</tbody></table></div>
 </details>{% endif %}
 {% endif %}
 {% endblock %}

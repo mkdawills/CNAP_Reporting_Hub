@@ -166,7 +166,7 @@ Constraints: `person_relationships_context_shape`, `person_relationships_dates_o
 | id | BigAutoField | no | unique |
 | created_at | DateTimeField | no |  |
 | updated_at | DateTimeField | no |  |
-| code | CharField | no | administrator, evaluation_staff, standard_user, reviewer — unique |
+| code | CharField | no | administrator, center_leadership, standard_user — unique |
 | name | CharField | no |  |
 | description | TextField | no |  |
 | permissions | FK → auth_permission | no |  |
@@ -180,7 +180,7 @@ Constraints: `person_relationships_context_shape`, `person_relationships_dates_o
 | updated_at | DateTimeField | no |  |
 | user_id | FK → users | no |  |
 | role_id | FK → application_roles | no |  |
-| scope_core_id | FK → cores | yes | Limits a Reviewer to one core's survey data. Empty means no scope. |
+| scope_core_id | FK → cores | yes | Reserved for a future core-scoped role. Empty means no scope. |
 | granted_by_id | FK → users | yes |  |
 | granted_at | DateTimeField | no |  |
 
@@ -269,9 +269,8 @@ How an assignment was completed: a full response or a structured opt-out.
 | about_core_id | FK → cores | yes | For a Core survey: the core it evaluates (used to exclude that core's director). |
 | confidentiality_class | CharField | no | standard, mentoring |
 | respondent_can_view_own | BooleanField | no |  |
-| evaluation_staff_can_view | BooleanField | no |  |
-| reviewer_can_view | BooleanField | no |  |
 | description | TextField | no |  |
+| display | JSONField | no | How the form appears on My tasks: task_group, short_name, about (paragraphs), time_label, opt_out {question, short}, prefill [[label, key]], holder_type. Loaded from fixtures/forms; not source wording. |
 | sort_order | PositiveSmallIntegerField | no |  |
 
 Constraints: `form_definitions_context_kind_valid`, `form_definitions_id_context_unique`
@@ -291,6 +290,7 @@ Constraints: `form_definitions_context_kind_valid`, `form_definitions_id_context
 | retired_at | DateTimeField | yes |  |
 | change_notes | TextField | no | What changed from the previous version and why. |
 | intro_text | TextField | no |  |
+| source_hash | CharField | no | Fingerprint of the fixture this version was built from (load_forms). |
 
 Constraints: `form_versions_number_unique`, `form_versions_id_definition_unique`, `form_versions_one_active_per_definition`, `form_versions_status_valid`
 
@@ -383,7 +383,7 @@ Constraints: `form_assignment_rules_unique`, `form_assignment_rules_shape`
 | id | BigAutoField | no | unique |
 | created_at | DateTimeField | no |  |
 | updated_at | DateTimeField | no |  |
-| name | CharField | no | e.g. 'Year 10, January 2027' |
+| name | CharField | no | e.g. 'Year 10 Fall' |
 | short_label | CharField | no | e.g. 'Y10A' or 'Y10-1' — unique |
 | period_type | CharField | no | semiannual, annual, other |
 | grant_year | PositiveSmallIntegerField | no | Center grant year, e.g. 10 |
@@ -596,7 +596,7 @@ Mirror of the code registry (apps/analytics/metrics.py), refreshed on deploy.
 | reporting_period_id | FK → reporting_periods | no |  |
 | version_no | PositiveSmallIntegerField | no |  |
 | kind | CharField | no | period_close, imported_aggregate |
-| status | CharField | no | generated, finalized, superseded |
+| status | CharField | no | generated, reviewed, finalized, superseded |
 | provenance | CharField | no | platform, piestar_import, aggregate_import |
 | generated_at | DateTimeField | no |  |
 | generated_by_id | FK → users | yes |  |
@@ -700,6 +700,8 @@ One manuscript = one record, followed through Planned -> Submitted -> Published 
 | resubmission_intent | BooleanField | yes |  |
 | resubmission_of_id | FK → publications | yes |  |
 | comments | TextField | no |  |
+| resources_other_text | CharField | no | What 'Other' means when Other is among the Center resources. |
+| confirmed_at | DateTimeField | yes | Last time the person reviewed this record ('Confirm no changes' or an update). |
 | created_by_id | FK → users | yes |  |
 
 Constraints: `publications_status_valid`, `publications_type_valid`, `publications_substatus_only_when_submitted`
@@ -854,6 +856,8 @@ Each submission attempt is one record. The version (A0, A1, ...) is system-set a
 | project_title | CharField | no |  |
 | anticipated_submission_date | DateField | yes |  |
 | submission_date | DateField | yes |  |
+| anticipated_total | DecimalField | yes | Planned stage, preliminary. |
+| planned_estimated_direct | DecimalField | yes | Planned stage, preliminary. |
 | requested_total | DecimalField | yes |  |
 | requested_direct | DecimalField | yes |  |
 | requested_indirect | DecimalField | yes |  |
@@ -875,6 +879,8 @@ Each submission attempt is one record. The version (A0, A1, ...) is system-set a
 | discussion_date | DateField | yes |  |
 | feedback_shared_with_cnap | BooleanField | yes |  |
 | plans_to_resubmit | BooleanField | yes |  |
+| resources_other_text | CharField | no |  |
+| confirmed_at | DateTimeField | yes |  |
 | resubmission_of_id | FK → grant_submissions | yes |  |
 | created_by_id | FK → users | yes |  |
 
@@ -909,6 +915,7 @@ Constraints: `grant_submission_projects_unique`
 | id | BigAutoField | no | unique |
 | grant_submission_id | FK → grant_submissions | no |  |
 | resource_id | FK → resources | no |  |
+| is_anticipated | BooleanField | no | Entered while Planned; confirmed later. |
 
 Constraints: `grant_submission_resources_unique`
 
@@ -933,6 +940,37 @@ Constraints: `grant_submission_files_unique`
 | changed_at | DateTimeField | no |  |
 | changed_by_id | FK → users | yes |  |
 | note | TextField | no |  |
+
+### `outcome_delegates` — OutcomeDelegate
+
+A faculty member lets someone (usually a student) enter publications and grants on their behalf.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| owner_id | FK → people | no |  |
+| delegate_id | FK → people | no |  |
+| created_at | DateTimeField | no |  |
+| ended_at | DateTimeField | yes |  |
+| created_by_id | FK → users | yes |  |
+
+Constraints: `outcome_delegates_one_open`, `outcome_delegates_not_self`
+
+### `outcome_checkins` — OutcomeCheckin
+
+One person's publications-and-grants check-in for one reporting period (the task on My tasks).
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| person_id | FK → people | no |  |
+| reporting_period_id | FK → reporting_periods | no |  |
+| plans_publications | BooleanField | yes |  |
+| plans_grants | BooleanField | yes |  |
+| completed_at | DateTimeField | yes |  |
+| completed_by_id | FK → users | yes |  |
+
+Constraints: `outcome_checkins_unique`
 
 ## Audit log (`audit`)
 

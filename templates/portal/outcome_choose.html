@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Update status · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{% if kind == 'pub' %}{{ obj.title }}{% else %}{{ obj.project_title }} ({{ obj.version_label }}){% endif %}</h1><p>Now: {{ obj.get_status_display }}. What’s changed?</p></div></div>
+<div class="panel" style="max-width:640px">
+  <div class="fieldrow">{% for s, label in choices %}<a class="btn" href="?for={{ owner.pk }}&to={{ s }}">{{ label }}</a>{% endfor %}
+  {% if obj.status == 'planned' %}<a class="btn ghost" href="?for={{ owner.pk }}&to=planned">Edit planned details</a>{% endif %}</div>
+  <p class="small" style="margin-top:16px"><a href="{% url 'portal:outcomes' %}?for={{ owner.pk }}">Back</a></p>
+</div>
+{% endblock %}

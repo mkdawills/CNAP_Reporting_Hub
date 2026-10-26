@@ -1,0 +1,17 @@
+<div class="orow{% if kind == 'pub' and o.pk in review_pub or kind == 'grant' and o.pk in review_grant %} needs{% endif %}">
+  <div class="orow-main">
+    <div><strong>{{ title }}</strong>{% if kind == 'grant' %} <span class="vchip">{{ o.version_label }}</span>{% endif %}</div>
+    <div class="small muted">{{ sub|default:"" }}{% if kind == 'grant' and o.mechanism %} {{ o.mechanism }}{% endif %}
+      {% if kind == 'pub' %}{% if o.publication_date %} · published {{ o.publication_date|date:"M Y" }}{% elif o.submission_date %} · submitted {{ o.submission_date|date:"M j, Y" }}{% elif o.anticipated_submission_month %} · planned for {{ o.anticipated_submission_month|date:"M Y" }}{% endif %}
+      {% else %}{% if o.award_notice_date %} · awarded {{ o.award_notice_date|date:"M j, Y" }}{% elif o.decision_date %} · decided {{ o.decision_date|date:"M j, Y" }}{% elif o.submission_date %} · submitted {{ o.submission_date|date:"M j, Y" }}{% elif o.anticipated_submission_date %} · planned for {{ o.anticipated_submission_date|date:"M Y" }}{% endif %}{% endif %}</div>
+  </div>
+  <span class="ostatus s-{{ o.status }}">{% if kind == 'pub' %}{{ o.get_status_display }}{% else %}{{ o.get_status_display }}{% endif %}</span>
+  <div class="orow-acts">
+    {% if kind == 'pub' and o.pk in review_pub or kind == 'grant' and o.pk in review_grant %}
+      <form method="post" action="{% url 'portal:outcome_confirm' kind o.pk %}">{% csrf_token %}<button class="btn small ghost">Confirm no changes</button></form>
+      <a class="btn small" href="{% url 'portal:outcome_update' kind o.pk %}?for={{ owner.pk }}">Update status</a>
+    {% elif o.status == 'planned' or o.status == 'submitted' %}
+      <a class="linkbtn small" href="{% url 'portal:outcome_update' kind o.pk %}?for={{ owner.pk }}">Update status</a>
+    {% endif %}
+  </div>
+</div>

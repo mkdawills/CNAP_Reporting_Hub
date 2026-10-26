@@ -588,3 +588,28 @@ fieldset.checks legend { font-weight: 600; margin-bottom: 4px; }
 .show-sd .lontab td.num:not(.sdc) { border-right: 0; }
 .lontab thead tr:first-child th { font-size: .72rem; color: var(--muted); font-weight: 600; }
 .sdview { margin: 6px 0 10px; }
+/* My publications and grants */
+.checkin { border-left: 4px solid var(--purple, #512888); background: var(--idle-wash, #f1eef7); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 0 0 18px; }
+.checkin.ok { border-left-color: #1f6857; background: #eaf4f1; }
+.sechead { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.ask { background: #f7f7f9; border-radius: 10px; padding: 14px 16px; margin: 6px 0 12px; }
+.ask p { margin: 0 0 10px; }
+.orow { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.orow.needs { background: linear-gradient(90deg, #fff7e0, transparent 60%); padding-left: 10px; margin-left: -10px; border-radius: 6px; }
+.orow-acts { display: flex; gap: 6px; align-items: center; }
+.orow-acts form { margin: 0; }
+.ostatus { font-size: .78rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #eee; white-space: nowrap; }
+.ostatus.s-published, .ostatus.s-awarded { background: #dcefe9; color: #1f6857; }
+.ostatus.s-declined, .ostatus.s-not_funded { background: #f6e1dc; color: #8f2f1f; }
+.ostatus.s-submitted { background: #e3ecf8; color: #24508f; }
+.vchip { font-size: .72rem; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; margin-left: 4px; }
+fieldset.yn { border: 0; padding: 0; margin: 0 0 16px; }
+fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
+.ynopt { display: inline-flex; gap: 6px; align-items: center; margin-right: 18px; color: var(--ink); }
+.oform input[type=month], .oform input[type=date] { max-width: 220px; }
+.oform .ynopt { flex-direction: row !important; border: 0 !important; padding: 0 !important; font-weight: 400; }
+.oform fieldset.yn .fieldrow { gap: 4px 22px; }
+.oform .field label .lt { display: block; margin-bottom: 4px; }
+.checkgrid label { flex-direction: row !important; align-items: flex-start; gap: 8px; border: 0 !important; padding: 0 !important; font-weight: 400; }
+.checkgrid label input { margin-top: 3px; flex: none; }
+.oform input[type=number] { max-width: 260px; }

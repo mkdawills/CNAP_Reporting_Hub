@@ -101,7 +101,7 @@ def test_counts_and_exports(client, center):
     _login(client, "mwills")
     r = client.get("/manage/outcomes/?tab=counts")
     assert r.status_code == 200 and "Papers published" in r.content.decode()
-    for kind, head in [("pubs", "Citation"), ("grants", "Title"), ("counts", "Group")]:
+    for kind, head in [("pubs", "Project ID"), ("grants", "Parent Grant ID"), ("counts", "Group")]:
         r = client.get(f"/manage/outcomes/export/{kind}/")
         assert r.status_code == 200 and r.content.decode("utf-8-sig").startswith(head)
 

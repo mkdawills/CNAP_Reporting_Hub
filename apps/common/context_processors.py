@@ -31,8 +31,12 @@ def cnap(request):
     label = access.admin_label(user)
     if not access.can_view_admin(user):
         label = role_summary(rels)
+    from apps.outcomes.services import owners_for
+
+    keeps_outcomes = bool(person and owners_for(person))
     return {
         "platform_name": "CNAP Reporting Hub",
+        "keeps_outcomes": keeps_outcomes,
         "can_view_admin": access.can_view_admin(user),
         "can_manage": access.can_manage(user),
         "is_view_only_admin": access.is_view_only_admin(user),

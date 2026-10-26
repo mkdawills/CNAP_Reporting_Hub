@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from apps.accounts import access
 from apps.audit.models import AuditLog, record_event
@@ -480,97 +481,193 @@ def export(request, kind):
 
     buf = io.StringIO()
     w = csv.writer(buf)
+    from apps.outcomes.services import status_dates
+
+    def res(o, anticipated):
+        names = [x.resource.name for x in o.resource_links.all() if x.is_anticipated == anticipated]
+        if o.resources_other_text and any(
+            x.resource.code == "other" and x.is_anticipated == anticipated
+            for x in o.resource_links.all()
+        ):
+            names = [n if n != "Other" else f"Other: {o.resources_other_text}" for n in names]
+        return "; ".join(names)
+
+    def ts(d, key):
+        v = d.get(key)
+        return timezone.localtime(v).strftime("%Y-%m-%d %H:%M") if v else ""
+
     if kind in ("publications", "pubs"):
+        # Columns from MW's Publication flow, section 8 (one publication = one row), plus people.
         w.writerow(
             [
-                "Citation",
-                "Authors",
+                "Project ID",
                 "Title",
                 "Journal",
-                "Published",
-                "Status",
-                "Link",
-                "Acknowledges CNAP",
-                "Linked to CNAP grant in NIH records",
-                "CNAP people",
-                "Projects",
-                "Cores and resources",
+                "Current Status",
+                "Anticipated Submission Date",
+                "Submission Date",
+                "Publication Date",
+                "Decline Date",
+                "PubMed Link",
+                "CNAP Cited",
+                "CNAP Grant Index",
+                "Foreign Authors",
+                "Anticipated Center Resources Utilized",
+                "Center Resources Utilized",
+                "Decline Comments",
+                "Planned Date (timestamp)",
+                "Submitted Date (timestamp)",
+                "Published Date (timestamp)",
+                "Declined Date (timestamp)",
+                "CNAP People",
             ]
         )
         qs = (
             Publication.objects.filter(archived_at__isnull=True)
             .prefetch_related(
-                "people__person", "project_links__project", "resource_links__resource"
+                "people__person",
+                "project_links__project",
+                "resource_links__resource",
+                "status_history",
             )
-            .order_by("-publication_date", "title")
+            .order_by("-updated_at")
         )
         for p in qs:
-            year = p.publication_date.year if p.publication_date else "n.d."
-            cite = f"{p.author_display_text or '; '.join(str(x.person) for x in p.people.all())} ({year}). {p.title}. {p.journal}.".replace(
-                " .", "."
-            )
+            d = status_dates(p)
             w.writerow(
                 [
-                    cite,
-                    p.author_display_text,
+                    "; ".join(x.project.title for x in p.project_links.all()),
                     p.title,
                     p.journal,
-                    p.publication_date or "",
                     p.get_status_display(),
+                    p.anticipated_submission_month.strftime("%Y-%m")
+                    if p.anticipated_submission_month
+                    else "",
+                    p.submission_date or "",
+                    p.publication_date or "",
+                    p.decline_date or "",
                     p.pubmed_url,
                     _yn(p.cnap_cited),
                     _yn(p.cnap_in_grant_index),
+                    _yn(p.has_foreign_authors),
+                    res(p, True),
+                    res(p, False),
+                    p.comments if p.status == PublicationStatus.DECLINED else "",
+                    ts(d, "planned"),
+                    ts(d, "submitted"),
+                    ts(d, "published"),
+                    ts(d, "declined"),
                     "; ".join(str(x.person) for x in p.people.all()),
-                    "; ".join(x.project.title for x in p.project_links.all()),
-                    "; ".join(x.resource.name for x in p.resource_links.all()),
                 ]
             )
     elif kind == "grants":
+        # Columns from MW's Grant flow, section 9 (one submission = one row).
         w.writerow(
             [
+                "Parent Grant ID",
+                "Submission Version",
+                "Project ID",
+                "PI / CNAP contact",
+                "Role",
                 "Title",
-                "Agency",
+                "Funding Agency",
                 "Mechanism",
-                "Version",
-                "Status",
-                "Submitted",
-                "Award notice",
-                "Requested total",
-                "Award total",
-                "Grant number",
-                "PI",
-                "CNAP people",
-                "Projects",
-                "Cores and resources",
-                "Acknowledges CNAP",
+                "Funding Opportunity Link",
+                "Current Status",
+                "Anticipated Submission Date",
+                "Submission Date",
+                "Award Date",
+                "Project Start Date",
+                "Project End Date",
+                "Decision Date",
+                "Anticipated Total Budget (planned, estimate)",
+                "Estimated Direct Costs (planned, estimate)",
+                "Total Requested Budget",
+                "Estimated Direct Costs (submitted, estimate)",
+                "Estimated Indirect Costs (submitted, estimate)",
+                "Total Award Amount (final)",
+                "Direct Costs (final)",
+                "Indirect Costs (final)",
+                "Grant Number",
+                "Prime vs Subaward",
+                "CNAP Acknowledged",
+                "CNAP Future Credit",
+                "Foreign Component",
+                "Program Officer Discussion",
+                "Program Officer Name",
+                "Discussion Date",
+                "Reviewer Feedback Shared with CNAP",
+                "Comments",
+                "Plans to Resubmit",
+                "Anticipated Center Resources Utilized",
+                "Center Resources Utilized",
+                "Planned Date (timestamp)",
+                "Submitted / Pending Date (timestamp)",
+                "Awarded Date (timestamp)",
+                "Not Funded Date (timestamp)",
             ]
         )
         qs = (
             GrantSubmission.objects.filter(archived_at__isnull=True)
+            .select_related("grant_family")
             .prefetch_related(
-                "people__person", "project_links__project", "resource_links__resource"
+                "people__person",
+                "project_links__project",
+                "resource_links__resource",
+                "status_history",
             )
-            .order_by("-submission_date", "project_title")
+            .order_by("grant_family_id", "version_no")
         )
         for g in qs:
-            pi = next((str(x.person) for x in g.people.all() if x.role == GrantRole.PI), "")
+            d = status_dates(g)
+            lead = next((x for x in g.people.all() if x.is_primary_cnap_contact), None) or next(
+                iter(g.people.all()), None
+            )
             w.writerow(
                 [
+                    g.grant_family_id,
+                    g.version_label,
+                    "; ".join(x.project.title for x in g.project_links.all()),
+                    str(lead.person) if lead else "",
+                    lead.get_role_display() if lead else "",
                     g.project_title,
                     g.funding_agency,
                     g.mechanism,
-                    g.version_label,
+                    g.opportunity_url,
                     g.get_status_display(),
+                    g.anticipated_submission_date.strftime("%Y-%m")
+                    if g.anticipated_submission_date
+                    else "",
                     g.submission_date or "",
                     g.award_notice_date or "",
+                    g.project_start_date or "",
+                    g.project_end_date or "",
+                    g.decision_date or "",
+                    g.anticipated_total or "",
+                    g.planned_estimated_direct or "",
                     g.requested_total or "",
+                    g.requested_direct or "",
+                    g.requested_indirect or "",
                     g.award_total or "",
+                    g.award_direct or "",
+                    g.award_indirect or "",
                     g.grant_number,
-                    pi,
-                    "; ".join(str(x.person) for x in g.people.all()),
-                    "; ".join(x.project.title for x in g.project_links.all()),
-                    "; ".join(x.resource.name for x in g.resource_links.all()),
+                    g.get_prime_or_subaward_display() if g.prime_or_subaward else "",
                     _yn(g.cnap_acknowledged),
+                    _yn(g.cnap_credited_in_publications),
+                    _yn(g.has_foreign_component),
+                    _yn(g.discussed_with_program_officer),
+                    g.program_officer_name,
+                    g.discussion_date or "",
+                    _yn(g.feedback_shared_with_cnap),
+                    g.decision_comments,
+                    _yn(g.plans_to_resubmit),
+                    res(g, True),
+                    res(g, False),
+                    ts(d, "planned"),
+                    ts(d, "submitted"),
+                    ts(d, "awarded"),
+                    ts(d, "not_funded"),
                 ]
             )
     else:

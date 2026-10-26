@@ -52,6 +52,18 @@ def tasks(request):
     )
     ctx = presenters.task_list(person, period, mine, just_done=request.GET.get("done"))
     ctx["due"] = due_label(period)
+    from .outcome_views import task_item
+
+    oc = task_item(person, period)
+    ctx["outcome"] = oc
+    ctx["done_count"] = len(ctx["done"]) + (1 if oc and oc["done"] else 0)
+    if oc:  # the publications-and-grants check-in counts as one task
+        ctx["total"] += 1
+        if not oc["done"]:
+            ctx["todo"] += 1
+            ctx["minutes_left"] += oc["minutes"]
+        ctx["done_n"] = ctx["total"] - ctx["todo"]
+        ctx["pct"] = round(100 * ctx["done_n"] / ctx["total"]) if ctx["total"] else 0
     return render(request, "portal/tasks.html", ctx)
 
 

@@ -1,0 +1,41 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Publications and grants · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div>
+  <h1>{% if acting_for_other %}Publications and grants for {{ owner }}{% else %}My publications and grants{% endif %}</h1>
+  <p>{{ "Keep one record for each paper and each grant proposal, from planned through the final decision. You only answer the new questions when something changes."|stack }}</p>
+</div>
+{% if owners|length > 1 %}<form method="get"><label class="small muted">Entering for <select name="for" onchange="this.form.submit()">{% for o in owners %}<option value="{{ o.pk }}" {% if o == owner %}selected{% endif %}>{% if o == request.user.person %}Myself{% else %}{{ o }}{% endif %}</option>{% endfor %}</select></label></form>{% endif %}
+</div>
+
+{% if period %}<div class="checkin {% if st.done %}ok{% endif %}" role="status">
+  {% if st.done %}<strong>All caught up for {{ period.name }}.</strong> Thank you.{% else %}<strong>For {{ period.name }}: {{ st.todo }} thing{{ st.todo|pluralize }} to look at.</strong> {{ "Answer the questions below, then confirm or update each planned or submitted record."|stack }}{% endif %}
+</div>{% endif %}
+
+<div class="panel">
+  <div class="sechead"><h2 class="sectionhead">Publications</h2><a class="btn small ghost" href="{% url 'portal:outcome_new' 'pub' %}?for={{ owner.pk }}">Add a publication</a></div>
+  {% if st.ask_pubs %}
+    <div class="ask"><p><strong>Do you plan to submit any publications?</strong></p>
+      <form method="post" action="{% url 'portal:outcome_plans' 'pubs' %}" class="fieldrow">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><button class="btn" name="answer" value="yes">Yes, add one</button><button class="btn ghost" name="answer" value="no">No, not right now</button></form></div>
+  {% elif not st.pubs %}<p class="small muted">No publications recorded. {% if st.checkin.plans_publications is False %}You said you don’t plan to submit any right now.{% endif %}</p>{% endif %}
+  {% for p in st.pubs %}{% include "portal/_outcome_row.html" with kind="pub" o=p title=p.title sub=p.journal %}{% endfor %}
+</div>
+
+<div class="panel">
+  <div class="sechead"><h2 class="sectionhead">Grant proposals</h2><a class="btn small ghost" href="{% url 'portal:outcome_new' 'grant' %}?for={{ owner.pk }}">Add a grant proposal</a></div>
+  {% if st.ask_grants %}
+    <div class="ask"><p><strong>Do you plan to submit any grant proposals?</strong></p>
+      <form method="post" action="{% url 'portal:outcome_plans' 'grants' %}" class="fieldrow">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><button class="btn" name="answer" value="yes">Yes, add one</button><button class="btn ghost" name="answer" value="no">No, not right now</button></form></div>
+  {% elif not st.grants %}<p class="small muted">No grant proposals recorded. {% if st.checkin.plans_grants is False %}You said you don’t plan to submit any right now.{% endif %}</p>{% endif %}
+  {% for g in st.grants %}{% include "portal/_outcome_row.html" with kind="grant" o=g title=g.project_title sub=g.funding_agency %}{% endfor %}
+</div>
+
+{% if not acting_for_other %}
+<div class="panel">
+  <h2 class="sectionhead">Who can enter for you</h2>
+  <p class="small muted">{{ "You can let someone, such as a student in your lab, keep these records for you. They see and edit only your publications and grants, not your surveys."|stack }}</p>
+  {% for d in delegates %}<div class="fieldrow" style="align-items:center"><span>{{ d.delegate }}</span><form method="post" action="{% url 'portal:outcome_delegate_end' d.pk %}">{% csrf_token %}<button class="btn small ghost">Remove</button></form></div>{% empty %}<p class="small">Nobody yet.</p>{% endfor %}
+  <form method="post" action="{% url 'portal:outcome_delegate_add' %}" class="fieldrow" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}">
+    <label class="small">Add a person <select name="person" required><option value="">Choose…</option>{% for p in roster %}{% if p != owner %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label><button class="btn small">Add</button></form>
+</div>{% endif %}
+{% endblock %}

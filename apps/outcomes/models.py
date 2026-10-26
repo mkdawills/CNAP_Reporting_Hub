@@ -69,6 +69,16 @@ class Publication(ArchivableModel):
         "self", null=True, blank=True, on_delete=models.PROTECT, related_name="resubmissions"
     )
     comments = models.TextField(blank=True)
+    resources_other_text = models.CharField(
+        max_length=300,
+        blank=True,
+        help_text="What 'Other' means when Other is among the Center resources.",
+    )
+    confirmed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Last time the person reviewed this record ('Confirm no changes' or an update).",
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -315,6 +325,20 @@ class GrantSubmission(ArchivableModel):
     project_title = models.CharField(max_length=500)
     anticipated_submission_date = models.DateField(null=True, blank=True)
     submission_date = models.DateField(null=True, blank=True)
+    anticipated_total = models.DecimalField(
+        max_digits=14,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Planned stage, preliminary.",
+    )
+    planned_estimated_direct = models.DecimalField(
+        max_digits=14,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Planned stage, preliminary.",
+    )
     requested_total = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
     requested_direct = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
     requested_indirect = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
@@ -336,6 +360,8 @@ class GrantSubmission(ArchivableModel):
     discussion_date = models.DateField(null=True, blank=True)
     feedback_shared_with_cnap = models.BooleanField(null=True, blank=True)
     plans_to_resubmit = models.BooleanField(null=True, blank=True)
+    resources_other_text = models.CharField(max_length=300, blank=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
     resubmission_of = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.PROTECT, related_name="resubmissions"
     )
@@ -420,6 +446,9 @@ class GrantSubmissionResource(models.Model):
         GrantSubmission, on_delete=models.CASCADE, related_name="resource_links"
     )
     resource = models.ForeignKey(Resource, on_delete=models.PROTECT, related_name="grant_links")
+    is_anticipated = models.BooleanField(
+        default=False, help_text="Entered while Planned; confirmed later."
+    )
 
     class Meta:
         db_table = "grant_submission_resources"
@@ -463,3 +492,58 @@ class GrantStatusHistory(models.Model):
         db_table = "grant_status_history"
         ordering = ["grant_submission", "changed_at"]
         verbose_name_plural = "grant status history"
+
+
+# ---------------------------------------------------------------------------
+# Self-entry (decisions.md 2026-10-26)
+# ---------------------------------------------------------------------------
+
+
+class OutcomeDelegate(models.Model):
+    """A faculty member lets someone (usually a student) enter publications and grants on their behalf."""
+
+    owner = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="outcome_delegates")
+    delegate = models.ForeignKey(
+        Person, on_delete=models.PROTECT, related_name="outcome_delegations"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "outcome_delegates"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["owner", "delegate"],
+                condition=Q(ended_at__isnull=True),
+                name="outcome_delegates_one_open",
+            ),
+            models.CheckConstraint(
+                condition=~Q(owner=models.F("delegate")), name="outcome_delegates_not_self"
+            ),
+        ]
+
+
+class OutcomeCheckin(models.Model):
+    """One person's publications-and-grants check-in for one reporting period (the task on My tasks)."""
+
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="outcome_checkins")
+    reporting_period = models.ForeignKey(
+        "reporting.ReportingPeriod", on_delete=models.PROTECT, related_name="outcome_checkins"
+    )
+    plans_publications = models.BooleanField(null=True, blank=True)
+    plans_grants = models.BooleanField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    completed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "outcome_checkins"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["person", "reporting_period"], name="outcome_checkins_unique"
+            )
+        ]
