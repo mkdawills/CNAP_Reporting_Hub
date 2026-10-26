@@ -1,0 +1,122 @@
+{% load cnap %}{% with r=rppr %}
+<div class="rppr">
+  <form method="get" class="rtop"><input type="hidden" name="tab" value="rppr">
+    <label class="small muted">Budget period <select name="year" onchange="this.form.submit()">{% for y in r.years %}<option value="{{ y }}" {% if y == r.year %}selected{% endif %}>Year {{ y }} (June 1, {{ y|add:2016 }} – May 31, {{ y|add:2017 }})</option>{% endfor %}</select></label>
+  </form>
+  <p class="small muted rintro">Built from the FY27 COBRE reporting guidance.<br>Check each list, download it for the RPPR, then mark everything as reported at the bottom, so nothing is reported twice.</p>
+
+  <nav class="rjump" aria-label="Sections">
+    <a href="#rp-c1"><span class="rj-k">C.1</span><span class="rj-v">{{ r.c1|length }}</span><span class="rj-l">publication{{ r.c1|length|pluralize }}</span></a>
+    <a href="#rp-t1"><span class="rj-k">Table 1</span><span class="rj-v">{{ r.t1.total.sub }} · {{ r.t1.total.won }}</span><span class="rj-l">applications · awards</span></a>
+    <a href="#rp-t2"><span class="rj-k">Table 2</span><span class="rj-v">{{ r.t2_users }}</span><span class="rj-l">core user{{ r.t2_users|pluralize }}</span></a>
+    <a href="#rp-d1"><span class="rj-k">D.1</span><span class="rj-v">{{ r.d1.rows|length }}</span><span class="rj-l">participant{{ r.d1.rows|length|pluralize }}</span></a>
+  </nav>
+
+  {% if r.carried %}<div class="rnote">
+    <p><strong>{{ r.carried }} item{{ r.carried|pluralize }} from Year {{ r.year|add:-1 }} {{ r.carried|pluralize:"is,are" }} included</strong> because {{ r.carried|pluralize:"it was,they were" }} never marked as reported (dated after that RPPR went in, for example).<br>{{ r.carried|pluralize:"It’s,They’re" }} marked “from Year {{ r.year|add:-1 }}” below.</p>
+    {% if not r.prev_marked %}<p>Nothing has been marked as reported in the Year {{ r.year|add:-1 }} RPPR yet.<br>If that RPPR already went in, open <a href="?tab=rppr&amp;year={{ r.year|add:-1 }}">Year {{ r.year|add:-1 }}</a> and mark its lists as reported first, so those items aren’t counted twice.</p>{% endif %}
+  </div>{% endif %}
+
+  {# ---------------------------------------------------------------- C.1 #}
+  <section class="rsec" id="rp-c1">
+    <header class="rhead">
+      <div><h2>C.1 Publications</h2>
+        <p class="rsum"><b>{{ r.c1|length }}</b> paper{{ r.c1|length|pluralize }}{% if r.c1_not_cited %} · <span class="gap">{{ r.c1_not_cited }} don’t cite the grant</span>{% endif %}{% if r.c1_unchecked %} · {{ r.c1_unchecked }} citation{{ r.c1_unchecked|pluralize }} not checked{% endif %}{% if r.c1_excluded %} · {{ r.c1_excluded|length }} left out{% endif %}</p></div>
+      <a class="small" href="{% url 'manage:outcomes_export' 'c1' %}?year={{ r.year }}">Download C.1 (CSV)</a>
+    </header>
+    <p class="rdesc">Peer-reviewed papers published this budget year that came from CNAP support (no preprints).<br>NIH lists them to show the Center’s research output. Each one should cite P20GM113109.</p>
+    {% if r.c1 %}<table class="rtab rlist"><colgroup><col><col class="w-status"></colgroup><tbody>{% for p in r.c1 %}<tr>
+      <td><strong>{{ p.title }}</strong>{% if p.carried_from %} <span class="chip st-in_progress">from Year {{ p.carried_from }}</span>{% endif %}<div class="small muted">{% if p.author_display_text %}{{ p.author_display_text }} · {% endif %}{{ p.journal }} · {{ p.publication_date|date:"M j, Y" }}</div></td>
+      <td class="small">{% if p.cnap_cited %}Cites the grant{% elif p.cnap_cited is False %}<span class="gap">Doesn’t cite the grant</span>{% else %}<span class="muted">Citation not checked</span>{% endif %}{% if p.has_non_idea_coauthors %}<div>Non-IDeA co-authors</div>{% endif %}{% if p.rppr_year %}<div class="muted">Marked reported (Y{{ p.rppr_year }})</div>{% endif %}</td></tr>{% endfor %}</tbody></table>
+    {% else %}<p class="muted">No publications for this period.</p>{% endif %}
+    {% if r.c1_excluded %}<details class="rmore"><summary class="small">Left out ({{ r.c1_excluded|length }}) and why</summary><ul class="small">{% for p, why in r.c1_excluded %}<li><strong>{{ p.title }}</strong>: {{ why }}</li>{% endfor %}</ul></details>{% endif %}
+    {% if r.non_idea %}<div class="rnote"><p><strong>{{ r.non_idea }} paper{{ r.non_idea|pluralize }} with co-authors from non-IDeA states.</strong><br>The guidance says to include this statement in the Narrative for the Accomplishments uploaded to B.2:</p>
+      <div class="acktext"><span id="nonidea">For each publication involving co-authors from non-IDeA states, I affirm that all research activities performed outside the IDeA state were supported entirely by non-IDeA funding, and no IDeA funds or resources were exchanged in those activities.</span> <button type="button" class="btn small ghost" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('nonidea').textContent);this.textContent='Copied'">Copy</button></div></div>{% endif %}
+  </section>
+
+  {# ---------------------------------------------------------------- Table 1 #}
+  <section class="rsec" id="rp-t1">
+    <header class="rhead">
+      <div><h2>Table 1: Funding accomplishments</h2>
+        <p class="rsum"><b>{{ r.t1.total.sub }}</b> application{{ r.t1.total.sub|pluralize }} submitted · <b>{{ r.t1.total.won }}</b> award{{ r.t1.total.won|pluralize }} funded · <b>${{ r.t1.total.cost|floatformat:"0g" }}</b> in award costs</p></div>
+      <a class="small" href="{% url 'manage:outcomes_export' 'table1' %}?year={{ r.year }}">Download Tables 1A and 1B (CSV)</a>
+    </header>
+    <p class="rdesc">Grant applications submitted and awards received this budget year by Center participants.<br>NIGMS uses it to measure return on investment: how COBRE support turns into new funding.</p>
+    <h3 class="rsub">1A. By funding source</h3>
+    <p class="rdesc">The applications and awards split by who funds them: NIH, other federal agencies, or non-federal sources.</p>
+    <div class="scroll"><table class="rtab cnttab"><colgroup><col class="w-label">{% for k in r.t1.sources %}<col class="w-num">{% endfor %}<col class="w-num"></colgroup>
+      <thead><tr><th>Funding Sources</th><th class="num">NIH</th><th class="num">Federal, non-NIH</th><th class="num">Non-Federal Sources</th><th class="num">Total</th></tr></thead><tbody>
+      <tr><td>Applications Submitted</td>{% for k in r.t1.sources %}{% with v=r.t1.a|get_item:k %}<td class="num">{{ v.sub }}</td>{% endwith %}{% endfor %}<td class="num"><strong>{{ r.t1.total.sub }}</strong></td></tr>
+      <tr><td>Awards Funded (New/Renewal)</td>{% for k in r.t1.sources %}{% with v=r.t1.a|get_item:k %}<td class="num">{{ v.won }}</td>{% endwith %}{% endfor %}<td class="num"><strong>{{ r.t1.total.won }}</strong></td></tr>
+      <tr><td>Total Award Costs <span class="muted small">(entire period of performance)</span></td>{% for k in r.t1.sources %}{% with v=r.t1.a|get_item:k %}<td class="num">${{ v.cost|floatformat:"0g" }}</td>{% endwith %}{% endfor %}<td class="num"><strong>${{ r.t1.total.cost|floatformat:"0g" }}</strong></td></tr>
+    </tbody></table></div>
+    <h3 class="rsub">1B. By role</h3>
+    <p class="rdesc">The same applications and awards split by the role of the person who led them.</p>
+    <div class="scroll"><table class="rtab cnttab"><colgroup><col class="w-label">{% for k in r.t1.roles %}<col class="w-num">{% endfor %}</colgroup>
+      <thead><tr><th>Breakdown by Role</th>{% for k in r.t1.roles %}<th class="num">{{ k }}</th>{% endfor %}</tr></thead><tbody>
+      <tr><td>Applications Submitted</td>{% for k in r.t1.roles %}{% with v=r.t1.b|get_item:k %}<td class="num">{{ v.sub }}</td>{% endwith %}{% endfor %}</tr>
+      <tr><td>Awards Funded (New/Renewal)</td>{% for k in r.t1.roles %}{% with v=r.t1.b|get_item:k %}<td class="num">{{ v.won }}</td>{% endwith %}{% endfor %}</tr>
+      <tr><td>Total Award Costs</td>{% for k in r.t1.roles %}{% with v=r.t1.b|get_item:k %}<td class="num">${{ v.cost|floatformat:"0g" }}</td>{% endwith %}{% endfor %}</tr>
+    </tbody></table></div>
+    <details class="rmore"><summary class="small">What was counted ({{ r.t1.rows|length }}){% if r.t1.skipped %} and not counted ({{ r.t1.skipped|length }}){% endif %}</summary>
+      <table class="rtab"><tbody>{% for x in r.t1.rows %}<tr><td class="small nowrap">{{ x.kind }}</td><td class="small"><strong>{{ x.g.project_title }}</strong> ({{ x.g.version_label }}){% if x.carried_from %} <span class="chip st-in_progress">from Year {{ x.carried_from }}</span>{% endif %} · {{ x.lead|default:"" }} · {{ x.role }}</td><td class="small nowrap">{{ x.source }}{% if x.guessed %} <span class="muted">(guessed from agency)</span>{% endif %}</td><td class="small nowrap">{% if x.cost %}${{ x.cost|floatformat:"0g" }} <span class="muted">{{ x.basis }}</span>{% endif %}{% if x.check %}<div class="gap" style="white-space:normal">{{ x.check }}</div>{% endif %}</td></tr>{% endfor %}
+      {% for g, why in r.t1.skipped %}<tr><td class="small muted">Not counted</td><td class="small">{{ g.project_title }} ({{ g.version_label }})</td><td class="small muted" colspan="2">{{ why }}</td></tr>{% endfor %}</tbody></table></details>
+  </section>
+
+  {# ---------------------------------------------------------------- Table 2 #}
+  <section class="rsec" id="rp-t2">
+    <header class="rhead">
+      <div><h2>Table 2: COBRE Core Users</h2>
+        <p class="rsum"><b>{{ r.t2_users }}</b> user{{ r.t2_users|pluralize }} across {{ r.t2.cores|length }} research core{{ r.t2.cores|length|pluralize }}{% if r.t2_waiting %} · <span class="gap">{{ r.t2_waiting }} core{{ r.t2_waiting|pluralize }} still to report</span>{% endif %}</p></div>
+      <a class="small" href="{% url 'manage:outcomes_export' 'table2' %}?year={{ r.year }}{% for p in r.t2.periods %}&amp;t2p={{ p.pk }}{% endfor %}">Download Table 2 (CSV)</a>
+    </header>
+    <p class="rdesc">Who used each research core this year, for which projects, and whether the core’s data went into a grant application or paper.<br>NIH uses it to see how the cores serve the Center. It comes from the core directors’ Core Usage Reports; the Admin Core isn’t included.</p>
+    <form method="get" action="#rp-t2" class="small rfilter"><input type="hidden" name="tab" value="rppr"><input type="hidden" name="year" value="{{ r.year }}"><span class="muted">Reports included:</span>
+      {% for p in r.t2_choices %}<label><input type="checkbox" name="t2p" value="{{ p.pk }}" {% if p in r.t2.periods %}checked{% endif %}> {{ p.name }}</label>{% endfor %}
+      <button class="btn small ghost" type="submit">Update</button></form>
+    <p class="small muted">A user lab may be listed more than once if different projects were supported.</p>
+    {% for c in r.t2.cores %}
+      <div class="rcore">
+        <h3 class="rsub">{{ c.letter }}. {{ c.core.name }}</h3>
+        <p class="rsum">{% if c.rows %}<b>{{ c.labs }}</b> lab{{ c.labs|pluralize }} · <b>{{ c.total_users }}</b> user{{ c.total_users|pluralize }} ({{ c.users }} individual, {{ c.students }} student) · core data used in {{ c.said_yes }} of {{ c.rows|length }} project{{ c.rows|length|pluralize }}{% elif c.assigned %}No projects listed yet{% else %}No Core Usage Report assigned for these reports{% endif %}{% for g in c.gaps %} · <span class="gap">{{ g.period.name }} not reported yet ({{ g.people|join:", " }})</span>{% endfor %}{% for d in c.doubles %} · <span class="gap">{{ d.period.name }}: two reports ({{ d.people|join:" and " }}); check for projects listed twice</span>{% endfor %}</p>
+        {% if c.rows %}<div class="scroll"><table class="rtab cnttab t2tab"><colgroup><col class="w-type"><col class="w-proj"><col class="w-svc"><col class="w-num"><col class="w-num"><col class="w-pay"><col class="w-yes"><col class="w-lab"></colgroup>
+          <thead><tr>{% for short, full in r.t2.heads %}<th title="{{ full }}"{% if forloop.counter == 4 or forloop.counter == 5 %} class="num"{% endif %}>{{ short }}</th>{% endfor %}<th class="muted">User lab</th></tr></thead><tbody>
+          {% for row in c.rows %}<tr>{% for v in row.cells %}<td{% if forloop.counter == 4 or forloop.counter == 5 %} class="num"{% endif %}>{{ v }}</td>{% endfor %}<td class="small muted">{{ row.lab|default:"–" }}<div>{{ row.period }}</div></td></tr>{% endfor %}
+          <tr class="rtot"><td colspan="3"><strong>Total User Labs: {{ c.labs }} · Total Users: {{ c.total_users }}</strong></td><td class="num"><strong>{{ c.users }}</strong></td><td class="num"><strong>{{ c.students }}</strong></td><td></td><td>{{ c.said_yes }} of {{ c.rows|length }} yes</td><td></td></tr>
+        </tbody></table></div>
+        {% if c.summary %}<p class="small rquote">For the RPPR core description: <q>{{ c.summary }}</q></p>{% endif %}{% endif %}
+        {% if c.pubs or c.grants %}<details class="rmore"><summary class="small">Papers and proposals this year that say they used this core ({{ c.credit_n }})</summary><ul class="small">{% for p in c.pubs %}<li>Paper: <strong>{{ p.title }}</strong> · {{ p.journal }}</li>{% endfor %}{% for g in c.grants %}<li>Proposal: <strong>{{ g.project_title }}</strong> · {{ g.funding_agency }} · {{ g.get_status_display }}</li>{% endfor %}</ul></details>{% endif %}
+      </div>
+    {% endfor %}
+    <p class="small muted" style="margin-top:28px">Total Users = individual users + student users. Total User Labs counts each lab once.<br>The download uses NIH’s full column wording.</p>
+  </section>
+
+  {# ---------------------------------------------------------------- D.1 #}
+  <section class="rsec" id="rp-d1">
+    <header class="rhead">
+      <div><h2>D.1 Participants</h2>
+        <p class="rsum"><b>{{ r.d1.rows|length }}</b> {{ r.d1.rows|length|pluralize:"person,people" }}{% if r.d1.missing_commons %} · <span class="gap">{{ r.d1.missing_commons|length }} need an eRA Commons ID</span>{% endif %}{% if r.d1.missing_months %} · <span class="gap">{{ r.d1.missing_months|length }} need calendar months</span>{% endif %}{% if r.d1.missing_level %} · <span class="gap">{{ r.d1.missing_level|length }} need a career level</span>{% endif %}</p></div>
+      <a class="small" href="{% url 'manage:outcomes_export' 'd1' %}?year={{ r.year }}">Download D.1 (CSV)</a>
+    </header>
+    <p class="rdesc">Everyone who worked on CNAP for at least 1.0 calendar month this year, in NIH’s six categories, with their eRA Commons ID.<br>It’s the RPPR’s list of the people who did the work.</p>
+    <p class="small muted">People under 1.0 month are set aside; people with no months entered stay on the list until they add them.<br>People add their eRA Commons ID and months on their Profile page; you can on their person page.</p>
+    {% if r.d1_cats %}<table class="rtab cnttab"><colgroup><col class="w-label"><col class="w-num"><col class="w-num"><col class="w-num"></colgroup>
+      <thead><tr><th>Category</th><th class="num">People</th><th class="num">Need an ID</th><th class="num">Need months</th></tr></thead><tbody>
+      {% for c in r.d1_cats %}<tr><td>{{ c.label }}</td><td class="num">{{ c.n }}</td><td class="num">{% if c.no_id %}<span class="gap">{{ c.no_id }}</span>{% else %}–{% endif %}</td><td class="num">{% if c.no_months %}<span class="gap">{{ c.no_months }}</span>{% else %}–{% endif %}</td></tr>{% endfor %}
+    </tbody></table>{% endif %}
+    {% if r.d1.rows %}<details class="rmore"><summary class="small">Show all {{ r.d1.rows|length }} {{ r.d1.rows|length|pluralize:"person,people" }}</summary>
+      <div class="scroll"><table class="rtab"><colgroup><col class="w-name"><col class="w-id"><col class="w-role"><col><col class="w-lvl"><col class="w-num"></colgroup>
+        <thead><tr><th>Name</th><th>eRA Commons ID</th><th>Role</th><th>Project or core</th><th>Career level</th><th class="num">Calendar months</th></tr></thead><tbody>
+        {% for x in r.d1.rows %}<tr><td><a href="{% url 'manage:person' x.person.pk %}">{{ x.person.last_name }}, {{ x.person.first_name }}</a></td><td class="small">{% if x.commons %}{{ x.commons }}{% else %}<span class="gap">needed</span>{% if x.help %}<div class="muted">Asked for help: {{ x.help|lower }}</div>{% endif %}{% endif %}</td><td class="small">{{ x.label }}{% if x.roles|length > 1 %}<div class="muted">also {{ x.roles|slice:"1:"|join:", " }}</div>{% endif %}</td><td class="small">{{ x.where|join:"; " }}</td><td class="small">{% if x.needs_level %}<span class="gap">needed</span>{% else %}{{ x.level|default:"–" }}{% endif %}</td><td class="num small">{% if x.months is None %}<span class="gap">needed</span>{% else %}{{ x.months }}{% endif %}</td></tr>{% endfor %}
+      </tbody></table></div></details>
+    {% else %}<p class="muted">No one in a personnel role in this budget year.</p>{% endif %}
+    {% if r.d1.below %}<details class="rmore"><summary class="small">Under 1.0 calendar month, not listed ({{ r.d1.below|length }})</summary><ul class="small">{% for x in r.d1.below %}<li>{{ x.person }}: {{ x.months }} months ({{ x.label }})</li>{% endfor %}</ul></details>{% endif %}
+  </section>
+
+  {% if can_edit %}<section class="rsec rdone">
+    <h2>When the RPPR has been submitted</h2>
+    <p class="small muted">Marking these lists as reported means none of these papers, applications or awards is counted again in a later year.</p>
+    <form method="post" action="{% url 'manage:outcomes_mark_rppr' %}" onsubmit="return confirm('Mark everything listed above as reported in the Year {{ r.year }} RPPR? It won’t be counted again in later years.')">{% csrf_token %}<input type="hidden" name="year" value="{{ r.year }}"><button class="btn">Mark these as reported in the Year {{ r.year }} RPPR</button></form>
+  </section>{% endif %}
+</div>
+{% endwith %}

@@ -1224,9 +1224,25 @@ def _rppr_ctx(request):
         + sum(1 for r in t1["rows"] if r["carried_from"]),
         "prev_marked": _prev_marked(gy - 1),
         "t1": t1,
-        "t2": rppr.table2(gy, _t2_periods(request, gy)),
+        "t2": (t2 := rppr.table2(gy, _t2_periods(request, gy))),
         "t2_choices": _t2_choices(),
-        "d1": rppr.d1(gy),
+        "d1": (d1 := rppr.d1(gy)),
+        # roll-ups for the section headers
+        "c1_not_cited": sum(1 for p in inc if p.cnap_cited is False),
+        "c1_unchecked": sum(1 for p in inc if p.cnap_cited is None),
+        "t2_users": sum(c["total_users"] for c in t2["cores"]),
+        "t2_reported": sum(1 for c in t2["cores"] if c["assigned"] and not c["gaps"]),
+        "t2_waiting": sum(1 for c in t2["cores"] if c["gaps"]),
+        "d1_cats": [
+            {
+                "label": cat,
+                "n": sum(1 for x in d1["rows"] if x["category"] == cat),
+                "no_id": sum(1 for x in d1["rows"] if x["category"] == cat and not x["commons"]),
+                "no_months": sum(1 for x in d1["rows"] if x["category"] == cat and x["months"] is None),
+            }
+            for cat in rppr.D1_ORDER
+            if any(x["category"] == cat for x in d1["rows"])
+        ],
     }
 
 
