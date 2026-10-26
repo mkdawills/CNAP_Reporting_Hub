@@ -13,9 +13,9 @@
         {% if not person.era_commons_id %}<details class="helpbox"{% if person.era_commons_help_requested_at %} open{% endif %}><summary class="small">I need help with eRA Commons, or I’m not sure I need one</summary>
           <dl class="small qa">
             <dt>Do I need one?</dt><dd>Yes, if you have a CNAP role (PD/PI, core director, mentor, project leader, graduate student, or staff) and work on CNAP at least 1 calendar month a year (about 8% of your time).<br>NIH requires it for everyone in the Center’s yearly progress report, students included.<br>Core users and event participants usually don’t need one.</dd>
-            {% if not is_external %}<dt>Have one already?</dt><dd>Great. You’ll keep it.<br>If you acquired it while at a different institution, reach out to K-State’s central research office to have your affiliation in eRA Commons switched to K-State.</dd>
+            {% if not is_external %}<dt>Already have an eRA Commons ID?</dt><dd>Great. You’ll keep it.<br>If you acquired it while at a different institution, reach out to K-State’s central research office to have your affiliation in eRA Commons switched to K-State.</dd>
             <dt>Need an eRA Commons ID?</dt><dd>K-State’s central research office creates your eRA Commons ID on your behalf; you’re restricted from making it yourself.<br>Email <a href="mailto:research@k-state.edu">research@k-state.edu</a> to create your eRA Commons ID or have your ID switched to your current institution.</dd>
-            {% else %}<dt>Have one already?</dt><dd>Great. You’ll keep it. Type it above.</dd>
+            {% else %}<dt>Already have an eRA Commons ID?</dt><dd>Great. You’ll keep it. Type it above.</dd>
             <dt>Need an eRA Commons ID?</dt><dd>Your institution’s research office creates your eRA Commons ID on your behalf; you’re restricted from making it yourself.<br>Contact your institution’s research office to create one.</dd>{% endif %}
           </dl>
           {% if person.era_commons_help_requested_at %}<p class="small ok-note">You asked for help on {{ person.era_commons_help_requested_at|date:"M j, Y" }}. The Center evaluator will be in touch by e-mail.</p>
