@@ -169,3 +169,19 @@ Assumptions to verify: the Year 9 Mentee report's comparison sheet prints mentor
 - **Section directions** for rating sections sit right under the heading, in parentheses without the trailing colon, with one line below them.
 - **Opt-out box** is quiet (gray text, thin border) until ticked; ticking turns it yellow.
 - **Questions are numbered**, restarting in each section, matching the site-visit report tables.
+- **Open-ended sections** are titled "Open-ended questions:" (MW, 2026-10-25). The opt-out note under the checkbox is in parentheses.
+- **No serif type anywhere** (MW, 2026-10-25): headings use Public Sans at heavier weights.
+- **Results tables**: every number is centered; a stronger vertical line separates Mean (SD) from each answer group (count and percent) and from Total.
+- **Numbered items hang**: numbers sit right-aligned in their own column and wrapped lines start under the first letter of the text, in results tables and on form pages. The response-count bars sit in a row under the totals, each bar under its own answer column.
+- **Results table structure** (as approved in the prototype): header row one holds Item, Mean (SD), each answer as "(1)" over "Very Poor" (never wrapping), and Total, all words on one line; row two holds the small sub-labels Mean · SD, n · %, n. Lines are logical: a heavy outer border and heavy lines after the Item column, between groups and under the header; faint lines inside a group (n | %). The response-count row merges its first three cells into one right-aligned label, "Response counts across all items:". In year-over-year tables, a heavy line starts each grant year.
+- **Results table lines, final** (MW, 2026-10-25): a double line between SD and the first answer's n, and between the last answer's % and Total; a bold single line between answer groups (after each %); a faint line inside a group (n | %). "Grand mean, totals and %:" is right-aligned against the line.
+- **Percent cells** are quieter than the counts: the whole percentage is 75% of the count's size, in gray (heat shading still applies).
+- **Answer columns are equal width** in results tables (each n and % column 48px), whatever the label length.
+- **Each results table sits in its own floating card** (white, rounded, soft shadow), with its title inside.
+
+## 2026-10-25 — Year-over-year table: prior years, contrast, column widths
+
+- The prototype now carries the same Year 6–9 item averages as the real site (matched by table and item wording), so Table 2 shows every period from Y6 Jan onward. Prototype demo periods were relabelled to the real convention (Y10 Jan, Y10 June, Y11 Jan).
+- Heat shading in the year-over-year table is stretched across that table's own lowest-to-highest average (Excel-style color scale), not the whole 1–5 scale: lowest is nearly white, highest is deep green with white text. MW asked for more noticeable contrast; averages cluster between 3 and 5, so a 1–5 scale left everything the same shade.
+- Period columns in the year-over-year table share equal width (the Item column's width rule no longer hits the first period header).
+- The intro sentence reads "Table 1 data captures …" (capital T), and the opt-out label's own period is dropped so the sentence doesn't end in ".”.".

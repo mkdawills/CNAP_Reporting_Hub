@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Data checks · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Data checks</h1><p>{{ "Problems that would stop forms reaching the right people, or skew results. Fix them from the linked pages, or dismiss one with a reason."|stack }}</p></div></div>
+{% for c in checks %}
+<details class="panel lgroup" {% if c.rows %}open{% endif %}><summary><span>{{ c.title }}</span><span>{{ c.rows|length }}</span></summary>
+  <p class="small muted mt">{{ c.note|stack }}</p>
+  {% if c.rows %}<div class="scroll"><table><tbody>{% for rtype, rid, label, url in c.rows %}<tr><td><a href="{{ url }}">{{ label }}</a></td>
+    {% if can_manage %}<td class="nowrap"><details><summary class="btn small ghost">Dismiss</summary><form method="post" action="{% url 'manage:quality_dismiss' %}" class="fieldrow mt">{% csrf_token %}<input type="hidden" name="check" value="{{ c.code }}"><input type="hidden" name="record_type" value="{{ rtype }}"><input type="hidden" name="record_id" value="{{ rid }}"><input type="text" name="reason" placeholder="Why this is fine" required><button class="btn small" type="submit">Dismiss</button></form></details></td>{% endif %}</tr>{% endfor %}</tbody></table></div>
+  {% else %}<p class="muted">None.</p>{% endif %}
+</details>
+{% endfor %}
+{% endblock %}

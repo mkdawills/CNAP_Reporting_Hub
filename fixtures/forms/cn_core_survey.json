@@ -233,7 +233,7 @@
     },
     {
       "code": "open",
-      "title": "Open-ended questions",
+      "title": "Open-ended questions:",
       "questions": [
         {
           "code": "open_1",
@@ -340,5 +340,6 @@
       "excluded": "core_director"
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md sections 1-3; opt-out follow-ups are MW's wording (2026-10-22)."
+  "_source": "CNAP_Forms_Reconstructed.md sections 1-3; opt-out follow-ups are MW's wording (2026-10-22).",
+  "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

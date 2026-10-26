@@ -1,5 +1,17 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Administration · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Administration</h1><p>{{ "People, relationships, forms and reporting periods for the CNAP Center."|stack }}</p></div></div>
+<div class="head"><div><h1>Administration</h1><p>{{ "Where each reporting period stands, and what needs attention."|stack }}</p></div></div>
+{% if current %}
+<div class="panel">
+  <h2 class="sectionhead">{{ current.name }} is open</h2>
+  {% include "manage/_lifecycle.html" %}
+  <div class="cols mt"><div><span class="stat">{{ stats.pct }}%</span><span class="small muted">complete</span></div><div><span class="stat">{{ stats.done }} / {{ stats.total }}</span><span class="small muted">forms done</span></div><div><span class="stat">{{ stats.people }}</span><span class="small muted">people with forms</span></div><div><span class="stat">{{ stats.started }}</span><span class="small muted">started, not submitted</span></div></div>
+  <div class="actions"><a class="btn" href="{% url 'manage:dashboard' %}?period={{ current.short_label }}">Open the dashboard</a><a class="btn ghost" href="{% url 'manage:results' %}?period={{ current.short_label }}">Live results</a></div>
+</div>{% endif %}
+{% if pending %}<div class="panel"><h2 class="sectionhead">{{ pending.name }} is closed</h2><p>{% if pending_stage == 'closed' %}{{ "Generate results when you’re ready."|stack }}{% elif pending_stage == 'generated' %}{{ "Results are generated. Review them, then mark them reviewed."|stack }}{% else %}{{ "Results are reviewed. Finalize them to make them official."|stack }}{% endif %}</p><div class="actions"><a class="btn ghost" href="{% url 'manage:periods' %}">Reporting periods</a></div></div>{% endif %}
+{% if draft %}<div class="panel"><h2 class="sectionhead">{{ draft.name }} is waiting for review</h2><p>{{ "Check who will receive which forms before anything is sent."|stack }}</p><div class="actions"><a class="btn" href="{% url 'manage:launch' draft.pk %}">Review before launch</a></div></div>{% endif %}
+<div class="panel"><h2 class="sectionhead">Data checks</h2>
+  {% if issues %}<p>{{ issues }} thing{{ issues|pluralize }} to look at.</p><ul class="guide">{% for c in checks %}<li>{{ c.title }}: {{ c.rows|length }}</li>{% endfor %}</ul><div class="actions"><a class="btn ghost" href="{% url 'manage:quality' %}">See data checks</a></div>
+  {% else %}<p class="muted">Nothing needs attention.</p>{% endif %}</div>
 {% endblock %}

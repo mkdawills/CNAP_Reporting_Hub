@@ -1,0 +1,53 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}{{ fd.name }} · {{ period.short_label }} · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head">
+  <div><h1>{{ fd.name }}</h1>
+    <p>{{ period.name }}{% if snapshot %} · results {{ snapshot.get_status_display|lower }}{% if snapshot.provenance == 'aggregate_import' %} (imported prior-year averages){% endif %}{% elif period.status == 'open' %} · open: live results, not an official snapshot{% endif %}</p></div>
+  <div class="small"><a href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.short_label }}</a>{% if tables %} · <a href="{% url 'manage:export_report' period.short_label fd.code %}">Download tables (CSV)</a>{% endif %}</div>
+</div>
+
+{% if period.assignments.exists %}
+<div class="panel">
+  {% if tables %}<p>{% with t=tables.0 %}Table {{ t.no }} data captures {{ t.section.title|cut:":"|lower }} for the {{ fd.name }}.{% endwith %} {{ opened }} {% if opened == 1 %}person{% else %}people{% endif %} completed it{% if opted_out %}. {{ "Once inside, " }}{{ opted_out }} of the {{ opened }} opted out by selecting “{{ optout_label }}”{% endif %}.{% if tables.0.has_na %} {{ "Occasionally, respondents selected N/A in response to individual items (observable when the Total column is less than"|stack }} {{ full }}).{% endif %}</p>
+  {% else %}<p>{{ completion.complete }} of {{ completion.assigned }} complete.</p>{% endif %}
+  {% include "manage/_report_tables.html" with show_codes=True %}
+  {% if is_report and not tables %}<p class="small muted">{{ "Narrative report. Read each submission from the list below."|stack }}</p>{% endif %}
+</div>
+{% else %}
+<div class="panel">
+  <p>{{ "Prior-year averages imported from the site-visit reports. There are no individual responses for this period."|stack }}</p>
+  {% include "manage/_report_tables.html" with show_codes=True %}
+</div>
+{% endif %}
+
+{% if followups and followups.counts %}
+<div class="panel"><h2 class="sectionhead">People who opted out</h2>
+  {% for prompt, counts in followups.counts.items %}<p><strong>{{ prompt }}</strong> {% for label, n in counts.items %}<span class="fchip">{{ label }}: {{ n }}</span> {% endfor %}</p>{% endfor %}
+  {% if show_verbatims and followups.texts %}<p class="subttl">Reasons given</p><table class="verb">{% for t in followups.texts %}<tr><td>{{ t }}</td></tr>{% endfor %}</table>{% endif %}
+</div>{% endif %}
+
+{% if period.assignments.exists and not is_report %}
+<div class="panel">
+  <h2 class="sectionhead">Qualitative data</h2>
+  <p class="subttl">Themes</p>
+  {% if can_edit_themes %}
+    <form method="post" action="{% url 'manage:save_themes' period.short_label fd.code %}">{% csrf_token %}
+      <textarea name="themes" rows="4" placeholder="One theme per line">{{ themes|default:"" }}</textarea>
+      <div class="actions"><button class="btn small" type="submit">Save themes</button></div></form>
+  {% elif themes %}<ul class="guide">{% for line in themes.splitlines %}{% if line.strip %}<li>{{ line }}</li>{% endif %}{% endfor %}</ul>
+  {% else %}<p class="small muted">{% if snapshot %}No themes written yet.{% else %}{{ "Themes are written once results are generated."|stack }}{% endif %}</p>{% endif %}
+  <p class="subttl" style="margin-top:22px">Verbatim responses</p>
+  {% if show_verbatims %}
+    {% for v in verbatims %}<p class="subttl" style="color:var(--ink)">{{ v.prompt }}</p>
+      <table class="verb">{% for t in v.answers %}<tr><td>{{ t }}</td></tr>{% empty %}<tr><td class="muted">No responses.</td></tr>{% endfor %}</table>{% endfor %}
+  {% elif deid_blocked %}<p class="small muted">{{ "Written answers aren’t shown because fewer than 5 people completed this survey. The combined results above still apply."|stack }}</p>
+  {% else %}<p class="small muted">{{ "Written answers are visible only to the evaluator and the Center Director and Associate Director."|stack }}</p>{% endif %}
+</div>{% endif %}
+
+{% if rows %}
+<details class="panel"><summary><strong>Individual responses ({{ rows|length }}){% if mode == 'deidentified' %}, de-identified{% endif %}</strong></summary>
+  <div class="scroll mt"><table><tbody>{% for r in rows %}<tr><td>{{ r.label }}</td><td class="small muted">{{ r.ctx }}</td><td class="small">{% if r.a.status == 'completed_opt_out' %}Opted out{% endif %}</td><td class="acts"><a class="btn small ghost" href="{% url 'manage:response' r.a.pk %}">Read</a></td></tr>{% endfor %}</tbody></table></div>
+</details>
+{% elif deid_blocked %}<p class="small muted">{{ "Individual responses aren’t shown because fewer than 5 people completed this survey."|stack }}</p>{% endif %}
+{% endblock %}

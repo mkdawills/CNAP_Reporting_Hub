@@ -22,7 +22,7 @@
     {% if optout %}
     <div class="optout">
       <label><input type="checkbox" id="optout" name="q-{{ optout.code }}" value="yes" {% if opted %}checked{% endif %} {% if not editable %}disabled{% endif %}> {{ optout.prompt }}</label>
-      <div class="small muted" style="margin-top:4px">{% if optout_followups %}{{ "Choosing this swaps the survey for three quick, optional questions. It still counts as done."|stack }}{% else %}{{ "Choosing this records your answer and completes the survey. You won’t see the remaining questions."|stack }}{% endif %}</div>
+      <div class="small muted" style="margin-top:4px">{% if optout_followups %}{{ "(Choosing this swaps the survey for three quick, optional questions. It still counts as done.)"|stack }}{% else %}{{ "(Choosing this records your answer and completes the survey. You won’t see the remaining questions.)"|stack }}{% endif %}</div>
     </div>{% endif %}
     {% for sv in sections %}{% include "portal/_section.html" %}{% endfor %}
     {% if preview_followup %}<p class="small muted" style="margin:30px 0 -14px">If you opt out, you’ll see these questions instead:</p>{% with sv=preview_followup %}{% include "portal/_section.html" with sv=sv %}{% endwith %}{% endif %}

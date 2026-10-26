@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Review before launch · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Review before launch</h1>
+  <p>{{ p.name }}{% if draft %} · opens {{ p.opens_at|date:"M j, Y" }}{% else %} · already open{% endif %}</p>
+  <p>{{ "Nothing is sent until you approve it. Check who receives what, fix anything flagged, then launch."|stack }}</p></div></div>
+{% if warnings %}<div class="panel warnbox"><h2 class="sectionhead">Check before launching ({{ warnings|length }})</h2>
+  <ul>{% for w in warnings %}<li><a href="{{ w.url }}">{{ w.text }}</a></li>{% endfor %}</ul>
+  <p class="small muted">{{ "Fix these from the linked pages. This list updates as you do."|stack }}</p></div>
+{% else %}<div class="okmsg">No problems found.</div>{% endif %}
+<div class="panel scroll"><h2 class="sectionhead">Totals</h2><p class="small muted">{{ people_n }} people, {{ forms_n }} forms.</p>
+  <table><tbody>{% for fd, n in totals %}<tr><td>{{ fd.name }}</td><td class="num">{{ n }}</td></tr>{% endfor %}</tbody></table></div>
+{% for g in groups %}
+<details class="panel lgroup" open><summary><span>{{ g.title }}</span><span>{{ g.rows|length }} {% if g.rows|length == 1 %}person{% else %}people{% endif %}</span></summary>
+  <p class="small muted mt">{{ g.note|stack }}</p>
+  <div class="scroll"><table><tbody>{% for r in g.rows %}<tr>
+    <td style="width:32%"><a href="{% url 'manage:person' r.person.pk %}"><strong>{{ r.person }}</strong></a>
+      {% if r.external %}<div class="small muted">External · {{ r.person.institution }} · {% if r.on_roster %}on the roster{% else %}not on the roster{% endif %}</div>{% endif %}
+      {% if r.also|length > 1 %}<div class="small muted">Also: {% for t in r.also %}{% if t != g.title %}{{ t }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %}</div>{% endif %}
+      {% if can_manage and r.external and not r.on_roster %}<form method="post" action="{% url 'manage:roster_from_launch' p.pk r.person.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit">Add to roster</button></form>{% endif %}</td>
+    <td><span class="small muted">{{ r.chips|length }} forms</span><div class="chips">{% for c in r.chips %}<span class="fchip{% if c.report %} report{% endif %}">{{ c.label }}{% if c.ctx %} · {{ c.ctx|truncatechars:28 }}{% endif %}</span>{% endfor %}</div></td>
+  </tr>{% endfor %}</tbody></table></div>
+</details>
+{% endfor %}
+{% if draft %}{% if can_manage %}<form method="post" action="{% url 'manage:launch_go' p.pk %}" class="actions">{% csrf_token %}<button class="btn" type="submit" onclick="return confirm('Open {{ p.short_label }} and assign everyone their forms?')">Approve and open {{ p.short_label }}</button></form>
+{% else %}<p class="small muted">View only. Only the evaluator can launch a period.</p>{% endif %}{% endif %}
+{% endblock %}

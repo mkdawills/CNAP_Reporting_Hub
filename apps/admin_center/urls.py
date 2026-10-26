@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import audit, home, people, roster
+from .views import audit, home, people, periods, quality, results, roster
 
 app_name = "manage"
 
@@ -43,6 +43,28 @@ urlpatterns = [
     path("roster/upload/", roster.roster_upload, name="roster_upload"),
     path("roster/<int:pk>/", roster.roster_review, name="roster_import"),
     path("roster/<int:pk>/decide/", roster.roster_decide, name="roster_decide"),
-    # audit
+    # periods, launch, dashboard
+    path("periods/", periods.periods, name="periods"),
+    path("periods/new/", periods.period_new, name="period_new"),
+    path("periods/<int:pk>/action/", periods.period_action, name="period_action"),
+    path("periods/<int:pk>/launch/", periods.launch, name="launch"),
+    path("periods/<int:pk>/launch/go/", periods.launch_go, name="launch_go"),
+    path(
+        "periods/<int:pk>/launch/roster/<int:person_pk>/",
+        periods.roster_from_launch,
+        name="roster_from_launch",
+    ),
+    path("periods/<int:pk>/generate/", periods.generate_assignments, name="generate_assignments"),
+    path("dashboard/", periods.dashboard, name="dashboard"),
+    path("assignments/<int:pk>/action/", periods.assignment_action, name="assignment_action"),
+    # results
+    path("results/", results.results, name="results"),
+    path("results/<str:label>/<slug:code>/", results.form_report, name="form_report"),
+    path("results/<str:label>/<slug:code>/themes/", results.save_themes, name="save_themes"),
+    path("results/<str:label>/<slug:code>/export/", results.export_report, name="export_report"),
+    path("responses/<int:pk>/", results.response, name="response"),
+    # data checks and audit
+    path("checks/", quality.checks, name="quality"),
+    path("checks/dismiss/", quality.dismiss, name="quality_dismiss"),
     path("audit/", audit.audit, name="audit"),
 ]

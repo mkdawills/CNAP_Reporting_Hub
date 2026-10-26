@@ -98,7 +98,7 @@
     },
     {
       "code": "open",
-      "title": "Open-ended questions",
+      "title": "Open-ended questions:",
       "questions": [
         {
           "code": "open_1",
@@ -193,5 +193,6 @@
       "scope": "universal"
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md section 4; non-attendance path from the appendix."
+  "_source": "CNAP_Forms_Reconstructed.md section 4; non-attendance path from the appendix.",
+  "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

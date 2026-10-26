@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}{{ fd.name }} · response · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="runner">
+  <a class="btn small ghost" href="{% url 'manage:form_report' a.reporting_period.short_label fd.code %}">Back to the report</a>
+  <div class="head"><div><h1>{{ fd.name }}</h1>
+    <p>{{ a.reporting_period.name }}{% if context_line %} · {{ context_line }}{% endif %} · {% status_chip a.status %}</p>
+    <p class="small">{% if deidentified %}De-identified response. Read-only.{% else %}{{ a.person }}’s response. Read-only.{% endif %}</p></div></div>
+  {% if prefill %}<dl class="prefill">{% for label, value in prefill %}<div><dt>{{ label }}</dt><dd>{{ value|default:"—" }}</dd></div>{% endfor %}</dl>{% endif %}
+  <form>
+    {% if intro %}<p class="instructions">{{ intro|stack }}</p>{% endif %}
+    {% if optout and opted %}<div class="optout"><label><input type="checkbox" checked disabled> {{ optout.prompt }}</label></div>{% endif %}
+    {% for sv in sections %}{% include "portal/_section.html" %}{% endfor %}
+  </form>
+</div>
+{% endblock %}

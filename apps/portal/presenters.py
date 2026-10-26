@@ -6,7 +6,6 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.analytics.results import completion, item_stats
 from apps.common.enums import AssignmentStatus, ConfidentialityClass, FormCategory, QuestionType
 from apps.forms_engine.models import FormDefinition
 from apps.forms_engine.runtime import FormSchema
@@ -350,39 +349,19 @@ def history_rows(done):
 
 def center_results(period):
     """Respondent-facing combined results: surveys only, never mentoring forms, items with n < 5 left out."""
-    min_n = settings.SMALL_N_THRESHOLD
+    from apps.analytics.report import build
+
     cards = []
     forms = (
         FormDefinition.objects.filter(
-            category=FormCategory.SURVEY,
-            assignments__reporting_period=period,
+            category=FormCategory.SURVEY, assignments__reporting_period=period
         )
         .exclude(confidentiality_class=ConfidentialityClass.MENTORING)
         .distinct()
         .order_by("sort_order")
     )
     for fd in forms:
-        stats = item_stats(fd, period)
-        shown = [s for s in stats if s.n >= min_n]
-        comp = completion(fd, period)
-        if not stats:
-            continue
-        first = stats[0].question
-        scale = [o for o in first.answer_set.options.all() if not o.is_na_option]
-        cards.append(
-            {
-                "fd": fd,
-                "scale": [
-                    {
-                        "num": o.label.partition(" - ")[0],
-                        "text": o.label.partition(" - ")[2] or o.label,
-                    }
-                    for o in scale
-                ],
-                "items": shown,
-                "left_out": len(stats) - len(shown),
-                "responses": comp["submitted"],
-                "min_n": min_n,
-            }
-        )
+        data = build(fd, period, audience="respondent")
+        if any(t["rows"] or t["left_out"] for t in data["tables"]):
+            cards.append(data)
     return cards

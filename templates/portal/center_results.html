@@ -10,9 +10,8 @@
   {% for c in cards %}
   <div class="panel">
     <h2 class="sectionhead">{{ c.fd.name }}</h2>
-    <p class="small muted">Based on {{ c.responses }} response{{ c.responses|pluralize }}.</p>
-    {% if c.items %}{% include "portal/_item_table.html" with items=c.items scale=c.scale %}{% endif %}
-    {% if c.left_out %}<p class="small muted footnote">{% if c.items %}{{ c.left_out }} item{{ c.left_out|pluralize }} aren’t shown{% else %}Items aren’t shown{% endif %} because fewer than {{ c.min_n }} people rated {{ c.left_out|pluralize:"it,them" }}. {{ "This keeps anyone’s answers from being worked out."|stack }}</p>{% endif %}
+    <p class="small muted">Based on {{ c.full }} response{{ c.full|pluralize }}.</p>
+    {% include "manage/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False %}
   </div>
   {% empty %}<div class="panel"><p class="muted">No survey results for this period.</p></div>{% endfor %}
 {% endif %}

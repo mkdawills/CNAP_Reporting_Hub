@@ -108,3 +108,10 @@ def caption(value):
     """Short section directions shown under a heading: in parentheses, no trailing colon."""
     text = str(value or "").strip().rstrip(":").strip()
     return mark_safe(f"({stack(text)})") if text else ""
+
+
+@register.filter
+def lastword(value):
+    """'Y10 Jan' -> 'Jan' (period column headings under their grant year)."""
+    parts = str(value or "").split()
+    return parts[-1] if parts else ""

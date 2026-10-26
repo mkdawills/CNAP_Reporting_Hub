@@ -175,7 +175,7 @@
     },
     {
       "code": "open",
-      "title": "Open-ended questions",
+      "title": "Open-ended questions:",
       "questions": [
         {
           "code": "open_1",
@@ -209,5 +209,6 @@
       "relationship_type": "primary_mentor"
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md section 6. Assigned once per mentor per period (decisions.md 2026-10-22)."
+  "_source": "CNAP_Forms_Reconstructed.md section 6. Assigned once per mentor per period (decisions.md 2026-10-22).",
+  "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

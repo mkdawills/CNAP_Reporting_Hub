@@ -25,5 +25,5 @@
   <label class="qt" for="f-{{ v.code }}">{{ v.q.prompt }}{% if v.required %} <span class="req">*</span>{% endif %}</label>
   <input type="text" id="f-{{ v.code }}" name="q-{{ v.code }}" value="{{ v.value }}" style="width:100%" {% if not editable %}readonly{% endif %}>
 {% endif %}
-{% if v.q.help_text %}<p class="small muted qnote">{{ v.q.help_text|stack }}</p>{% endif %}
+{% if v.q.help_text and not v.narrative %}<p class="small muted qnote">{{ v.q.help_text|stack }}</p>{% endif %}
 </div>

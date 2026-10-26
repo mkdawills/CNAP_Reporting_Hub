@@ -147,8 +147,10 @@ def history(request):
 
 @login_required
 def center_results(request):
-    periods = ReportingPeriod.objects.filter(status=PeriodStatus.FINALIZED).order_by(
-        "-display_order"
+    periods = (
+        ReportingPeriod.objects.filter(status=PeriodStatus.FINALIZED, assignments__isnull=False)
+        .distinct()
+        .order_by("-display_order")
     )
     selected = None
     if periods:

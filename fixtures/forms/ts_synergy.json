@@ -113,7 +113,7 @@
     },
     {
       "code": "open",
-      "title": "Open-ended questions",
+      "title": "Open-ended questions:",
       "questions": [
         {
           "code": "open_1",
@@ -166,5 +166,5 @@
   ],
   "_source": "Team_Science.pdf (Piestar export), split into four surveys (MW, 2026-10-24); open-ended prompts reworded per topic.",
   "sort_order": 5,
-  "_change_notes": "Rating section titled 'Survey Questions:' (MW, 2026-10-25)."
+  "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

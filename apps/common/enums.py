@@ -146,6 +146,7 @@ class SnapshotKind(models.TextChoices):
 
 class SnapshotStatus(models.TextChoices):
     GENERATED = "generated", "Generated, under review"
+    REVIEWED = "reviewed", "Reviewed, ready to finalize"
     FINALIZED = "finalized", "Finalized"
     SUPERSEDED = "superseded", "Superseded by a later version"
 
