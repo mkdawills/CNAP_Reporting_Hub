@@ -247,4 +247,4 @@ MW: set up the next session right away so people can sign in and look at the sur
 - Nothing can be answered in preview: drafts, submit and opt-out are refused (is_editable checks the period), and opening a form redirects to its preview. "Close period" isn't offered.
 - It opens by itself at opens_at (derived from the date; no job or button needed). Tests: tests/test_preview_period.py.
 - Prototype: a "Demo: show as preview / open answering now" switch on Reporting periods (prototype only) shows both states.
-- Footnote under My tasks ("* Opt out of any survey …") has clear space above so it reads as applying to the whole list. Task summary reads "5 of 10 remaining. About 34 min in total."
+- Footnote under My tasks ("* Opt out of any survey …") has clear space above so it reads as applying to the whole list. Task summary reads "5 of 10 remaining." with "About 34 min in total. Due in 102 days (Feb 1)." together on the next line.
