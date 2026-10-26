@@ -270,3 +270,10 @@ MW chose acknowledgment checking first (then counts for the NIH report, exportab
 - Downloads (CSV, opens in Excel): citation list (with a ready-made citation column, links, both acknowledgment checks, people, projects, cores), grant list (agency, mechanism, A0/A1, status, dates, amounts, PI, people, projects, cores, acknowledgment), and the counts. Each download is audited.
 - Each person's admin page lists their papers and grants with acknowledgment status.
 - Still to come: faculty entering their own outcomes (and students entering for them), presentations entry, and the matching prototype screens.
+
+## 2026-10-25 — Year-over-year table like the Year 9 reports; NI import fixed
+
+- Table 2's item table has three header rows (school year "2022–2023", "Year 6", Fall/Spring), red-to-blue shading centered on the table's middle value (red below, blue above, deeper = further; note under the table), and a "Means / Means and SD" switch. SDs come from the reports where given (NeuroSync all periods; NI all periods; BN and CN for Y9 Spring from Table 1); otherwise "–". Live periods use the computed SD.
+- Data fix: NI's trend tables pair each mean with its SD, and the first extraction read alternating columns, so NI means sat under the wrong periods and Y8 Spring–Y9 Spring were missing. The extractor now reads pairs; NI has 8 periods per item, checked against the report. The earlier sanity check compared the database to the extracted file, not to the reports, so it couldn't catch this.
+- CN "CN Core Shared facility space (Bluemont Hall 426)" is the same item as today's "CN Core Shared facility space" (MW confirmed; the Y9 Spring report lists it as current), so its Y6–Y9 history is joined to cn_frequency_02.
+- The importer stores the SD with each mean and removes imported values the file no longer contains. File now: 797 means, 186 SDs.

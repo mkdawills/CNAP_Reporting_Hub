@@ -79,17 +79,20 @@
 </div>
 {% endif %}{% endwith %}
 <details class="tmore"><summary><span class="tmore-open">Show item-by-item trends</span><span class="tmore-close">Hide item-by-item trends</span></summary>
+{% if t.lon.has_sd %}<div class="nview sdview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-sdview="mean" class="on">Means</button><button type="button" data-sdview="sd">Means and SD</button></div>{% endif %}
 <div class="scroll"><table class="lontab">
   <thead>
-    <tr><th rowspan="2" style="text-align:left">Item</th>{% for y in t.lon.years %}<th colspan="{{ y.span }}" class="num ygstart">Y{{ y.year }}</th>{% endfor %}</tr>
-    <tr>{% for pp in t.lon.periods %}<th class="num{% if pp.sequence == 1 or forloop.first %} ygstart{% endif %}{% if forloop.last %} latest{% endif %}">{{ pp.short_label|lastword }}</th>{% endfor %}</tr>
+    <tr><th rowspan="3" style="text-align:left">Item</th>{% for y in t.lon.years %}<th colspan="{{ y.span }}" data-span="{{ y.span }}" class="num ygstart sdgrp">{{ y.school }}</th>{% endfor %}</tr>
+    <tr>{% for y in t.lon.years %}<th colspan="{{ y.span }}" data-span="{{ y.span }}" class="num ygstart sdgrp">Year {{ y.year }}</th>{% endfor %}</tr>
+    <tr>{% for pp in t.lon.periods %}<th data-span="1" class="num sdgrp{% if pp.sequence == 1 or forloop.first %} ygstart{% endif %}{% if forloop.last %} latest{% endif %}">{{ pp.short_label|lastword }}</th>{% endfor %}</tr>
   </thead>
   <tbody>
     {% for r in t.lon.rows %}<tr><td><div class="itm"><span class="ino">{% if r.no %}{{ r.no }}.{% endif %}</span><div><strong>{{ r.prompt }}</strong></div></div></td>
-      {% for c in r.cells %}<td class="num{% if c.year_start or forloop.first %} ygstart{% endif %}{% if c.latest %} latest{% endif %}" style="{{ c.style }}">{% if c.mean is not None %}{{ c.mean|floatformat:1 }}{% else %}–{% endif %}</td>{% endfor %}</tr>{% endfor %}
-    <tr class="totrow"><td style="text-align:right"><strong>Overall mean ratings:</strong></td>{% for c in t.lon.overall %}<td class="num{% if forloop.first %} ygstart{% endif %}" style="{{ c.style }}"><strong>{% if c.mean is not None %}{{ c.mean|floatformat:1 }}{% else %}–{% endif %}</strong></td>{% endfor %}</tr>
+      {% for c in r.cells %}<td class="num{% if c.year_start or forloop.first %} ygstart{% endif %}{% if c.latest %} latest{% endif %}" style="{{ c.style }}">{% if c.mean is not None %}{{ c.mean|floatformat:1 }}{% else %}–{% endif %}</td><td class="num sdc{% if c.latest %} latest{% endif %}">{% if c.sd is not None %}({{ c.sd|floatformat:1 }}){% elif c.mean is not None %}<span class="muted">–</span>{% endif %}</td>{% endfor %}</tr>{% endfor %}
+    <tr class="totrow"><td style="text-align:right"><strong>Overall mean ratings:</strong></td>{% for c in t.lon.overall %}<td class="num{% if forloop.first %} ygstart{% endif %}" style="{{ c.style }}"><strong>{% if c.mean is not None %}{{ c.mean|floatformat:1 }}{% else %}–{% endif %}</strong></td><td class="num sdc">{% if c.sd is not None %}({{ c.sd|floatformat:1 }}){% endif %}</td>{% endfor %}</tr>
   </tbody>
 </table></div>
+<p class="small muted mt">{{ "Shading: red is below this table’s middle value, blue is above it; the deeper the color, the further from the middle."|stack }}{% if t.lon.has_sd %} {{ "SDs exist only where the source report gave them."|stack }}{% endif %}</p>
 </details>
 </div>
 {% endif %}

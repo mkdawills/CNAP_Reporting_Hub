@@ -54,8 +54,15 @@ def md_tables(path):
 rows_out = []
 
 
-def emit(form, measure, name, scale, values, source):
-    for (label, gy, seq), v in zip(PERIODS, values):
+SDS = {}  # (form, measure, period label) -> sd, where the reports give one
+ALIASES = {"cncoresharedfacilityspacebluemonthall426": "cn_frequency_02"}
+
+
+def emit(form, measure, name, scale, values, source, sds=None):
+    for i, ((label, gy, seq), v) in enumerate(zip(PERIODS, values)):
+        sd = sds[i] if sds and i < len(sds) else None
+        if isinstance(sd, (int, float)):
+            SDS[(form, measure, label)] = round(float(sd), 3)
         if (
             v in (None, "", "--", "-")
             or isinstance(v, str)
@@ -96,6 +103,13 @@ for core, doc in (
     ):
         items = fixture_items(f"{core}_core_survey", section)
         lookup = {norm(p): (m, p) for m, p, _ in items}
+        # Same item, room number dropped from today's wording (the Y9 Spring report lists it as current).
+        for old, code in ALIASES.items():
+            hit = next(((m, p) for m, p, _ in items if m == code), None)
+            if hit:
+                lookup[old] = hit
+        # NI's trend tables pair every mean with its SD: Mean | (SD) | Mean | (SD) ...
+        paired = any(sum(c == "(SD)" for c in row) >= 4 for row in tab[:6])
         retired = 0
         for r in tab:
             label = r[0]
@@ -106,12 +120,17 @@ for core, doc in (
                 or label.lower().startswith("grand")
             ):
                 continue
-            vals = r[1:9]
+            if paired:
+                vals = [r[i] if i < len(r) else "" for i in range(1, 17, 2)]
+                sds = [(r[i] if i < len(r) else "").strip("()") for i in range(2, 18, 2)]
+                sds = [float(x) if re.match(r"^\d+(\.\d+)?$", x or "") else None for x in sds]
+            else:
+                vals, sds = r[1:9], None
             if not any(re.match(r"^\d", v or "") for v in vals):
                 continue
             hit = lookup.get(norm(label))
             if hit:
-                emit(f"{core}_core_survey", hit[0], hit[1], scale, vals, doc)
+                emit(f"{core}_core_survey", hit[0], hit[1], scale, vals, doc, sds)
             else:
                 retired += 1
                 emit(
@@ -121,10 +140,43 @@ for core, doc in (
                     scale,
                     vals,
                     doc + " (retired item)",
+                    sds,
                 )
 
 
-def comparison(xlsx, sheet, form, section, scale, mean_cols):
+def table1_sds(core, md):
+    """Table 1 of each core report is the latest period (Y9 Spring): Mean | (SD) per item."""
+    cur, tabs = [], []
+    for line in Path(md).read_text().splitlines():
+        if line.startswith("|"):
+            cur.append(
+                [c.strip().replace("**", "").strip() for c in line.strip().strip("|").split("|")]
+            )
+        elif cur:
+            tabs.append(cur)
+            cur = []
+    t1 = [
+        t
+        for t in tabs
+        if any(
+            ("(SD)" in r or "SD" in r) and "Mean" in r and sum(c == "(SD)" for c in r) < 2
+            for r in t[:2]
+        )
+    ]
+    for tab, section in zip(t1[:2], ("quality", "frequency")):
+        lookup = {norm(p): m for m, p, _ in fixture_items(f"{core}_core_survey", section)}
+        lookup.update({k: v for k, v in ALIASES.items() if v in lookup.values()})
+        for r in tab:
+            m = lookup.get(norm(r[0]))
+            if m and len(r) > 2 and re.match(r"^\(?\d+(\.\d+)?\)?$", r[2]):
+                SDS[(f"{core}_core_survey", m, "Y9 Spring")] = float(r[2].strip("()"))
+
+
+for core in ("bn", "ni", "cn"):
+    table1_sds(core, Y9 / f"{core}.md")
+
+
+def comparison(xlsx, sheet, form, section, scale, mean_cols, sd_cols=None):
     ws = load_workbook(Y9 / xlsx, read_only=True, data_only=True)[sheet]
     items = fixture_items(form, section)
     i = 0
@@ -134,7 +186,15 @@ def comparison(xlsx, sheet, form, section, scale, mean_cols):
             continue
         m, prompt, _ = items[i]
         i += 1
-        emit(form, m, prompt, scale, [r[c] for c in mean_cols], xlsx)
+        emit(
+            form,
+            m,
+            prompt,
+            scale,
+            [r[c] for c in mean_cols],
+            xlsx,
+            [r[c] for c in sd_cols] if sd_cols else None,
+        )
     assert i == len(items), (form, i)
 
 
@@ -145,6 +205,7 @@ comparison(
     "ratings",
     "Agreement",
     [1, 3, 5, 7, 9, 11, 13, 15],
+    [2, 4, 6, 8, 10, 12, 14, 16],
 )
 comparison(
     "Mentor Survey - Year 9 Site Visit.xlsx",
@@ -163,6 +224,8 @@ comparison(
     [1, 2, 3, 4, 5, 6, 7, 8],
 )
 
+for r in rows_out:
+    r["sd"] = SDS.get((r["form_code"], r["measure_code"], r["period"]), "")
 OUT.parent.mkdir(parents=True, exist_ok=True)
 with OUT.open("w", newline="") as fh:
     w = csv.DictWriter(fh, fieldnames=list(rows_out[0]))

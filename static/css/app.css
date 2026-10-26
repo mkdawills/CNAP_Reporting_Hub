@@ -582,3 +582,9 @@ fieldset.checks { border: 0; padding: 0; margin: 0 0 18px; }
 fieldset.checks legend { font-weight: 600; margin-bottom: 4px; }
 .cnttab td.num, .cnttab th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .cnttab td, .cnttab th { padding: 6px 10px; }
+/* year-over-year: SD columns only when asked for */
+.lontab .sdc { display: none; font-size: .75em; color: var(--muted); }
+.show-sd .lontab .sdc { display: table-cell; }
+.show-sd .lontab td.num:not(.sdc) { border-right: 0; }
+.lontab thead tr:first-child th { font-size: .72rem; color: var(--muted); font-weight: 600; }
+.sdview { margin: 6px 0 10px; }

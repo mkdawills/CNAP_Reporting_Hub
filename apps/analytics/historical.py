@@ -6,9 +6,10 @@ The file has one row per item per period:
 
 Each period becomes a finalized ReportingPeriod (if it doesn't exist) with one
 finalized snapshot of kind 'imported_aggregate' and provenance
-'aggregate_import'. Means are stored as historical_item_mean results with no n
-and no drill-down. Measures not in any current form are created inactive
-(retired items). Running the import again updates values in place.
+'aggregate_import'. Means (and the SD where the report gives one) are stored as historical_item_mean
+results with no n and no drill-down. Measures not in any current form are created inactive
+(retired items). Running the import again updates values in place and removes
+imported values the file no longer contains.
 """
 
 import csv
@@ -78,7 +79,7 @@ def _period(label, grant_year, sequence):
 @transaction.atomic
 def import_file(path, actor=None):
     rows = list(csv.DictReader(Path(path).open()))
-    snaps, n = {}, 0
+    snaps, n, kept = {}, 0, {}
     for r in rows:
         key = (int(r["grant_year"]), int(r["sequence"]))
         if key not in snaps:
@@ -114,15 +115,29 @@ def import_file(path, actor=None):
             defaults={
                 "value": float(r["mean"]),
                 "n": None,
-                "detail": {"prompt": r["measure_name"], "source": r["source"]},
+                "detail": {
+                    "prompt": r["measure_name"],
+                    "source": r["source"],
+                    "sd": float(r["sd"]) if r.get("sd") not in (None, "") else None,
+                },
                 "is_confidential": r["form_code"] in ("mentee_survey", "mentor_questionnaire"),
             },
         )
         n += 1
+        kept.setdefault(snaps[key].pk, set()).add((r["form_code"], measure.pk))
+    # The file is the whole truth for imported periods: drop rows it no longer contains.
+    removed = 0
+    for snap_pk, keep in kept.items():
+        for res in SnapshotResult.objects.filter(
+            snapshot_id=snap_pk, metric_code="historical_item_mean"
+        ):
+            if (res.group_key, res.subject_id) not in keep:
+                res.delete()
+                removed += 1
     record_event(
         actor,
         AuditLog.Action.IMPORT,
         "analytics.historical_aggregates",
-        new={"values": n, "periods": len(snaps), "file": Path(path).name},
+        new={"values": n, "periods": len(snaps), "removed": removed, "file": Path(path).name},
     )
     return n, len(snaps)

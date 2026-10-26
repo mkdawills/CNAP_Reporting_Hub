@@ -58,14 +58,37 @@ def heat_rel(mean, lo, hi):
     return css + (";color:#fff" if a > 0.62 else "")
 
 
+def heat_div(mean, lo, mid, hi):
+    """Red below the table's middle value, blue above it, like the Year 9 site-visit tables."""
+    if mean is None:
+        return ""
+    if mean >= mid:
+        a = 0.0 if hi <= mid else min(1.0, (mean - mid) / (hi - mid))
+        rgb = "33,102,172"
+    else:
+        a = 0.0 if mid <= lo else min(1.0, (mid - mean) / (mid - lo))
+        rgb = "178,24,43"
+    if a < 0.04:
+        return ""
+    css = f"background:rgba({rgb},{0.08 + a * 0.72:.2f})"
+    return css + (";color:#fff" if a > 0.7 else "")
+
+
 def _restyle(lon):
     vals = [c["mean"] for r in lon["rows"] for c in r["cells"] if c["mean"] is not None]
     vals += [c["mean"] for c in lon["overall"] if c["mean"] is not None]
     if not vals:
         return
-    lo, hi = min(vals), max(vals)
+    vals.sort()
+    lo, hi = vals[0], vals[-1]
+    mid = (
+        vals[len(vals) // 2]
+        if len(vals) % 2
+        else (vals[len(vals) // 2 - 1] + vals[len(vals) // 2]) / 2
+    )
+    lon["mid"] = mid
     for c in [c for r in lon["rows"] for c in r["cells"]] + lon["overall"]:
-        c["style"] = heat_rel(c["mean"], lo, hi)
+        c["style"] = heat_div(c["mean"], lo, mid, hi)
 
 
 SEGMENT_COLORS = {
@@ -182,13 +205,13 @@ def _scale(question):
 
 
 def _period_means(form_definition, measure_ids, upto):
-    """{period: {measure_id: mean}} from imported aggregates and finalized platform snapshots."""
+    """({period: {measure_id: mean}}, {period: {measure_id: sd}}) from imported aggregates and finalized snapshots."""
     periods = list(
         ReportingPeriod.objects.filter(display_order__lte=upto.display_order).order_by(
             "display_order"
         )
     )
-    out = {}
+    out, sds = {}, {}
     for p in periods:
         snap = (
             ReportingSnapshot.objects.filter(reporting_period=p, status=SnapshotStatus.FINALIZED)
@@ -203,10 +226,16 @@ def _period_means(form_definition, measure_ids, upto):
             subject_type="measure",
             group_key=form_definition.code,
         )
+        rows = list(rows)
         vals = {r.subject_id: float(r.value) for r in rows if r.value is not None}
         if vals:
             out[p] = vals
-    return out
+            sds[p] = {
+                r.subject_id: (r.detail or {}).get("sd")
+                for r in rows
+                if (r.detail or {}).get("sd") is not None
+            }
+    return out, sds
 
 
 def build(form_definition, period, *, audience="admin"):
@@ -315,7 +344,7 @@ def build(form_definition, period, *, audience="admin"):
         # Year over year: prior periods (imported or finalized) plus this period live.
         measure_ids = [q.measure_id for q in qs if q.measure_id]
         if upto_means is None:
-            upto_means = _period_means(form_definition, measure_ids, period)
+            upto_means, upto_sds = _period_means(form_definition, measure_ids, period)
         cols = [
             p
             for p in upto_means
@@ -345,9 +374,14 @@ def build(form_definition, period, *, audience="admin"):
                         if p.pk == period.pk
                         else upto_means.get(p, {}).get(r["q"].measure_id)
                     )
+                    if p.pk == period.pk and not skip_main:
+                        sd = r["sd"] if r["n"] >= 2 else None
+                    else:
+                        sd = upto_sds.get(p, {}).get(r["q"].measure_id)
                     cells.append(
                         {
                             "mean": m,
+                            "sd": sd,
                             "style": heat_mean(m, 1, len(scale)),
                             "latest": p.pk == period.pk,
                             "year_start": p.sequence == 1,
@@ -358,6 +392,7 @@ def build(form_definition, period, *, audience="admin"):
                 cells = [
                     {
                         "mean": upto_means.get(p, {}).get(m.pk),
+                        "sd": upto_sds.get(p, {}).get(m.pk),
                         "style": heat_mean(upto_means.get(p, {}).get(m.pk), 1, len(scale)),
                         "latest": p.pk == period.pk,
                         "year_start": p.sequence == 1,
@@ -370,7 +405,13 @@ def build(form_definition, period, *, audience="admin"):
                 if years and years[-1]["year"] == p.grant_year:
                     years[-1]["span"] += 1
                 else:
-                    years.append({"year": p.grant_year, "span": 1})
+                    years.append(
+                        {
+                            "year": p.grant_year,
+                            "span": 1,
+                            "school": f"{2016 + p.grant_year}–{2017 + p.grant_year}",
+                        }
+                    )
             table["lon"] = {
                 "no": tno + 1,
                 "periods": col_objs,
@@ -383,6 +424,11 @@ def build(form_definition, period, *, audience="admin"):
                     for p in col_objs
                 ],
             }
+            if not skip_main and table["lon"]["overall"]:
+                table["lon"]["overall"][-1]["sd"] = table["grand_sd"] if total >= 2 else None
+            table["lon"]["has_sd"] = any(
+                c.get("sd") is not None for r in lon_rows for c in r["cells"]
+            )
             _restyle(table["lon"])
             table["lon"]["trend"] = _trend(table["lon"])
             tno += 1
@@ -533,7 +579,7 @@ def _trend(lon, w=640, h=170, pad_l=34, pad_r=16, pad_t=22, pad_b=34):
 
 def _overall(means, measure_ids, top):
     if not means:
-        return {"mean": None, "style": ""}
+        return {"mean": None, "style": "", "sd": None}
     vals = [means[m] for m in measure_ids if means.get(m) is not None]
     m = sum(vals) / len(vals) if vals else None
-    return {"mean": m, "style": heat_mean(m, 1, top)}
+    return {"mean": m, "style": heat_mean(m, 1, top), "sd": None}

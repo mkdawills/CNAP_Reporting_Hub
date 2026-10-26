@@ -32,7 +32,7 @@ METRICS = [
         "code": "historical_item_mean",
         "name": "Historical item mean (imported)",
         "domain": "survey",
-        "definition_text": "An item mean copied from a Year 6 to Year 9 report. Only the mean is known; there is no n, distribution or drill-down.",
+        "definition_text": "An item mean copied from a Year 6 to Year 9 report, with its SD in the detail where the report gives one. There is no n, distribution or drill-down.",
         "dimensions": ["form", "measure"],
     },
 ]
