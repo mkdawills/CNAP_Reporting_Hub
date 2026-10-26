@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}{% if obj %}Edit{% else %}Add{% endif %} {{ kind }} · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{% if obj %}Edit{% else %}Add a{% endif %} {{ kind }}</h1><p>{% if kind == 'grant' %}{{ "One record per submission. A resubmission keeps the original title so it shows as A1, A2, …"|stack }}{% else %}{{ "One record per paper, followed from planned to published."|stack }}{% endif %}</p></div></div>
+<form method="post" class="panel" style="max-width:860px">{% csrf_token %}
+  {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+  {% for field in form %}{% if obj and field.name == 'family_title' %}{% else %}
+    <div class="field"><label>{{ field.label }}{{ field }}</label>{% if field.help_text %}<div class="help">{{ field.help_text|stack }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>
+  {% endif %}{% endfor %}
+  <h2 class="sectionhead" style="margin-top:28px">Credit</h2>
+  {% for field in credit %}
+    <fieldset class="field checks"><legend>{{ field.label }}</legend>{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}<div class="checkgrid">{% for c in field %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div></fieldset>
+  {% endfor %}
+  <div class="actions"><button class="btn" type="submit">Save</button><a href="{% url 'manage:outcomes' %}{% if kind == 'grant' %}?tab=grants{% endif %}">Cancel</a></div>
+</form>
+{% endblock %}

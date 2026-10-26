@@ -258,4 +258,146 @@ def seed_demo(stdout=None):
                 a.started_at = now
                 a.save(update_fields=["status", "started_at"])
                 Response.objects.create(assignment=a)
+    _seed_outcomes(people)
     log(f"Sample center ready. Logins use the password {DEMO_PASSWORD}.")
+
+
+def _seed_outcomes(people):
+    """A few fictional papers and proposals so the Publications and grants page has something to check."""
+    from apps.outcomes.models import (
+        GrantFamily,
+        GrantSubmission,
+        GrantSubmissionPerson,
+        GrantSubmissionProject,
+        GrantSubmissionResource,
+        Publication,
+        PublicationPerson,
+        PublicationProject,
+        PublicationResource,
+    )
+    from apps.people.models import Project, Resource
+
+    if Publication.objects.exists():
+        return
+    projects = list(Project.objects.order_by("pk"))
+    res = {r.code: r for r in Resource.objects.all()}
+    core_res = [r for r in res.values() if r.core_id]
+    P = people
+    pubs = [
+        (
+            "Sample paper: attention shifts measured with EEG in young adults",
+            "Journal of Sample Neuroscience",
+            dt.date(2026, 3, 1),
+            True,
+            ["okafor", "moreau"],
+            [0],
+            ["CN"],
+        ),
+        (
+            "Sample paper: a shared pipeline for behavioral video scoring",
+            "Sample Methods Letters",
+            dt.date(2026, 5, 1),
+            None,
+            ["varga", "kim"],
+            [1],
+            ["BN", "NI"],
+        ),
+        (
+            "Sample paper: mentoring networks in a COBRE center",
+            "Sample Journal of Research Development",
+            dt.date(2025, 11, 1),
+            False,
+            ["kim"],
+            [1, 2],
+            [],
+        ),
+        (
+            "Sample paper: open data practices for small labs",
+            "Sample Data Science Review",
+            dt.date(2026, 1, 1),
+            None,
+            ["natarajan"],
+            [],
+            ["NI"],
+        ),
+    ]
+    for title, journal, when, cited, who, prj, cores in pubs:
+        p = Publication.objects.create(
+            title=title,
+            publication_type="journal_article",
+            status="published",
+            journal=journal,
+            publication_date=when,
+            cnap_cited=cited,
+        )
+        for i, u in enumerate(who):
+            if u in P:
+                PublicationPerson.objects.create(publication=p, person=P[u], author_order=i)
+        for k in prj:
+            if k < len(projects):
+                PublicationProject.objects.create(publication=p, project=projects[k])
+        for c in cores:
+            r = next((x for x in core_res if x.core.code == c), None)
+            if r:
+                PublicationResource.objects.create(publication=p, resource=r)
+    grants = [
+        (
+            "Sample R01: circuits of sustained attention",
+            "NIH",
+            "R01",
+            "awarded",
+            dt.date(2025, 10, 5),
+            1250000,
+            True,
+            "okafor",
+            [0],
+            ["CN"],
+        ),
+        (
+            "Sample R21: low-cost behavioral phenotyping",
+            "NIH",
+            "R21",
+            "submitted",
+            dt.date(2026, 2, 16),
+            None,
+            None,
+            "varga",
+            [1],
+            ["BN"],
+        ),
+        (
+            "Sample NSF CAREER: data stewardship for neuroscience",
+            "NSF",
+            "CAREER",
+            "not_funded",
+            dt.date(2025, 7, 25),
+            None,
+            False,
+            "natarajan",
+            [],
+            ["NI"],
+        ),
+    ]
+    for title, agency, mech, status, sub, award, ack, pi, prj, cores in grants:
+        fam = GrantFamily.objects.create(title=title)
+        g = GrantSubmission.objects.create(
+            grant_family=fam,
+            project_title=title,
+            funding_agency=agency,
+            mechanism=mech,
+            status=status,
+            submission_date=sub,
+            award_total=award,
+            cnap_acknowledged=ack,
+        )
+        if pi in P:
+            GrantSubmissionPerson.objects.create(
+                grant_submission=g, person=P[pi], role="pi", is_primary_cnap_contact=True
+            )
+        for k in prj:
+            if k < len(projects):
+                GrantSubmissionProject.objects.create(grant_submission=g, project=projects[k])
+        for c in cores:
+            r = next((x for x in core_res if x.core.code == c), None)
+            if r:
+                GrantSubmissionResource.objects.create(grant_submission=g, resource=r)

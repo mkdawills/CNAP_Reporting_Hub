@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import audit, home, people, periods, quality, results, roster
+from .views import audit, home, outcomes, people, periods, quality, results, roster
 
 app_name = "manage"
 
@@ -64,6 +64,13 @@ urlpatterns = [
     path("results/<str:label>/<slug:code>/export/", results.export_report, name="export_report"),
     path("responses/<int:pk>/", results.response, name="response"),
     # data checks and audit
+    # publications and grants
+    path("outcomes/", outcomes.outcomes, name="outcomes"),
+    path("outcomes/publications/new/", outcomes.publication_edit, name="publication_new"),
+    path("outcomes/publications/<int:pk>/", outcomes.publication_edit, name="publication_edit"),
+    path("outcomes/grants/new/", outcomes.grant_edit, name="grant_new"),
+    path("outcomes/grants/<int:pk>/", outcomes.grant_edit, name="grant_edit"),
+    path("outcomes/<str:kind>/<int:pk>/ack/", outcomes.set_ack, name="set_ack"),
     path("checks/", quality.checks, name="quality"),
     path("checks/dismiss/", quality.dismiss, name="quality_dismiss"),
     path("audit/", audit.audit, name="audit"),

@@ -563,3 +563,20 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .life li { font-size: .8rem; padding-right: 4px; }
 .fchip .why { display: block; font-size: .7rem; color: var(--muted); font-weight: 400; margin-top: 1px; }
 .skips { margin-top: 6px; }
+/* publications and grants */
+.ack-kpis { margin-bottom: 18px; }
+.ack-kpis .kpi { text-decoration: none; color: inherit; border: 2px solid transparent; max-width: 340px; }
+.ack-kpis .kpi.on { border-color: var(--ink); }
+.tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.tabs a { padding: 8px 2px; text-decoration: none; color: var(--muted); font-weight: 600; border-bottom: 3px solid transparent; }
+.tabs a.on { color: var(--ink); border-bottom-color: var(--ink); }
+.filt a { color: var(--muted); }
+.filt a.on { color: var(--ink); font-weight: 700; text-decoration: none; }
+.ack { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ack-l { font-weight: 700; font-size: .85rem; min-width: 84px; }
+.ack-y .ack-l { color: #1f6857; } .ack-n .ack-l { color: #b2432f; } .ack-q .ack-l { color: var(--muted); }
+.ack-f { display: flex; gap: 4px; margin: 0; }
+.checkgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 4px 16px; max-height: 260px; overflow: auto; padding: 6px 0; }
+.checkgrid label { display: flex; gap: 8px; align-items: flex-start; font-size: .88rem; color: var(--ink); }
+fieldset.checks { border: 0; padding: 0; margin: 0 0 18px; }
+fieldset.checks legend { font-weight: 600; margin-bottom: 4px; }

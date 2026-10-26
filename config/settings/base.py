@@ -136,3 +136,6 @@ SESSION_COOKIE_SAMESITE = "Lax"
 X_FRAME_OPTIONS = "DENY"
 
 AUTHENTICATION_BACKENDS = ["apps.accounts.backends.RoleBackend"]
+
+# Django 6 default; set now so link fields assume https.
+FORMS_URLFIELD_ASSUME_HTTPS = True

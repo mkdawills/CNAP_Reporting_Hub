@@ -1,0 +1,44 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Publications and grants · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head">
+  <div><h1>Publications and grants</h1><p>{{ "Check whether each published paper and each submitted proposal acknowledges CNAP. One paper or grant can be credited to several projects and cores."|stack }}</p></div>
+  {% if can_edit %}<div class="fieldrow"><a class="btn" href="{% url 'manage:publication_new' %}">Add a publication</a><a class="btn ghost" href="{% url 'manage:grant_new' %}">Add a grant</a></div>{% endif %}
+</div>
+
+<div class="kpis ack-kpis">
+  <a class="kpi{% if tab == 'pubs' %} on{% endif %}" href="?tab=pubs"><span class="ring" style="--p:{{ summary.pubs.pct|default:0 }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v">{% if summary.pubs.pct is not None %}{{ summary.pubs.pct }}%{% else %}—{% endif %}</span><span class="kpi-l">of checked published papers acknowledge CNAP</span><span class="kpi-l">{{ summary.pubs.unchecked }} of {{ summary.pubs.total }} still to check</span></span></a>
+  <a class="kpi{% if tab == 'grants' %} on{% endif %}" href="?tab=grants"><span class="ring" style="--p:{{ summary.grants.pct|default:0 }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v">{% if summary.grants.pct is not None %}{{ summary.grants.pct }}%{% else %}—{% endif %}</span><span class="kpi-l">of checked submitted proposals acknowledge CNAP</span><span class="kpi-l">{{ summary.grants.unchecked }} of {{ summary.grants.total }} still to check</span></span></a>
+</div>
+
+<div class="panel">
+  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}">Grants</a></div>
+  <p class="small muted filt">Show: {% for k, label in filters %}<a href="?tab={{ tab }}&ack={{ k }}" class="{% if ack == k %}on{% endif %}">{{ label }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}{% if ack != 'all' %} <span>({% if tab == 'pubs' %}published papers{% else %}submitted proposals{% endif %} only)</span>{% endif %}</p>
+  <div class="scroll"><table class="outtab">
+    <thead><tr><th>{% if tab == 'pubs' %}Publication{% else %}Proposal{% endif %}</th><th>CNAP people</th><th>Credited to</th><th>Status</th><th>Acknowledges CNAP?</th></tr></thead>
+    <tbody>
+    {% for o in rows %}
+      {% if tab == 'pubs' %}{% with ack=o.cnap_cited %}
+      <tr>
+        <td>{% if can_edit %}<a href="{% url 'manage:publication_edit' o.pk %}"><strong>{{ o.title }}</strong></a>{% else %}<strong>{{ o.title }}</strong>{% endif %}
+          <div class="small muted">{{ o.journal|default:"" }}{% if o.publication_date %} · {{ o.publication_date|date:"M Y" }}{% endif %}{% if o.pubmed_url %} · <a href="{{ o.pubmed_url }}" target="_blank" rel="noopener">Open</a>{% endif %}</div></td>
+        <td class="small">{% for x in o.people.all %}<div>{{ x.person }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
+        <td class="small">{% for x in o.project_links.all %}<div>{{ x.project.title|truncatechars:40 }}</div>{% endfor %}{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% endfor %}{% if not o.project_links.all and not o.resource_links.all %}<span class="muted">—</span>{% endif %}</td>
+        <td class="small nowrap">{{ o.get_status_display }}{% if o.substatus %}<div class="muted">{{ o.get_substatus_display }}</div>{% endif %}</td>
+        <td>{% include "manage/_ack_cell.html" with kind="publication" %}</td>
+      </tr>{% endwith %}
+      {% else %}{% with ack=o.cnap_acknowledged %}
+      <tr>
+        <td>{% if can_edit %}<a href="{% url 'manage:grant_edit' o.pk %}"><strong>{{ o.project_title }}</strong></a>{% else %}<strong>{{ o.project_title }}</strong>{% endif %}
+          <div class="small muted">{{ o.funding_agency }}{% if o.mechanism %} {{ o.mechanism }}{% endif %} · {{ o.version_label }}{% if o.submission_date %} · submitted {{ o.submission_date|date:"M Y" }}{% endif %}</div></td>
+        <td class="small">{% for x in o.people.all %}<div>{{ x.person }}{% if x.role == 'pi' %} <span class="muted">(PI)</span>{% endif %}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
+        <td class="small">{% for x in o.project_links.all %}<div>{{ x.project.title|truncatechars:40 }}</div>{% endfor %}{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% endfor %}{% if not o.project_links.all and not o.resource_links.all %}<span class="muted">—</span>{% endif %}</td>
+        <td class="small nowrap">{{ o.get_status_display }}{% if o.award_total %}<div class="muted">${{ o.award_total|floatformat:0 }}</div>{% endif %}</td>
+        <td>{% include "manage/_ack_cell.html" with kind="grant" %}</td>
+      </tr>{% endwith %}
+      {% endif %}
+    {% empty %}<tr><td colspan="5" class="muted">Nothing here.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endblock %}

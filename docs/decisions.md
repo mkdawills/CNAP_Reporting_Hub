@@ -254,3 +254,12 @@ MW: set up the next session right away so people can sign in and look at the sur
 MW was worried about assignments being right. The launch review now shows, for every person, each form with the reason under it ("Everyone on the roster", "Research Project Leader (RPL)", "Core Director (CN Core)" …), what was deliberately not sent and why ("Not sent: CN Core, because they are core director of the CN Core"), and a warning for anyone active with no current CNAP role ("won’t receive anything").
 
 Outcomes (grants, awards, publications, presentations) — MW's direction so far: both people and administrators enter them; faculty can let a student enter on their behalf; the person can credit one outcome to several projects and/or cores (the schema already links one outcome to many projects and resources). UI is Build 2 per the original plan; a short plan goes to MW before building.
+
+## 2026-10-25 — Publications and grants, part 1: acknowledgment tracking
+
+MW chose acknowledgment checking first (then counts for the NIH report, exportable lists, and each person's outcomes on their page, in any order).
+- New admin page "Publications and grants" (sidebar). Two summary tiles: % of checked published papers that acknowledge CNAP, and % of checked submitted proposals that do, each with "n of N still to check"; clicking a tile switches tabs.
+- Publications tab lists published papers; Grants tab lists submitted proposals (planned ones appear under All). Filters: All · Needs checking · Not acknowledged · Acknowledged. Each row shows CNAP people, every project and core it is credited to, status, and "Acknowledges CNAP?" Yes / No / Not checked with one-click buttons (audited).
+- Add/edit forms for a publication and a grant. Credit: any number of CNAP people, projects, and cores/resources. A resubmission is entered with the earlier proposal's title and becomes A1, A2, … in the same grant family. Status changes write history rows. Publications record two checks: the paper acknowledges CNAP's grant (cnap_cited) and it is linked to the grant in NIH's records (cnap_in_grant_index).
+- Access: the evaluator adds, edits and marks; Center leadership sees the list read-only; respondents can't open it. Self-entry by faculty (and students entering for them) comes in a later part.
+- Fictional sample papers and proposals are added by `seed --fictional`.

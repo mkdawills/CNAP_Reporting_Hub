@@ -32,6 +32,7 @@
         {% url 'manage:longitudinal' as u_long %}{% if u_long %}<a href="{{ u_long }}" {% nav_current 'longitudinal' 'snapshot' %}>Year over year</a>{% endif %}
         <a href="{% url 'manage:people' %}" {% nav_current 'people' 'person' 'person_new' %}>People</a>
         <a href="{% url 'manage:projects' %}" {% nav_current 'projects' 'project' 'project_new' %}>Projects and cores</a>
+        <a href="{% url 'manage:outcomes' %}" {% nav_current 'outcomes' 'publication_new' 'publication_edit' 'grant_new' 'grant_edit' %}>Publications and grants</a>
         <a href="{% url 'manage:roster_imports' %}" {% nav_current 'roster_imports' 'roster_import' %}>Roster import</a>
         {% url 'manage:forms' as u_forms %}{% if u_forms %}<a href="{{ u_forms }}" {% nav_current 'forms' 'form_detail' %}>Forms</a>{% endif %}
         {% url 'manage:quality' as u_q %}{% if u_q %}<a href="{{ u_q }}" {% nav_current 'quality' %}>Data checks</a>{% endif %}
