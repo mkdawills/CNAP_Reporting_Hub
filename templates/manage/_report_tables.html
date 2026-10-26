@@ -4,7 +4,7 @@
 <h3 class="ttitle2">{{ t.section.title|cut:":" }}</h3>
 {% with g=t.glance %}{% if g %}
 <div class="kpis">
-  <div class="kpi"><div class="ring" style="--p:{{ g.mean_fill }};--c:#3a3a48"><span class="ring-v">{{ t.grand_mean|floatformat:1 }}<small>/{{ t.scale|length }}</small></span></div><span class="kpi-l">Average rating<br><b>{{ g.word }}</b></span></div>
+  <div class="kpi"><div class="ring" style="--p:{{ g.mean_fill }};--c:#3a3a48"><span class="ring-v">{{ t.grand_mean|floatformat:1 }}<small>/{{ t.scale|length }}</small></span></div><span class="kpi-l">Average rating: {{ g.word }}</span></div>
   <div class="kpi"><div class="ring" style="--p:{{ g.top_pct }};--c:#1f6857"><span class="ring-v pos">{{ g.top_pct }}%</span></div><span class="kpi-l">{{ g.top_label }}</span></div>
   <div class="kpi"><div class="ring" style="--p:{{ g.bot_pct }};--c:#b2432f"><span class="ring-v neg">{{ g.bot_pct }}%</span></div><span class="kpi-l">{{ g.bot_label }}</span></div>
 </div>

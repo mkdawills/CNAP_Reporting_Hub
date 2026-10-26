@@ -498,3 +498,7 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .ring-v.neg { color: #b2432f; }
 .kpi .kpi-l { font-size: .84rem; line-height: 1.3; }
 .linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--accent, #512888); text-decoration: underline; cursor: pointer; }
+/* grey table titles; rule under the headline rings */
+.ttitle2 { color: var(--muted); }
+.kpis { border-bottom: 1px solid var(--line); padding-bottom: 18px; margin-bottom: 18px; }
+.kpi { width: 150px; }
