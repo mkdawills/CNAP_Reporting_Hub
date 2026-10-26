@@ -11,8 +11,8 @@
 
   {% if prefill %}<dl class="prefill">{% for label, value in prefill %}<div><dt>{{ label }}</dt><dd>{{ value|default:"—" }}</dd></div>{% endfor %}</dl>{% endif %}
 
-  {% if preview %}<div class="previewbar"><p>{% if a.status == 'in_progress' %}{{ "You previously started this "|add:noun|add:", and your answers are saved. This preview doesn’t change anything."|stack }}{% else %}Preview. Nothing here is saved.{% endif %}</p>
-    {% if a.status == 'not_started' or a.status == 'in_progress' %}<a class="btn" href="{% url 'portal:form' a.pk %}">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a>{% endif %}</div>{% endif %}
+  {% if preview %}<div class="previewbar"><p>{% if a.status == 'in_progress' %}{{ "You previously started this "|add:noun|add:", and your answers are saved. This preview doesn’t change anything."|stack }}{% elif a.reporting_period.in_preview %}Preview. Answering opens {{ a.reporting_period.opens_at|date:"l, F j" }}.{% else %}Preview. Nothing here is saved.{% endif %}</p>
+    {% if a.reporting_period.in_preview %}<a class="btn ghost" href="{% url 'portal:tasks' %}">Back to my list</a>{% elif a.status == 'not_started' or a.status == 'in_progress' %}<a class="btn" href="{% url 'portal:form' a.pk %}">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a>{% endif %}</div>{% endif %}
   {% if resume %}<p class="resume">{{ "Welcome back. Your earlier answers are filled in, so you can pick up where you left off."|stack }}</p>{% endif %}
   {% if not editable and not preview %}<p class="readonly mt">{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}{{ "Submitted. This is a read-only copy. If you need to change something, ask the evaluator to reopen it."|stack }}{% else %}{{ "This period is closed, so this form is read-only."|stack }}{% endif %}</p>{% endif %}
   {% if errors %}<div class="error" role="alert">{% for e in errors %}<div>{{ e|stack }}</div>{% endfor %}</div>{% endif %}
@@ -31,7 +31,7 @@
     <div class="actions" style="position:sticky;bottom:0;background:var(--paper)">
       <button class="btn" type="submit" name="action" value="submit" id="submitbtn">{% if opted %}Submit opt-out{% else %}Submit{% endif %}</button>
       <button class="btn ghost" type="submit" name="action" value="save" formnovalidate>Save draft</button>
-    </div>{% elif preview and a.status != 'submitted' and a.status != 'completed_opt_out' and a.status != 'exempt' %}
+    </div>{% elif preview and not a.reporting_period.in_preview and a.status != 'submitted' and a.status != 'completed_opt_out' and a.status != 'exempt' %}
     <div class="actions"><a class="btn" href="{% url 'portal:form' a.pk %}">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a></div>{% endif %}
   </form>
 </div>

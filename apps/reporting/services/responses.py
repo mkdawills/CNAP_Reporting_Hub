@@ -91,6 +91,7 @@ def is_editable(assignment, user):
     return (
         assignment.person_id == user.person_id
         and assignment.reporting_period.status == PeriodStatus.OPEN
+        and not assignment.reporting_period.in_preview
         and assignment.status
         not in (
             AssignmentStatus.SUBMITTED,

@@ -558,3 +558,6 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .gh { background: none; border-left: 0; border-radius: 0; border-bottom: 2px solid var(--ink); padding: 18px 2px 8px; margin-bottom: 4px; }
 .gh h3 { font-size: .8rem; color: var(--ink); }
 .ghcount { border-left: 0 !important; padding-left: 0 !important; color: var(--muted); font-size: .8rem; }
+.footnote { margin-top: 36px !important; padding-top: 14px; }
+.life { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.life li { font-size: .8rem; padding-right: 4px; }

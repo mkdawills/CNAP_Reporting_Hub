@@ -73,6 +73,8 @@ def form(request, pk):
     gate = presenters.confidential_gate(request, a)
     if gate:
         return gate
+    if a.reporting_period.in_preview:
+        return redirect("portal:preview", pk)
     editable = rs.is_editable(a, request.user)
     errors, missing = [], []
     if request.method == "POST":

@@ -7,7 +7,9 @@
     {% if r.a.status == 'completed_opt_out' %}<div class="small muted">Opted out: {{ r.opt_out_note|default:r.pathway }}</div>{% endif %}
     {% if r.a.status == 'exempt' %}<div class="small muted">Not needed this period</div>{% endif %}
   </td>
-  {% if r.is_open %}
+  {% if r.is_open and r.preview_only %}
+    <td class="acts"><a class="btn small" href="{% url 'portal:preview' r.a.pk %}">Preview</a></td><td class="acts"></td><td class="acts"></td>
+  {% elif r.is_open %}
     <td class="acts"><a class="btn small" href="{% url 'portal:form' r.a.pk %}">{% if r.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a></td>
     <td class="acts"><a class="linkbtn" href="{% url 'portal:preview' r.a.pk %}">Preview</a></td>
     <td class="acts">{% if r.can_opt_out %}<form method="post" action="{% url 'portal:opt_out' r.a.pk %}">{% csrf_token %}<button class="btn small ghost" type="submit" title="{{ r.opt_out_note }}">Opt out*</button></form>{% endif %}</td>

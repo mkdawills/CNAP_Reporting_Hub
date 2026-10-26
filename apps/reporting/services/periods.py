@@ -1,10 +1,13 @@
 """
 Reporting-period lifecycle (Milestone 5; snapshots in Milestone 8):
 
-    draft (review before launch) -> open -> closed -> results generated
-    -> reviewed -> finalized
+    draft (review before launch) -> [open for preview] -> open -> closed
+    -> results generated -> reviewed -> finalized
 
 Launching generates assignments; nothing is sent while a period is a draft.
+Launching before the period's opens_at puts it in preview: people can sign in
+and read every form, but answering (drafts, submit, opt-out) starts at opens_at
+automatically. No separate step is needed to open it.
 """
 
 from django.db import transaction
@@ -17,6 +20,7 @@ from . import assignments
 
 STAGES = [
     ("draft", "Review before launch"),
+    ("preview", "Open for preview"),
     ("open", "Open"),
     ("closed", "Closed"),
     ("generated", "Results generated"),
@@ -30,7 +34,9 @@ class PeriodError(ValueError):
 
 
 def stage(period):
-    """Where the period is in the six-step lifecycle."""
+    """Where the period is in the seven-step lifecycle."""
+    if period.status == PeriodStatus.OPEN and period.in_preview:
+        return "preview"
     if period.status in (PeriodStatus.DRAFT, PeriodStatus.OPEN):
         return period.status
     if period.status == PeriodStatus.FINALIZED:

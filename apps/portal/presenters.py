@@ -82,10 +82,11 @@ def task_list(person, period, mine, just_done=None):
                 "about": disp.get("about", []),
                 "time": s.time_label(),
                 "minutes": s.minutes() if not disp.get("time_label") else 0,
-                "can_opt_out": bool(s.optout_question) and is_open,
+                "can_opt_out": bool(s.optout_question) and is_open and not period.in_preview,
                 "opt_out_note": (disp.get("opt_out") or {}).get("short", ""),
                 "used_core": bool(fd.about_core_id and fd.about_core_id in used),
                 "is_open": is_open,
+                "preview_only": period.in_preview,
                 "noun": _noun(fd),
                 "pathway": a.completion_pathway.name if a.completion_pathway_id else "",
             }

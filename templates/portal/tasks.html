@@ -4,9 +4,10 @@
 {% if not period %}
   <div class="head"><div><h1>My tasks</h1><p>{{ "No reporting period is open right now. We’ll e-mail you when the next one opens."|stack }}</p></div></div>
 {% else %}
+{% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong> {{ "You can read every form now with Preview. Answering opens that day; nothing you do here before then is saved."|stack }}</div>{% endif %}
 <div class="head"><div>
   <h1>My tasks</h1>
-  <p>{% if todo %}{{ todo }} of {{ total }} still to do{% if minutes_left %}, about {{ minutes_left }} min in total{% endif %}.{% else %}All {{ total }} done.{% endif %} {{ due }}.</p>
+  <p>{% if todo %}{{ todo }} of {{ total }} remaining.{% if minutes_left %} About {{ minutes_left }} min in total.{% endif %}{% else %}All {{ total }} done.{% endif %} {{ due }}.</p>
   <div class="taskprog"><div class="bar" role="progressbar" aria-label="Tasks done" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done_n }}"><span style="width:{{ pct }}%"></span></div><span class="small muted">{{ done_n }} of {{ total }} done</span></div>
   {% for d in is_core_director %}<p class="small muted">{{ "You direct the "|add:d.core.name|add:", so you don’t receive its user survey. You still receive the other core surveys."|stack }}</p>{% endfor %}
 </div></div>

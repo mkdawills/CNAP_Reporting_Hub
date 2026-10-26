@@ -239,3 +239,12 @@ MW: the two collections are Fall (surveyed in January) and Spring (surveyed in M
 - Full check (MW asked; Year 9 Spring is the latest real session): every page for every demo user returns 200 or the expected 403, no server errors; all 757 prior-year averages match across the CSV, the database and the prototype; NeuroSync Table 2 matches the Year 9 PDF exactly. Fixed: new-period suggestions now read "Y11 Fall"/"Year 11 Fall"; admin Results opens on the latest finalized period (Y9 Spring), with the open period still selectable and marked "(open: live, not final)"; field help and docstrings use Fall/Spring. Open question for MW: is the current CN item "CN Core Shared facility space" the same as the retired "… (Bluemont Hall 426)"? If so, link their history.
 - When a submit is blocked, the message lists each unanswered required question by name with a link, and each one is outlined in red with "Needs an answer". Hidden questions are never counted.
 - Task groups on My tasks are plain section headings (uppercase label, rule underneath), not tinted cards, so they don't look clickable.
+
+## 2026-10-25 — Open for preview
+
+MW: set up the next session right away so people can sign in and look at the surveys any time, without being able to answer yet.
+- New lifecycle step between review and open: launching a period before its opens_at puts it in "Open for preview" (seven steps now). Assignments exist and people see their full list on My tasks, but every row offers only Preview; a banner says "Year 10 Fall opens Monday, January 11. You can read every form now with Preview. Answering opens that day; nothing you do here before then is saved."
+- Nothing can be answered in preview: drafts, submit and opt-out are refused (is_editable checks the period), and opening a form redirects to its preview. "Close period" isn't offered.
+- It opens by itself at opens_at (derived from the date; no job or button needed). Tests: tests/test_preview_period.py.
+- Prototype: a "Demo: show as preview / open answering now" switch on Reporting periods (prototype only) shows both states.
+- Footnote under My tasks ("* Opt out of any survey …") has clear space above so it reads as applying to the whole list. Task summary reads "5 of 10 remaining. About 34 min in total."

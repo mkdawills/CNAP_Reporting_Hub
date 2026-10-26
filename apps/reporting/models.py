@@ -91,6 +91,19 @@ class ReportingPeriod(TimestampedModel):
             ),
         ]
 
+    @property
+    def in_preview(self):
+        """Launched but before opens_at: people can read their forms, but answering hasn't opened yet."""
+        from django.utils import timezone
+
+        return (
+            self.status == "open" and self.opens_at is not None and self.opens_at > timezone.now()
+        )
+
+    @property
+    def accepting_responses(self):
+        return self.status == "open" and not self.in_preview
+
     def __str__(self):
         return f"{self.name} ({self.short_label})"
 

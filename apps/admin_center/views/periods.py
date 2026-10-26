@@ -302,7 +302,15 @@ def launch_go(request, pk):
     except ps.PeriodError as exc:
         messages.error(request, str(exc))
         return redirect("manage:launch", pk)
-    messages.success(request, f"{p.short_label} is open. {result.created} forms were assigned.")
+    if p.in_preview:
+        when = timezone.localtime(p.opens_at).strftime("%A, %B %-d at %-I:%M %p")
+        messages.success(
+            request,
+            f"{p.short_label} is set up for preview. {result.created} forms were assigned. "
+            f"People can sign in and read their forms now; answering opens {when}.",
+        )
+    else:
+        messages.success(request, f"{p.short_label} is open. {result.created} forms were assigned.")
     return redirect(f"/manage/dashboard/?period={p.short_label}")
 
 

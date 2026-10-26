@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Reporting periods · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Reporting periods</h1><p>{{ "Each period moves through six steps, starting with a review before anything is sent. Finalized results change only through a new, audited version."|stack }}</p></div>
+<div class="head"><div><h1>Reporting periods</h1><p>{{ "Each period moves through seven steps, starting with a review before anything is sent. Finalized results change only through a new, audited version."|stack }}</p></div>
   {% if can_manage %}<div><a class="btn" href="{% url 'manage:period_new' %}">Add a period</a></div>{% endif %}</div>
 {% for r in rows %}
 <div class="panel">
