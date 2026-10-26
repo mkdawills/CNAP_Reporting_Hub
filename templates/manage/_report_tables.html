@@ -71,8 +71,8 @@
     </svg>
   </figure>
   <ul class="callouts">
-    {% if tr.gain %}<li><span class="co-k">Biggest gain since {{ tr.gain.since }}</span><span class="co-v up">▲ +{{ tr.gain.d|floatformat:1 }}</span><span class="co-t">{{ tr.gain.prompt }}</span></li>{% endif %}
-    {% if tr.drop %}<li><span class="co-k">Biggest drop since {{ tr.drop.since }}</span><span class="co-v down">▼ −{{ tr.drop.d|floatformat:1|cut:"-" }}</span><span class="co-t">{{ tr.drop.prompt }}</span></li>{% endif %}
+    {% if tr.gain %}<li><span class="co-k">Biggest gain since {{ tr.gain.since }}</span>{% if tr.gain.none %}<span class="co-t co-none">No item went up</span>{% else %}<span class="co-v up">▲ +{{ tr.gain.d|floatformat:1 }}</span><span class="co-t">{{ tr.gain.prompt }}</span>{% endif %}</li>{% endif %}
+    {% if tr.drop %}<li><span class="co-k">Biggest drop since {{ tr.drop.since }}</span>{% if tr.drop.none %}<span class="co-t co-none">No item went down</span>{% else %}<span class="co-v down">▼ −{{ tr.drop.d|floatformat:1|cut:"-" }}</span><span class="co-t">{{ tr.drop.prompt }}</span>{% endif %}</li>{% endif %}
     {% if tr.low %}<li><span class="co-k">Lowest-rated item now</span><span class="co-v">{{ tr.low.mean|floatformat:1 }}</span><span class="co-t">{{ tr.low.prompt }}</span></li>{% endif %}
   </ul>
 </div>

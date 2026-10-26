@@ -222,3 +222,4 @@ MW: "make it possible to instantly understand." The summary now answers three qu
 - (same day) Each ring sits on its own light grey square tile (so the rings read as summary cards, not chart marks) and is smaller (76px).
 - (same day) One spacing rhythm inside result cards: 40px at every break (title → tiles → rule → bars, note → button, card → card). The note under the bars sits 14px below them because it explains them.
 - (same day) Headline tiles shrunk to compact chips (small ring left, number and label right) sitting 12px under the title, so they read as title information. 40px rhythm resumes below them.
+- (same day) Every Table 2 shows all three call-out cards. When nothing rose or fell since the previous period the card says so quietly ("No item went up" / "No item went down") instead of disappearing.

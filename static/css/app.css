@@ -536,3 +536,4 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .ring-v { font-size: 1.05rem; }
 .ring-v small { font-size: .68rem; }
 .kpi .kpi-l { font-size: .74rem; }
+.co-none { color: var(--muted); font-weight: 500; }

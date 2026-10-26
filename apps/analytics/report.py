@@ -491,8 +491,16 @@ def _trend(lon, w=640, h=170, pad_l=34, pad_r=16, pad_t=22, pad_b=34):
         if deltas:
             up = max(deltas)
             dn = min(deltas)
-            gain = {"d": up[0], "prompt": up[1], "since": prev_label} if up[0] > 0 else None
-            drop = {"d": dn[0], "prompt": dn[1], "since": prev_label} if dn[0] < 0 else None
+            gain = (
+                {"d": up[0], "prompt": up[1], "since": prev_label}
+                if up[0] > 0
+                else {"none": True, "since": prev_label}
+            )
+            drop = (
+                {"d": dn[0], "prompt": dn[1], "since": prev_label}
+                if dn[0] < 0
+                else {"none": True, "since": prev_label}
+            )
     now = [
         (r["cells"][-1]["mean"], r["prompt"])
         for r in lon["rows"]
