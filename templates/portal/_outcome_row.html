@@ -13,6 +13,8 @@
       <a class="btn small" href="{% url 'portal:outcome_update' kind o.pk %}?for={{ owner.pk }}">Update status</a>
     {% elif o.status == 'planned' or o.status == 'submitted' %}
       <a class="linkbtn small" href="{% url 'portal:outcome_update' kind o.pk %}?for={{ owner.pk }}">Update status</a>
+    {% else %}
+      <a class="linkbtn small" href="{% url 'portal:outcome_update' kind o.pk %}?to={{ o.status }}&amp;for={{ owner.pk }}">View or edit</a>
     {% endif %}
   </div>
 </div>

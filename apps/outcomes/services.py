@@ -332,7 +332,13 @@ def update_publication(user, p, new_status, data, resources=None, projects=None,
         new={"status": new_status},
     )
     new = None
-    if new_status == PublicationStatus.DECLINED and data.get("resubmission_intent"):
+    if (
+        new_status == PublicationStatus.DECLINED
+        and data.get("resubmission_intent")
+        and not Publication.objects.filter(
+            resubmission_of=p
+        ).exists()  # re-saving never makes a second one
+    ):
         owner = p.people.order_by("author_order").first()
         new = create_publication(
             user,
@@ -458,7 +464,13 @@ def update_grant(
         new={"status": new_status},
     )
     new = None
-    if new_status == GrantStatus.NOT_FUNDED and data.get("plans_to_resubmit"):
+    if (
+        new_status == GrantStatus.NOT_FUNDED
+        and data.get("plans_to_resubmit")
+        and not GrantSubmission.objects.filter(
+            resubmission_of=g
+        ).exists()  # re-saving never makes a second one
+    ):
         lead = g.people.filter(is_primary_cnap_contact=True).first() or g.people.first()
         new = create_grant(
             user,

@@ -223,3 +223,36 @@ def test_exports_have_spec_columns(client, center):
         "Not Funded Date (timestamp)",
     ]:
         assert col in head
+
+
+def test_final_records_can_be_viewed_and_edited_without_duplicates(client, center):
+    login(client, "okafor")
+    cn = Resource.objects.get(code="cn_core")
+    client.post(
+        "/outcomes/new/grant/",
+        {
+            "funding_agency": "NIH",
+            "project_title": "Grant V",
+            "role": "pi",
+            "anticipated_total": "1",
+            "resources": [cn.pk],
+        },
+    )
+    g = GrantSubmission.objects.get(project_title="Grant V")
+    GrantSubmission.objects.filter(pk=g.pk).update(status="not_funded", decision_date="2027-02-01")
+    html = client.get("/outcomes/").content.decode()
+    assert "View or edit" in html
+    r = client.get(f"/outcomes/grant/{g.pk}/?to=not_funded")
+    assert r.status_code == 200 and "Your details (not funded)" in r.content.decode()
+    post = {
+        "to": "not_funded",
+        "decision_date": "2027-02-01",
+        "discussed_with_program_officer": "no",
+        "feedback_shared_with_cnap": "no",
+        "plans_to_resubmit": "yes",
+    }
+    client.post(f"/outcomes/grant/{g.pk}/", post)
+    client.post(f"/outcomes/grant/{g.pk}/", {**post, "decision_comments": "Added later"})
+    assert GrantSubmission.objects.filter(resubmission_of=g).count() == 1
+    g.refresh_from_db()
+    assert g.decision_comments == "Added later" and g.status == "not_funded"

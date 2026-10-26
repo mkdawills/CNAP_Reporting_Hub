@@ -677,3 +677,9 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 .runner .q:has(textarea) textarea { min-height: 84px; border-color: var(--line); box-shadow: none; }
 .runner .q:has(textarea) textarea:focus { border-color: var(--focus); }
 .runner .q:has(textarea) + .q:has(textarea) { border-top: 0; padding-top: 10px; }
+/* quieter overall (MW, 2026-10-26: about 13% calmer across the site) */
+html { font-size: 87%; }
+body { font-size: 14px; }
+select, input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], input[type=search], input[type=url], input[type=month], textarea { padding: 5px 8px; border-radius: 5px; }
+:focus-visible { outline: 2px solid color-mix(in srgb, var(--focus) 55%, transparent); outline-offset: 1px; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 18%, transparent); }

@@ -5,7 +5,7 @@
   "context_kind": "core",
   "confidentiality": "standard",
   "sort_order": 15,
-  "intro_text": "List each project that used your core during this reporting period, one row per project. A lab may be listed more than once if different projects were supported. The Center combines these lists into its yearly NIH progress report.",
+  "intro_text": "List each project that used your core during this reporting period. Use one row per project. A lab may be listed more than once if different projects were supported. The Center combines these lists into its yearly NIH progress report.",
   "display": {
     "task_group": "mycore",
     "short_name": "Core usage report",
@@ -49,7 +49,7 @@
         },
         {
           "code": "lab",
-          "prompt": "User lab (PI's name)",
+          "prompt": "User lab (PI’s first and last name)",
           "type": "short_text",
           "help_text": "Used to count Total User Labs; not a Table 2 column."
         },

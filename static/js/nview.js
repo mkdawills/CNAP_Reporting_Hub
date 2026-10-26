@@ -8,8 +8,10 @@
   }
   document.addEventListener("click", function (e) {
     var b = e.target.closest(".nview button");
-    if (!b) return;
+    if (!b || !b.dataset.nview) return;
+    var before = b.getBoundingClientRect().top;
     apply(b.dataset.nview);
+    window.scrollBy(0, b.getBoundingClientRect().top - before);
     try { localStorage.setItem("cnap-nview", b.dataset.nview); } catch (err) {}
   });
   var saved = "both";
@@ -29,7 +31,9 @@
   document.addEventListener("click", function (e) {
     var b = e.target.closest(".sdview button");
     if (!b) return;
+    var before = b.getBoundingClientRect().top;
     apply(b.dataset.sdview);
+    window.scrollBy(0, b.getBoundingClientRect().top - before); // keep the button where it was
     try { localStorage.setItem("cnap-sdview", b.dataset.sdview); } catch (err) {}
   });
   var saved = "sd";

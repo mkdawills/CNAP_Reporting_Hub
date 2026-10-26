@@ -308,7 +308,13 @@ def update(request, kind, pk):
             "owner": owner,
             "stage": to,
             "obj": obj,
-            "title": f"{'Edit planned details' if to == obj.status == 'planned' else 'Mark as ' + STATUS_WORDS[kind][to].lower()}",
+            "title": (
+                "Edit planned details"
+                if to == obj.status == "planned"
+                else f"Your details ({STATUS_WORDS[kind][to].lower()})"
+                if to == obj.status
+                else "Mark as " + STATUS_WORDS[kind][to].lower()
+            ),
         },
     )
 
