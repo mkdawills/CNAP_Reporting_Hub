@@ -10,7 +10,7 @@
   {% for c in cards %}
   <div class="panel">
     <h2 class="sectionhead">{{ c.fd.name }}</h2>
-    <ul class="facts"><li><b>{{ c.full }}</b> {% if c.full == 1 %}person{% else %}people{% endif %} answered the ratings</li></ul>
+    <p class="facts2"><b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered the ratings.</p>
     {% include "manage/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False %}
   </div>
   {% empty %}<div class="panel"><p class="muted">No survey results for this period.</p></div>{% endfor %}

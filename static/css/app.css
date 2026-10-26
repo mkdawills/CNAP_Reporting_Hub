@@ -478,3 +478,10 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .hbars { grid-template-columns: max-content minmax(120px, 420px) max-content; }
 .hb-v { text-align: left; }
 .hb-t { background: #f6f6f8; }
+.vbars { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(64px, 96px); gap: 0 14px; height: 160px; margin-top: 4px; }
+.vb { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 3px; }
+.vb-v { font-size: .9rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.vb-b { width: 70%; min-height: 2px; border-radius: 3px 3px 0 0; flex: none; }
+.vb-l { width: 100%; border-top: 2px solid var(--ink); padding-top: 5px; font-size: .78rem; text-align: center; white-space: nowrap; }
+.facts2 { font-size: .95rem; margin: 0 0 18px; }
+.facts2 b { font-size: 1.05rem; }

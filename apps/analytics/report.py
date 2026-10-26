@@ -94,6 +94,9 @@ def _glance(scale, totals, total, mean):
                 "inside": pct >= 7,
             }
         )
+    top_pct = max(float(sg["w"]) for sg in segs) or 1
+    for sg in segs:
+        sg["h"] = f"{100 * float(sg['w']) / top_pct:.2f}"
     two = 2 if k >= 4 else 1
     word = (
         scale[min(k - 1, max(0, math.floor(mean + 0.5) - int(scale[0]["value"])))]["text"]

@@ -8,8 +8,8 @@
   <div class="kpi"><span class="kpi-v pos">{{ g.top_pct }}%</span><span class="kpi-l">{{ g.top_label }}</span></div>
   <div class="kpi"><span class="kpi-v neg">{{ g.bot_pct }}%</span><span class="kpi-l">{{ g.bot_label }}</span></div>
 </div>
-<div class="hbars" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}
-  <span class="hb-l">{{ sg.text }}</span><span class="hb-t"><span class="hb-f" style="width:{{ sg.w }}%;background:{{ sg.color }}"></span></span><span class="hb-v">{{ sg.pct }}%</span>{% endfor %}
+<div class="vbars" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}
+  <div class="vb"><span class="vb-v">{{ sg.pct }}%</span><span class="vb-b" style="height:calc((100% - 46px) * {{ sg.h }} / 100);background:{{ sg.color }}"></span><span class="vb-l">{{ sg.text }}</span></div>{% endfor %}
 </div>
 <p class="tnote">All {{ t.rows|length }} item{{ t.rows|length|pluralize }} combined.</p>
 {% endif %}{% endwith %}
