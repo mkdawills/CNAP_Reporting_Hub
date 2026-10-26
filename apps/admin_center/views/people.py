@@ -126,6 +126,9 @@ def person(request, pk):
         else None,
         "history": AuditLog.objects.filter(entity_type="people.Person", entity_id=p.pk)[:10],
     }
+    from .outcomes import person_outcomes
+
+    ctx["outcomes"] = person_outcomes(p)
     return render(request, "manage/person.html", ctx)
 
 

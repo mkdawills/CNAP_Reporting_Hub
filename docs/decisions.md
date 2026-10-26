@@ -263,3 +263,10 @@ MW chose acknowledgment checking first (then counts for the NIH report, exportab
 - Add/edit forms for a publication and a grant. Credit: any number of CNAP people, projects, and cores/resources. A resubmission is entered with the earlier proposal's title and becomes A1, A2, … in the same grant family. Status changes write history rows. Publications record two checks: the paper acknowledges CNAP's grant (cnap_cited) and it is linked to the grant in NIH's records (cnap_in_grant_index).
 - Access: the evaluator adds, edits and marks; Center leadership sees the list read-only; respondents can't open it. Self-entry by faculty (and students entering for them) comes in a later part.
 - Fictional sample papers and proposals are added by `seed --fictional`.
+
+## 2026-10-25 — Publications and grants, part 2: counts, lists, person pages
+
+- Counts tab: by grant year (June–May; June 2025–May 2026 is Year 9) for All CNAP, by project, and by core/resource: papers published, presentations, grants submitted, grants awarded, awarded dollars. An outcome credited to several projects or cores counts once in each, so those rows can exceed All CNAP (said on the page). Grants count in the year submitted; awards in the year of the award notice (submission date if none).
+- Downloads (CSV, opens in Excel): citation list (with a ready-made citation column, links, both acknowledgment checks, people, projects, cores), grant list (agency, mechanism, A0/A1, status, dates, amounts, PI, people, projects, cores, acknowledgment), and the counts. Each download is audited.
+- Each person's admin page lists their papers and grants with acknowledgment status.
+- Still to come: faculty entering their own outcomes (and students entering for them), presentations entry, and the matching prototype screens.

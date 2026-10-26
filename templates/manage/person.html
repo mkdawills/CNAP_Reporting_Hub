@@ -88,6 +88,12 @@
     <details class="panel"><summary><strong>Past relationships ({{ past|length }})</strong></summary>
       {% for r in past %}<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)">{{ r.relationship_type.name }}{% if r.project %} · {{ r.project.title }}{% elif r.core %} · {{ r.core.name }}{% endif %} · {{ r.effective_from|date:"M j, Y" }} to {{ r.effective_to|date:"M j, Y" }}</div>{% endfor %}
     </details>{% endif %}
+    <div class="panel scroll"><h2 class="sectionhead">Publications and grants</h2>
+      {% if outcomes.pubs or outcomes.grants %}<table><tbody>
+        {% for o in outcomes.pubs %}<tr><td class="small muted nowrap">Paper</td><td><a href="{% url 'manage:publication_edit' o.pk %}">{{ o.title }}</a><div class="small muted">{{ o.journal }}{% if o.publication_date %} · {{ o.publication_date|date:"M Y" }}{% endif %} · {{ o.get_status_display }}</div></td><td class="small nowrap">{% if o.cnap_cited is None %}<span class="muted">Not checked</span>{% elif o.cnap_cited %}Acknowledges CNAP{% else %}<span class="error" style="padding:1px 6px">No CNAP acknowledgment</span>{% endif %}</td></tr>{% endfor %}
+        {% for o in outcomes.grants %}<tr><td class="small muted nowrap">Grant</td><td><a href="{% url 'manage:grant_edit' o.pk %}">{{ o.project_title }}</a><div class="small muted">{{ o.funding_agency }} {{ o.mechanism }} · {{ o.version_label }} · {{ o.get_status_display }}{% if o.award_total %} · ${{ o.award_total|floatformat:"0g" }}{% endif %}</div></td><td class="small nowrap">{% if o.cnap_acknowledged is None %}<span class="muted">Not checked</span>{% elif o.cnap_acknowledged %}Acknowledges CNAP{% else %}<span class="error" style="padding:1px 6px">No CNAP acknowledgment</span>{% endif %}</td></tr>{% endfor %}
+      </tbody></table>{% else %}<p class="small muted">Nothing recorded yet.</p>{% endif %}
+    </div>
     {% if assignments %}
     <div class="panel scroll"><h2 class="sectionhead">Recent forms</h2>
       <table><tbody>{% for a in assignments %}<tr><td>{{ a.reporting_period.short_label }}</td><td>{{ a.form_definition.name }}{% if a.project %} · {{ a.project.title }}{% elif a.core and a.context_kind == 'core' %} · {{ a.core.code }} Core{% endif %}</td><td>{% status_chip a.status %}</td></tr>{% endfor %}</tbody></table>

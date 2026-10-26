@@ -580,3 +580,5 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .checkgrid label { display: flex; gap: 8px; align-items: flex-start; font-size: .88rem; color: var(--ink); }
 fieldset.checks { border: 0; padding: 0; margin: 0 0 18px; }
 fieldset.checks legend { font-weight: 600; margin-bottom: 4px; }
+.cnttab td.num, .cnttab th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.cnttab td, .cnttab th { padding: 6px 10px; }

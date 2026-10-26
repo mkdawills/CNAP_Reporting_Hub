@@ -85,3 +85,29 @@ def test_access(client, center):
     )
     _login(client, "okafor")
     assert client.get("/manage/outcomes/").status_code == 403
+
+
+def test_grant_year():
+    import datetime as dt
+
+    from apps.admin_center.views.outcomes import grant_year
+
+    assert grant_year(dt.date(2025, 6, 1)) == 9
+    assert grant_year(dt.date(2026, 5, 31)) == 9
+    assert grant_year(dt.date(2026, 6, 1)) == 10
+
+
+def test_counts_and_exports(client, center):
+    _login(client, "mwills")
+    r = client.get("/manage/outcomes/?tab=counts")
+    assert r.status_code == 200 and "Papers published" in r.content.decode()
+    for kind, head in [("pubs", "Citation"), ("grants", "Title"), ("counts", "Group")]:
+        r = client.get(f"/manage/outcomes/export/{kind}/")
+        assert r.status_code == 200 and r.content.decode("utf-8-sig").startswith(head)
+
+
+def test_person_page_lists_outcomes(client, center):
+    _login(client, "mwills")
+    p = Publication.objects.filter(people__isnull=False).first()
+    person = p.people.first().person
+    assert p.title in client.get(f"/manage/people/{person.pk}/").content.decode()

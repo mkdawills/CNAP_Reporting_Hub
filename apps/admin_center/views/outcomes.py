@@ -88,6 +88,14 @@ def outcomes(request):
         request,
         "manage/outcomes.html",
         {
+            "counts": (c := counts() if tab == "counts" else None),
+            "counts_tables": [
+                ("All CNAP", c["all"]),
+                ("By project", c["projects"]),
+                ("By core and resource", c["cores"]),
+            ]
+            if c
+            else [],
             "tab": tab,
             "ack": f,
             "filters": ACK_FILTERS,
@@ -96,6 +104,90 @@ def outcomes(request):
             "can_edit": access.can_manage(request.user),
         },
     )
+
+
+def grant_year(d):
+    """Grant Year N runs June to May: June 2025 - May 2026 is Year 9."""
+    if not d:
+        return None
+    return d.year - 2016 if d.month >= 6 else d.year - 2017
+
+
+def counts():
+    """Outcome counts by grant year, overall and by project and by core/resource (for the NIH progress report)."""
+    from apps.outcomes.models import Presentation
+
+    pubs = Publication.objects.filter(
+        archived_at__isnull=True, status=PublicationStatus.PUBLISHED
+    ).prefetch_related("project_links__project", "resource_links__resource")
+    talks = Presentation.objects.filter(archived_at__isnull=True).prefetch_related(
+        "project_links__project", "resource_links__resource"
+    )
+    grants = (
+        GrantSubmission.objects.filter(archived_at__isnull=True)
+        .exclude(status=GrantStatus.PLANNED)
+        .prefetch_related("project_links__project", "resource_links__resource")
+    )
+    metrics = [
+        ("pubs", "Papers published"),
+        ("talks", "Presentations"),
+        ("sub", "Grants submitted"),
+        ("won", "Grants awarded"),
+        ("dollars", "Awarded dollars"),
+    ]
+    years = set()
+    tally = {}
+
+    def add(groups, metric, year, value=1):
+        if year is None:
+            return
+        years.add(year)
+        for g in groups:
+            k = (*g, metric, year)
+            tally[k] = tally.get(k, 0) + value
+
+    def groups_of(o):
+        out = [("all", "All CNAP")]
+        out += [("project", x.project.title) for x in o.project_links.all()]
+        out += [("core", x.resource.name) for x in o.resource_links.all()]
+        return out
+
+    for p in pubs:
+        add(groups_of(p), "pubs", grant_year(p.publication_date))
+    for t in talks:
+        add(groups_of(t), "talks", grant_year(t.presented_on))
+    for g in grants:
+        add(groups_of(g), "sub", grant_year(g.submission_date))
+        if g.status == GrantStatus.AWARDED:
+            y = grant_year(g.award_notice_date or g.submission_date)
+            add(groups_of(g), "won", y)
+            add(groups_of(g), "dollars", y, float(g.award_total or 0))
+    years = sorted(years)
+
+    def table(kind):
+        names = sorted({k[1] for k in tally if k[0] == kind})
+        rows = []
+        for n in names:
+            for m, label in metrics:
+                vals = [tally.get((kind, n, m, y), 0) for y in years]
+                if any(vals):
+                    rows.append(
+                        {
+                            "group": n,
+                            "metric": label,
+                            "dollars": m == "dollars",
+                            "vals": vals,
+                            "total": sum(vals),
+                        }
+                    )
+        return rows
+
+    return {
+        "years": years,
+        "all": table("all"),
+        "projects": table("project"),
+        "cores": table("core"),
+    }
 
 
 @manage_action
@@ -372,3 +464,141 @@ def grant_edit(request, pk=None):
         "manage/outcome_form.html",
         {"form": form, "credit": credit, "obj": obj, "kind": "grant"},
     )
+
+
+def _yn(v):
+    return "" if v is None else ("Yes" if v else "No")
+
+
+@admin_view
+def export(request, kind):
+    """Citation list, grant list or counts as a spreadsheet-ready CSV."""
+    import csv
+    import io
+
+    from django.http import HttpResponse
+
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    if kind in ("publications", "pubs"):
+        w.writerow(
+            [
+                "Citation",
+                "Authors",
+                "Title",
+                "Journal",
+                "Published",
+                "Status",
+                "Link",
+                "Acknowledges CNAP",
+                "Linked to CNAP grant in NIH records",
+                "CNAP people",
+                "Projects",
+                "Cores and resources",
+            ]
+        )
+        qs = (
+            Publication.objects.filter(archived_at__isnull=True)
+            .prefetch_related(
+                "people__person", "project_links__project", "resource_links__resource"
+            )
+            .order_by("-publication_date", "title")
+        )
+        for p in qs:
+            year = p.publication_date.year if p.publication_date else "n.d."
+            cite = f"{p.author_display_text or '; '.join(str(x.person) for x in p.people.all())} ({year}). {p.title}. {p.journal}.".replace(
+                " .", "."
+            )
+            w.writerow(
+                [
+                    cite,
+                    p.author_display_text,
+                    p.title,
+                    p.journal,
+                    p.publication_date or "",
+                    p.get_status_display(),
+                    p.pubmed_url,
+                    _yn(p.cnap_cited),
+                    _yn(p.cnap_in_grant_index),
+                    "; ".join(str(x.person) for x in p.people.all()),
+                    "; ".join(x.project.title for x in p.project_links.all()),
+                    "; ".join(x.resource.name for x in p.resource_links.all()),
+                ]
+            )
+    elif kind == "grants":
+        w.writerow(
+            [
+                "Title",
+                "Agency",
+                "Mechanism",
+                "Version",
+                "Status",
+                "Submitted",
+                "Award notice",
+                "Requested total",
+                "Award total",
+                "Grant number",
+                "PI",
+                "CNAP people",
+                "Projects",
+                "Cores and resources",
+                "Acknowledges CNAP",
+            ]
+        )
+        qs = (
+            GrantSubmission.objects.filter(archived_at__isnull=True)
+            .prefetch_related(
+                "people__person", "project_links__project", "resource_links__resource"
+            )
+            .order_by("-submission_date", "project_title")
+        )
+        for g in qs:
+            pi = next((str(x.person) for x in g.people.all() if x.role == GrantRole.PI), "")
+            w.writerow(
+                [
+                    g.project_title,
+                    g.funding_agency,
+                    g.mechanism,
+                    g.version_label,
+                    g.get_status_display(),
+                    g.submission_date or "",
+                    g.award_notice_date or "",
+                    g.requested_total or "",
+                    g.award_total or "",
+                    g.grant_number,
+                    pi,
+                    "; ".join(str(x.person) for x in g.people.all()),
+                    "; ".join(x.project.title for x in g.project_links.all()),
+                    "; ".join(x.resource.name for x in g.resource_links.all()),
+                    _yn(g.cnap_acknowledged),
+                ]
+            )
+    else:
+        c = counts()
+        w.writerow(["Group", "Credited to", "Measure"] + [f"Y{y}" for y in c["years"]] + ["Total"])
+        for title, rows in [
+            ("All CNAP", c["all"]),
+            ("Project", c["projects"]),
+            ("Core or resource", c["cores"]),
+        ]:
+            for r in rows:
+                w.writerow([title, r["group"], r["metric"]] + r["vals"] + [r["total"]])
+    record_event(request.user, AuditLog.Action.EXPORT, f"outcomes:{kind}")
+    resp = HttpResponse("﻿" + buf.getvalue(), content_type="text/csv; charset=utf-8")
+    resp["Content-Disposition"] = f'attachment; filename="cnap_{kind}.csv"'
+    return resp
+
+
+def person_outcomes(person):
+    """Everything credited to one person, for their page."""
+    pubs = (
+        Publication.objects.filter(archived_at__isnull=True, people__person=person)
+        .distinct()
+        .order_by("-publication_date")
+    )
+    grants = (
+        GrantSubmission.objects.filter(archived_at__isnull=True, people__person=person)
+        .distinct()
+        .order_by("-submission_date")
+    )
+    return {"pubs": pubs, "grants": grants}

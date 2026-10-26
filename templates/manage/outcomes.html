@@ -12,7 +12,17 @@
 </div>
 
 <div class="panel">
-  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}">Grants</a></div>
+  <p class="small" style="float:right;margin:8px 0 0"><a href="{% url 'manage:outcomes_export' tab|default:'pubs' %}">{% if tab == 'grants' %}Download grant list (CSV){% elif tab == 'counts' %}Download counts (CSV){% else %}Download citation list (CSV){% endif %}</a></p>
+  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}">Grants</a><a href="?tab=counts" class="{% if tab == 'counts' %}on{% endif %}">Counts</a></div>
+  {% if tab == 'counts' %}
+    <p class="small muted">{{ "Counted by grant year (June to May). A paper or grant credited to several projects or cores counts once in each, so project and core rows can add up to more than All CNAP. Grants are counted in the year submitted; awards in the year of the award notice."|stack }}</p>
+    {% for title, rows in counts_tables %}
+    <h2 class="sectionhead" style="margin-top:22px">{{ title }}</h2>
+    {% if rows %}<div class="scroll"><table class="cnttab"><thead><tr>{% if not forloop.first %}<th>Credited to</th>{% endif %}<th>Measure</th>{% for y in counts.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+      <tbody>{% for r in rows %}<tr>{% if not forloop.parentloop.first %}<td>{% ifchanged r.group %}<strong>{{ r.group }}</strong>{% endifchanged %}</td>{% endif %}<td>{{ r.metric }}</td>{% for v in r.vals %}<td class="num">{% if r.dollars %}{% if v %}${{ v|floatformat:"0g" }}{% else %}–{% endif %}{% else %}{{ v|default:"–" }}{% endif %}</td>{% endfor %}<td class="num"><strong>{% if r.dollars %}${{ r.total|floatformat:"0g" }}{% else %}{{ r.total }}{% endif %}</strong></td></tr>{% endfor %}</tbody></table></div>
+    {% else %}<p class="muted">Nothing recorded yet.</p>{% endif %}
+    {% endfor %}
+  {% else %}
   <p class="small muted filt">Show: {% for k, label in filters %}<a href="?tab={{ tab }}&ack={{ k }}" class="{% if ack == k %}on{% endif %}">{{ label }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}{% if ack != 'all' %} <span>({% if tab == 'pubs' %}published papers{% else %}submitted proposals{% endif %} only)</span>{% endif %}</p>
   <div class="scroll"><table class="outtab">
     <thead><tr><th>{% if tab == 'pubs' %}Publication{% else %}Proposal{% endif %}</th><th>CNAP people</th><th>Credited to</th><th>Status</th><th>Acknowledges CNAP?</th></tr></thead>
@@ -40,5 +50,6 @@
     {% empty %}<tr><td colspan="5" class="muted">Nothing here.</td></tr>{% endfor %}
     </tbody>
   </table></div>
+  {% endif %}
 </div>
 {% endblock %}
