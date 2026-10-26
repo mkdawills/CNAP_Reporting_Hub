@@ -508,3 +508,4 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .vb-b { width: min(70%, 140px); }
 .ttitle2 { margin-bottom: 28px; }
 .ttitle2 { margin-bottom: 44px; }
+.kpis { justify-content: flex-start; gap: 16px 28px; }

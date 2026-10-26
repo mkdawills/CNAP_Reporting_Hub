@@ -114,6 +114,52 @@ def _glance(scale, totals, total, mean):
     }
 
 
+SMALL_WORDS = {
+    "a",
+    "an",
+    "and",
+    "as",
+    "at",
+    "by",
+    "for",
+    "in",
+    "of",
+    "on",
+    "or",
+    "the",
+    "to",
+    "with",
+}
+MONTHS = {
+    "Jan": "January",
+    "Feb": "February",
+    "Mar": "March",
+    "Apr": "April",
+    "Jun": "June",
+    "Jul": "July",
+    "Aug": "August",
+    "Sep": "September",
+    "Sept": "September",
+    "Oct": "October",
+    "Nov": "November",
+    "Dec": "December",
+}
+
+
+def title_case(text):
+    words = text.replace(":", "").split()
+    return " ".join(
+        w if (i and w.lower() in SMALL_WORDS) else w[:1].upper() + w[1:]
+        for i, w in enumerate(words)
+    )
+
+
+def period_title(period):
+    """'Y10 Jan' -> 'Year 10 January'."""
+    word = period.short_label.split()[-1]
+    return f"Year {period.grant_year} {MONTHS.get(word, word)}"
+
+
 def _sd(vals):
     if len(vals) < 2:
         return 0.0
@@ -239,6 +285,8 @@ def build(form_definition, period, *, audience="admin"):
         tno += 1
         table = {
             "no": tno,
+            "title": f"{period_title(period)} {title_case(sec.title)} Survey Responses",
+            "lon_title": f"{title_case(sec.title)} Over Time",
             "section": sec,
             "scale": scale,
             "rows": rows,
