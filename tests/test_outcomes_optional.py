@@ -147,10 +147,7 @@ def test_not_funded_shows_encouraging_note(client, center):
         follow=True,
     )
     html = r.content.decode()
-    assert (
-        "part of the journey all researchers take toward securing funding" in html
-        and "encourage" in html
-    )
+    assert "part of every researcher’s journey toward funding" in html and "encourage" in html
 
 
 def test_presentations(client, center):

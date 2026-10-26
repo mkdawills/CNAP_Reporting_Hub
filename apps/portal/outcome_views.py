@@ -17,9 +17,8 @@ from .outcome_forms import GRANT_FORMS, NEXT, PUB_FORMS
 
 # MW's words (decisions.md 2026-10-26), shown after a proposal is marked Not funded.
 NOT_FUNDED_NOTE = (
-    "Thank you for updating us. Although a not-funded decision is always challenging feedback, please be heartened "
-    "and assured that it is part of the journey all researchers take toward securing funding. We are very proud of you "
-    "and excited for your opportunity to take the free reviewer feedback and incorporate it into the next cycle."
+    "Thank you for the update. We hope you’ll still celebrate your great accomplishment; a not-funded decision is "
+    "part of every researcher’s journey toward funding. We are very proud of you and excited for your next steps!"
 )
 
 STATUS_WORDS = {
