@@ -537,3 +537,10 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .ring-v small { font-size: .68rem; }
 .kpi .kpi-l { font-size: .74rem; }
 .co-none { color: var(--muted); font-weight: 500; }
+
+/* after submitting: done line quiet, next step strong; confetti */
+.nextup .nu-done { color: var(--muted); }
+.nextup .nu-next { color: var(--ink); font-weight: 700; }
+.confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 9999; }
+.confetti i { position: absolute; top: -14px; width: 8px; height: 12px; border-radius: 2px; animation: cnap-cf linear forwards; }
+@keyframes cnap-cf { to { transform: translate(var(--x), 105vh) rotate(var(--r)); opacity: .9; } }

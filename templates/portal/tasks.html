@@ -12,9 +12,9 @@
 </div></div>
 
 {% if just_done %}
-<div class="panel nextup" role="status">
-  <p><strong>{% if just_done.a.status == 'completed_opt_out' %}Recorded{% else %}Submitted{% endif %}: {{ just_done.name }}.</strong></p>
-  {% if next_up %}<p>Next: {{ next_up.name }}, {{ next_up.time|lower }}.</p>
+<div class="panel nextup" role="status" data-confetti="{{ just_done.a.pk }}">
+  <p class="nu-done">{% if just_done.a.status == 'completed_opt_out' %}Recorded{% else %}Submitted{% endif %}: {{ just_done.name }}.</p>
+  {% if next_up %}<p class="nu-next">Next: {{ next_up.name }}, {{ next_up.time|lower }}.</p>
   <div class="fieldrow"><a class="btn" href="{% url 'portal:form' next_up.a.pk %}">Start now</a><a class="btn ghost" href="{% url 'portal:tasks' %}">Back to my list</a></div>{% endif %}
 </div>{% endif %}
 
