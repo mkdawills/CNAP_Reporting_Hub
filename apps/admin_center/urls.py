@@ -48,6 +48,8 @@ urlpatterns = [
     path("periods/", periods.periods, name="periods"),
     path("periods/new/", periods.period_new, name="period_new"),
     path("periods/<int:pk>/action/", periods.period_action, name="period_action"),
+    path("periods/<int:pk>/emails/", periods.period_emails, name="period_emails"),
+    path("periods/<int:pk>/emails/send/", periods.period_emails_send, name="period_emails_send"),
     path("periods/<int:pk>/launch/", periods.launch, name="launch"),
     path("periods/<int:pk>/launch/go/", periods.launch_go, name="launch_go"),
     path(

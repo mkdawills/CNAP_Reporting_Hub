@@ -206,6 +206,47 @@ Constraints: `one_effort_per_year`, `effort_months_0_12`
 
 Constraints: `user_roles_unique`
 
+### `signin_links` — SignInLink
+
+A single-use emailed sign-in link (decisions.md 2026-10-24, sign-in plan). Only a hash of the token is kept.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| person_id | FK → people | no |  |
+| email | CharField | no |  |
+| token_hash | CharField | no | unique |
+| purpose | CharField | no | request, period_open or reminder |
+| created_at | DateTimeField | no |  |
+| expires_at | DateTimeField | no |  |
+| used_at | DateTimeField | yes |  |
+| used_ip | GenericIPAddressField | yes |  |
+
+### `signin_codes` — SignInCode
+
+A 6-digit code e-mailed before a link-signed-in person opens a confidential mentoring form.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| person_id | FK → people | no |  |
+| code_hash | CharField | no |  |
+| created_at | DateTimeField | no |  |
+| expires_at | DateTimeField | no |  |
+| attempts | PositiveSmallIntegerField | no |  |
+| used_at | DateTimeField | yes |  |
+
+### `failed_logins` — FailedLogin
+
+Failed password sign-ins, for throttling (kept 1 day).
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| username | CharField | no |  |
+| ip | GenericIPAddressField | yes |  |
+| at | DateTimeField | no |  |
+
 ## Forms_Engine (`forms_engine`)
 
 ### `measures` — Measure
@@ -561,6 +602,22 @@ Constraints: `answer_selected_options_unique`
 | sort_order | PositiveSmallIntegerField | no |  |
 
 Constraints: `answer_files_unique`
+
+### `period_emails` — PeriodEmail
+
+One "your forms are open" or reminder e-mail sent to one person for one period.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| period_id | FK → reporting_periods | no |  |
+| person_id | FK → people | no |  |
+| kind | CharField | no | open, reminder |
+| email | CharField | no |  |
+| forms_listed | PositiveSmallIntegerField | no |  |
+| with_link | BooleanField | no |  |
+| sent_by_id | FK → users | yes |  |
+| sent_at | DateTimeField | no |  |
 
 ## Analytics (`analytics`)
 

@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Email me a sign-in link · {{ platform_name }}{% endblock %}
+{% block anon %}
+<div class="panel">
+  <h1 class="sectionhead">Email me a sign-in link</h1>
+  {% if sent %}
+    <p class="okmsg">If <strong>{{ email }}</strong> is on file with the Center, a sign-in link is on its way.</p>
+    <p class="small muted">{{ "The link works once and expires in 7 days. Check your spam folder if it doesn’t arrive in a few minutes."|stack }}</p>
+    <p class="small muted">{{ "Still nothing? Make sure it’s the address the Center has for you, or contact the evaluator."|stack }}</p>
+    <div class="actions"><a class="btn ghost" href="{% url 'link_request' %}">Send to a different address</a></div>
+  {% else %}
+    <p class="small muted">{{ "Enter the e-mail address the Center has for you. We’ll send a link that signs you in."|stack }}</p>
+    <form method="post">{% csrf_token %}
+      <div class="field"><label for="id_email">E-mail address<input type="email" name="email" id="id_email" autocomplete="email" autofocus required></label></div>
+      <div class="actions"><button class="btn" type="submit">Send me a link</button><a href="{% url 'login' %}">Back to sign in</a></div>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
+from apps.accounts import views as account_views
 from apps.portal.views import home
 
 admin.site.site_header = "CNAP Reporting Hub: database administration"
@@ -12,7 +13,10 @@ admin.site.index_title = "Administration"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/login/", auth_views.LoginView.as_view(), name="login"),
+    path("accounts/login/", account_views.LoginView.as_view(), name="login"),
+    path("accounts/link/", account_views.link_request, name="link_request"),
+    path("accounts/link/<str:token>/", account_views.link_login, name="link_login"),
+    path("accounts/code/", account_views.link_code, name="link_code"),
     path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
     path(
         "accounts/password/",

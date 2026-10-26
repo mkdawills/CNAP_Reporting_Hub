@@ -100,6 +100,7 @@ def outcomes(request):
         "manage/outcomes.html",
         {
             "rppr": _rppr_ctx(request) if tab == "rppr" else None,
+            "sv": _sv_ctx(request) if tab == "sitevisit" else None,
             "reminders_due": _rem.due() if tab == "reminders" else None,
             "reminders_sent": OutcomeReminder.objects.select_related("person")[:20]
             if tab == "reminders"
@@ -713,6 +714,119 @@ def export(request, kind):
                 w.writerow(
                     ["Not counted", g.project_title, g.version_label, "", "", "", "", "", why]
                 )
+    elif kind == "sitevisit":
+        import datetime as dt
+
+        from apps.outcomes import rppr, sitevisit
+
+        gy = int(request.GET.get("year", rppr.current_year()))
+        try:
+            since = dt.date.fromisoformat(request.GET.get("since", ""))
+        except ValueError:
+            since = None
+        pubs, talks, grants = (
+            sitevisit.publications(gy, since),
+            sitevisit.presentations(gy, since),
+            sitevisit.grants(gy, since),
+        )
+        core_names = [label for _, label in sitevisit.CORES]
+        head = f"Year {gy} site visit (June 1, {2016 + gy} – May 31, {2017 + gy})"
+        w.writerow([head + " — Publications (duplicates counted)"])
+        for t in pubs["rows"]:
+            if not t["rows"]:
+                continue
+            w.writerow([t["core"], "Type"] + pubs["cols"] + ["Total"])
+            for r in t["rows"]:
+                w.writerow(["", r["type"]] + r["vals"] + [r["total"]])
+            w.writerow(["", "Total"] + t["col_totals"] + [t["total"]])
+        w.writerow([f"{pubs['n_items']} publications; {pubs['n_counted']} counted across cores"])
+        w.writerow([])
+        w.writerow([head + " — Presentations (duplicates counted)"])
+        w.writerow(["Core"] + talks["cols"] + ["Total"])
+        for r in talks["rows"]:
+            w.writerow([r["core"]] + r["vals"] + [r["total"]])
+        w.writerow(["Total"] + talks["col_totals"] + [talks["n_counted"]])
+        w.writerow([f"{talks['n_items']} presentations"])
+        w.writerow([])
+        w.writerow([head + " — Grants and awards (duplicates counted; total costs)"])
+        hdr = ["Core"]
+        for st in sitevisit.GRANT_STATUSES:
+            hdr += [f"{st} count", f"{st} total $"]
+        w.writerow(hdr + ["Total $"])
+        for r in grants["rows"]:
+            w.writerow(
+                [r["label"]]
+                + [v for x in r["cells"] for v in (x["n"], round(x["dollars"], 2))]
+                + [round(r["dollars"], 2)]
+            )
+        w.writerow(["Funder"] + hdr[1:] + ["Total count"])
+        for r in grants["by_funder"]:
+            w.writerow(
+                [r["label"]]
+                + [v for x in r["cells"] for v in (x["n"], round(x["dollars"], 2))]
+                + [r["n"]]
+            )
+        w.writerow([])
+        w.writerow(
+            [
+                "Items",
+                "Kind",
+                "Title",
+                "Type or funder",
+                "Status",
+                "Cores",
+                "Two or more cores",
+                "Added after " + (str(since) if since else "(no date chosen)"),
+            ]
+        )
+        for it in pubs["items"]:
+            p = it["obj"]
+            w.writerow(
+                [
+                    "",
+                    "Publication",
+                    p.title,
+                    p.get_publication_type_display(),
+                    it["status"],
+                    "; ".join(
+                        core_names[[c for c, _ in sitevisit.CORES].index(c)] for c in it["cores"]
+                    ),
+                    "yes" if len(it["cores"]) > 1 else "",
+                    "yes" if it["new"] else "",
+                ]
+            )
+        for it in talks["items"]:
+            t = it["obj"]
+            w.writerow(
+                [
+                    "",
+                    "Presentation",
+                    t.title,
+                    t.get_presentation_type_display(),
+                    "",
+                    "; ".join(
+                        core_names[[c for c, _ in sitevisit.CORES].index(c)] for c in it["cores"]
+                    ),
+                    "yes" if len(it["cores"]) > 1 else "",
+                    "yes" if it["new"] else "",
+                ]
+            )
+        for it in grants["items"]:
+            g = it["obj"]
+            w.writerow(
+                [
+                    "",
+                    "Grant",
+                    g.project_title,
+                    it["funder"],
+                    it["status"],
+                    "; ".join(
+                        core_names[[c for c, _ in sitevisit.CORES].index(c)] for c in it["cores"]
+                    ),
+                    "yes" if len(it["cores"]) > 1 else "",
+                    "yes" if it["new"] else "",
+                ]
+            )
     elif kind in ("table2", "d1"):
         from apps.outcomes import rppr
 
@@ -1005,6 +1119,33 @@ def _t2_periods(request, gy):
 
     ids = [int(x) for x in request.GET.getlist("t2p") if x.isdigit()]
     return list(ReportingPeriod.objects.filter(pk__in=ids)) if ids else rppr.usage_periods(gy)
+
+
+def _sv_ctx(request):
+    """Site-visit tables (MW's workbook layout) for a budget year; ?since=YYYY-MM-DD marks newer entries."""
+    import datetime as dt
+
+    from apps.outcomes import rppr, sitevisit
+
+    cur = rppr.current_year()
+    try:
+        gy = int(request.GET.get("year", cur))
+    except ValueError:
+        gy = cur
+    try:
+        since = dt.date.fromisoformat(request.GET.get("since", ""))
+    except ValueError:
+        since = None
+    return {
+        "year": gy,
+        "years": list(range(cur, 5, -1)),
+        "since": since,
+        "pubs": sitevisit.publications(gy, since),
+        "talks": sitevisit.presentations(gy, since),
+        "grants": sitevisit.grants(gy, since),
+        "pub_statuses": sitevisit.PUB_STATUSES,
+        "grant_statuses": sitevisit.GRANT_STATUSES,
+    }
 
 
 def _prev_marked(gy):

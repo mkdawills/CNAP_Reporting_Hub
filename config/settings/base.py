@@ -150,6 +150,14 @@ FORMS_URLFIELD_ASSUME_HTTPS = True
 # Links in e-mails point here (no trailing slash).
 SITE_URL = env("SITE_URL").rstrip("/")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+# Mail server as one URL, e.g. smtp+tls://user:password@smtp.k-state.edu:587 (K-State's relay). Default: print to
+# the console, which sends nothing.
+vars().update(env.email_url("EMAIL_URL", default="consolemail://"))
+
+# Emailed sign-in links (decisions.md 2026-10-24). K-State people may use links only until single sign-on is on.
+SIGNIN_LINK_DAYS = 7
+SIGNIN_CODE_MINUTES = 15
+SIGNIN_LINKS_FOR_KSTATE = env.bool("SIGNIN_LINKS_FOR_KSTATE", default=not SSO_ENABLED)
 
 # Publications and grants (decisions.md 2026-10-26).
 # A Planned or Submitted record not reviewed for this many days is "stale" and its owner gets a reminder,

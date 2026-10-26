@@ -149,3 +149,51 @@ class UserRole(TimestampedModel):
 
     def __str__(self):
         return f"{self.user}: {self.role}" + (f" ({self.scope_core})" if self.scope_core_id else "")
+
+
+class SignInLink(models.Model):
+    """A single-use emailed sign-in link (decisions.md 2026-10-24, sign-in plan). Only a hash of the token is kept."""
+
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="signin_links")
+    email = models.EmailField()
+    token_hash = models.CharField(max_length=64, unique=True)
+    purpose = models.CharField(
+        max_length=20, default="request", help_text="request, period_open or reminder"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    used_ip = models.GenericIPAddressField(null=True, blank=True)
+
+    class Meta:
+        db_table = "signin_links"
+        indexes = [models.Index(fields=["email", "created_at"])]
+
+    def __str__(self):
+        return f"Sign-in link for {self.email} ({self.purpose})"
+
+
+class SignInCode(models.Model):
+    """A 6-digit code e-mailed before a link-signed-in person opens a confidential mentoring form."""
+
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="signin_codes")
+    code_hash = models.CharField(max_length=64)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    attempts = models.PositiveSmallIntegerField(default=0)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "signin_codes"
+
+
+class FailedLogin(models.Model):
+    """Failed password sign-ins, for throttling (kept 1 day)."""
+
+    username = models.CharField(max_length=150)
+    ip = models.GenericIPAddressField(null=True, blank=True)
+    at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "failed_logins"
+        indexes = [models.Index(fields=["username", "at"]), models.Index(fields=["ip", "at"])]

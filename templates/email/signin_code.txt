@@ -1,0 +1,10 @@
+{% autoescape off %}Hello {{ person.first_name }},
+
+Your CNAP Reporting Hub code is {{ code }}
+
+Enter it on the page that asked for it. It expires in {{ minutes }} minutes.
+
+If you didn't ask for this, you can ignore this e-mail.
+
+The CNAP evaluation team
+{% endautoescape %}

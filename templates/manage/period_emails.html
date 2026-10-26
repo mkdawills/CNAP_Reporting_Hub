@@ -1,0 +1,50 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}E-mails · {{ p.name }} · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{{ p.name }}: e-mails</h1><p>{{ "Each person gets their own list of forms and the due date. People who sign in by emailed link get a personal link; K-State people sign in with their eID."|stack }}</p></div></div>
+<div class="tabs" role="tablist"><a href="?kind=open" class="{% if kind == 'open' %}on{% endif %}">Forms are open</a><a href="?kind=reminder" class="{% if kind == 'reminder' %}on{% endif %}">Reminder</a></div>
+<div class="panel">
+  {% if history %}<p class="small muted">Sent so far: {% for h in history %}{{ h.n }} {% if h.kind == 'open' %}“forms are open”{% else %}reminder{% endif %}{% if not forloop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+  <p><strong>{{ to_send|length }}</strong> {{ to_send|length|pluralize:"person,people" }} will get {% if kind == 'open' %}the “forms are open” e-mail{% else %}a reminder listing only what’s left{% endif %}.{% if skipped %} {{ skipped|length }} won’t (listed below).{% endif %}</p>
+  {% if kind == 'reminder' %}<p class="small muted">Nobody gets more than one reminder in 3 days.</p>{% endif %}
+  {% if can_manage %}{% if can_send %}{% if to_send %}<form method="post" action="{% url 'manage:period_emails_send' p.pk %}" onsubmit="return confirm('Send {{ to_send|length }} e-mail{{ to_send|length|pluralize }} now?')">{% csrf_token %}<input type="hidden" name="kind" value="{{ kind }}"><div class="actions"><button class="btn" type="submit">Send {{ to_send|length }} e-mail{{ to_send|length|pluralize }}</button></div></form>{% endif %}
+  {% else %}<p class="small"><span class="gap">E-mails can be sent only while the period is open for answers.</span></p>{% endif %}{% endif %}
+  <details class="mt"{% if to_send|length < 15 %} open{% endif %}><summary class="small">Who gets it ({{ to_send|length }})</summary>
+    <div class="scroll"><table><thead><tr><th>Name</th><th>E-mail</th><th class="num">Forms</th><th>Signs in with</th></tr></thead><tbody>
+    {% for r in to_send %}<tr><td>{{ r.person }}</td><td class="small">{{ r.email }}</td><td class="num small" title="{{ r.forms|join:'; ' }}">{{ r.forms|length }}</td><td class="small">{% if r.with_link %}Personal link{% else %}K-State eID{% endif %}</td></tr>{% endfor %}
+    </tbody></table></div></details>
+  {% if skipped %}<details class="mt"><summary class="small">Not e-mailed ({{ skipped|length }})</summary><ul class="small">{% for r in skipped %}<li>{{ r.person }}: {{ r.skip }}</li>{% endfor %}</ul></details>{% endif %}
+</div>
+<details class="panel"><summary class="small"><strong>What the e-mail says</strong></summary>
+  <pre class="small" style="white-space:pre-wrap;font-family:inherit">{% if kind == 'open' %}Subject: CNAP Reporting Hub: your {{ p.name }} forms are open
+
+Hello [first name],
+
+The {{ p.name }} CNAP reporting session is open. Please complete these [N] forms by [due date]:
+- [each form, with its project or core]
+
+Open your forms:
+[personal sign-in link, or the site address for K-State people]
+
+This link signs you in. It works once and expires in 7 days. You can get a new one any time at [site]/accounts/link/
+
+Your answers are saved as you go, so you can finish across several sittings. Surveys you don't use have a one-click opt-out.
+
+Thank you,
+The CNAP evaluation team{% else %}Subject: Reminder: your {{ p.name }} CNAP forms are due [date]
+
+Hello [first name],
+
+A reminder that your {{ p.name }} CNAP forms are due [due date]. Still to do:
+- [each form not yet done]
+
+Open your forms:
+[personal sign-in link, or the site address for K-State people]
+
+Anything you've started is saved.
+
+Thank you,
+The CNAP evaluation team{% endif %}</pre>
+  <p class="small muted">{{ "Wording is a draft for your review."|stack }}</p>
+</details>
+{% endblock %}

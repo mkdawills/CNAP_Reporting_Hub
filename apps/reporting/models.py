@@ -428,3 +428,26 @@ class AnswerFile(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["answer", "file"], name="answer_files_unique")
         ]
+
+
+class PeriodEmail(models.Model):
+    """One "your forms are open" or reminder e-mail sent to one person for one period."""
+
+    class Kind(models.TextChoices):
+        OPEN = "open", "Forms are open"
+        REMINDER = "reminder", "Reminder"
+
+    period = models.ForeignKey(ReportingPeriod, on_delete=models.CASCADE, related_name="emails")
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="period_emails")
+    kind = models.CharField(max_length=10, choices=Kind.choices)
+    email = models.EmailField()
+    forms_listed = models.PositiveSmallIntegerField(default=0)
+    with_link = models.BooleanField(default=False)
+    sent_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "period_emails"
+        indexes = [models.Index(fields=["period", "kind", "person"])]

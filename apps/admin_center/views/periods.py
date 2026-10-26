@@ -494,3 +494,54 @@ def generate_assignments(request, pk):
 
 def _unused():
     return dt, timezone, access, is_on_roster
+
+
+# --------------------------------------------------------------------------- e-mails
+
+
+@admin_view
+def period_emails(request, pk):
+    """Who gets the "forms are open" or reminder e-mail, before anything is sent."""
+    from apps.reporting.models import PeriodEmail
+    from apps.reporting.services import emails
+
+    p = get_object_or_404(ReportingPeriod, pk=pk)
+    kind = request.GET.get("kind", "open")
+    if kind not in PeriodEmail.Kind.values:
+        kind = "open"
+    rows = emails.plan(p, kind)
+    return render(
+        request,
+        "manage/period_emails.html",
+        {
+            "p": p,
+            "kind": kind,
+            "rows": rows,
+            "to_send": [r for r in rows if not r["skip"]],
+            "skipped": [r for r in rows if r["skip"]],
+            "history": PeriodEmail.objects.filter(period=p)
+            .values("kind")
+            .annotate(n=Count("id"))
+            .order_by("kind"),
+            "can_send": p.accepting_responses,
+        },
+    )
+
+
+@manage_action
+def period_emails_send(request, pk):
+    from apps.reporting.services import emails
+
+    p = get_object_or_404(ReportingPeriod, pk=pk)
+    kind = request.POST.get("kind", "")
+    try:
+        n, skipped = emails.send(p, kind, actor=request.user)
+    except emails.EmailError as exc:
+        messages.error(request, str(exc))
+    else:
+        messages.success(
+            request,
+            f"Sent {n} e-mail{'s' if n != 1 else ''}."
+            + (f" {skipped} people were skipped (see the list)." if skipped else ""),
+        )
+    return redirect(f"/manage/periods/{p.pk}/emails/?kind={kind}")

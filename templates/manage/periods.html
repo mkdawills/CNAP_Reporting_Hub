@@ -17,7 +17,7 @@
       </form>{% endif %}</div></div>
   {% if not r.historical %}{% include "manage/_lifecycle.html" with steps=r.steps %}{% endif %}
   {% if r.snapshots %}<p class="small muted mt">Results versions: {% for s in r.snapshots %}v{{ s.version_no }} {{ s.get_status_display|lower }}{% if s.regeneration_reason %} (“{{ s.regeneration_reason }}”){% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</p>{% endif %}
-  {% if r.stage != 'draft' %}<p class="small"><a href="{% url 'manage:results' %}?period={{ r.p.short_label }}">Results</a>{% if not r.historical %} · <a href="{% url 'manage:dashboard' %}?period={{ r.p.short_label }}">Dashboard</a>{% endif %}</p>{% endif %}
+  {% if r.stage != 'draft' %}<p class="small"><a href="{% url 'manage:results' %}?period={{ r.p.short_label }}">Results</a>{% if not r.historical %} · <a href="{% url 'manage:dashboard' %}?period={{ r.p.short_label }}">Dashboard</a> · <a href="{% url 'manage:period_emails' r.p.pk %}">E-mails</a>{% endif %}</p>{% endif %}
 </div>
 {% endfor %}
 {% endblock %}

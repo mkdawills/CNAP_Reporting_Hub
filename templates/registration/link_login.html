@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Sign in · {{ platform_name }}{% endblock %}
+{% block anon %}
+<div class="panel">
+  <h1 class="sectionhead">CNAP Reporting Hub</h1>
+  {% if link %}
+    <p>Signing in as <strong>{{ link.person.first_name }} {{ link.person.last_name }}</strong> ({{ link.email }}).</p>
+    <form method="post">{% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+      <div class="actions"><button class="btn" type="submit" autofocus>Sign in</button></div>
+    </form>
+    <p class="small muted">{{ "Not you? Close this page. The link stays unused."|stack }}</p>
+  {% else %}
+    <p class="error">This sign-in link has already been used or has expired.</p>
+    <p class="small muted">{{ "Links work once and last 7 days. Your saved answers are kept, so just get a new link."|stack }}</p>
+    <div class="actions"><a class="btn" href="{% url 'link_request' %}">Email me a new link</a></div>
+  {% endif %}
+</div>
+{% endblock %}
