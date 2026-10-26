@@ -185,3 +185,8 @@ Assumptions to verify: the Year 9 Mentee report's comparison sheet prints mentor
 - Heat shading in the year-over-year table is stretched across that table's own lowest-to-highest average (Excel-style color scale), not the whole 1–5 scale: lowest is nearly white, highest is deep green with white text. MW asked for more noticeable contrast; averages cluster between 3 and 5, so a 1–5 scale left everything the same shade.
 - Period columns in the year-over-year table share equal width (the Item column's width rule no longer hits the first period header).
 - The intro sentence reads "Table 1 data captures …" (capital T), and the opt-out label's own period is dropped so the sentence doesn't end in ".”.".
+
+## 2026-10-25 — n / % switch on result tables
+
+- A "Show: n and % · n only · % only" switch sits above Table 1 on every results page (admin report and Center results). It hides the other column under each answer; group lines stay (the % column takes over the bold/double line when n is hidden), answer columns become equal width, and in "% only" the percentages return to full size and ink colour. The Grand mean label follows the view ("Grand mean and totals:" / "Grand mean and %:"). The choice is remembered per browser (localStorage, wrapped in try/catch); the CSV export always has both.
+- Table 2 (year over year) shows finalized periods up to the period being viewed, plus that period itself; later or unfinished periods are never shown.

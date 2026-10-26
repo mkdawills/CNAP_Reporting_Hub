@@ -1,4 +1,4 @@
-{% load cnap %}{% for t in tables %}
+{% load cnap %}{% if tables %}<div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on">n and %</button><button type="button" data-nview="n">n only</button><button type="button" data-nview="p">% only</button></div>{% endif %}{% for t in tables %}
 <div class="tcard">
 <h3 class="ttitle">Table {{ t.no }}. {{ t.section.title|cut:":" }}</h3>
 <div class="scroll"><table class="reptab">
@@ -6,12 +6,12 @@
     <tr>
       <th rowspan="2" class="itemh">Item</th>
       <th colspan="2" class="num"><span class="pn">&nbsp;</span>Mean (SD)</th>
-      {% for s in t.scale %}<th colspan="2" class="num gstart{% if forloop.first %} dline{% endif %}"><span class="pn">({{ s.num }})</span>{{ s.text }}</th>{% endfor %}
+      {% for s in t.scale %}<th colspan="2" class="num grp gstart{% if forloop.first %} dline{% endif %}"><span class="pn">({{ s.num }})</span>{{ s.text }}</th>{% endfor %}
       <th class="num gstart dline"><span class="pn">&nbsp;</span>Total</th>
     </tr>
     <tr>
       <th class="num sub">Mean</th><th class="num sub">SD</th>
-      {% for s in t.scale %}<th class="num sub gstart{% if forloop.first %} dline{% endif %}">n</th><th class="num sub">%</th>{% endfor %}
+      {% for s in t.scale %}<th class="num sub cn gstart{% if forloop.first %} dline{% endif %}">n</th><th class="num sub cp{% if forloop.first %} dl{% endif %}">%</th>{% endfor %}
       <th class="num sub gstart dline">n</th>
     </tr>
   </thead>
@@ -20,19 +20,19 @@
       <td><div class="itm"><span class="ino">{{ r.no }}.</span><div><strong>{{ r.q.prompt }}</strong>{% if show_codes and r.q.measure %}<div class="small muted">{{ r.q.measure.code }}</div>{% endif %}</div></div></td>
       <td class="num">{% if r.mean is not None %}{{ r.mean|floatformat:1 }}{% else %}—{% endif %}</td>
       <td class="num muted">({{ r.sd|floatformat:1 }})</td>
-      {% for c in r.cells %}<td class="num gstart{% if forloop.first %} dline{% endif %}">{{ c.count }}</td><td class="num pct" style="{{ c.style }}">{{ c.pct }}%</td>{% endfor %}
+      {% for c in r.cells %}<td class="num cn gstart{% if forloop.first %} dline{% endif %}">{{ c.count }}</td><td class="num pct cp{% if forloop.first %} dl{% endif %}" style="{{ c.style }}">{{ c.pct }}%</td>{% endfor %}
       <td class="num gstart dline">{{ r.n }}</td>
     </tr>{% endfor %}
     <tr class="totrow">
-      <td class="glabel"><strong>Grand mean, totals and %:</strong></td>
+      <td class="glabel"><strong><span class="lb-both">Grand mean, totals and %:</span><span class="lb-n">Grand mean and totals:</span><span class="lb-p">Grand mean and %:</span></strong></td>
       <td class="num"><strong>{% if t.grand_mean is not None %}{{ t.grand_mean|floatformat:1 }}{% else %}—{% endif %}</strong></td>
       <td class="num muted">({{ t.grand_sd|floatformat:1 }})</td>
-      {% for c in t.totals %}<td class="num gstart{% if forloop.first %} dline{% endif %}"><strong>{{ c.count }}</strong></td><td class="num pct" style="{{ c.style }}"><strong>{{ c.pct }}%</strong></td>{% endfor %}
+      {% for c in t.totals %}<td class="num cn gstart{% if forloop.first %} dline{% endif %}"><strong>{{ c.count }}</strong></td><td class="num pct cp{% if forloop.first %} dl{% endif %}" style="{{ c.style }}"><strong>{{ c.pct }}%</strong></td>{% endfor %}
       <td class="num gstart dline"><strong>{{ t.total }}</strong></td>
     </tr>
     <tr class="chartrow">
       <td colspan="3" class="small muted cbl">Response counts across all items:</td>
-      {% for c in t.totals %}<td colspan="2" class="gstart cbar{% if forloop.first %} dline{% endif %}"><div class="cbwrap"><span class="ccv">{{ c.count }}</span><span class="ccb" style="height:{{ c.bar }}%"></span></div></td>{% endfor %}
+      {% for c in t.totals %}<td colspan="2" class="grp gstart cbar{% if forloop.first %} dline{% endif %}"><div class="cbwrap"><span class="ccv">{{ c.count }}</span><span class="ccb" style="height:{{ c.bar }}%"></span></div></td>{% endfor %}
       <td class="gstart dline"></td>
     </tr>
   </tbody>

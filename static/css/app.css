@@ -378,3 +378,14 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 
 /* year-over-year: period columns share the width equally */
 .lontab td.num, .lontab thead tr:last-child th { width: 52px; min-width: 52px; }
+
+/* n / % column switch (decisions.md 2026-10-25) */
+.nview { display: flex; align-items: center; gap: 4px; margin: 0 0 12px; }
+.nview button { font: inherit; font-size: .8rem; padding: 4px 10px; border: 1px solid var(--line); background: var(--surface, #fff); color: var(--ink); border-radius: 999px; cursor: pointer; }
+.nview button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.only-n .reptab .cp, .only-p .reptab .cn { display: none; }
+.only-p .reptab td.cp, .only-p .reptab th.cp { border-left: 3px solid var(--ink); font-size: inherit; color: var(--ink); }
+.only-p .reptab td.cp.dl, .only-p .reptab th.cp.dl { border-left: 6px double var(--ink); }
+.only-n .reptab .cn, .only-p .reptab .cp { width: 88px; min-width: 88px; }
+.reptab .lb-n, .reptab .lb-p, .only-n .reptab .lb-both, .only-p .reptab .lb-both { display: none; }
+.only-n .reptab .lb-n, .only-p .reptab .lb-p { display: inline; }
