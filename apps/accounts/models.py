@@ -1,0 +1,135 @@
+"""
+Band A: authentication and application permissions.
+
+A user is a person who logs in; every user belongs to exactly one Person.
+Application roles are bundles of permissions and are never derived from CNAP
+relationships. The confidential-mentoring permission is granted to named
+users only and is never part of a role (analytics addendum, section D).
+"""
+
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser, Permission, UserManager
+from django.db import models
+
+from apps.common.models import TimestampedModel
+from apps.people.models import Core, Person
+
+CONFIDENTIAL_MENTORING_PERM = "reporting.view_confidential_mentoring_data"
+
+
+class CnapUserManager(UserManager):
+    """Creates the Person row alongside a user when none is supplied (createsuperuser)."""
+
+    def _ensure_person(self, extra_fields):
+        if extra_fields.get("person") is None:
+            from apps.people.models import PersonEmail
+
+            email = extra_fields.get("email") or ""
+            person = None
+            if email:
+                row = (
+                    PersonEmail.objects.filter(email__iexact=email).select_related("person").first()
+                )
+                person = row.person if row else None
+            if person is None:
+                person = Person.objects.create(
+                    first_name=extra_fields.get("first_name") or "",
+                    last_name=extra_fields.get("last_name") or "",
+                )
+                if email:
+                    PersonEmail.objects.create(person=person, email=email, is_primary=True)
+            extra_fields["person"] = person
+        return extra_fields
+
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        extra_fields = self._ensure_person({**extra_fields, "email": email})
+        extra_fields.pop("email", None)
+        return super().create_user(username, email, password, **extra_fields)
+
+    def create_superuser(self, username, email=None, password=None, **extra_fields):
+        extra_fields = self._ensure_person({**extra_fields, "email": email})
+        extra_fields.pop("email", None)
+        return super().create_superuser(username, email, password, **extra_fields)
+
+
+class User(AbstractUser):
+    person = models.OneToOneField(Person, on_delete=models.PROTECT, related_name="user")
+    is_enabled = models.BooleanField(
+        default=True, help_text="Disabled users cannot log in; the record stays."
+    )
+
+    REQUIRED_FIELDS = ["email", "first_name", "last_name"]
+
+    objects = CnapUserManager()
+
+    class Meta:
+        db_table = "users"
+
+    def __str__(self):
+        return self.get_full_name() or self.username
+
+    def role_codes(self):
+        return list(self.user_roles.values_list("role__code", flat=True))
+
+    def has_confidential_mentoring_access(self):
+        """
+        True only for an explicit, direct grant on this user. Roles never carry
+        it, and being a superuser does not imply it: the data-access layer calls
+        this method, not has_perm(), so nothing bypasses the rule by accident.
+        """
+        if not self.is_active or not self.is_enabled:
+            return False
+        app_label, codename = CONFIDENTIAL_MENTORING_PERM.split(".")
+        return self.user_permissions.filter(
+            content_type__app_label=app_label, codename=codename
+        ).exists()
+
+
+class ApplicationRole(TimestampedModel):
+    class Code(models.TextChoices):
+        ADMINISTRATOR = "administrator", "Administrator"
+        EVALUATION_STAFF = "evaluation_staff", "Evaluation / Reporting Staff"
+        STANDARD_USER = "standard_user", "Standard User"
+        REVIEWER = "reviewer", "Reviewer (read-only, optionally core-scoped)"
+
+    code = models.CharField(max_length=40, unique=True, choices=Code.choices)
+    name = models.CharField(max_length=120)
+    description = models.TextField(blank=True)
+    permissions = models.ManyToManyField(Permission, blank=True, related_name="application_roles")
+
+    class Meta:
+        db_table = "application_roles"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class UserRole(TimestampedModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_roles")
+    role = models.ForeignKey(ApplicationRole, on_delete=models.PROTECT, related_name="user_roles")
+    scope_core = models.ForeignKey(
+        Core,
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="+",
+        help_text="Limits a Reviewer to one core's survey data. Empty means no scope.",
+    )
+    granted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    granted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "user_roles"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "role", "scope_core"],
+                nulls_distinct=False,
+                name="user_roles_unique",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.user}: {self.role}" + (f" ({self.scope_core})" if self.scope_core_id else "")

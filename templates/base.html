@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CNAP Platform{% endblock %}</title>
+  <style>
+    :root { --ink: #1f1e1b; --quiet: #5f5c56; --line: #d9d5cb; --accent: #4a2f8f; --bg: #fbfaf7; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+    header { background: #ffffff; border-bottom: 1px solid var(--line); }
+    header .bar { max-width: 1100px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    header a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    header nav a { margin-left: 16px; font-weight: 500; }
+    main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+    .card { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+    label { display: block; margin: 12px 0 4px; font-weight: 600; }
+    input[type=text], input[type=password], input[type=email] { width: 100%; max-width: 360px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 16px; }
+    button { background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 10px 16px; font-size: 16px; cursor: pointer; margin-top: 12px; }
+    .errorlist { color: #a0261b; padding-left: 18px; }
+    .quiet { color: var(--quiet); }
+  </style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a href="{% url 'home' %}">CNAP Evaluation and Reporting Platform</a>
+    <nav>
+      {% if user.is_authenticated %}
+        <span class="quiet">{{ user.get_full_name|default:user.username }}</span>
+        {% if user.is_staff %}<a href="{% url 'admin:index' %}">Administration</a>{% endif %}
+        <a href="{% url 'password_change' %}">Password</a>
+        <form method="post" action="{% url 'logout' %}" style="display:inline">{% csrf_token %}<button type="submit" style="margin:0 0 0 16px;padding:6px 12px">Log out</button></form>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+<main>
+  {% if messages %}{% for m in messages %}<div class="card">{{ m }}</div>{% endfor %}{% endif %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>
