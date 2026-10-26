@@ -43,14 +43,19 @@ def pub(title, status, codes, **kw):
 def test_publications_by_core_type_status(center):
     pub("A", "published", ["bn_core", "ni_core"], publication_date=dt.date(2026, 3, 1))
     pub(
-        "B", "submitted", ["bn_core"], substatus="under_review", submission_date=dt.date(2025, 1, 5)
-    )  # still under review
+        "B", "submitted", ["bn_core"], substatus="under_review", submission_date=dt.date(2025, 7, 5)
+    )  # submitted in Year 9, still under review
     pub("C", "declined", ["cn_core"], decline_date=dt.date(2025, 12, 1))
     pub("D", "published", [], publication_date=dt.date(2026, 2, 1), ptype="preprint")
     pub("E", "published", ["bn_core"], publication_date=dt.date(2024, 3, 1))  # other year
     pub("F", "planned", ["bn_core"])  # planned: not counted
+    old = pub(
+        "H", "submitted", ["bn_core"], substatus="under_review", submission_date=dt.date(2024, 3, 1)
+    )
     t = sitevisit.publications(9)
     assert t["n_items"] == 4 and t["n_counted"] == 5 and len(t["multi_core"]) == 1
+    # submitted in an earlier year and still under review: listed separately, not counted
+    assert [it["obj"] for it in t["carried"]] == [old]
     bn = next(x for x in t["rows"] if x["core"] == "BN Core")
     ja = next(r for r in bn["rows"] if r["type"] == "Journal Article")
     cols = sitevisit.PUB_STATUSES
@@ -127,14 +132,26 @@ def test_grants_by_core_and_funder(center):
         requested_total=50000,
         agency="American Heart Association",
     )
+    g(
+        "Waiting now",
+        "submitted",
+        ["cn_core"],
+        submission_date=dt.date(2025, 10, 1),
+        requested_total=200000,
+    )
     t = sitevisit.grants(9)
+    # "Waiting" was submitted in Year 8: it's still pending, listed separately and not counted in Year 9
+    assert [it["obj"].project_title for it in t["carried"]] == ["Waiting"] and t[
+        "carried_dollars"
+    ] == 100000.0
     assert t["status_counts"] == {"Awarded": 1, "Pending": 1, "Declined": 1}
     bn = next(r for r in t["rows"] if r["label"] == "BN Core")
-    assert bn["cells"][0] == {"n": 1, "dollars": 300000.0} and bn["cells"][1]["n"] == 1
+    assert bn["cells"][0] == {"n": 1, "dollars": 300000.0} and bn["cells"][1]["n"] == 0
     f = {r["label"]: r for r in t["by_funder"]}
     assert (
         f["NIH"]["cells"][0]["dollars"] == 300000.0
-        and f["NSF"]["cells"][1]["n"] == 1
+        and f["NIH"]["cells"][1]["n"] == 1  # "Waiting now" (agency NIH, submitted in Year 9)
+        and f["NSF"]["n"] == 0  # "Waiting" is carried, not counted
         and f["Other"]["cells"][2]["dollars"] == 50000.0
     )
     assert t["funder_totals"][0]["n"] + t["funder_totals"][1]["n"] + t["funder_totals"][2]["n"] == 3

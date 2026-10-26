@@ -362,3 +362,11 @@ A separate reviewer, who hadn't seen the build reasoning, reviewed the sign-in a
 - "Turn off sign-in" for someone who has never signed in explains how to stop them (untick Active: inactive people can't use any link).
 - Tests added for each.
 Known trade-off kept: anyone can pause password sign-in for a username for 15 minutes with 10 wrong tries. Respondents can still use a link; administrators will use single sign-on, which this doesn't affect.
+
+## 2026-10-26 — Site-visit choices confirmed (MW)
+
+- **No double counting across years:** a year's numbers count only papers and proposals with something that happened in that year (submitted, published, declined, presented, awarded, decided). Ones submitted earlier and still waiting are listed separately, "Still pending from earlier years" / "Still under review from earlier years", with their count and requested dollars, and are not in the numbers (MW agreed counting them in both years would inflate the tables).
+- **Dollars:** award total for awards; amount requested for pending and declined proposals; always total costs (direct + indirect).
+- **Admin Core** is now on the respondents' list of Center resources for papers, presentations and grants (it was left off the flows' list), so the Admin Core column fills in like the workbooks'.
+- **Design preference (MW):** avoid two-column layouts almost always. The screens gallery is now a single list. Profile and the person page still show two panels side by side; asked MW whether to stack them.
+- **Writing preference (MW):** messages to MW use short sentences with plenty of space between them, explain each choice with an example and a recommendation, and avoid italics.

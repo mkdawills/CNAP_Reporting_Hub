@@ -89,7 +89,7 @@
       <label class="small muted">Budget period <select name="year">{% for y in v.years %}<option value="{{ y }}" {% if y == v.year %}selected{% endif %}>Year {{ y }} (June 1, {{ y|add:2016 }} – May 31, {{ y|add:2017 }})</option>{% endfor %}</select></label>
       <label class="small muted">Mark entries added after<input type="date" name="since" value="{{ v.since|date:'Y-m-d' }}"></label>
       <button class="btn small ghost" type="submit">Update</button></form>
-    <p class="small muted">{{ "Laid out like the Year 9 site-visit workbooks. A paper, talk or grant credited to two cores counts under each (duplicates counted), so the core rows can add up to more than the number of items. Each section says how many items that is."|stack }}</p>
+    <p class="small muted">{{ "Laid out like the Year 9 site-visit workbooks. A paper, talk or grant credited to two cores counts under each (duplicates counted), so the core rows can add up to more than the number of items. Each section says how many items that is. Papers and proposals submitted in an earlier year and still waiting are listed separately, so nothing is counted in two years."|stack }}</p>
 
     <h2 class="sectionhead" style="margin-top:18px">Publications</h2>
     <p class="small">{{ v.pubs.n_items }} publication{{ v.pubs.n_items|pluralize }} · {{ v.pubs.n_counted }} counted across cores{% if v.pubs.multi_core %} ({{ v.pubs.multi_core|length }} credit two or more cores){% endif %}{% if v.since %} · <span class="gap">{{ v.pubs.new|length }} added after {{ v.since|date:"M j, Y" }}</span>{% endif %}</p>
@@ -100,6 +100,7 @@
         <tr><td><strong>Total</strong></td>{% for x in t.col_totals %}<td class="num"><strong>{{ x }}</strong></td>{% endfor %}<td class="num"><strong>{{ t.total }}</strong></td></tr>
       </tbody></table></div>{% endif %}{% empty %}{% endfor %}
     {% if not v.pubs.n_items %}<p class="muted">No publications in this year.</p>{% endif %}
+    {% if v.pubs.carried %}<details class="mt"><summary class="small">Still under review from earlier years: {{ v.pubs.carried|length }} (not in the numbers above)</summary><ul class="small">{% for it in v.pubs.carried %}<li>{{ it.obj.title }} · {{ it.status }} · submitted {{ it.obj.submission_date|date:"M j, Y" }}</li>{% endfor %}</ul></details>{% endif %}
 
     <h2 class="sectionhead" style="margin-top:22px">Presentations</h2>
     <p class="small">{{ v.talks.n_items }} presentation{{ v.talks.n_items|pluralize }} · {{ v.talks.n_counted }} counted across cores{% if v.talks.multi_core %} ({{ v.talks.multi_core|length }} used two or more cores){% endif %}{% if v.since %} · <span class="gap">{{ v.talks.new|length }} added after {{ v.since|date:"M j, Y" }}</span>{% endif %}</p>
@@ -121,7 +122,9 @@
       <tr><td><strong>Total</strong></td>{% for x in v.grants.funder_totals %}<td class="num"><strong>{{ x.n }}</strong></td><td class="num"><strong>${{ x.dollars|floatformat:"0g" }}</strong></td>{% endfor %}<td class="num"><strong>{{ v.grants.n_items }}</strong></td></tr>
     </tbody></table></div>
     <p class="small muted">{{ "Dollars are total costs: the award total for awards, the amount requested for pending and declined proposals. Funder is read from the agency name (NIH and its institutes, NSF, everything else Other)."|stack }}</p>
-    {% else %}<p class="muted">No proposals in this year.</p>{% endif %}
+    {% endif %}
+    {% if v.grants.carried %}<details class="mt"><summary class="small">Still pending from earlier years: {{ v.grants.carried|length }}, ${{ v.grants.carried_dollars|floatformat:"0g" }} requested (not in the numbers above)</summary><ul class="small">{% for it in v.grants.carried %}<li>{{ it.obj.project_title }} · {{ it.funder }} · submitted {{ it.obj.submission_date|date:"M j, Y" }}{% if it.dollars %} · ${{ it.dollars|floatformat:"0g" }}{% endif %}</li>{% endfor %}</ul></details>{% endif %}
+    {% if not v.grants.n_items %}<p class="muted">No proposals in this year.</p>{% endif %}
     <p class="small mt"><a href="{% url 'manage:outcomes_export' 'sitevisit' %}?year={{ v.year }}{% if v.since %}&amp;since={{ v.since|date:'Y-m-d' }}{% endif %}">Download these tables and the item lists (CSV)</a></p>
   {% endwith %}
   {% elif tab == 'counts' %}

@@ -47,7 +47,7 @@ def money(label, required=False):
 
 class _Resources(forms.Form):
     resources = forms.ModelMultipleChoiceField(
-        queryset=Resource.objects.filter(is_active=True).exclude(code="admin_core"),
+        queryset=Resource.objects.filter(is_active=True),  # Admin Core included (MW 2026-10-26)
         widget=forms.CheckboxSelectMultiple,
         required=False,
         label="Center resources utilized",

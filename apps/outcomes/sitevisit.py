@@ -11,7 +11,9 @@ decisions.md 2026-10-26). Counts only: no names leave this module except through
 - Grants: core x status (Awarded / Pending / Declined) with counts and dollars, and funder (NIH / NSF / Other)
   x status. Dollars are total costs: the award total for awards, the requested total otherwise.
 - What belongs to a year (June 1 - May 31): anything with a submission, publication, decline, presentation,
-  award or decision date in it, plus papers and proposals still under review at its end.
+  award or decision date in it. Papers and proposals submitted earlier and still waiting for a decision are listed
+  separately ("still pending from earlier years") and are not in the year's numbers, so nothing is counted twice
+  across years (MW 2026-10-26).
 - "New since": items first entered after a date (the RPPR submission, say), like the workbooks' peach rows.
 """
 
@@ -121,19 +123,23 @@ def publications(gy, since=None):
         .exclude(status=PublicationStatus.PLANNED)
         .prefetch_related("resource_links__resource__core")
     )
+    carried = []
     for p in qs:
         active = (
             _in(p.submission_date, start, end)
             or _in(p.publication_date, start, end)
             or _in(p.decline_date, start, end)
-            or (
-                p.status == PublicationStatus.SUBMITTED
-                and p.submission_date
-                and p.submission_date <= end
-            )
         )
         st = pub_status(p)
-        if active and st:
+        if (
+            not active
+            and st
+            and p.status == PublicationStatus.SUBMITTED
+            and p.submission_date
+            and p.submission_date < start
+        ):
+            carried.append({"obj": p, "cores": cores_of(p), "status": st})
+        elif active and st:
             items.append(
                 {
                     "obj": p,
@@ -162,7 +168,9 @@ def publications(gy, since=None):
                 "col_totals": [sum(r["vals"][i] for r in rows) for i in range(len(PUB_STATUSES))],
             }
         )
-    return _wrap(items, tables, PUB_STATUSES)
+    out = _wrap(items, tables, PUB_STATUSES)
+    out["carried"] = carried
+    return out
 
 
 def presentations(gy, since=None):
@@ -196,17 +204,24 @@ def grants(gy, since=None):
         .exclude(status=GrantStatus.PLANNED)
         .prefetch_related("resource_links__resource__core")
     )
+    carried = []
     for g in qs:
         active = (
             _in(g.submission_date, start, end)
             or _in(g.award_notice_date, start, end)
             or _in(g.decision_date, start, end)
-            or (
-                g.status == GrantStatus.SUBMITTED and g.submission_date and g.submission_date <= end
-            )
         )
         st = grant_status(g)
-        if active and st:
+        if (
+            not active
+            and g.status == GrantStatus.SUBMITTED
+            and g.submission_date
+            and g.submission_date < start
+        ):
+            carried.append(
+                {"obj": g, "cores": cores_of(g), "funder": funder(g), "dollars": grant_dollars(g)}
+            )
+        elif active and st:
             items.append(
                 {
                     "obj": g,
@@ -261,6 +276,8 @@ def grants(gy, since=None):
         core_totals=totals(by_core),
         funder_totals=totals(by_funder),
         status_counts={s: sum(1 for it in items if it["status"] == s) for s in GRANT_STATUSES},
+        carried=carried,
+        carried_dollars=sum(it["dollars"] for it in carried),
     )
     return out
 
