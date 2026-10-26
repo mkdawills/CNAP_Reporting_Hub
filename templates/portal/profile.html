@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Profile · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{{ person }}</h1><p>{{ person.institution|default:"" }}</p></div></div>
+<div class="grid2">
+  <div class="panel">
+    <h2 class="sectionhead">Your details</h2>
+    <form method="post">{% csrf_token %}
+      <div class="field"><label>Department<input type="text" name="department" value="{{ person.department }}"></label></div>
+      <div class="field"><label>Position<input type="text" name="position_title" value="{{ person.position_title }}"></label></div>
+      <p class="small muted">E-mail: {{ person.primary_email|default:"none on file" }}</p>
+      <p class="small muted">{{ "To change your name, institution or e-mail, contact the evaluator."|stack }}</p>
+      <div class="actions"><button class="btn" type="submit">Save</button></div>
+    </form>
+  </div>
+  <div class="panel">
+    <h2 class="sectionhead">Your CNAP roles</h2>
+    {% for r in rels %}<div style="padding:8px 0;border-bottom:1px solid var(--line)"><strong>{{ r.relationship_type.name }}</strong><div class="small muted">{% if r.project %}{{ r.project.title }}{% elif r.core %}{{ r.core.name }}{% else %}Center-level{% endif %} · since {{ r.effective_from|date:"M Y" }}</div></div>
+    {% empty %}<p class="muted">No project or core roles.</p>{% endfor %}
+    <p class="small muted mt">{% if on_roster %}You’re on the CNAP roster.{% endif %} {{ "Your roles decide which forms you receive. If something here is wrong, contact the evaluator."|stack }}</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Center results · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Center results</h1><p>{{ "Combined results from finalized reporting periods. Individual answers are never shown."|stack }}</p></div>
+{% if periods|length > 1 %}<form method="get"><label class="small muted">Reporting period <select name="period" onchange="this.form.submit()">{% for p in periods %}<option value="{{ p.short_label }}" {% if p == selected %}selected{% endif %}>{{ p.short_label }}</option>{% endfor %}</select></label></form>{% endif %}</div>
+{% if not selected %}
+  <div class="panel"><p class="muted">{{ "No results yet. They appear here once a reporting period’s results are finalized."|stack }}</p></div>
+{% else %}
+  <h2 style="margin:4px 0 14px">{{ selected.name }}</h2>
+  {% for c in cards %}
+  <div class="panel">
+    <h2 class="sectionhead">{{ c.fd.name }}</h2>
+    <p class="small muted">Based on {{ c.responses }} response{{ c.responses|pluralize }}.</p>
+    {% if c.items %}{% include "portal/_item_table.html" with items=c.items scale=c.scale %}{% endif %}
+    {% if c.left_out %}<p class="small muted footnote">{% if c.items %}{{ c.left_out }} item{{ c.left_out|pluralize }} aren’t shown{% else %}Items aren’t shown{% endif %} because fewer than {{ c.min_n }} people rated {{ c.left_out|pluralize:"it,them" }}. {{ "This keeps anyone’s answers from being worked out."|stack }}</p>{% endif %}
+  </div>
+  {% empty %}<div class="panel"><p class="muted">No survey results for this period.</p></div>{% endfor %}
+{% endif %}
+{% endblock %}

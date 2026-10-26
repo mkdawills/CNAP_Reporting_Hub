@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}My history · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>My history</h1><p>Everything you’ve submitted, by reporting period.</p></div></div>
+{% if rows %}
+<div class="panel">
+  <div class="scroll"><table class="tasks"><tbody>
+  {% for g in rows %}
+    <tr class="gap" aria-hidden="true"><td colspan="3"></td></tr>
+    <tr class="grouphead"><td colspan="3"><div class="gh"><div><h3>{{ g.period.short_label }}</h3><p>{{ g.period.name }}</p></div><span class="ghcount">{{ g.rows|length }} done</span></div></td></tr>
+    {% for r in g.rows %}<tr>
+      <td><strong>{{ r.name }}</strong>{% if r.context %}<div class="small muted">{{ r.context }}</div>{% endif %}{% if r.opted %}<div class="small muted">Opted out: {{ r.pathway }}</div>{% endif %}</td>
+      <td class="acts"><a class="btn small ghost" href="{% url 'portal:form' r.a.pk %}">View</a></td>
+      <td class="mins">{% if r.a.submitted_at %}Submitted {{ r.a.submitted_at|date:"M j, Y" }}{% endif %}</td>
+    </tr>{% endfor %}
+  {% endfor %}
+  </tbody></table></div>
+</div>
+{% else %}<div class="panel"><p class="muted">{{ "Nothing submitted yet. Your open forms are under My tasks."|stack }}</p></div>{% endif %}
+{% endblock %}

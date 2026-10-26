@@ -6,8 +6,9 @@ questions, conditional rules and who receives it. Loading is idempotent:
 
 - if the form's active version was built from identical content, nothing changes;
 - if the content differs, a new version is created and (unless --draft) activated;
-  the old version is retired. Assignments already issued keep the version they
-  were issued with, so a respondent mid-way through a form is never moved;
+  the old version is retired. Not-started assignments in open periods move to
+  the new version; anyone who has started keeps the version they began, so a
+  respondent mid-way through a form is never moved;
 - measures are created by code and must keep their scale;
 - assignment rules are made to match the file (missing ones added, extra ones
   deactivated, never deleted).
@@ -167,7 +168,22 @@ def activate(actor, fv):
         fv.status = VersionStatus.ACTIVE
         fv.activated_at = now
         fv.save(update_fields=["status", "activated_at", "updated_at"])
-        record_event(actor, AuditLog.Action.ACTIVATE_VERSION, fv)
+        # Not-started assignments in open or draft periods move to the new
+        # version; anyone who has started keeps the version they began.
+        from apps.common.enums import AssignmentStatus, PeriodStatus
+        from apps.reporting.models import Assignment
+
+        moved = (
+            Assignment.objects.filter(
+                form_definition=fv.form_definition,
+                status=AssignmentStatus.NOT_STARTED,
+                reporting_period__status__in=[PeriodStatus.DRAFT, PeriodStatus.OPEN],
+                responses__isnull=True,
+            )
+            .exclude(form_version=fv)
+            .update(form_version=fv)
+        )
+        record_event(actor, AuditLog.Action.ACTIVATE_VERSION, fv, new={"moved_not_started": moved})
     return fv
 
 

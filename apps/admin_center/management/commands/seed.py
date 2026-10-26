@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
         load_all(stdout=self.stdout)
         if options["fictional"]:
-            self.stdout.write(
-                "Fictional sample data arrives in Milestone 9; reference data is loaded."
-            )
+            from apps.admin_center.demo import seed_demo
+
+            seed_demo(self.stdout)
         self.stdout.write(self.style.SUCCESS("Reference data is in place."))

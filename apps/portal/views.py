@@ -1,14 +1,33 @@
+"""
+What respondents see (Milestones 4 and 6): My tasks, the form pages, My
+history, Center results and Profile. Nobody here can see another person's
+answers; the form page refuses anyone but the respondent (administrators read
+responses from their own screens, under their own rules).
+"""
+
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.core.exceptions import PermissionDenied
+from django.http import FileResponse, Http404
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from apps.accounts import access
+from apps.common.enums import COMPLETE_STATUSES, PeriodStatus
+from apps.people.services import update_person
+from apps.reporting.models import Assignment, File, ReportingPeriod
+from apps.reporting.services import responses as rs
+from apps.reporting.services.assignments import due_label
+
+from . import presenters
 
 
 @login_required
 def home(request):
     """Send people where they work: respondents to My tasks, administrators to their home."""
     person = request.user.person
-    if person.current_relationships().exists():
+    if person.current_relationships().exists() or person.assignments.exists():
         return redirect("portal:tasks")
     if access.can_view_admin(request.user):
         return redirect("manage:home")
@@ -17,19 +36,169 @@ def home(request):
 
 @login_required
 def tasks(request):
-    return render(request, "portal/placeholder.html", {"title": "My tasks"})
+    person = request.user.person
+    period = (
+        ReportingPeriod.objects.filter(status=PeriodStatus.OPEN, assignments__person=person)
+        .distinct()
+        .order_by("-display_order")
+        .first()
+    )
+    if not period:
+        return render(request, "portal/tasks.html", {"period": None})
+    mine = list(
+        Assignment.objects.filter(person=person, reporting_period=period).select_related(
+            "form_definition", "form_version", "project", "core", "completion_pathway"
+        )
+    )
+    ctx = presenters.task_list(person, period, mine, just_done=request.GET.get("done"))
+    ctx["due"] = due_label(period)
+    return render(request, "portal/tasks.html", ctx)
+
+
+def _own_assignment(request, pk):
+    a = get_object_or_404(
+        Assignment.objects.select_related(
+            "form_definition", "form_version", "reporting_period", "project", "core", "person"
+        ),
+        pk=pk,
+    )
+    if a.person_id != request.user.person_id:
+        raise PermissionDenied("Only the person who received a form can open it here.")
+    return a
+
+
+@login_required
+def form(request, pk):
+    a = _own_assignment(request, pk)
+    gate = presenters.confidential_gate(request, a)
+    if gate:
+        return gate
+    editable = rs.is_editable(a, request.user)
+    errors, missing = [], []
+    if request.method == "POST":
+        if not editable:
+            raise PermissionDenied
+        action = request.POST.get("action", "save")
+        row_action = action if action.startswith("remove:") else None
+        try:
+            errors = rs.save_draft(
+                a, request.user, request.POST, request.FILES, row_action=row_action
+            )
+        except rs.LockedError as exc:
+            messages.error(request, str(exc))
+            return redirect("portal:form", pk)
+        if action.startswith("add:"):
+            return redirect(
+                f"{reverse('portal:form', args=[pk])}?add={action[4:]}#sec-{action[4:]}"
+            )
+        if action == "submit" and not errors:
+            try:
+                rs.submit(a, request.user, request=request)
+            except rs.SubmitError as exc:
+                missing = exc.missing
+                errors = [str(exc)]
+            else:
+                return redirect(f"{reverse('portal:tasks')}?done={a.pk}")
+        elif action == "save" and not errors:
+            messages.success(
+                request, "Draft saved. You can come back to it any time before the period closes."
+            )
+            return redirect("portal:form", pk)
+        elif not errors and row_action:
+            return redirect("portal:form", pk)
+        a.refresh_from_db()
+    ctx = presenters.form_page(request, a, editable=editable, errors=errors, missing=missing)
+    return render(request, "portal/form.html", ctx)
+
+
+@login_required
+def preview(request, pk):
+    a = _own_assignment(request, pk)
+    ctx = presenters.form_page(request, a, editable=False, preview=True)
+    return render(request, "portal/form.html", ctx)
+
+
+@login_required
+@require_POST
+def opt_out(request, pk):
+    a = _own_assignment(request, pk)
+    try:
+        result = rs.quick_opt_out(a, request.user)
+    except (rs.LockedError, ValueError) as exc:
+        messages.error(request, str(exc))
+        return redirect("portal:tasks")
+    if result == "open":
+        return redirect("portal:form", pk)
+    return redirect(f"{reverse('portal:tasks')}?done={a.pk}")
 
 
 @login_required
 def history(request):
-    return render(request, "portal/placeholder.html", {"title": "My history"})
+    person = request.user.person
+    done = (
+        Assignment.objects.filter(person=person, status__in=COMPLETE_STATUSES)
+        .select_related(
+            "form_definition", "reporting_period", "project", "core", "completion_pathway"
+        )
+        .order_by("-reporting_period__display_order", "form_definition__sort_order")
+    )
+    return render(request, "portal/history.html", {"rows": presenters.history_rows(done)})
 
 
 @login_required
 def center_results(request):
-    return render(request, "portal/placeholder.html", {"title": "Center results"})
+    periods = ReportingPeriod.objects.filter(status=PeriodStatus.FINALIZED).order_by(
+        "-display_order"
+    )
+    selected = None
+    if periods:
+        label = request.GET.get("period")
+        selected = next((p for p in periods if p.short_label == label), periods[0])
+    cards = presenters.center_results(selected) if selected else []
+    return render(
+        request,
+        "portal/center_results.html",
+        {"periods": periods, "selected": selected, "cards": cards},
+    )
 
 
 @login_required
 def profile(request):
-    return render(request, "portal/placeholder.html", {"title": "Profile"})
+    person = request.user.person
+    if request.method == "POST":
+        update_person(
+            request.user,
+            person,
+            department=request.POST.get("department", "")[:200],
+            position_title=request.POST.get("position_title", "")[:200],
+        )
+        messages.success(request, "Profile saved.")
+        return redirect("portal:profile")
+    rels = person.current_relationships().select_related("relationship_type", "project", "core")
+    return render(
+        request,
+        "portal/profile.html",
+        {
+            "person": person,
+            "rels": [r for r in rels if r.relationship_type.code != "cnap_member"],
+            "on_roster": any(r.relationship_type.code == "cnap_member" for r in rels),
+        },
+    )
+
+
+@login_required
+def download(request, file_pk):
+    """A file is downloadable by its uploader, or by an administrator allowed to read that response."""
+    f = get_object_or_404(File, pk=file_pk)
+    link = f.answer_links.select_related("answer__response__assignment").first()
+    if not link:
+        raise Http404
+    assignment = link.answer.response.assignment
+    from apps.reporting.access import response_access
+
+    if (
+        assignment.person_id != request.user.person_id
+        and response_access(request.user, assignment) != "identified"
+    ):
+        raise PermissionDenied
+    return FileResponse(f.storage_key.open("rb"), as_attachment=True, filename=f.original_filename)

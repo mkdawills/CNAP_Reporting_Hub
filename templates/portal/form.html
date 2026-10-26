@@ -1,0 +1,50 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}{{ fd.name }} · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="runner">
+  <a class="btn small ghost" href="{% url 'portal:tasks' %}">Back to my tasks</a>
+  <div class="head" style="margin-top:14px"><div>
+    <h1>{{ fd.name }}</h1>
+    <p>{{ a.reporting_period.name }}{% if context_line %} · {{ context_line }}{% endif %} · {% status_chip a.status respondent=True %}</p>
+    <p class="small">Other respondents never see your answers.</p>
+  </div></div>
+
+  {% if prefill %}<dl class="prefill">{% for label, value in prefill %}<div><dt>{{ label }}</dt><dd>{{ value|default:"—" }}</dd></div>{% endfor %}</dl>{% endif %}
+
+  {% if preview %}<div class="previewbar"><p>{% if a.status == 'in_progress' %}{{ "You previously started this "|add:noun|add:", and your answers are saved. This preview doesn’t change anything."|stack }}{% else %}Preview. Nothing here is saved.{% endif %}</p>
+    {% if a.status == 'not_started' or a.status == 'in_progress' %}<a class="btn" href="{% url 'portal:form' a.pk %}">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a>{% endif %}</div>{% endif %}
+  {% if resume %}<p class="resume">{{ "Welcome back. Your earlier answers are filled in, so you can pick up where you left off."|stack }}</p>{% endif %}
+  {% if not editable and not preview %}<p class="readonly mt">{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}{{ "Submitted. This is a read-only copy. If you need to change something, ask the evaluator to reopen it."|stack }}{% else %}{{ "This period is closed, so this form is read-only."|stack }}{% endif %}</p>{% endif %}
+  {% if errors %}<div class="error" role="alert">{% for e in errors %}<div>{{ e|stack }}</div>{% endfor %}</div>{% endif %}
+
+  <form method="post" enctype="multipart/form-data" id="runner" novalidate>{% csrf_token %}
+    {% if intro %}<p class="instructions">{{ intro|stack }}</p>{% endif %}
+    {% if optout %}
+    <div class="optout">
+      <label><input type="checkbox" id="optout" name="q-{{ optout.code }}" value="yes" {% if opted %}checked{% endif %} {% if not editable %}disabled{% endif %}> {{ optout.prompt }}</label>
+      <div class="small muted" style="margin-top:4px">{% if optout_followups %}{{ "Choosing this swaps the survey for three quick, optional questions. It still counts as done."|stack }}{% else %}{{ "Choosing this records your answer and completes the survey. You won’t see the remaining questions."|stack }}{% endif %}</div>
+    </div>{% endif %}
+    {% for sv in sections %}{% include "portal/_section.html" %}{% endfor %}
+    {% if preview_followup %}<p class="small muted" style="margin:30px 0 -14px">If you opt out, you’ll see these questions instead:</p>{% with sv=preview_followup %}{% include "portal/_section.html" with sv=sv %}{% endwith %}{% endif %}
+    {% if editable %}
+    <div class="actions" style="position:sticky;bottom:0;background:var(--paper)">
+      <button class="btn" type="submit" name="action" value="submit" id="submitbtn">{% if opted %}Submit opt-out{% else %}Submit{% endif %}</button>
+      <button class="btn ghost" type="submit" name="action" value="save" formnovalidate>Save draft</button>
+    </div>{% elif preview and a.status != 'submitted' and a.status != 'completed_opt_out' and a.status != 'exempt' %}
+    <div class="actions"><a class="btn" href="{% url 'portal:form' a.pk %}">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a></div>{% endif %}
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}{% if optout and editable %}
+<script>
+(function () {
+  var box = document.getElementById("optout"), btn = document.getElementById("submitbtn");
+  var hide = {{ hide_on_optout|safe|default:"[]" }}, show = {{ show_on_optout|safe|default:"[]" }};
+  function apply() {
+    hide.forEach(function (c) { var s = document.getElementById("sec-" + c); if (s) s.hidden = box.checked; });
+    show.forEach(function (c) { var s = document.getElementById("sec-" + c); if (s) s.hidden = !box.checked; });
+    if (btn) btn.textContent = box.checked ? "Submit opt-out" : "Submit";
+  }
+  box.addEventListener("change", apply);
+})();
+</script>{% endif %}{% endblock %}

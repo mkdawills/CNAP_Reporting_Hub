@@ -1,0 +1,19 @@
+{% load cnap %}<section class="section" id="sec-{{ sv.s.code }}" data-sec="{{ sv.s.code }}" {% if not sv.visible %}hidden{% endif %}>
+  {% if sv.s.title %}<h2>{{ sv.s.title }}</h2>{% endif %}
+  {% if sv.s.instructions %}{% if sv.caption %}<p class="instructions secintro">{{ sv.s.instructions|caption }}</p>{% else %}{{ sv.s.instructions|guidance }}{% endif %}{% endif %}
+  {% for v in sv.questions %}{% if v.narrative and v.q.help_text %}<p class="small muted qnote" style="margin-top:14px">{{ v.q.help_text|stack }}</p>{% endif %}{% include "portal/_question.html" %}{% endfor %}
+  {% if sv.s.is_repeatable %}
+    <input type="hidden" name="rep-{{ sv.s.code }}-count" value="{{ sv.rows|length }}">
+    {% for row in sv.rows %}{% with i=forloop.counter0 %}
+      <div class="repeat fieldrow">
+        {% for v in row %}
+          {% if v.type == 'date' %}<label>{{ v.q.prompt }}<input type="date" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>
+          {% elif v.type == 'long_text' %}<label class="grow">{{ v.q.prompt }}<textarea name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}readonly{% endif %}>{{ v.value }}</textarea></label>
+          {% else %}<label>{{ v.q.prompt }}<input type="text" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>{% endif %}
+        {% endfor %}
+        {% if editable %}<button class="btn small ghost" type="submit" name="action" value="remove:{{ sv.s.code }}:{{ i }}" formnovalidate>Remove</button>{% endif %}
+      </div>
+    {% endwith %}{% empty %}<p class="small muted">No entries.</p>{% endfor %}
+    {% if editable %}<button class="btn small ghost" type="submit" name="action" value="add:{{ sv.s.code }}" formnovalidate>{{ sv.s.repeat_label|default:"Add an entry" }}</button>{% endif %}
+  {% endif %}
+</section>

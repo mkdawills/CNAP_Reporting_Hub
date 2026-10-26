@@ -101,3 +101,10 @@ def get_item(mapping, key):
 def nav_current(context, *names):
     match = getattr(context.get("request"), "resolver_match", None)
     return 'aria-current="page"' if match and match.url_name in names else ""
+
+
+@register.filter(is_safe=True)
+def caption(value):
+    """Short section directions shown under a heading: in parentheses, no trailing colon."""
+    text = str(value or "").strip().rstrip(":").strip()
+    return mark_safe(f"({stack(text)})") if text else ""

@@ -64,4 +64,4 @@ def admin_label(user):
         )
     if can_view_admin(user):
         return "Administrator · view only"
-    return "Respondent"
+    return ""

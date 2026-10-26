@@ -15,7 +15,7 @@
   "sections": [
     {
       "code": "reporting_hub",
-      "title": "CNAP Reporting Hub Items",
+      "title": "Survey Questions:",
       "instructions": "Please indicate your level of agreement with each of the following statements regarding the CNAP Reporting Hub:",
       "questions": [
         {
@@ -76,5 +76,6 @@
     }
   ],
   "_source": "Team_Science.pdf (Piestar export), split into four surveys (MW, 2026-10-24); open-ended prompts reworded per topic.",
-  "sort_order": 8
+  "sort_order": 8,
+  "_change_notes": "Rating section titled 'Survey Questions:' (MW, 2026-10-25)."
 }

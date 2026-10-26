@@ -1,0 +1,45 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}My tasks · {{ platform_name }}{% endblock %}
+{% block content %}
+{% if not period %}
+  <div class="head"><div><h1>My tasks</h1><p>{{ "No reporting period is open right now. We’ll e-mail you when the next one opens."|stack }}</p></div></div>
+{% else %}
+<div class="head"><div>
+  <h1>My tasks</h1>
+  <p>{% if todo %}{{ todo }} of {{ total }} still to do{% if minutes_left %}, about {{ minutes_left }} min in total{% endif %}.{% else %}All {{ total }} done.{% endif %} {{ due }}.</p>
+  <div class="taskprog"><div class="bar" role="progressbar" aria-label="Tasks done" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done_n }}"><span style="width:{{ pct }}%"></span></div><span class="small muted">{{ done_n }} of {{ total }} done</span></div>
+  {% for d in is_core_director %}<p class="small muted">{{ "You direct the "|add:d.core.name|add:", so you don’t receive its user survey. You still receive the other core surveys."|stack }}</p>{% endfor %}
+</div></div>
+
+{% if just_done %}
+<div class="panel nextup" role="status">
+  <p><strong>{% if just_done.a.status == 'completed_opt_out' %}Recorded{% else %}Submitted{% endif %}: {{ just_done.name }}.</strong></p>
+  {% if next_up %}<p>Next: {{ next_up.name }}, {{ next_up.time|lower }}.</p>
+  <div class="fieldrow"><a class="btn" href="{% url 'portal:form' next_up.a.pk %}">Start now</a><a class="btn ghost" href="{% url 'portal:tasks' %}">Back to my list</a></div>{% endif %}
+</div>{% endif %}
+
+{% if not todo %}
+<div class="panel finish"><h2>You’re all set for {{ period.short_label }}.</h2><p>{{ "Thank you for your time. We’ll e-mail you when the next reporting period opens."|stack }}</p></div>
+{% else %}
+<p class="privacy">Other respondents never see your answers.</p>
+<div class="panel">
+  <h2 class="sectionhead">To do ({{ todo }})</h2>
+  <div class="scroll"><table class="tasks"><tbody>
+  {% for g in groups %}
+    <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div><span class="ghcount">{{ g.count }} to do</span></div></td></tr>
+    {% for r in g.used %}{% include "portal/_task_row.html" %}{% endfor %}
+    {% if g.used and g.rows %}<tr class="subhead"><td colspan="5">Did you also use these?</td></tr>{% endif %}
+    {% for r in g.rows %}{% include "portal/_task_row.html" %}{% endfor %}
+  {% endfor %}
+  </tbody></table></div>
+  {% if has_optouts %}<p class="small muted footnote">{{ "* Opt out of any survey that doesn’t apply to you since the last reporting period: for example, a core you didn’t use, NeuroSync if you didn’t attend, or the grant writing program if you didn’t use it."|stack }}</p>{% endif %}
+</div>
+{% endif %}
+
+{% if done %}
+<details class="panel donebox" {% if not todo %}open{% endif %}><summary>Done ({{ done|length }})</summary>
+  <div class="scroll"><table class="tasks"><tbody>{% for r in done %}{% include "portal/_task_row.html" %}{% endfor %}</tbody></table></div>
+</details>{% endif %}
+{% endif %}
+{% endblock %}

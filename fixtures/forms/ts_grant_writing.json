@@ -34,7 +34,7 @@
     },
     {
       "code": "grant_writing",
-      "title": "The Grant Writing Program",
+      "title": "Survey Questions:",
       "instructions": "Please indicate your level of agreement with each of the following statements regarding the grant writing program. (The grant writing program includes activities such as reviewer analysis, support preparing proposal materials, and grantsmanship training.):",
       "questions": [
         {
@@ -117,5 +117,6 @@
     }
   ],
   "_source": "Team_Science.pdf (Piestar export), split into four surveys (MW, 2026-10-24); open-ended prompts reworded per topic.",
-  "sort_order": 7
+  "sort_order": 7,
+  "_change_notes": "Rating section titled 'Survey Questions:' (MW, 2026-10-25)."
 }

@@ -1,0 +1,18 @@
+{% load cnap %}<tr class="{% if r.used_core and r.is_open %}usedrow{% endif %}">
+  <td>
+    {% if r.about %}<details class="about"><summary>{{ r.name }}</summary><div class="aboutbody">{% for p in r.about %}<p>{{ p|stack }}</p>{% endfor %}</div></details>{% else %}<strong>{{ r.name }}</strong>{% endif %}
+    {% if r.context %}<div class="small muted">{{ r.context }}</div>{% endif %}
+    {% if r.used_core and r.is_open %}<div class="pinned">The core you used</div>{% endif %}
+    {% if r.a.status == 'in_progress' %}<div class="small muted">You previously started this {{ r.noun }}. Your answers are saved.</div>{% endif %}
+    {% if r.a.status == 'completed_opt_out' %}<div class="small muted">Opted out: {{ r.opt_out_note|default:r.pathway }}</div>{% endif %}
+    {% if r.a.status == 'exempt' %}<div class="small muted">Not needed this period</div>{% endif %}
+  </td>
+  {% if r.is_open %}
+    <td class="acts"><a class="btn small" href="{% url 'portal:form' r.a.pk %}">{% if r.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a></td>
+    <td class="acts"><a class="linkbtn" href="{% url 'portal:preview' r.a.pk %}">Preview</a></td>
+    <td class="acts">{% if r.can_opt_out %}<form method="post" action="{% url 'portal:opt_out' r.a.pk %}">{% csrf_token %}<button class="btn small ghost" type="submit" title="{{ r.opt_out_note }}">Opt out*</button></form>{% endif %}</td>
+  {% else %}
+    <td class="acts"><a class="btn small ghost" href="{% url 'portal:form' r.a.pk %}">View</a></td><td class="acts"></td><td class="acts"></td>
+  {% endif %}
+  <td class="mins">{{ r.time }}</td>
+</tr>

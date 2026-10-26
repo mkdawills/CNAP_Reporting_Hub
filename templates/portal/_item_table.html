@@ -1,0 +1,9 @@
+{% load cnap %}<div class="scroll"><table class="itemtab">
+  <thead><tr><th>Item</th><th class="num">People</th><th class="num">Average</th>{% for o in scale %}<th class="pcol"><span class="pn">{{ o.num }}</span>{{ o.text }}</th>{% endfor %}</tr></thead>
+  <tbody>{% for st in items %}<tr>
+    <td>{{ st.question.prompt }}{% if show_codes and st.question.measure %}<div class="small muted">{{ st.question.measure.code }}</div>{% endif %}</td>
+    <td class="num">{{ st.n }}{% if show_na and st.na %}<div class="small muted">{{ st.na }} N/A</div>{% endif %}</td>
+    <td class="num">{% if st.mean is not None %}<strong>{{ st.mean|floatformat:2 }}</strong> <span class="small muted">of {{ scale|length }}</span>{% else %}—{% endif %}</td>
+    {% for v, c, p in st.distribution %}{% if forloop.counter <= scale|length %}<td class="pcell" title="{{ c }} of {{ st.n }}"><span class="pbar" style="height:{{ p|floatformat:0 }}%"></span><span class="pv">{{ p|floatformat:0 }}%</span></td>{% endif %}{% endfor %}
+  </tr>{% endfor %}</tbody>
+</table></div>

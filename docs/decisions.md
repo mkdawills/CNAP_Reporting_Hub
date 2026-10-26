@@ -149,3 +149,23 @@ To confirm with K-State IT: approval of emailed links for outside users, and whe
 ## 2026-10-25 — Center results: small items left out, with a note
 
 On the respondent-facing Center results page, any item rated by fewer than 5 people is left out, and a short note under that survey says some items aren't shown because fewer than 5 people rated them. Administrators see every item on their own Results page.
+
+## 2026-10-25 — Prior-year averages loaded (MW overrides the real-data rule for these)
+
+MW asked for the Year 6–9 results to be in the platform now, and said the "fictional data until K-State hosting" rule does not apply to them. Only item averages are loaded: `fixtures/historical/aggregates_y6_y9.csv` (757 values) was extracted from the comparison tables of the Year 9 site-visit reports (BN, NI and CN Tables 2 and 4; the NeuroSync, Mentor and Mentee comparison sheets) by `fixtures/historical/extract_from_y9_reports.py`. No names, e-mails, respondent rows or written comments were taken; the reports' raw-data sheets were not used. They are stored as historical aggregate snapshots (provenance `aggregate_import`) with no drill-down, one reporting period per column (Y6 Jan through Y9 May).
+
+Assumptions to verify: the Year 9 Mentee report's comparison sheet prints mentor-worded item labels; its values differ from the mentor sheet, so they are taken as mentee ratings and mapped by item number. Items no longer asked are kept as retired measures (BN "Planning and execution of alterations and renovations", one NI and one CN frequency item).
+
+## 2026-10-25 — Layout and display choices from MW's review
+
+- **Results mirror the site-visit report layout**: per section, a table of items with Mean (SD), a count and percent for each answer and a Total, a grand-mean row, a column chart of response counts, then a year-over-year table of means. Percent and mean cells are heat-shaded (darker green for higher values).
+- **My history** uses the My tasks layout: one gray band per reporting period, rows with View and a quiet submitted date.
+- **Form pages**: every divider has the same space above and below; the question text is larger and bolder, and the rating scale is borderless and quiet until hovered or chosen; a light line also sits above the first question after a section's intro.
+- **Sidebar**: more spacing, a centered line under "Kansas State University", and the person's CNAP roles (e.g. "BN Core Director") instead of "Standard User".
+- Reports say "You previously started this report"; surveys say "survey".
+- **Team Science surveys**: the single rating section of each of the four is titled "Survey Questions:" (MW, 2026-10-25). Core surveys keep "Quality of services and functions" and "Frequency of use".
+- **Form title block**: centered, on a light purple panel, with no divider inside it.
+- **Rating answers are a vertical list on every screen** ("1 Strongly Disagree" … with N/A below), chosen by MW over the side-by-side scale: each answer reads as one line, long labels don't wrap, and the whole row is the target.
+- **Section directions** for rating sections sit right under the heading, in parentheses without the trailing colon, with one line below them.
+- **Opt-out box** is quiet (gray text, thin border) until ticked; ticking turns it yellow.
+- **Questions are numbered**, restarting in each section, matching the site-visit report tables.
