@@ -13,6 +13,7 @@ from django.db import models
 from django.db.models import Q
 
 from apps.common.enums import (
+    FundingSourceType,
     GrantRole,
     GrantStatus,
     PresentationType,
@@ -73,6 +74,19 @@ class Publication(ArchivableModel):
         max_length=300,
         blank=True,
         help_text="What 'Other' means when Other is among the Center resources.",
+    )
+    foreign_component_approved = models.BooleanField(
+        null=True,
+        blank=True,
+        help_text="With foreign co-authors: has NIGMS given prior approval for the foreign component?",
+    )
+    has_non_idea_coauthors = models.BooleanField(
+        null=True, blank=True, help_text="Co-authors from non-IDeA states?"
+    )
+    rppr_year = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        help_text="Grant year of the RPPR it was reported in (C.1). Never reported twice.",
     )
     confirmed_at = models.DateTimeField(
         null=True,
@@ -364,6 +378,31 @@ class GrantSubmission(ArchivableModel):
     discussion_date = models.DateField(null=True, blank=True)
     feedback_shared_with_cnap = models.BooleanField(null=True, blank=True)
     plans_to_resubmit = models.BooleanField(null=True, blank=True)
+    funding_source_type = models.CharField(
+        max_length=14,
+        blank=True,
+        choices=FundingSourceType.choices,
+        help_text="RPPR Table 1A: NIH, Federal non-NIH, Non-federal.",
+    )
+    cnap_portion = models.DecimalField(
+        max_digits=14,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="If MPI, Co-PI, collaborator or subawardee: the CNAP investigator's portion of the award (RPPR Table 1).",
+    )
+    exclude_from_table1 = models.BooleanField(
+        default=False,
+        help_text="The parent COBRE award or a supplement to it: never counted in RPPR Table 1.",
+    )
+    rppr_submitted_year = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        help_text="Grant year of the RPPR that counted this application as submitted.",
+    )
+    rppr_awarded_year = models.PositiveSmallIntegerField(
+        null=True, blank=True, help_text="Grant year of the RPPR that counted this award."
+    )
     resources_other_text = models.CharField(max_length=300, blank=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
     resubmission_of = models.ForeignKey(

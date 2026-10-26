@@ -99,6 +99,7 @@ def outcomes(request):
         request,
         "manage/outcomes.html",
         {
+            "rppr": _rppr_ctx(request) if tab == "rppr" else None,
             "reminders_due": _rem.due() if tab == "reminders" else None,
             "reminders_sent": OutcomeReminder.objects.select_related("person")[:20]
             if tab == "reminders"
@@ -296,6 +297,10 @@ class PublicationForm(forms.ModelForm):
             "publication_date",
             "pubmed_url",
             "comments",
+            "has_foreign_authors",
+            "foreign_component_approved",
+            "has_non_idea_coauthors",
+            "rppr_year",
         ]
         widgets = {
             "submission_date": forms.DateInput(attrs={"type": "date"}),
@@ -334,6 +339,11 @@ class GrantForm(forms.ModelForm):
             "award_total",
             "grant_number",
             "decision_comments",
+            "funding_source_type",
+            "cnap_portion",
+            "exclude_from_table1",
+            "rppr_submitted_year",
+            "rppr_awarded_year",
         ]
         widgets = {
             "submission_date": forms.DateInput(attrs={"type": "date"}),
@@ -584,6 +594,110 @@ def export(request, kind):
                     "; ".join(str(x.person) for x in p.people.all()),
                 ]
             )
+    elif kind in ("c1", "table1"):
+        from apps.outcomes import rppr
+
+        gy = int(request.GET.get("year", rppr.current_year()))
+        if kind == "c1":
+            inc, exc = rppr.c1(gy)
+            w.writerow(
+                [
+                    f"RPPR Year {gy} — C.1 Publications (published June 1, {2016 + gy} – May 31, {2017 + gy})"
+                ]
+            )
+            w.writerow(
+                [
+                    "Authors",
+                    "Title",
+                    "Journal",
+                    "Publication date",
+                    "PubMed link",
+                    "Cites P20GM113109",
+                    "Non-IDeA-state co-authors",
+                    "CNAP people",
+                ]
+            )
+            for p in inc:
+                w.writerow(
+                    [
+                        p.author_display_text,
+                        p.title,
+                        p.journal,
+                        p.publication_date,
+                        p.pubmed_url,
+                        _yn(p.cnap_cited),
+                        _yn(p.has_non_idea_coauthors),
+                        "; ".join(str(x.person) for x in p.people.all()),
+                    ]
+                )
+            w.writerow([])
+            w.writerow(["Left out", "Title", "Reason"])
+            for p, why in exc:
+                w.writerow(["", p.title, why])
+        else:
+            t = rppr.table1(gy)
+            w.writerow([f"RPPR Year {gy} — Table 1A: Funding Accomplishments"])
+            w.writerow(
+                ["Funding Sources", "NIH", "Federal, non-NIH", "Non-Federal Sources", "Total"]
+            )
+            w.writerow(
+                ["Applications Submitted"]
+                + [t["a"][k]["sub"] for k in t["sources"]]
+                + [t["total"]["sub"]]
+            )
+            w.writerow(
+                ["Awards Funded (New/Renewal)"]
+                + [t["a"][k]["won"] for k in t["sources"]]
+                + [t["total"]["won"]]
+            )
+            w.writerow(
+                ["Total Award Costs (entire period of performance)"]
+                + [round(t["a"][k]["cost"], 2) for k in t["sources"]]
+                + [round(t["total"]["cost"], 2)]
+            )
+            w.writerow([])
+            w.writerow(
+                ["Table 1B: COBRE Funding Accomplishments by Role for This Reporting Period"]
+            )
+            w.writerow(["Breakdown of Table 1A by Role"] + t["roles"])
+            w.writerow(["# Applications Submitted"] + [t["b"][k]["sub"] for k in t["roles"]])
+            w.writerow(["# New/Renewal Awards Funded"] + [t["b"][k]["won"] for k in t["roles"]])
+            w.writerow(
+                ["Total Award Costs (entire period of performance)"]
+                + [round(t["b"][k]["cost"], 2) for k in t["roles"]]
+            )
+            w.writerow([])
+            w.writerow(
+                [
+                    "Counted",
+                    "Title",
+                    "Version",
+                    "Lead",
+                    "Role",
+                    "Funding source",
+                    "Source guessed from agency",
+                    "Amount",
+                    "Amount basis",
+                ]
+            )
+            for r in t["rows"]:
+                w.writerow(
+                    [
+                        r["kind"],
+                        r["g"].project_title,
+                        r["g"].version_label,
+                        r["lead"] or "",
+                        r["role"],
+                        r["source"],
+                        "yes" if r["guessed"] else "",
+                        r["cost"] or "",
+                        r["basis"],
+                    ]
+                )
+            for g, why in t["skipped"]:
+                w.writerow(
+                    ["Not counted", g.project_title, g.version_label, "", "", "", "", "", why]
+                )
     elif kind in ("talks", "presentations"):
         from apps.outcomes.models import Presentation
 
@@ -766,6 +880,40 @@ def person_outcomes(person):
         .order_by("-submission_date")
     )
     return {"pubs": pubs, "grants": grants}
+
+
+def _rppr_ctx(request):
+    from apps.outcomes import rppr
+
+    cur = rppr.current_year()
+    try:
+        gy = int(request.GET.get("year", cur))
+    except ValueError:
+        gy = cur
+    inc, exc = rppr.c1(gy)
+    start, end = rppr.period(gy)
+    return {
+        "year": gy,
+        "years": list(range(cur, 5, -1)),
+        "start": start,
+        "end": end,
+        "c1": inc,
+        "c1_excluded": exc,
+        "t1": rppr.table1(gy),
+    }
+
+
+@manage_action
+def mark_rppr(request):
+    from apps.outcomes import rppr
+
+    gy = int(request.POST["year"])
+    n = rppr.mark_reported(request.user, gy)
+    messages.success(
+        request,
+        f"{n} item{'s' if n != 1 else ''} marked as reported in the Year {gy} RPPR. They won’t be counted again in later years.",
+    )
+    return redirect(f"/manage/outcomes/?tab=rppr&year={gy}")
 
 
 @manage_action

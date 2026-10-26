@@ -683,7 +683,7 @@ One manuscript = one record, followed through Planned -> Submitted -> Published 
 | updated_at | DateTimeField | no |  |
 | archived_at | DateTimeField | yes |  |
 | title | CharField | no |  |
-| publication_type | CharField | no | journal_article, conference_paper, book_chapter, thesis, other |
+| publication_type | CharField | no | journal_article, conference_paper, book_chapter, thesis, preprint, other |
 | status | CharField | no | planned, submitted, published, declined |
 | substatus | CharField | yes | under_review, accepted, in_press — Only while Submitted: under review, accepted, in press. |
 | author_display_text | TextField | no | Full author list as entered, citation style. |
@@ -701,6 +701,9 @@ One manuscript = one record, followed through Planned -> Submitted -> Published 
 | resubmission_of_id | FK → publications | yes |  |
 | comments | TextField | no |  |
 | resources_other_text | CharField | no | What 'Other' means when Other is among the Center resources. |
+| foreign_component_approved | BooleanField | yes | With foreign co-authors: has NIGMS given prior approval for the foreign component? |
+| has_non_idea_coauthors | BooleanField | yes | Co-authors from non-IDeA states? |
+| rppr_year | PositiveSmallIntegerField | yes | Grant year of the RPPR it was reported in (C.1). Never reported twice. |
 | confirmed_at | DateTimeField | yes | Last time the person reviewed this record ('Confirm no changes' or an update). |
 | created_by_id | FK → users | yes |  |
 
@@ -881,6 +884,11 @@ Each submission attempt is one record. The version (A0, A1, ...) is system-set a
 | discussion_date | DateField | yes |  |
 | feedback_shared_with_cnap | BooleanField | yes |  |
 | plans_to_resubmit | BooleanField | yes |  |
+| funding_source_type | CharField | no | nih, federal_other, non_federal — RPPR Table 1A: NIH, Federal non-NIH, Non-federal. |
+| cnap_portion | DecimalField | yes | If MPI, Co-PI, collaborator or subawardee: the CNAP investigator's portion of the award (RPPR Table 1). |
+| exclude_from_table1 | BooleanField | no | The parent COBRE award or a supplement to it: never counted in RPPR Table 1. |
+| rppr_submitted_year | PositiveSmallIntegerField | yes | Grant year of the RPPR that counted this application as submitted. |
+| rppr_awarded_year | PositiveSmallIntegerField | yes | Grant year of the RPPR that counted this award. |
 | resources_other_text | CharField | no |  |
 | confirmed_at | DateTimeField | yes |  |
 | resubmission_of_id | FK → grant_submissions | yes |  |

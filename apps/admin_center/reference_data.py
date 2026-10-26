@@ -100,6 +100,9 @@ RELATIONSHIP_TYPES = [
     ("student_trainee", "Student / Trainee (center-level)", ContextKind.NONE, [], False, False, 11),
     ("cnap_member", "General CNAP Member (active roster)", ContextKind.NONE, [], False, False, 12),
     ("event_participant", "Event / Training Participant", ContextKind.NONE, [], False, False, 13),
+    # RPPR D.1 "PD/PI" and Table 1B "Core Staff (including the PD/PI)" (decisions.md 2026-10-26)
+    ("pd_pi", "PD/PI (Center Director)", ContextKind.NONE, [], False, False, 14),
+    ("associate_director", "Associate Director", ContextKind.NONE, [], False, False, 15),
 ]
 
 # Shared answer sets: name, scale kind, options as (code, label, value, is_na)

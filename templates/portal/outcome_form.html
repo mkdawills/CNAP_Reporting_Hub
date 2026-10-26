@@ -7,6 +7,13 @@ document.querySelectorAll("[data-show-if]").forEach(function (el) {
   document.querySelectorAll('input[name="' + name + '"]').forEach(function (i) { i.addEventListener("change", sync); });
   sync();
 });
+document.querySelectorAll(".acktext .copy").forEach(function (b) {
+  b.addEventListener("click", function () {
+    var t = b.parentNode.querySelector("span").textContent;
+    try { navigator.clipboard.writeText(t); b.textContent = "Copied"; } catch (e) {}
+    setTimeout(function () { b.textContent = "Copy"; }, 1500);
+  });
+});
 // "If Other, what?" appears when Other is ticked.
 document.querySelectorAll("[data-show-other]").forEach(function (el) {
   var other = Array.from(document.querySelectorAll('input[name="resources"]')).find(function (i) { return i.closest("label").textContent.trim() === "Other"; });
@@ -21,13 +28,26 @@ document.querySelectorAll("[data-show-other]").forEach(function (el) {
   {% if obj %}<p>{% if kind == 'pub' %}{{ obj.title }}{% else %}{{ obj.project_title }} · {{ obj.version_label }}{% endif %}</p>{% endif %}
   {% if owner != request.user.person %}<p class="small muted">Entering for {{ owner }}.</p>{% endif %}</div></div>
 <form method="post" class="panel oform" style="max-width:820px">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><input type="hidden" name="to" value="{{ stage }}">
+  {% if kind == 'pub' and stage != 'declined' or kind == 'presentation' or kind == 'grant' and stage == 'planned' or kind == 'grant' and stage == 'submitted' %}
+  <details class="ackbox" {% if stage == 'submitted' or stage == 'published' %}open{% endif %}><summary>How to acknowledge CNAP</summary>
+    {% if kind == 'grant' %}
+      <p class="small">Suggested wording for your proposal:</p>
+      <div class="acktext"><span>Preliminary data for this proposal were generated with support from the National Institute of General Medical Sciences of the National Institutes of Health under Award Number P20GM113109 (CNAP COBRE).</span><button type="button" class="btn small ghost copy">Copy</button></div>
+    {% else %}
+      <p class="small">NIH requires COBRE-supported work to cite the grant. Suggested wording:</p>
+      <div class="acktext"><span>Research reported in this {% if kind == 'presentation' %}presentation{% else %}publication{% endif %} was supported by the National Institute of General Medical Sciences of the National Institutes of Health under Award Number P20GM113109. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health.</span><button type="button" class="btn small ghost copy">Copy</button></div>
+      <p class="small">If you used a CNAP core, for example as fee-for-service:</p>
+      <div class="acktext"><span>We acknowledge the CNAP COBRE (P20GM113109) for the use of the [BN / NI / CN] Core as fee-for-service. The Core was used for [describe the use of the Core].</span><button type="button" class="btn small ghost copy">Copy</button></div>
+      <p class="small muted">{{ "Papers with foreign co-authors may cite the grant only if NIGMS approved the foreign component in advance; the acknowledgment should make clear the foreign component wasn’t supported with IDeA funds."|stack }}</p>
+    {% endif %}
+  </details>{% endif %}
   {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
   {% for field in form %}
     {% if field.name == 'resources' or field.name == 'projects' %}
       <fieldset class="field checks"><legend>{{ field.label }}{% if field.name == 'resources' and form.resources_required %} <span class="req">*</span>{% endif %}</legend><div class="checkgrid">{% for c in field %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</fieldset>
     {% elif field.field.widget.input_type == 'radio' %}
       {% if field.name == 'has_foreign_authors' and affiliations %}<details class="affs"><summary class="small">Author affiliations from PubMed ({{ affiliations|length }}), to help answer the next question</summary><ul class="small">{% for a in affiliations %}<li>{{ a }}</li>{% endfor %}</ul></details>{% endif %}
-      <fieldset class="field yn"><legend>{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</legend><div class="fieldrow">{% for c in field %}<label class="ynopt">{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</fieldset>
+      <fieldset class="field yn" {% if field.name == 'foreign_component_approved' %}data-show-if="has_foreign_authors"{% endif %}><legend>{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</legend><div class="fieldrow">{% for c in field %}<label class="ynopt">{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</fieldset>
     {% else %}
       <div class="field" {% if field.name == 'program_officer_name' or field.name == 'discussion_date' %}data-show-if="discussed_with_program_officer"{% elif field.name == 'resources_other_text' %}data-show-other="1"{% endif %}><label><span class="lt">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</span>{{ field }}</label>{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}
       {% if field.name == 'pubmed_url' %}<button class="btn small ghost" type="submit" name="lookup" value="1" formnovalidate style="margin-top:6px">Fill in from PubMed</button>{% endif %}</div>
@@ -42,6 +62,13 @@ document.querySelectorAll("[data-show-if]").forEach(function (el) {
   function sync() { var y = document.querySelector('input[name="' + name + '"][value="yes"]'); el.hidden = !(y && y.checked); }
   document.querySelectorAll('input[name="' + name + '"]').forEach(function (i) { i.addEventListener("change", sync); });
   sync();
+});
+document.querySelectorAll(".acktext .copy").forEach(function (b) {
+  b.addEventListener("click", function () {
+    var t = b.parentNode.querySelector("span").textContent;
+    try { navigator.clipboard.writeText(t); b.textContent = "Copied"; } catch (e) {}
+    setTimeout(function () { b.textContent = "Copy"; }, 1500);
+  });
 });
 // "If Other, what?" appears when Other is ticked.
 document.querySelectorAll("[data-show-other]").forEach(function (el) {

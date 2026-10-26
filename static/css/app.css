@@ -616,3 +616,7 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 .affs { margin: 0 0 10px; } .affs ul { margin: 6px 0 0 18px; color: var(--muted); }
 /* encouraging note after a Not funded decision */
 .messages li.encourage { background: #eef6f3; border-left: 4px solid #1f6857; color: var(--ink); padding: 16px 18px; font-size: 1rem; line-height: 1.55; max-width: 760px; }
+.ackbox { background: #f4f7fb; border-radius: 10px; padding: 10px 14px; margin: 0 0 18px; }
+.ackbox summary { cursor: pointer; font-weight: 600; }
+.acktext { display: flex; gap: 10px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 4px 0 10px; font-size: .88rem; }
+.acktext span { flex: 1; }

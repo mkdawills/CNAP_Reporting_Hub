@@ -2,7 +2,13 @@
 
 from django import forms
 
-from apps.common.enums import GrantRole, PresentationType, PrimeOrSubaward, PublicationType
+from apps.common.enums import (
+    FundingSourceType,
+    GrantRole,
+    PresentationType,
+    PrimeOrSubaward,
+    PublicationType,
+)
 from apps.people.models import Project, Resource
 
 YN = [("yes", "Yes"), ("no", "No")]
@@ -112,6 +118,10 @@ class PubPublished(_Resources):
     cnap_cited = yn("Did you cite CNAP in your journal article?")
     cnap_in_grant_index = yn("Did you list CNAP in the grant index portion of your PubMed entry?")
     has_foreign_authors = yn("Does your publication include any foreign authors?")
+    foreign_component_approved = yn(
+        "Has NIGMS given prior approval for the foreign component?", required=False
+    )
+    has_non_idea_coauthors = yn("Does it have any co-authors from non-IDeA states?")
     field_order = [
         "submission_date",
         "journal",
@@ -122,7 +132,24 @@ class PubPublished(_Resources):
         "cnap_cited",
         "cnap_in_grant_index",
         "has_foreign_authors",
+        "foreign_component_approved",
+        "has_non_idea_coauthors",
     ]
+
+
+def _pub_published_clean(self):
+    data = _Resources.clean(self)
+    if data.get("has_foreign_authors") and data.get("foreign_component_approved") is None:
+        self.add_error(
+            "foreign_component_approved",
+            "Please answer: it decides whether the paper can be reported to NIH.",
+        )
+    if data.get("has_foreign_authors") is False:
+        data["foreign_component_approved"] = None
+    return data
+
+
+PubPublished.clean = _pub_published_clean
 
 
 class PubDeclined(forms.Form):
@@ -159,6 +186,7 @@ class GrantPlanned(_Resources):
     planned_estimated_direct = money("Estimated direct costs (optional; preliminary)")
     field_order = [
         "funding_agency",
+        "funding_source_type",
         "opportunity_url",
         "mechanism",
         "anticipated_submission_date",
@@ -172,6 +200,11 @@ class GrantPlanned(_Resources):
 class GrantSubmitted(_Resources):
     resources_required = True
     funding_agency = forms.CharField(label="Funding agency", max_length=200)
+    funding_source_type = forms.ChoiceField(
+        label="Funding source",
+        choices=list(FundingSourceType.choices),
+        help_text="For NIH’s progress report (Table 1A).",
+    )
     opportunity_url = forms.URLField(
         label="Funding opportunity link", max_length=500, required=False
     )
@@ -184,6 +217,7 @@ class GrantSubmitted(_Resources):
     requested_indirect = money("Estimated indirect costs (optional)")
     field_order = [
         "funding_agency",
+        "funding_source_type",
         "opportunity_url",
         "mechanism",
         "submission_date",
@@ -221,6 +255,7 @@ class GrantAwarded(_Resources):
         "award_total",
         "award_direct",
         "award_indirect",
+        "cnap_portion",
         "grant_number",
         "prime_or_subaward",
         "cnap_acknowledged",

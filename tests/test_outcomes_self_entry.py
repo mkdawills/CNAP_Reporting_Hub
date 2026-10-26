@@ -20,8 +20,22 @@ def login(client, u):
 
 
 def test_only_awardees_and_their_delegates(client, center):
-    login(client, "lee")  # a student on a project, not an awardee
-    assert client.get("/outcomes/").status_code == 403
+    login(
+        client, "lee"
+    )  # on the roster: can open the page (decisions.md 2026-10-26, everyone on the roster)
+    assert client.get("/outcomes/").status_code == 200
+    client.logout()
+    from apps.people.models import Person
+
+    nobody = Person.objects.create(first_name="No", last_name="Roles")
+    nobody_user = (
+        User.objects.create_user(username="noroles", password="x", person=nobody)
+        if hasattr(User.objects, "create_user")
+        else None
+    )
+    if nobody_user:
+        client.force_login(nobody_user)
+        assert client.get("/outcomes/").status_code == 403
     login(client, "okafor")
     assert client.get("/outcomes/").status_code == 200
 
@@ -85,6 +99,7 @@ def test_publication_lifecycle(client, center):
             "cnap_cited": "yes",
             "cnap_in_grant_index": "no",
             "has_foreign_authors": "no",
+            "has_non_idea_coauthors": "no",
             "resources": [bn.pk],
         },
     )
@@ -139,6 +154,7 @@ def test_grant_not_funded_resubmission_is_a1(client, center):
             "project_title": "Grant G",
             "role": "pi",
             "submission_date": "2026-10-05",
+            "funding_source_type": "nih",
             "requested_total": "120000",
             "resources": [cn.pk],
         },

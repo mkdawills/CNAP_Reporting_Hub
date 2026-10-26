@@ -60,11 +60,43 @@ def is_awardee(person, on=None):
     )
 
 
+PROMPT_ROLES = (
+    "project_leader",
+    "pilot_awardee",
+    "core_director",
+    "core_staff",
+    "core_user",
+    "pd_pi",
+    "associate_director",
+)
+
+
+def is_prompted(person, on=None):
+    """Who gets the per-period check-in (decisions.md 2026-10-26): RPPR Table 1 roles and core users."""
+    on = on or timezone.localdate()
+    return (
+        PersonRelationship.objects.filter(
+            person=person, relationship_type__code__in=PROMPT_ROLES, effective_from__lte=on
+        )
+        .exclude(effective_to__lt=on)
+        .exists()
+    )
+
+
+def on_roster(person, on=None):
+    on = on or timezone.localdate()
+    return (
+        PersonRelationship.objects.filter(person=person, effective_from__lte=on)
+        .exclude(effective_to__lt=on)
+        .exists()
+    )
+
+
 def owners_for(person):
     """People this person can enter for: themselves (if an awardee or already has records) and anyone who delegated to them."""
     out = []
     if (
-        is_awardee(person)
+        on_roster(person)
         or Publication.objects.filter(people__person=person).exists()
         or GrantSubmission.objects.filter(people__person=person).exists()
     ):
@@ -262,6 +294,8 @@ def update_publication(user, p, new_status, data, resources=None, projects=None,
         "cnap_cited",
         "cnap_in_grant_index",
         "has_foreign_authors",
+        "foreign_component_approved",
+        "has_non_idea_coauthors",
         "decline_date",
         "comments",
         "resubmission_intent",
@@ -325,6 +359,7 @@ def create_grant(
         grant_family=fam,
         project_title=data["project_title"],
         funding_agency=data.get("funding_agency", ""),
+        funding_source_type=data.get("funding_source_type", "") or "",
         opportunity_url=data.get("opportunity_url", ""),
         mechanism=data.get("mechanism", ""),
         anticipated_submission_date=data.get("anticipated_submission_date"),
@@ -360,6 +395,8 @@ def update_grant(
     for f in (
         "project_title",
         "funding_agency",
+        "funding_source_type",
+        "cnap_portion",
         "opportunity_url",
         "mechanism",
         "anticipated_submission_date",

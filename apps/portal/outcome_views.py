@@ -272,6 +272,17 @@ def update(request, kind, pk):
             created = os.update_publication(request.user, obj, to, d, res, prj, other)
         else:
             created = os.update_grant(request.user, obj, to, d, res, prj, other, owner=owner)
+        if (
+            kind == "pub"
+            and to == "published"
+            and d.get("has_foreign_authors")
+            and d.get("foreign_component_approved") is False
+        ):
+            messages.warning(
+                request,
+                "Because NIGMS hasn’t approved the foreign component, NIH rules say this paper can’t be listed in "
+                "CNAP’s progress report and shouldn’t cite P20GM113109. The CNAP evaluator will be in touch about it.",
+            )
         if kind == "grant" and to == "not_funded":
             messages.add_message(request, messages.INFO, NOT_FUNDED_NOTE, extra_tags="encourage")
         if created:
@@ -394,10 +405,19 @@ def task_item(person, period):
         return None
     items = []
     for o in owners:
+        # The check-in goes to RPPR roles and core users, and to anyone with papers or proposals to review.
+        if (
+            o.pk == person.pk
+            and not os.is_prompted(o)
+            and not (os.pubs_of(o).exists() or os.grants_of(o).exists())
+        ):
+            continue
         st = os.state(o, period)
         items.append(
             {"owner": o, "todo": st["todo"], "done": st["done"], "self": o.pk == person.pk}
         )
+    if not items:
+        return None
     todo = sum(i["todo"] for i in items)
     return {"items": items, "todo": todo, "done": todo == 0, "minutes": max(2, min(10, 2 * todo))}
 

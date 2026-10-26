@@ -162,6 +162,7 @@ class PublicationType(models.TextChoices):
     CONFERENCE_PAPER = "conference_paper", "Conference paper or proceeding"
     BOOK_CHAPTER = "book_chapter", "Book chapter"
     THESIS = "thesis", "Thesis or dissertation"
+    PREPRINT = "preprint", "Preprint (not peer reviewed)"
     OTHER = "other", "Other"
 
 
@@ -204,3 +205,11 @@ class GrantRole(models.TextChoices):
 class PrimeOrSubaward(models.TextChoices):
     PRIME = "prime", "Prime institution"
     SUBAWARD = "subaward", "Subaward"
+
+
+class FundingSourceType(models.TextChoices):
+    """RPPR Table 1A columns."""
+
+    NIH = "nih", "NIH"
+    FEDERAL_OTHER = "federal_other", "Federal, non-NIH"
+    NON_FEDERAL = "non_federal", "Non-federal"

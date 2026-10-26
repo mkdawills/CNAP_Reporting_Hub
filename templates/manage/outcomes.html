@@ -12,9 +12,37 @@
 </div>
 
 <div class="panel">
-  {% if tab != 'reminders' %}<p class="small" style="float:right;margin:8px 0 0"><a href="{% url 'manage:outcomes_export' tab|default:'pubs' %}">{% if tab == 'grants' %}Download grant list (CSV){% elif tab == 'talks' %}Download presentation list (CSV){% elif tab == 'counts' %}Download counts (CSV){% else %}Download citation list (CSV){% endif %}</a></p>{% endif %}
-  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}">Grants</a><a href="?tab=talks" class="{% if tab == 'talks' %}on{% endif %}">Presentations</a><a href="?tab=counts" class="{% if tab == 'counts' %}on{% endif %}">Counts</a><a href="?tab=reminders" class="{% if tab == 'reminders' %}on{% endif %}">Reminders</a></div>
-  {% if tab == 'reminders' %}
+  {% if tab != 'reminders' and tab != 'rppr' %}<p class="small" style="float:right;margin:8px 0 0"><a href="{% url 'manage:outcomes_export' tab|default:'pubs' %}">{% if tab == 'grants' %}Download grant list (CSV){% elif tab == 'talks' %}Download presentation list (CSV){% elif tab == 'counts' %}Download counts (CSV){% else %}Download citation list (CSV){% endif %}</a></p>{% endif %}
+  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}">Grants</a><a href="?tab=talks" class="{% if tab == 'talks' %}on{% endif %}">Presentations</a><a href="?tab=counts" class="{% if tab == 'counts' %}on{% endif %}">Counts</a><a href="?tab=rppr" class="{% if tab == 'rppr' %}on{% endif %}">RPPR</a><a href="?tab=reminders" class="{% if tab == 'reminders' %}on{% endif %}">Reminders</a></div>
+  {% if tab == 'rppr' %}{% with r=rppr %}
+    <form method="get" class="fieldrow" style="align-items:center;margin-bottom:8px"><input type="hidden" name="tab" value="rppr"><label class="small muted">Budget period <select name="year" onchange="this.form.submit()">{% for y in r.years %}<option value="{{ y }}" {% if y == r.year %}selected{% endif %}>Year {{ y }} (June 1, {{ y|add:2016 }} – May 31, {{ y|add:2017 }})</option>{% endfor %}</select></label></form>
+    <p class="small muted">{{ "Built from the FY27 COBRE reporting guidance. Check the lists, download them for the RPPR, then mark them as reported so nothing is reported twice."|stack }}</p>
+
+    <h2 class="sectionhead" style="margin-top:18px">C.1 Publications ({{ r.c1|length }})</h2>
+    {% if r.c1 %}<table><tbody>{% for p in r.c1 %}<tr><td><strong>{{ p.title }}</strong><div class="small muted">{{ p.author_display_text|default:"" }} · {{ p.journal }} · {{ p.publication_date|date:"M j, Y" }}</div></td><td class="small nowrap">{% if p.cnap_cited %}Cites the grant{% elif p.cnap_cited is False %}<span class="error" style="padding:1px 6px">Doesn’t cite the grant</span>{% else %}<span class="muted">Citation not checked</span>{% endif %}{% if p.has_non_idea_coauthors %}<div class="small">Non-IDeA co-authors: B.2 statement needed</div>{% endif %}{% if p.rppr_year %}<div class="small muted">Marked reported (Y{{ p.rppr_year }})</div>{% endif %}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="muted">No publications for this period.</p>{% endif %}
+    {% if r.c1_excluded %}<details><summary class="small">Left out ({{ r.c1_excluded|length }}) and why</summary><ul class="small">{% for p, why in r.c1_excluded %}<li><strong>{{ p.title }}</strong>: {{ why }}</li>{% endfor %}</ul></details>{% endif %}
+    <p class="small"><a href="{% url 'manage:outcomes_export' 'c1' %}?year={{ r.year }}">Download C.1 list (CSV)</a></p>
+
+    <h2 class="sectionhead" style="margin-top:22px">Table 1A: Funding Accomplishments</h2>
+    <div class="scroll"><table class="cnttab"><thead><tr><th>Funding Sources</th><th class="num">NIH</th><th class="num">Federal, non-NIH</th><th class="num">Non-Federal</th><th class="num">Total</th></tr></thead><tbody>
+      <tr><td>Applications Submitted</td>{% for k in r.t1.sources %}{% with v=r.t1.a|get_item:k %}<td class="num">{{ v.sub }}</td>{% endwith %}{% endfor %}<td class="num"><strong>{{ r.t1.total.sub }}</strong></td></tr>
+      <tr><td>Awards Funded (New/Renewal)</td>{% for k in r.t1.sources %}{% with v=r.t1.a|get_item:k %}<td class="num">{{ v.won }}</td>{% endwith %}{% endfor %}<td class="num"><strong>{{ r.t1.total.won }}</strong></td></tr>
+      <tr><td>Total Award Costs (entire period of performance)</td>{% for k in r.t1.sources %}{% with v=r.t1.a|get_item:k %}<td class="num">${{ v.cost|floatformat:"0g" }}</td>{% endwith %}{% endfor %}<td class="num"><strong>${{ r.t1.total.cost|floatformat:"0g" }}</strong></td></tr>
+    </tbody></table></div>
+    <h2 class="sectionhead" style="margin-top:18px">Table 1B: by role</h2>
+    <div class="scroll"><table class="cnttab"><thead><tr><th>Breakdown by Role</th>{% for k in r.t1.roles %}<th class="num">{{ k }}</th>{% endfor %}</tr></thead><tbody>
+      <tr><td># Applications Submitted</td>{% for k in r.t1.roles %}{% with v=r.t1.b|get_item:k %}<td class="num">{{ v.sub }}</td>{% endwith %}{% endfor %}</tr>
+      <tr><td># New/Renewal Awards Funded</td>{% for k in r.t1.roles %}{% with v=r.t1.b|get_item:k %}<td class="num">{{ v.won }}</td>{% endwith %}{% endfor %}</tr>
+      <tr><td>Total Award Costs</td>{% for k in r.t1.roles %}{% with v=r.t1.b|get_item:k %}<td class="num">${{ v.cost|floatformat:"0g" }}</td>{% endwith %}{% endfor %}</tr>
+    </tbody></table></div>
+    <details style="margin-top:8px"><summary class="small">What was counted ({{ r.t1.rows|length }}){% if r.t1.skipped %} and not counted ({{ r.t1.skipped|length }}){% endif %}</summary>
+      <table><tbody>{% for x in r.t1.rows %}<tr><td class="small nowrap">{{ x.kind }}</td><td class="small"><strong>{{ x.g.project_title }}</strong> ({{ x.g.version_label }}) · {{ x.lead|default:"" }} · {{ x.role }}</td><td class="small nowrap">{{ x.source }}{% if x.guessed %} <span class="muted">(guessed from agency)</span>{% endif %}</td><td class="small nowrap">{% if x.cost %}${{ x.cost|floatformat:"0g" }} <span class="muted">{{ x.basis }}</span>{% endif %}</td></tr>{% endfor %}
+      {% for g, why in r.t1.skipped %}<tr><td class="small muted">Not counted</td><td class="small">{{ g.project_title }} ({{ g.version_label }})</td><td class="small muted" colspan="2">{{ why }}</td></tr>{% endfor %}</tbody></table></details>
+    <p class="small"><a href="{% url 'manage:outcomes_export' 'table1' %}?year={{ r.year }}">Download Tables 1A and 1B (CSV)</a></p>
+
+    {% if can_edit %}<form method="post" action="{% url 'manage:outcomes_mark_rppr' %}" style="margin-top:18px" onsubmit="return confirm('Mark everything listed above as reported in the Year {{ r.year }} RPPR? It won’t be counted again in later years.')">{% csrf_token %}<input type="hidden" name="year" value="{{ r.year }}"><button class="btn">Mark these as reported in the Year {{ r.year }} RPPR</button></form>{% endif %}
+  {% endwith %}
+  {% elif tab == 'reminders' %}
     <p class="small muted">A planned or submitted record that nobody has reviewed for {{ stale_days }} days is stale.<br>Its owner gets one e-mail listing all their stale records, copied to anyone who enters for them, at most once every {{ remind_every }} days.<br>Reminders go out automatically each morning; you can also send them now.</p>
     <h2 class="sectionhead" style="margin-top:18px">Due now ({{ reminders_due|length }})</h2>
     {% if reminders_due %}<table><tbody>{% for person, recs, cc in reminders_due %}<tr><td><strong>{{ person }}</strong>{% if not person.primary_email %} <span class="error" style="padding:1px 6px">no e-mail on file</span>{% endif %}{% if cc %}<div class="small muted">Copy to {{ cc|join:", " }}</div>{% endif %}</td><td class="small">{% for k, o, t in recs %}<div>{{ k }}: {{ t }} <span class="muted">· {{ o.get_status_display }}, last reviewed {{ o.confirmed_at|default:o.updated_at|date:"M j, Y" }}</span></div>{% endfor %}</td></tr>{% endfor %}</tbody></table>
