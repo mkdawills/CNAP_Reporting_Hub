@@ -4,14 +4,15 @@
 <h3 class="ttitle2">{{ t.section.title|cut:":" }}</h3>
 {% with g=t.glance %}{% if g %}
 <div class="kpis">
-  <div class="kpi"><span class="kpi-v">{{ t.grand_mean|floatformat:1 }}<small> / {{ t.scale|length }}</small></span><span class="kpi-l">Average rating: <b>{{ g.word }}</b></span></div>
-  <div class="kpi"><span class="kpi-v pos">{{ g.top_pct }}%</span><span class="kpi-l">{{ g.top_label }}</span></div>
-  <div class="kpi"><span class="kpi-v neg">{{ g.bot_pct }}%</span><span class="kpi-l">{{ g.bot_label }}</span></div>
+  <div class="kpi"><div class="ring" style="--p:{{ g.mean_fill }};--c:#3a3a48"><span class="ring-v">{{ t.grand_mean|floatformat:1 }}<small>/{{ t.scale|length }}</small></span></div><span class="kpi-l">Average rating<br><b>{{ g.word }}</b></span></div>
+  <div class="kpi"><div class="ring" style="--p:{{ g.top_pct }};--c:#1f6857"><span class="ring-v pos">{{ g.top_pct }}%</span></div><span class="kpi-l">{{ g.top_label }}</span></div>
+  <div class="kpi"><div class="ring" style="--p:{{ g.bot_pct }};--c:#b2432f"><span class="ring-v neg">{{ g.bot_pct }}%</span></div><span class="kpi-l">{{ g.bot_label }}</span></div>
+</div>
 </div>
 <div class="vbars" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}
   <div class="vb"><span class="vb-v">{{ sg.pct }}%</span><span class="vb-b" style="height:calc((100% - 46px) * {{ sg.h }} / 100);background:{{ sg.color }}"></span><span class="vb-l">{{ sg.text }}</span></div>{% endfor %}
 </div>
-<p class="tnote">All {{ t.rows|length }} item{{ t.rows|length|pluralize }} combined.</p>
+<p class="tnote">These bars combine every answer to the {{ t.rows|length }} survey item{{ t.rows|length|pluralize }} in this section{% if t.rows %}, such as “{{ t.rows.0.q.prompt }}”{% endif %}. <button type="button" class="linkbtn" onclick="this.closest('.tcard').querySelector('.tmore').open=true">See each item</button></p>
 {% endif %}{% endwith %}
 <details class="tmore"><summary><span class="tmore-open">Show item-by-item table</span><span class="tmore-close">Hide item-by-item table</span></summary>
 <div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on">n and %</button><button type="button" data-nview="n">n only</button><button type="button" data-nview="p">% only</button></div>

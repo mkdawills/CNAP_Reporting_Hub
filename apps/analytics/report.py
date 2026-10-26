@@ -105,6 +105,7 @@ def _glance(scale, totals, total, mean):
     )
     return {
         "segments": segs,
+        "mean_fill": round(100 * mean / k) if mean is not None else 0,
         "word": word,
         "top_pct": round(100 * sum(totals[-two:]) / total),
         "top_label": " or ".join(s["text"] for s in scale[-two:]),
