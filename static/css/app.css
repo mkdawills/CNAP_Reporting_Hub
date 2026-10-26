@@ -620,3 +620,30 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 .ackbox summary { cursor: pointer; font-weight: 600; }
 .acktext { display: flex; gap: 10px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 4px 0 10px; font-size: .88rem; }
 .acktext span { flex: 1; }
+
+/* eRA Commons help (profile) */
+.helpbox{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--surface)}
+.helpbox>summary{cursor:pointer;font-weight:600;color:var(--purple)}
+.helpbox[open]>summary{margin-bottom:6px}
+.helpbox p{margin:6px 0}
+
+/* repeating rows: an even grid (decisions.md 2026-10-26) */
+.repeat.rgrid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px 16px; align-items: end; }
+.repeat.rgrid > label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); grid-column: span 2; min-width: 0; }
+.repeat.rgrid > label.w-wide { grid-column: span 4; }
+.repeat.rgrid > label.w-full { grid-column: 1 / -1; }
+.repeat.rgrid input, .repeat.rgrid select, .repeat.rgrid textarea { width: 100%; box-sizing: border-box; }
+.repeat.rgrid > .rnum { grid-column: 1 / -1; font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.repeat.rgrid > .rmv { grid-column: span 2; justify-self: end; align-self: end; }
+@media (max-width: 720px) { .repeat.rgrid { grid-template-columns: 1fr; } .repeat.rgrid > label, .repeat.rgrid > label.w-wide, .repeat.rgrid > .rmv { grid-column: 1 / -1; } .repeat.rgrid > .rmv { justify-self: start; } }
+.helpbox { margin-top: 8px; }
+.helpbox dl.qa { margin: 4px 0 10px; }
+.helpbox dl.qa dt { font-weight: 600; color: var(--ink, inherit); margin-top: 8px; }
+.helpbox dl.qa dd { margin: 2px 0 0; }
+.helpbox .ok-note { color: var(--done); margin: 6px 0 0; }
+.t2tab { font-size: .85rem; }
+.t2tab th, .t2tab td { padding: 6px 8px; vertical-align: top; }
+.t2tab td:nth-child(2) { min-width: 12em; }
+.t2tab th.num, .t2tab td.num { width: 6em; }
+/* a quiet "still needed" marker: readable at a glance without a wall of red */
+.gap { color: var(--progress); font-weight: 600; }

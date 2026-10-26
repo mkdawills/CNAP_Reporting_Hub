@@ -21,6 +21,10 @@ Every CNAP person has exactly one row here, whether or not they ever log in.
 | position_title | CharField | no |  |
 | is_active | BooleanField | no |  |
 | rich_profile_override | BooleanField | yes | Leave empty to derive the rich profile from relationships; set to force it on or off. |
+| era_commons_id | CharField | no | NIH eRA Commons user name. Needed for RPPR D.1 for everyone in a personnel role. |
+| trainee_level | CharField | no | postdoc, graduate, undergraduate, high_school — Career level for trainees (RPPR D.1). |
+| era_commons_help_requested_at | DateTimeField | yes | When the person last asked the Center for help with eRA Commons. |
+| era_commons_help_kind | CharField | no | setup, unsure |
 | notes | TextField | no |  |
 
 ### `person_emails` — PersonEmail
@@ -136,6 +140,22 @@ One CNAP relationship held by one person for a span of time. `context_kind`, `is
 | created_by_id | FK → users | yes |  |
 
 Constraints: `person_relationships_context_shape`, `person_relationships_dates_ordered`
+
+### `person_efforts` — PersonEffort
+
+Calendar months a person worked on CNAP in one budget year (June 1 - May 31), for RPPR D.1. D.1 lists people who worked at least 1.0 calendar month in the year. Calendar months = share of full-time effort x 12 (10% all year = 1.2 months).
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| person_id | FK → people | no |  |
+| grant_year | PositiveSmallIntegerField | no |  |
+| calendar_months | DecimalField | no |  |
+| entered_by_id | FK → users | yes |  |
+
+Constraints: `one_effort_per_year`, `effort_months_0_12`
 
 ## Accounts and permissions (`accounts`)
 
@@ -886,7 +906,7 @@ Each submission attempt is one record. The version (A0, A1, ...) is system-set a
 | plans_to_resubmit | BooleanField | yes |  |
 | funding_source_type | CharField | no | nih, federal_other, non_federal — RPPR Table 1A: NIH, Federal non-NIH, Non-federal. |
 | cnap_portion | DecimalField | yes | If MPI, Co-PI, collaborator or subawardee: the CNAP investigator's portion of the award (RPPR Table 1). |
-| exclude_from_table1 | BooleanField | no | The parent COBRE award or a supplement to it: never counted in RPPR Table 1. |
+| exclude_from_table1 | BooleanField | no | Never counted in RPPR Table 1: the parent COBRE award or a supplement to it, or core-staff funding not related to IDeA support. |
 | rppr_submitted_year | PositiveSmallIntegerField | yes | Grant year of the RPPR that counted this application as submitted. |
 | rppr_awarded_year | PositiveSmallIntegerField | yes | Grant year of the RPPR that counted this award. |
 | resources_other_text | CharField | no |  |

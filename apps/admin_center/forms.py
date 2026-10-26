@@ -27,6 +27,8 @@ class PersonEditForm(forms.ModelForm):
             "institution",
             "department",
             "position_title",
+            "era_commons_id",
+            "trainee_level",
             "is_active",
             "notes",
         ]

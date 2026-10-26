@@ -8,10 +8,29 @@
     <form method="post">{% csrf_token %}
       <div class="field"><label>Department<input type="text" name="department" value="{{ person.department }}"></label></div>
       <div class="field"><label>Position<input type="text" name="position_title" value="{{ person.position_title }}"></label></div>
+      <div class="field" id="commons"><label>eRA Commons ID<input type="text" name="era_commons_id" value="{{ person.era_commons_id }}" autocomplete="off" spellcheck="false"></label>
+        <p class="small muted">{{ "Your NIH eRA Commons user name. The Center lists it in its yearly NIH progress report."|stack }}</p>
+        {% if not person.era_commons_id %}<details class="helpbox"{% if person.era_commons_help_requested_at %} open{% endif %}><summary class="small">I need help with eRA Commons, or I’m not sure I need one</summary>
+          <dl class="small qa">
+            <dt>Do I need one?</dt><dd>Yes, if you have a CNAP role (PD/PI, core director, mentor, project leader, trainee or staff) <em>and</em> work on CNAP at least 1 calendar month a year (about 8% of your time). NIH requires it for everyone in the Center’s yearly progress report, students included. Core users and event participants usually don’t need one.</dd>
+            <dt>Have one already?</dt><dd>Keep it, even if it’s from another school or job. Type it above.</dd>
+            <dt>Need one?</dt><dd>Your institution’s research office creates it; you can’t make it yourself. Tell us and the Center will help.</dd>
+          </dl>
+          {% if person.era_commons_help_requested_at %}<p class="small ok-note">You asked for help on {{ person.era_commons_help_requested_at|date:"M j, Y" }}. The Center evaluator will be in touch by e-mail.</p>
+          {% else %}<div class="fieldrow" style="gap:8px">
+            <button class="btn small" type="submit" form="commonshelp" name="kind" value="setup">I need help setting up eRA Commons</button>
+            <button class="btn small ghost" type="submit" form="commonshelp" name="kind" value="unsure">I’m not sure I need eRA Commons</button>
+          </div>{% endif %}
+        </details>{% endif %}
+      </div>
+      {% if is_trainee or person.trainee_level %}<div class="field"><label>Career level<select name="trainee_level"><option value="">—</option>{% for c, l in levels %}<option value="{{ c }}" {% if person.trainee_level == c %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></label></div>{% endif %}
+      {% if in_d1 %}<div class="field"><label>Calendar months on CNAP work, Year {{ gy }} (June 1, {{ gy_start }} – May 31, {{ gy_start|add:1 }})<input type="number" name="calendar_months" min="0" max="12" step="0.1" value="{{ effort.calendar_months|default_if_none:'' }}" style="max-width:8em"></label>
+        <p class="small muted">{{ "Your share of full-time effort × 12. For example, 10% of your time all year = 1.2; one full-time summer month = 1.0. Your best estimate is fine."|stack }}</p></div>{% endif %}
       <p class="small muted">E-mail: {{ person.primary_email|default:"none on file" }}</p>
       <p class="small muted">{{ "To change your name, institution or e-mail, contact the evaluator."|stack }}</p>
       <div class="actions"><button class="btn" type="submit">Save</button></div>
     </form>
+    <form method="post" id="commonshelp">{% csrf_token %}<input type="hidden" name="action" value="commons_help"></form>
   </div>
   <div class="panel">
     <h2 class="sectionhead">Your CNAP roles</h2>

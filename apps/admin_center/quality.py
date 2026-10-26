@@ -26,6 +26,11 @@ CHECKS = [
     ("ended_but_open", "Open forms whose relationship has ended", "Consider exempting them."),
     ("duplicate_names", "Possible duplicate people", "Same first and last name on two records."),
     (
+        "director_and_leader",
+        "Core directors who are also a project leader",
+        "A core director normally isn’t also an RPL or PPL (MW). Check their roles, or dismiss if it’s right.",
+    ),
+    (
         "overdue",
         "Past due and not started",
         "Forms in an open period that are past due and untouched.",
@@ -35,6 +40,23 @@ CHECKS = [
 
 def _current(on):
     return Q(effective_from__lte=on) & (Q(effective_to__isnull=True) | Q(effective_to__gte=on))
+
+
+LEADER_CODES = ("project_leader", "pilot_awardee")
+
+
+def director_and_leader(on, person=None):
+    """People who are currently a core director and an RPL or PPL at the same time."""
+    cur = PersonRelationship.objects.filter(_current(on))
+    if person is not None:
+        cur = cur.filter(person=person)
+    directors = set(
+        cur.filter(relationship_type__code="core_director").values_list("person_id", flat=True)
+    )
+    leaders = set(
+        cur.filter(relationship_type__code__in=LEADER_CODES).values_list("person_id", flat=True)
+    )
+    return Person.objects.active().filter(pk__in=directors & leaders)
 
 
 def run():
@@ -89,6 +111,8 @@ def run():
                     f"/manage/dashboard/?period={a.reporting_period.short_label}",
                 )
             )
+    for p in director_and_leader(today):
+        out["director_and_leader"].append(("person", p.pk, str(p), f"/manage/people/{p.pk}/"))
     seen = {}
     for p in Person.objects.active():
         key = (p.first_name.strip().lower(), p.last_name.strip().lower())

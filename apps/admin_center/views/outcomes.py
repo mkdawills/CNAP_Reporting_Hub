@@ -615,6 +615,7 @@ def export(request, kind):
                     "Cites P20GM113109",
                     "Non-IDeA-state co-authors",
                     "CNAP people",
+                    "Note",
                 ]
             )
             for p in inc:
@@ -628,6 +629,9 @@ def export(request, kind):
                         _yn(p.cnap_cited),
                         _yn(p.has_non_idea_coauthors),
                         "; ".join(str(x.person) for x in p.people.all()),
+                        f"From Year {p.carried_from}, not reported before"
+                        if p.carried_from
+                        else "",
                     ]
                 )
             w.writerow([])
@@ -678,6 +682,7 @@ def export(request, kind):
                     "Source guessed from agency",
                     "Amount",
                     "Amount basis",
+                    "Note",
                 ]
             )
             for r in t["rows"]:
@@ -692,11 +697,112 @@ def export(request, kind):
                         "yes" if r["guessed"] else "",
                         r["cost"] or "",
                         r["basis"],
+                        "; ".join(
+                            x
+                            for x in (
+                                f"From Year {r['carried_from']}, not reported before"
+                                if r["carried_from"]
+                                else "",
+                                r["check"],
+                            )
+                            if x
+                        ),
                     ]
                 )
             for g, why in t["skipped"]:
                 w.writerow(
                     ["Not counted", g.project_title, g.version_label, "", "", "", "", "", why]
+                )
+    elif kind in ("table2", "d1"):
+        from apps.outcomes import rppr
+
+        gy = int(request.GET.get("year", rppr.current_year()))
+        if kind == "table2":
+            t = rppr.table2(gy, _t2_periods(request, gy))
+            w.writerow(
+                [
+                    f"RPPR Year {gy} — Table 2. COBRE Core Users (reports: "
+                    + ", ".join(p.name for p in t["periods"])
+                    + ")"
+                ]
+            )
+            w.writerow(
+                ["A user lab may be listed more than once if different projects were supported."]
+            )
+            for c in t["cores"]:
+                w.writerow([])
+                w.writerow([f"Table {c['letter']}", f"Core Name: {c['core'].name}"])
+                w.writerow([label for _, label in t["cols"]] + ["User lab (not a Table 2 column)"])
+                for r in c["rows"]:
+                    w.writerow(r["cells"] + [r.get("lab", "")])
+                w.writerow(
+                    [
+                        f"Total User Labs: {c['labs']}",
+                        "",
+                        f"Total Users: {c['total_users']}",
+                        c["users"],
+                        c["students"],
+                        "",
+                        "",
+                    ]
+                )
+                for g in c["gaps"]:
+                    w.writerow(
+                        ["Not yet reported", g["period"].name, "; ".join(map(str, g["people"]))]
+                    )
+                for d in c["doubles"]:
+                    w.writerow(
+                        [
+                            "Two reports, check for duplicates",
+                            d["period"].name,
+                            "; ".join(map(str, d["people"])),
+                        ]
+                    )
+                if c["summary"]:
+                    w.writerow(["Core use sentence", c["summary"]])
+                for p in c["pubs"]:
+                    w.writerow(
+                        ["Paper crediting this core", p.title, p.journal, p.publication_date]
+                    )
+                for g in c["grants"]:
+                    w.writerow(
+                        [
+                            "Proposal crediting this core",
+                            g.project_title,
+                            g.funding_agency,
+                            g.get_status_display(),
+                        ]
+                    )
+        else:
+            t = rppr.d1(gy)
+            w.writerow(
+                [f"RPPR Year {gy} — D.1 Participants (June 1, {2016 + gy} – May 31, {2017 + gy})"]
+            )
+            w.writerow(
+                [
+                    "Name",
+                    "eRA Commons ID",
+                    "Role",
+                    "All CNAP roles",
+                    "Project or core",
+                    "Career level (trainees)",
+                    "Institution",
+                    "Calendar months worked",
+                ]
+            )
+            for r in t["rows"]:
+                p = r["person"]
+                w.writerow(
+                    [
+                        f"{p.last_name}, {p.first_name}",
+                        r["commons"],
+                        r["label"],
+                        "; ".join(r["roles"]),
+                        "; ".join(r["where"]),
+                        r["level"],
+                        p.institution,
+                        r["months"] if r["months"] is not None else "missing",
+                    ]
                 )
     elif kind in ("talks", "presentations"):
         from apps.outcomes.models import Presentation
@@ -882,6 +988,35 @@ def person_outcomes(person):
     return {"pubs": pubs, "grants": grants}
 
 
+def _t2_choices():
+    from apps.reporting.models import ReportingPeriod
+
+    return list(
+        ReportingPeriod.objects.filter(assignments__form_definition__code="core_usage_report")
+        .distinct()
+        .order_by("-display_order")
+    )
+
+
+def _t2_periods(request, gy):
+    """Collections chosen for Table 2 (?t2p=…); the budget year's own collections by default."""
+    from apps.outcomes import rppr
+    from apps.reporting.models import ReportingPeriod
+
+    ids = [int(x) for x in request.GET.getlist("t2p") if x.isdigit()]
+    return list(ReportingPeriod.objects.filter(pk__in=ids)) if ids else rppr.usage_periods(gy)
+
+
+def _prev_marked(gy):
+    """Has anything been marked as reported in the Year gy RPPR?"""
+    return (
+        Publication.objects.filter(rppr_year=gy).exists()
+        or GrantSubmission.objects.filter(
+            Q(rppr_submitted_year=gy) | Q(rppr_awarded_year=gy)
+        ).exists()
+    )
+
+
 def _rppr_ctx(request):
     from apps.outcomes import rppr
 
@@ -891,6 +1026,7 @@ def _rppr_ctx(request):
     except ValueError:
         gy = cur
     inc, exc = rppr.c1(gy)
+    t1 = rppr.table1(gy)
     start, end = rppr.period(gy)
     return {
         "year": gy,
@@ -899,7 +1035,14 @@ def _rppr_ctx(request):
         "end": end,
         "c1": inc,
         "c1_excluded": exc,
-        "t1": rppr.table1(gy),
+        "non_idea": sum(1 for p in inc if p.has_non_idea_coauthors),
+        "carried": sum(1 for p in inc if p.carried_from)
+        + sum(1 for r in t1["rows"] if r["carried_from"]),
+        "prev_marked": _prev_marked(gy - 1),
+        "t1": t1,
+        "t2": rppr.table2(gy, _t2_periods(request, gy)),
+        "t2_choices": _t2_choices(),
+        "d1": rppr.d1(gy),
     }
 
 

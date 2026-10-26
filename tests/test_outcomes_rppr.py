@@ -186,3 +186,71 @@ def test_rppr_tab_and_downloads(client, center):
     assert "C.1 Publications" in client.get("/manage/outcomes/export/c1/?year=9").content.decode(
         "utf-8-sig"
     )
+
+
+def test_previous_year_unreported_items_count_in_the_next_rppr(center):
+    late = pub("Published after the Y9 RPPR", dt.date(2026, 5, 10))
+    inc, _ = rppr.c1(10)
+    assert late in inc
+    late.rppr_year = 9
+    late.save()
+    assert late not in rppr.c1(10)[0]
+    g = grant(
+        "Funded after the Y9 RPPR", sub=dt.date(2025, 9, 1), won=dt.date(2026, 5, 1), total=1000
+    )
+    row = next(r for r in rppr.table1(10)["rows"] if r["g"] == g)
+    assert row["kind"] == "Award funded" and row["carried_from"] == 9
+    # two years back is not carried
+    old = pub("Two years back", dt.date(2025, 5, 1))
+    assert old not in rppr.c1(10)[0]
+    # once marked, the award's application is never counted separately afterwards
+    rppr.mark_reported(None, 10)
+    g.refresh_from_db()
+    assert g.rppr_awarded_year == 10 and g.rppr_submitted_year == 10
+
+
+def test_core_staff_awards_carry_the_idea_support_check(center):
+    from apps.people.models import PersonRelationship, RelationshipType
+
+    PersonRelationship.objects.filter(person=person("okafor")).delete()
+    PersonRelationship.objects.create(
+        person=person("okafor"),
+        relationship_type=RelationshipType.objects.get(code="core_staff"),
+        core=__import__("apps.people.models", fromlist=["Core"]).Core.objects.get(code="BN"),
+        effective_from=dt.date(2020, 1, 1),
+    )
+    grant("Equipment", sub=dt.date(2026, 7, 1), won=dt.date(2026, 9, 1), total=50000)
+    row = next(r for r in rppr.table1(10)["rows"] if r["g"].project_title == "Equipment")
+    assert row["role"] == "Core Staff" and "related to IDeA support" in row["check"]
+
+
+def test_award_form_asks_for_portion_when_shared(client, center):
+    from apps.outcomes.models import GrantSubmissionResource
+    from apps.people.models import Resource
+
+    g = grant("Shared award", sub=dt.date(2026, 7, 1), role="mpi")
+    GrantSubmissionResource.objects.create(
+        grant_submission=g, resource=Resource.objects.get(code="cn_core"), is_anticipated=False
+    )
+    client.force_login(User.objects.get(username="okafor"))
+    base = {
+        "to": "awarded",
+        "award_notice_date": "2026-09-01",
+        "project_start_date": "2026-10-01",
+        "project_end_date": "2029-09-30",
+        "award_total": "300000",
+        "award_direct": "200000",
+        "award_indirect": "100000",
+        "cnap_acknowledged": "yes",
+        "cnap_credited_in_publications": "yes",
+        "has_foreign_component": "no",
+        "resources": [Resource.objects.get(code="cn_core").pk],
+    }
+    r = client.post(f"/outcomes/grant/{g.pk}/", base)
+    assert "please give your portion" in r.content.decode()
+    r = client.post(f"/outcomes/grant/{g.pk}/", {**base, "award_direct": "150000"})
+    assert "don’t add up" in r.content.decode()
+    client.post(f"/outcomes/grant/{g.pk}/", {**base, "cnap_portion": "120000"})
+    g.refresh_from_db()
+    assert g.status == "awarded" and g.cnap_portion == 120000
+    assert rppr.amount(g) == (120000.0, "CNAP investigator's portion")

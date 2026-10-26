@@ -20,17 +20,17 @@ def schema(code):
     return FormSchema(FormDefinition.objects.get(code=code).active_version)
 
 
-def test_all_fifteen_instruments_load(instruments):
-    assert len(instruments) == 15
-    assert FormDefinition.objects.count() == 15
-    assert FormVersion.objects.filter(status=VersionStatus.ACTIVE).count() == 15
+def test_all_sixteen_instruments_load(instruments):
+    assert len(instruments) == 16
+    assert FormDefinition.objects.count() == 16
+    assert FormVersion.objects.filter(status=VersionStatus.ACTIVE).count() == 16
     assert loader.universal_rule_check()
 
 
 def test_loading_again_changes_nothing(instruments):
     again = loader.load_all()
     assert {s for *_, s in again} == {"unchanged"}
-    assert FormVersion.objects.count() == 15
+    assert FormVersion.objects.count() == 16
 
 
 def test_item_counts_match_sources(instruments):

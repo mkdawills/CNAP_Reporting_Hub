@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 
 from apps.accounts import access
 from apps.common.enums import COMPLETE_STATUSES, PeriodStatus
+from apps.people.models import Person
 from apps.people.services import update_person
 from apps.reporting.models import Assignment, File, ReportingPeriod
 from apps.reporting.services import responses as rs
@@ -176,19 +177,48 @@ def center_results(request):
     )
 
 
+LEVELS = [c for c in Person._meta.get_field("trainee_level").choices]
+
+
 @login_required
 def profile(request):
+    from apps.outcomes import rppr
+    from apps.people.models import PersonEffort
+    from apps.people.services import request_commons_help, set_effort
+
     person = request.user.person
+    gy = rppr.current_year()
+    rels = person.current_relationships().select_related("relationship_type", "project", "core")
+    in_d1 = any(r.relationship_type.code in rppr.D1_CATEGORY for r in rels)
     if request.method == "POST":
+        if request.POST.get("action") == "commons_help":
+            request_commons_help(request.user, person, request.POST.get("kind", ""))
+            messages.success(
+                request,
+                "Thanks. The Center evaluator has your request and will get in touch by e-mail.",
+            )
+            return redirect(reverse("portal:profile") + "#commons")
         update_person(
             request.user,
             person,
             department=request.POST.get("department", "")[:200],
             position_title=request.POST.get("position_title", "")[:200],
+            era_commons_id=request.POST.get("era_commons_id", "")[:40],
+            trainee_level=(
+                request.POST.get("trainee_level", "")
+                if request.POST.get("trainee_level", "") in dict(LEVELS)
+                else ""
+            ),
         )
+        if in_d1 and "calendar_months" in request.POST:
+            try:
+                set_effort(request.user, person, gy, request.POST.get("calendar_months"))
+            except ValueError as exc:
+                messages.error(request, str(exc))
+                return redirect("portal:profile")
         messages.success(request, "Profile saved.")
         return redirect("portal:profile")
-    rels = person.current_relationships().select_related("relationship_type", "project", "core")
+    effort = PersonEffort.objects.filter(person=person, grant_year=gy).first()
     return render(
         request,
         "portal/profile.html",
@@ -196,6 +226,14 @@ def profile(request):
             "person": person,
             "rels": [r for r in rels if r.relationship_type.code != "cnap_member"],
             "on_roster": any(r.relationship_type.code == "cnap_member" for r in rels),
+            "levels": LEVELS,
+            "is_trainee": any(
+                r.relationship_type.code in ("project_student", "student_trainee") for r in rels
+            ),
+            "in_d1": in_d1,
+            "gy": gy,
+            "gy_start": 2016 + gy,
+            "effort": effort,
         },
     )
 

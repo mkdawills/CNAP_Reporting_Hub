@@ -129,7 +129,24 @@ def person(request, pk):
     from .outcomes import person_outcomes
 
     ctx["outcomes"] = person_outcomes(p)
+    from apps.outcomes import rppr
+
+    ctx["efforts"] = p.efforts.order_by("-grant_year")
+    ctx["cur_gy"] = rppr.current_year()
     return render(request, "manage/person.html", ctx)
+
+
+@manage_action
+def person_effort(request, pk):
+    p = get_object_or_404(Person, pk=pk)
+    try:
+        gy = int(request.POST.get("grant_year", ""))
+        services.set_effort(request.user, p, gy, request.POST.get("calendar_months", ""))
+    except ValueError as exc:
+        messages.error(request, str(exc) if "month" in str(exc) else "Choose a budget year.")
+    else:
+        messages.success(request, f"Calendar months saved for Year {gy}.")
+    return redirect("manage:person", pk)
 
 
 @manage_action
@@ -203,6 +220,14 @@ def relationship_add(request, pk):
             start=d["start"],
         )
         messages.success(request, f"Added {rel.relationship_type.name}.")
+        from .. import quality
+
+        if quality.director_and_leader(max(d["start"], timezone.localdate()), person=p).exists():
+            messages.warning(
+                request,
+                f"{p} is now both a core director and a project leader (RPL or PPL). "
+                "A core director normally isn’t also an RPL or PPL. Check that this is right.",
+            )
     except services.RelationshipError as exc:
         messages.error(request, str(exc))
     return redirect("manage:person", pk)

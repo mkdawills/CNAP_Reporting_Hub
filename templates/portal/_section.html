@@ -5,13 +5,16 @@
   {% if sv.s.is_repeatable %}
     <input type="hidden" name="rep-{{ sv.s.code }}-count" value="{{ sv.rows|length }}">
     {% for row in sv.rows %}{% with i=forloop.counter0 %}
-      <div class="repeat fieldrow">
+      <div class="repeat rgrid"><div class="rnum">{{ sv.s.repeat_label|default:"Entry"|cut:"Add a "|cut:"Add an "|capfirst }} {{ forloop.counter }}</div>
         {% for v in row %}
-          {% if v.type == 'date' %}<label>{{ v.q.prompt }}<input type="date" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>
-          {% elif v.type == 'long_text' %}<label class="grow">{{ v.q.prompt }}<textarea name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}readonly{% endif %}>{{ v.value }}</textarea></label>
-          {% else %}<label>{{ v.q.prompt }}<input type="text" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>{% endif %}
+          {% if v.type == 'date' %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="date" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>
+          {% elif v.type == 'single_select' %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<select name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}disabled{% endif %}><option value="">—</option>{% for o in v.options %}<option value="{{ o.code }}" {% if v.value == o.code %}selected{% endif %}>{{ o.label }}</option>{% endfor %}</select></label>
+          {% elif v.type == 'yes_no' %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<select name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}disabled{% endif %}><option value="">—</option>{% for o in v.pts %}<option value="{{ o.code }}" {% if v.value == o.code %}selected{% endif %}>{{ o.text }}</option>{% endfor %}</select></label>
+          {% elif v.type == 'number' %}<label class="num w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="number" min="0" step="1" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>
+          {% elif v.type == 'long_text' %}<label class="grow w-full">{{ v.q.prompt }}<textarea name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}readonly{% endif %}>{{ v.value }}</textarea></label>
+          {% else %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="text" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>{% endif %}
         {% endfor %}
-        {% if editable %}<button class="btn small ghost" type="submit" name="action" value="remove:{{ sv.s.code }}:{{ i }}" formnovalidate>Remove</button>{% endif %}
+        {% if editable %}<div class="rmv"><button class="btn small ghost" type="submit" name="action" value="remove:{{ sv.s.code }}:{{ i }}" formnovalidate>Remove</button></div>{% endif %}
       </div>
     {% endwith %}{% empty %}<p class="small muted">No entries.</p>{% endfor %}
     {% if editable %}<button class="btn small ghost" type="submit" name="action" value="add:{{ sv.s.code }}" formnovalidate>{{ sv.s.repeat_label|default:"Add an entry" }}</button>{% endif %}

@@ -263,6 +263,11 @@ def update(request, kind, pk):
             },
         )
     form = F(request.POST or None, initial=initial)
+    if kind == "grant" and to == "awarded":
+        from apps.common.enums import GrantRole
+
+        link = obj.people.filter(person=owner).first()
+        form.shared_role = bool(link and link.role and link.role != GrantRole.PI)
     if request.method == "POST" and form.is_valid():
         d = dict(form.cleaned_data)
         res = d.pop("resources", None)

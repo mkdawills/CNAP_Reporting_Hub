@@ -31,6 +31,36 @@ class Person(ArchivableModel):
         blank=True,
         help_text="Leave empty to derive the rich profile from relationships; set to force it on or off.",
     )
+    era_commons_id = models.CharField(
+        "eRA Commons ID",
+        max_length=40,
+        blank=True,
+        help_text="NIH eRA Commons user name. Needed for RPPR D.1 for everyone in a personnel role.",
+    )
+    trainee_level = models.CharField(
+        max_length=20,
+        blank=True,
+        choices=[
+            ("postdoc", "Postdoc"),
+            ("graduate", "Graduate student"),
+            ("undergraduate", "Undergraduate student"),
+            ("high_school", "High school student"),
+        ],
+        help_text="Career level for trainees (RPPR D.1).",
+    )
+    era_commons_help_requested_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When the person last asked the Center for help with eRA Commons.",
+    )
+    era_commons_help_kind = models.CharField(
+        max_length=10,
+        blank=True,
+        choices=[
+            ("setup", "Needs help setting one up"),
+            ("unsure", "Unsure whether they need one"),
+        ],
+    )
     notes = models.TextField(blank=True)
 
     class Meta:
@@ -313,3 +343,30 @@ class PersonRelationship(TimestampedModel):
     @property
     def is_current(self):
         return self.effective_to is None
+
+
+class PersonEffort(TimestampedModel):
+    """Calendar months a person worked on CNAP in one budget year (June 1 - May 31), for RPPR D.1.
+
+    D.1 lists people who worked at least 1.0 calendar month in the year. Calendar months = share of
+    full-time effort x 12 (10% all year = 1.2 months)."""
+
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="efforts")
+    grant_year = models.PositiveSmallIntegerField()
+    calendar_months = models.DecimalField(max_digits=4, decimal_places=1)
+    entered_by = models.ForeignKey(
+        "accounts.User", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "person_efforts"
+        constraints = [
+            models.UniqueConstraint(fields=["person", "grant_year"], name="one_effort_per_year"),
+            models.CheckConstraint(
+                condition=models.Q(calendar_months__gte=0, calendar_months__lte=12),
+                name="effort_months_0_12",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.person} Y{self.grant_year}: {self.calendar_months} months"

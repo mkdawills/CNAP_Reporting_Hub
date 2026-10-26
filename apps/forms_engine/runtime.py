@@ -176,7 +176,9 @@ class FormSchema:
     # ------------------------------------------------------------------ display
 
     def minutes(self):
-        """Rough time to complete, shown on My tasks."""
+        """Rough time to complete, shown on My tasks. A form's display "minutes" overrides the estimate."""
+        if self.display.get("minutes"):
+            return int(self.display["minutes"])
         total = 0.0
         followup = self.followup_section
         for s in self.sections:

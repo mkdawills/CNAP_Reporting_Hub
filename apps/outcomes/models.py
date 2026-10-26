@@ -392,8 +392,12 @@ class GrantSubmission(ArchivableModel):
         help_text="If MPI, Co-PI, collaborator or subawardee: the CNAP investigator's portion of the award (RPPR Table 1).",
     )
     exclude_from_table1 = models.BooleanField(
+        "Leave out of Table 1",
         default=False,
-        help_text="The parent COBRE award or a supplement to it: never counted in RPPR Table 1.",
+        help_text=(
+            "Never counted in RPPR Table 1: the parent COBRE award or a supplement to it, or core-staff "
+            "funding not related to IDeA support."
+        ),
     )
     rppr_submitted_year = models.PositiveSmallIntegerField(
         null=True,

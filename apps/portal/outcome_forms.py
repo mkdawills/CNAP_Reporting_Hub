@@ -237,6 +237,7 @@ class GrantAwarded(_Resources):
     award_total = money("Total award amount", required=True)
     award_direct = money("Direct costs", required=True)
     award_indirect = money("Indirect costs", required=True)
+    cnap_portion = money("Your portion of the total award")
     grant_number = forms.CharField(
         label="Grant number (if available)", max_length=120, required=False
     )
@@ -263,8 +264,35 @@ class GrantAwarded(_Resources):
         "has_foreign_component",
     ]
 
+    shared_role = (
+        False  # set by the view when the person is MPI, Co-I, key personnel, consultant or other
+    )
+
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        self.fields[
+            "award_total"
+        ].help_text = "Direct plus indirect costs for the entire project period, not one year."
+        self.fields["cnap_portion"].help_text = (
+            "Only if you’re MPI, Co-PI, a collaborator, or on a subaward: the part of the total award that is yours "
+            "(direct plus indirect, entire project period). NIH counts this part, not the whole award."
+        )
+
     def clean(self):
         data = super().clean()
+        tot, part = data.get("award_total"), data.get("cnap_portion")
+        if (self.shared_role or data.get("prime_or_subaward") == "subaward") and part is None:
+            self.add_error(
+                "cnap_portion",
+                "Because you share this award or it’s a subaward, please give your portion.",
+            )
+        if tot is not None and part is not None and part > tot:
+            self.add_error("cnap_portion", "Your portion can’t be more than the total award.")
+        d_, i_ = data.get("award_direct"), data.get("award_indirect")
+        if tot is not None and d_ is not None and i_ is not None and abs((d_ + i_) - tot) > 1:
+            self.add_error(
+                "award_total", "Direct plus indirect costs don’t add up to the total award."
+            )
         s, e = data.get("project_start_date"), data.get("project_end_date")
         if s and e and e < s:
             self.add_error("project_end_date", "The end date is before the start date.")

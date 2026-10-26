@@ -11,6 +11,7 @@ urlpatterns = [
     path("people/new/", people.person_new, name="person_new"),
     path("people/<int:pk>/", people.person, name="person"),
     path("people/<int:pk>/edit/", people.person_edit, name="person_edit"),
+    path("people/<int:pk>/effort/", people.person_effort, name="person_effort"),
     path("people/<int:pk>/roster/", people.person_roster, name="person_roster"),
     path("people/<int:pk>/emails/add/", people.person_email_add, name="person_email_add"),
     path(

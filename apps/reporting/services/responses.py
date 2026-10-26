@@ -71,7 +71,8 @@ def answers_of(response, schema):
         elif a.value_date is not None:
             val = a.value_date.isoformat()
         elif a.value_number is not None:
-            val = str(a.value_number)
+            n = a.value_number
+            val = str(int(n)) if n == int(n) else format(n.normalize(), "f")  # "3", not "3.00"
         else:
             link = a.files.all().first()
             val = str(link.file_id) if link else None

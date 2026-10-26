@@ -1,0 +1,113 @@
+{
+  "code": "core_usage_report",
+  "name": "Core Usage Report",
+  "category": "report",
+  "context_kind": "core",
+  "confidentiality": "standard",
+  "sort_order": 15,
+  "intro_text": "List each project that used your core during this reporting period, one row per project. A lab may be listed more than once if different projects were supported. The Center combines these lists into its yearly NIH progress report.",
+  "display": {
+    "task_group": "mycore",
+    "short_name": "Core usage report",
+    "about": [
+      "Your list shows NIH who uses your core and what came of it.",
+      "One row per project. Count students in their own column."
+    ],
+    "minutes": 10
+  },
+  "rules": [],
+  "assignment_rules": [
+    {
+      "scope": "relationship",
+      "relationship_type": "core_director",
+      "per_context": true
+    }
+  ],
+  "_source": "RPPR Table 2 'COBRE Core Users', FY27 COBRE Reporting Guidance p.10 (MW, 2026-10-26, item 7a). One table per core except the Admin Core.",
+  "sections": [
+    {
+      "code": "users",
+      "title": "Projects that used the core this period",
+      "repeatable": true,
+      "repeat_label": "Add a project",
+      "instructions": "One row per project. Student users go in their own column, not in the individual users column.",
+      "questions": [
+        {
+          "code": "user_type",
+          "prompt": "User type",
+          "type": "single_select",
+          "required": true,
+          "options": [
+            "RPL",
+            "PPL",
+            "Former RPL",
+            "Former PPL",
+            "Students",
+            "Other institutional",
+            "External"
+          ]
+        },
+        {
+          "code": "lab",
+          "prompt": "User lab (PI's name)",
+          "type": "short_text",
+          "help_text": "Used to count Total User Labs; not a Table 2 column."
+        },
+        {
+          "code": "project_name",
+          "prompt": "Project name",
+          "type": "short_text"
+        },
+        {
+          "code": "services",
+          "prompt": "Technology, instruments, or services used",
+          "type": "short_text",
+          "config": {
+            "width": "full"
+          }
+        },
+        {
+          "code": "n_users",
+          "prompt": "Number of individual users per project (exclude student users)",
+          "type": "number"
+        },
+        {
+          "code": "n_students",
+          "prompt": "Number of student users (all levels)",
+          "type": "number"
+        },
+        {
+          "code": "payment",
+          "prompt": "Payment type",
+          "type": "single_select",
+          "options": [
+            "In-kind",
+            "Voucher",
+            "Fee-for-service",
+            "Other"
+          ]
+        },
+        {
+          "code": "core_data_used",
+          "prompt": "Were core-generated data included in a grant application or publication?",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "config": {
+            "width": "wide"
+          }
+        }
+      ]
+    },
+    {
+      "code": "notes",
+      "title": "Anything else",
+      "questions": [
+        {
+          "code": "usage_notes",
+          "prompt": "Notes on core usage this period (optional)",
+          "type": "long_text"
+        }
+      ]
+    }
+  ]
+}

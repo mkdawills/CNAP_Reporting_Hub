@@ -236,3 +236,66 @@ def update_person(actor, person, **fields):
             new=changed,
         )
     return person
+
+
+def set_effort(actor, person, grant_year, months):
+    """Record calendar months for one budget year; blank removes it."""
+    from decimal import Decimal, InvalidOperation
+
+    from .models import PersonEffort
+
+    raw = (str(months) if months is not None else "").strip()
+    if not raw:
+        PersonEffort.objects.filter(person=person, grant_year=grant_year).delete()
+        return None
+    try:
+        m = Decimal(raw).quantize(Decimal("0.1"))
+    except InvalidOperation as exc:
+        raise ValueError("Calendar months needs a number, like 1.2.") from exc
+    if not (0 <= m <= 12):
+        raise ValueError("Calendar months must be between 0 and 12.")
+    row, _ = PersonEffort.objects.update_or_create(
+        person=person,
+        grant_year=grant_year,
+        defaults={"calendar_months": m, "entered_by": actor},
+    )
+    record_event(actor, AuditLog.Action.UPDATE, person, new={f"effort_Y{grant_year}": str(m)})
+    return row
+
+
+def request_commons_help(actor, person, kind):
+    """The person asked for help with eRA Commons: note it and e-mail the evaluator(s)."""
+    from django.conf import settings
+    from django.core.mail import send_mail
+    from django.utils import timezone
+
+    from apps.accounts.models import ApplicationRole, User
+
+    kind = kind if kind in ("setup", "unsure") else "unsure"
+    person.era_commons_help_requested_at = timezone.now()
+    person.era_commons_help_kind = kind
+    person.save(update_fields=["era_commons_help_requested_at", "era_commons_help_kind"])
+    record_event(actor, AuditLog.Action.UPDATE, person, new={"era_commons_help": kind})
+    admins = User.objects.filter(
+        user_roles__role__code=ApplicationRole.Code.ADMINISTRATOR, is_enabled=True
+    ).select_related("person")
+    emails = sorted(
+        {u.person.primary_email for u in admins if u.person_id and u.person.primary_email}
+    )
+    if emails:
+        what = (
+            "needs help setting up an eRA Commons account"
+            if kind == "setup"
+            else "isn’t sure whether they need an eRA Commons account"
+        )
+        send_mail(
+            subject=f"CNAP Reporting Hub: eRA Commons help for {person.full_name}",
+            message=(
+                f"{person.full_name} ({person.primary_email or 'no e-mail on file'}) {what}.\n\n"
+                f"Person page: {getattr(settings, 'SITE_URL', '').rstrip('/')}/manage/people/{person.pk}/"
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=emails,
+            fail_silently=True,
+        )
+    return len(emails)
