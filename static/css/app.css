@@ -662,3 +662,11 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 .helpbox dl.qa dd { margin: 3px 0 0; }
 .helpbox .btn.small { font-size: .78rem; }
 .helpbox .ok-note { font-size: .78rem; }
+/* (a little more, MW) */
+.helpbox > summary { font-size: .8rem; }
+.helpbox dl.qa { font-size: .74rem; line-height: 1.55; margin: 8px 0 14px; }
+.helpbox dl.qa dt { font-size: .76rem; margin-top: 22px; }
+.helpbox dl.qa dt:first-child { margin-top: 8px; }
+.helpbox dl.qa dd { margin-top: 4px; }
+.helpbox .btn.small { font-size: .74rem; }
+.helpbox .ok-note { font-size: .74rem; }
