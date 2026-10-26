@@ -13,6 +13,7 @@ no verbatims).
 """
 
 import math
+import re
 from collections import defaultdict
 
 from django.conf import settings
@@ -65,6 +66,48 @@ def _restyle(lon):
     lo, hi = min(vals), max(vals)
     for c in [c for r in lon["rows"] for c in r["cells"]] + lon["overall"]:
         c["style"] = heat_rel(c["mean"], lo, hi)
+
+
+SEGMENT_COLORS = {
+    5: ["#b2432f", "#e8a38c", "#d4d4d4", "#7db5a4", "#1f6857"],
+    4: ["#b2432f", "#e8a38c", "#7db5a4", "#1f6857"],
+    3: ["#b2432f", "#d4d4d4", "#1f6857"],
+}
+
+
+def _glance(scale, totals, total, mean):
+    """Summary for reading in one look: mean in words, top-two and bottom-two shares, one stacked bar."""
+    if not total:
+        return None
+    k = len(scale)
+    colors = SEGMENT_COLORS.get(k) or ["#7db5a4"] * k
+    segs = []
+    for s, c, col in zip(scale, totals, colors, strict=False):
+        pct = 100 * c / total
+        segs.append(
+            {
+                "text": s["text"],
+                "pct": round(pct),
+                "w": f"{pct:.2f}",
+                "color": col,
+                "dark": col in ("#b2432f", "#1f6857"),
+                "inside": pct >= 7,
+            }
+        )
+    two = 2 if k >= 4 else 1
+    word = (
+        scale[min(k - 1, max(0, math.floor(mean + 0.5) - int(scale[0]["value"])))]["text"]
+        if mean is not None
+        else ""
+    )
+    return {
+        "segments": segs,
+        "word": word,
+        "top_pct": round(100 * sum(totals[-two:]) / total),
+        "top_label": " or ".join(s["text"] for s in scale[-two:]),
+        "bot_pct": round(100 * sum(totals[:two]) / total),
+        "bot_label": " or ".join(s["text"] for s in scale[:two]),
+    }
 
 
 def _sd(vals):
@@ -199,9 +242,7 @@ def build(form_definition, period, *, audience="admin"):
             "grand_mean": (sum(all_nums) / total) if total else None,
             "grand_sd": _sd(all_nums),
             "scale_top": len(scale),
-            "gm_pos": round(100 * ((sum(all_nums) / total) - 1) / max(1, len(scale) - 1))
-            if total
-            else None,
+            "glance": _glance(scale, totals, total, (sum(all_nums) / total) if total else None),
             "total": total,
             "totals": [
                 {
@@ -331,6 +372,7 @@ def build(form_definition, period, *, audience="admin"):
         ).first()
         themes = note.body if note else ""
     opened = comp["complete"]
+    pw = schema.optout_pathway
     return {
         "fd": form_definition,
         "period": period,
@@ -339,6 +381,9 @@ def build(form_definition, period, *, audience="admin"):
         "opted_out": comp["opted_out"],
         "optout_label": optout_q.prompt.rstrip(".") if optout_q else "",
         "full": comp["submitted"],
+        "optout_name": (lambda n: n[:1].lower() + n[1:])(re.sub(r"\s*\(.*\)$", "", pw.name))
+        if pw
+        else "",
         "tables": tables,
         "verbatims": verbatims,
         "followups": followups,

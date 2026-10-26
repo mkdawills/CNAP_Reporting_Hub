@@ -201,3 +201,10 @@ Assumptions to verify: the Year 9 Mentee report's comparison sheet prints mentor
 
 - Table 2 opens as a roll-up: a line of the overall mean rating for every period (labelled points, latest filled and bold) plus three call-outs comparing the last two periods: biggest gain, biggest drop, and lowest-rated item now (current items only). "Show item-by-item trends" drops down the heat-map table.
 - Table 1 summary: grand mean tile ("GRAND MEAN" label, bold value "/ 5", a 1–5 track with a marker at the mean, then SD · ratings · items). Each bar shows the % in bold with "n ratings" under it, captioned "Share of all ratings for each answer (all items combined)".
+
+## 2026-10-25 — Results summary, cognitive-load pass
+
+MW: "make it possible to instantly understand." The summary now answers three questions in reading order (how good, how many happy, how many unhappy), using the scale's own words.
+- Page facts replace the opening paragraph: "7 took part · 6 answered the ratings · 1 did not use this core" (opt-out wording from the completion pathway). The site-visit sentence ("Table 1 data captures …") is kept word for word under "Show site-visit report wording" for copying into the report.
+- Table card: small "TABLE 1" label above a plain title. Three headline numbers: average "3.9 / 5 · Good" (mean rounded to the nearest answer label), "% Good or Very Good" (top two answers, green), "% Very Poor or Poor" (bottom two, red). Below, one 100% bar split by answer (red → grey → green; % printed inside segments of 7% or more) with a legend giving every answer's %. "All 15 items combined." The 1–5 marker line, the five-bar chart and the "share of all ratings" caption are gone.
+- Table 2 title reads "<section> over time"; chart caption "Average rating, all items, each reporting period". Call-outs sit three across when they wrap under the chart.

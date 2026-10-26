@@ -1,18 +1,17 @@
 {% load cnap %}{% for t in tables %}
 <div class="tcard">
-<h3 class="ttitle">Table {{ t.no }}. {{ t.section.title|cut:":" }}</h3>
-<div class="tsum">
-  <div class="tsum-gm">
-    <span class="tsum-k">Grand mean</span>
-    <span class="tsum-big">{% if t.grand_mean is not None %}{{ t.grand_mean|floatformat:1 }}{% else %}—{% endif %}<span class="tsum-of">/ {{ t.scale_top }}</span></span>
-    {% if t.gm_pos is not None %}<span class="tsum-track" aria-hidden="true"><span class="tsum-mark" style="left:{{ t.gm_pos }}%"></span>{% for s in t.scale %}<span class="tsum-tick">{{ s.num }}</span>{% endfor %}</span>{% endif %}
-    <span class="tsum-meta">SD {{ t.grand_sd|floatformat:1 }} · {{ t.total }} rating{{ t.total|pluralize }} · {{ t.rows|length }} item{{ t.rows|length|pluralize }}</span>
-  </div>
-  <figure class="tsum-fig"><figcaption class="small muted">Share of all ratings for each answer (all items combined)</figcaption>
-  <div class="tsum-chart" role="img" aria-label="Response counts across all items">{% for c in t.totals %}
-    <div class="tsum-col"><span class="ccv"><b>{{ c.pct }}%</b><small>{{ c.count }} rating{{ c.count|pluralize }}</small></span><span class="tsum-bar" style="height:calc((100% - 70px) * {{ c.bar }} / 100)"></span><span class="tsum-lab">({{ c.num }}) {{ c.text }}</span></div>{% endfor %}
-  </div></figure>
+<div class="teyebrow">Table {{ t.no }}</div>
+<h3 class="ttitle2">{{ t.section.title|cut:":" }}</h3>
+{% with g=t.glance %}{% if g %}
+<div class="kpis">
+  <div class="kpi"><span class="kpi-v">{{ t.grand_mean|floatformat:1 }}<small> / {{ t.scale|length }}</small></span><span class="kpi-l">Average rating: <b>{{ g.word }}</b></span></div>
+  <div class="kpi"><span class="kpi-v pos">{{ g.top_pct }}%</span><span class="kpi-l">{{ g.top_label }}</span></div>
+  <div class="kpi"><span class="kpi-v neg">{{ g.bot_pct }}%</span><span class="kpi-l">{{ g.bot_label }}</span></div>
 </div>
+<div class="stack" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}{% if sg.pct %}<span style="width:{{ sg.w }}%;background:{{ sg.color }}" class="{% if sg.dark %}dk{% endif %}">{% if sg.inside %}{{ sg.pct }}%{% endif %}</span>{% endif %}{% endfor %}</div>
+<ul class="legend">{% for sg in g.segments %}<li><i style="background:{{ sg.color }}"></i>{{ sg.text }} <b>{{ sg.pct }}%</b></li>{% endfor %}</ul>
+<p class="tnote">All {{ t.rows|length }} item{{ t.rows|length|pluralize }} combined.</p>
+{% endif %}{% endwith %}
 <details class="tmore"><summary><span class="tmore-open">Show item-by-item table</span><span class="tmore-close">Hide item-by-item table</span></summary>
 <div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on">n and %</button><button type="button" data-nview="n">n only</button><button type="button" data-nview="p">% only</button></div>
 <div class="scroll"><table class="reptab">
@@ -56,11 +55,12 @@
 </div>
 {% if t.lon and t.lon.periods|length > 1 %}
 <div class="tcard">
-<h3 class="ttitle">Table {{ t.lon.no }}. Mean ratings of {{ t.section.title|cut:":"|lower }}, by reporting period</h3>
+<div class="teyebrow">Table {{ t.lon.no }}</div>
+<h3 class="ttitle2">{{ t.section.title|cut:":" }} over time</h3>
 {% with tr=t.lon.trend %}{% if tr %}
 <div class="trend">
   <figure class="trend-fig">
-    <figcaption class="small muted">Overall mean rating, each reporting period</figcaption>
+    <figcaption class="small muted">Average rating, all items, each reporting period</figcaption>
     <svg viewBox="0 0 {{ tr.w }} {{ tr.h }}" role="img" aria-label="Overall mean rating by reporting period">
       {% for g in tr.grid %}<line x1="{{ tr.pad_l }}" x2="{{ tr.right }}" y1="{{ g.y }}" y2="{{ g.y }}" class="tg"/><text x="{{ tr.pad_l|add:-6 }}" y="{{ g.y }}" class="tgl">{{ g.v }}</text>{% endfor %}
       <polyline points="{{ tr.path }}" class="tl"/>
