@@ -1,6 +1,14 @@
-{% load cnap %}{% if tables %}<div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on">n and %</button><button type="button" data-nview="n">n only</button><button type="button" data-nview="p">% only</button></div>{% endif %}{% for t in tables %}
+{% load cnap %}{% for t in tables %}
 <div class="tcard">
 <h3 class="ttitle">Table {{ t.no }}. {{ t.section.title|cut:":" }}</h3>
+<div class="tsum">
+  <div class="tsum-gm"><span class="tsum-big">{% if t.grand_mean is not None %}{{ t.grand_mean|floatformat:1 }}{% else %}—{% endif %}</span><span class="small muted">grand mean (SD {{ t.grand_sd|floatformat:1 }})<br>{{ t.total }} rating{{ t.total|pluralize }} across {{ t.rows|length }} item{{ t.rows|length|pluralize }}</span></div>
+  <div class="tsum-chart" role="img" aria-label="Response counts across all items">{% for c in t.totals %}
+    <div class="tsum-col"><span class="ccv">{{ c.count }} <span class="muted">· {{ c.pct }}%</span></span><span class="tsum-bar" style="height:{{ c.bar }}%"></span><span class="tsum-lab">({{ c.num }}) {{ c.text }}</span></div>{% endfor %}
+  </div>
+</div>
+<details class="tmore"><summary><span class="tmore-open">Show item-by-item table</span><span class="tmore-close">Hide item-by-item table</span></summary>
+<div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on">n and %</button><button type="button" data-nview="n">n only</button><button type="button" data-nview="p">% only</button></div>
 <div class="scroll"><table class="reptab">
   <thead>
     <tr>
@@ -20,14 +28,14 @@
       <td><div class="itm"><span class="ino">{{ r.no }}.</span><div><strong>{{ r.q.prompt }}</strong>{% if show_codes and r.q.measure %}<div class="small muted">{{ r.q.measure.code }}</div>{% endif %}</div></div></td>
       <td class="num">{% if r.mean is not None %}{{ r.mean|floatformat:1 }}{% else %}—{% endif %}</td>
       <td class="num muted">({{ r.sd|floatformat:1 }})</td>
-      {% for c in r.cells %}<td class="num cn gstart{% if forloop.first %} dline{% endif %}">{{ c.count }}</td><td class="num pct cp{% if forloop.first %} dl{% endif %}" style="{{ c.style }}">{{ c.pct }}%</td>{% endfor %}
+      {% for c in r.cells %}<td class="num cn gstart{% if forloop.first %} dline{% endif %}" style="{{ c.style|heatvar }}">{{ c.count }}</td><td class="num pct cp{% if forloop.first %} dl{% endif %}" style="{{ c.style }}">{{ c.pct }}%</td>{% endfor %}
       <td class="num gstart dline">{{ r.n }}</td>
     </tr>{% endfor %}
     <tr class="totrow">
       <td class="glabel"><strong><span class="lb-both">Grand mean, totals and %:</span><span class="lb-n">Grand mean and totals:</span><span class="lb-p">Grand mean and %:</span></strong></td>
       <td class="num"><strong>{% if t.grand_mean is not None %}{{ t.grand_mean|floatformat:1 }}{% else %}—{% endif %}</strong></td>
       <td class="num muted">({{ t.grand_sd|floatformat:1 }})</td>
-      {% for c in t.totals %}<td class="num cn gstart{% if forloop.first %} dline{% endif %}"><strong>{{ c.count }}</strong></td><td class="num pct cp{% if forloop.first %} dl{% endif %}" style="{{ c.style }}"><strong>{{ c.pct }}%</strong></td>{% endfor %}
+      {% for c in t.totals %}<td class="num cn gstart{% if forloop.first %} dline{% endif %}" style="{{ c.style|heatvar }}"><strong>{{ c.count }}</strong></td><td class="num pct cp{% if forloop.first %} dl{% endif %}" style="{{ c.style }}"><strong>{{ c.pct }}%</strong></td>{% endfor %}
       <td class="num gstart dline"><strong>{{ t.total }}</strong></td>
     </tr>
     <tr class="chartrow">
@@ -37,6 +45,7 @@
     </tr>
   </tbody>
 </table></div>
+</details>
 {% if t.left_out %}<p class="small muted mt">{{ t.left_out }} item{{ t.left_out|pluralize }} aren’t shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"it,them" }}. {{ "This keeps anyone’s answers from being worked out."|stack }}</p>{% endif %}
 </div>
 {% if t.lon and t.lon.periods|length > 1 %}

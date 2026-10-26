@@ -389,3 +389,22 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .only-n .reptab .cn, .only-p .reptab .cp { width: 88px; min-width: 88px; }
 .reptab .lb-n, .reptab .lb-p, .only-n .reptab .lb-both, .only-p .reptab .lb-both { display: none; }
 .only-n .reptab .lb-n, .only-p .reptab .lb-p { display: inline; }
+
+/* Table summary first; full table on demand (decisions.md 2026-10-25) */
+.tsum { display: flex; gap: 32px; align-items: flex-end; flex-wrap: wrap; margin: 4px 0 12px; }
+.tsum-gm { display: flex; align-items: baseline; gap: 10px; min-width: 200px; }
+.tsum-big { font-size: 2.2rem; font-weight: 700; line-height: 1; }
+.tsum-chart { flex: 1; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(70px, 1fr); gap: 12px; height: 170px; min-width: 320px; }
+.tsum-col { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; min-height: 0; }
+.tsum-col .ccv { font-size: .8rem; font-variant-numeric: tabular-nums; }
+.tsum-bar { width: 60%; max-width: 46px; min-height: 2px; background: #4472c4; border-radius: 2px 2px 0 0; flex-shrink: 1; }
+.tsum-lab { font-size: .74rem; text-align: center; border-top: 2px solid var(--ink); width: 100%; padding-top: 4px; white-space: nowrap; }
+.tmore > summary { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; font-weight: 600; color: var(--accent, #512888); padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; list-style: none; margin-bottom: 12px; }
+.tmore > summary::-webkit-details-marker { display: none; }
+.tmore > summary::after { content: "▾"; }
+.tmore[open] > summary::after { content: "▴"; }
+.tmore .tmore-close, .tmore[open] .tmore-open { display: none; }
+.tmore[open] .tmore-close { display: inline; }
+.only-n .reptab td.cn { background: var(--h, transparent); }
+.only-p .reptab td.gstart + td.cp, .only-p .reptab th.sub.gstart + th.cp { border-left: 3px solid var(--ink); }
+.only-p .reptab td.gstart + td.cp.dl, .only-p .reptab th.sub.gstart + th.cp.dl { border-left: 6px double var(--ink); }

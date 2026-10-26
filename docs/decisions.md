@@ -190,3 +190,9 @@ Assumptions to verify: the Year 9 Mentee report's comparison sheet prints mentor
 
 - A "Show: n and % · n only · % only" switch sits above Table 1 on every results page (admin report and Center results). It hides the other column under each answer; group lines stay (the % column takes over the bold/double line when n is hidden), answer columns become equal width, and in "% only" the percentages return to full size and ink colour. The Grand mean label follows the view ("Grand mean and totals:" / "Grand mean and %:"). The choice is remembered per browser (localStorage, wrapped in try/catch); the CSV export always has both.
 - Table 2 (year over year) shows finalized periods up to the period being viewed, plus that period itself; later or unfinished periods are never shown.
+
+## 2026-10-25 — Summary first, table on demand; heat follows the view
+
+- Each results table opens as a summary: the grand mean (SD, ratings, items) and the response-count chart with n · % per answer. A "Show item-by-item table" button drops down the full table (native details/summary, no script needed). The n / % switch sits inside the drop-down. Table 2 (year over year) has no chart and stays open.
+- Heat shading follows what's showing: on % in "n and %" and "% only", on the counts in "n only" (same shade, since it is set by each count's share of the item's ratings).
+- In "% only" the bold/double group lines move to the % column so the dividers stay.

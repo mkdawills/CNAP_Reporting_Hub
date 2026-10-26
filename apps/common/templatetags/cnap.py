@@ -115,3 +115,11 @@ def lastword(value):
     """'Y10 Jan' -> 'Jan' (period column headings under their grant year)."""
     parts = str(value or "").split()
     return parts[-1] if parts else ""
+
+
+@register.filter
+def heatvar(style):
+    """Heat shade as --h so the n column can show it when % is hidden."""
+    from apps.analytics.report import heat_var
+
+    return heat_var(style or "")

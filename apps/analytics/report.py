@@ -36,6 +36,11 @@ def heat(pct, top=100.0):
     return f"background:rgba(44,122,104,{0.08 + a * 0.55:.2f})"
 
 
+def heat_var(style):
+    """The same shade as a CSS custom property, so the counts can take it in 'n only' view."""
+    return style.replace("background:", "--h:") if style else ""
+
+
 def heat_mean(mean, lo=1.0, hi=5.0):
     if mean is None:
         return ""
@@ -200,8 +205,10 @@ def build(form_definition, period, *, audience="admin"):
                     "pct": round(100 * c / total) if total else 0,
                     "style": heat(round(100 * c / total) if total else 0),
                     "bar": round(100 * c / top),
+                    "num": sc["num"],
+                    "text": sc["text"],
                 }
-                for c in totals
+                for c, sc in zip(totals, scale, strict=True)
             ],
             "has_na": any(o.is_na_option for o in qs[0].answer_set.options.all()),
         }
