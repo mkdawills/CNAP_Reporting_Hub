@@ -14,7 +14,7 @@ from apps.reporting.services import responses as rs
 
 TASK_GROUPS = [
     ("cores", "Core facilities", "Tell us about the cores you used. Opt out of any you didn’t."),
-    ("grant", "Your CNAP grant", "Feedback on your project and your mentoring."),
+    ("grant", "Your CNAP grant", "Feedback on your project and your mentoring relationship."),
     ("mycore", "Your core", "Reports for the core you direct: progress and who used the core."),
     ("mentoring", "Projects you mentor", "Your view as a mentor on a CNAP project."),
     ("admin", "Administrative Core", "How the Center’s administration is serving you."),
