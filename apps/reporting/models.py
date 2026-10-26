@@ -37,7 +37,7 @@ from apps.people.models import Core, Person, PersonRelationship, Project
 
 
 class ReportingPeriod(TimestampedModel):
-    name = models.CharField(max_length=120, help_text="e.g. 'Year 10, January 2027'")
+    name = models.CharField(max_length=120, help_text="e.g. 'Year 10 Fall'")
     short_label = models.CharField(max_length=20, unique=True, help_text="e.g. 'Y10A' or 'Y10-1'")
     period_type = models.CharField(
         max_length=12, choices=PeriodType.choices, default=PeriodType.SEMIANNUAL

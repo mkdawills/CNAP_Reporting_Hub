@@ -233,3 +233,9 @@ MW: the two collections are Fall (surveyed in January) and Spring (surveyed in M
 - Prototype: no made-up results at all (MW's choice). The fake finished period is gone; Results and Center results list Y6 Fall … Y9 Spring (real averages), default Y9 Spring. Fictional answers exist only in the open Y10 Fall period so the tasks and dashboard screens work, and never appear in results.
 - The site-visit report sentence ("Table 1 data captures …") moved off the page into the CSV download's second line; the sentence at the top of the page covers it for readers.
 - (same day) After submitting: the "Submitted:/Recorded:" line is grey; "Next: …" is bold black. A short confetti burst plays when a survey or report is finished (submitted or recorded as opt-out); skipped for people who ask their system for reduced motion, and shown once per finished task (sessionStorage).
+
+## 2026-10-25 — Sanity check, required-question message, task headings
+
+- Full check (MW asked; Year 9 Spring is the latest real session): every page for every demo user returns 200 or the expected 403, no server errors; all 757 prior-year averages match across the CSV, the database and the prototype; NeuroSync Table 2 matches the Year 9 PDF exactly. Fixed: new-period suggestions now read "Y11 Fall"/"Year 11 Fall"; admin Results opens on the latest finalized period (Y9 Spring), with the open period still selectable and marked "(open: live, not final)"; field help and docstrings use Fall/Spring. Open question for MW: is the current CN item "CN Core Shared facility space" the same as the retired "… (Bluemont Hall 426)"? If so, link their history.
+- When a submit is blocked, the message lists each unanswered required question by name with a link, and each one is outlined in red with "Needs an answer". Hidden questions are never counted.
+- Task groups on My tasks are plain section headings (uppercase label, rule underneath), not tinted cards, so they don't look clickable.

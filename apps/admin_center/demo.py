@@ -6,8 +6,8 @@ real names MW gave (decisions.md) with example.edu addresses; give them real
 addresses and K-State sign-in when the site goes live.
 
 Creates: people and relationships, logins (password DEMO_PASSWORD), the
-Year 10 January period (open, with assignments and some fictional answers)
-and Year 10 June (waiting for review before launch).
+Year 10 Fall period (open, with assignments and some fictional answers)
+and Year 10 Spring (waiting for review before launch).
 """
 
 import datetime as dt

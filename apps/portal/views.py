@@ -96,7 +96,7 @@ def form(request, pk):
                 rs.submit(a, request.user, request=request)
             except rs.SubmitError as exc:
                 missing = exc.missing
-                errors = [str(exc)]
+                errors = [] if missing else [str(exc)]
             else:
                 return redirect(f"{reverse('portal:tasks')}?done={a.pk}")
         elif action == "save" and not errors:

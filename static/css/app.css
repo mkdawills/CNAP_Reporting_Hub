@@ -544,3 +544,17 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 9999; }
 .confetti i { position: absolute; top: -14px; width: 8px; height: 12px; border-radius: 2px; animation: cnap-cf linear forwards; }
 @keyframes cnap-cf { to { transform: translate(var(--x), 105vh) rotate(var(--r)); opacity: .9; } }
+.confetti i { top: 0; left: 0; width: 8px; height: 11px; animation: cnap-burst cubic-bezier(.15,.7,.4,1) forwards; }
+@keyframes cnap-burst {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  35% { transform: translate(var(--x), var(--y)) rotate(calc(var(--r) * .4)); opacity: 1; }
+  100% { transform: translate(calc(var(--x) * 1.25), calc(var(--y) + 75vh)) rotate(var(--r)); opacity: 0; }
+}
+.misslist { margin: 6px 0 0; padding-left: 20px; }
+.misslist a { color: inherit; font-weight: 600; }
+.q.has-error { outline: 2px solid #b2432f; outline-offset: 6px; border-radius: 6px; }
+.qmiss-l { color: #b2432f; font-size: .78rem; font-weight: 700; margin-left: 6px; }
+/* task groups are headings, not cards */
+.gh { background: none; border-left: 0; border-radius: 0; border-bottom: 2px solid var(--ink); padding: 18px 2px 8px; margin-bottom: 4px; }
+.gh h3 { font-size: .8rem; color: var(--ink); }
+.ghcount { border-left: 0 !important; padding-left: 0 !important; color: var(--muted); font-size: .8rem; }

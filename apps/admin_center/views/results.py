@@ -32,7 +32,12 @@ def _period(request, label=None):
     qs = ReportingPeriod.objects.order_by("-display_order")
     label = label or request.GET.get("period")
     p = qs.filter(short_label=label).first() if label else None
-    return p or qs.exclude(status=PeriodStatus.DRAFT).first()
+    # Default: the latest finalized period (today Y9 Spring); open periods are still selectable for live results.
+    return (
+        p
+        or qs.filter(status=PeriodStatus.FINALIZED).first()
+        or qs.exclude(status=PeriodStatus.DRAFT).first()
+    )
 
 
 @admin_view

@@ -112,7 +112,7 @@ def caption(value):
 
 @register.filter
 def lastword(value):
-    """'Y10 Jan' -> 'Jan' (period column headings under their grant year)."""
+    """'Y10 Fall' -> 'Fall' (period column headings under their grant year)."""
     parts = str(value or "").split()
     return parts[-1] if parts else ""
 

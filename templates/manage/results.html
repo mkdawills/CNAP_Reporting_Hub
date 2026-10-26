@@ -2,7 +2,7 @@
 {% block title %}Results · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>Results</h1><p>{{ "Each survey laid out like the site-visit reports: item tables, year-over-year means, themes and verbatims."|stack }}</p></div>
-  <form method="get"><label class="small muted">Reporting period <select name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}</option>{% endfor %}</select></label></form></div>
+  <form method="get"><label class="small muted">Reporting period <select name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}{% if pp.status == 'open' %} (open: live, not final){% endif %}</option>{% endfor %}</select></label></form></div>
 {% if p %}
 <h2 style="margin:4px 0 14px">{{ p.name }}</h2>
 {% if p.status == 'open' %}<div class="banner">{{ p.short_label }} is still open. These are live results, not an official snapshot.</div>{% endif %}

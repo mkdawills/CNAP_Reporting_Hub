@@ -16,6 +16,7 @@
   {% if resume %}<p class="resume">{{ "Welcome back. Your earlier answers are filled in, so you can pick up where you left off."|stack }}</p>{% endif %}
   {% if not editable and not preview %}<p class="readonly mt">{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}{{ "Submitted. This is a read-only copy. If you need to change something, ask the evaluator to reopen it."|stack }}{% else %}{{ "This period is closed, so this form is read-only."|stack }}{% endif %}</p>{% endif %}
   {% if errors %}<div class="error" role="alert">{% for e in errors %}<div>{{ e|stack }}</div>{% endfor %}</div>{% endif %}
+  {% if missing_list %}<div class="error errbox" role="alert"><p><strong>{% if missing_list|length == 1 %}One required question still needs an answer{% else %}{{ missing_list|length }} required questions still need answers{% endif %}</strong> before you can submit (or save a draft for later):</p><ul class="misslist">{% for m in missing_list %}<li><a href="#q-{{ m.code }}">{{ m.prompt }}</a></li>{% endfor %}</ul></div>{% endif %}
 
   <form method="post" enctype="multipart/form-data" id="runner" novalidate>{% csrf_token %}
     {% if intro %}<p class="instructions">{{ intro|stack }}</p>{% endif %}

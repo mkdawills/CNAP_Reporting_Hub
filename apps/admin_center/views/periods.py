@@ -77,7 +77,7 @@ class PeriodForm(forms.ModelForm):
         labels = {
             "opens_at": "Opens",
             "due_at": "Due",
-            "sequence": "Sequence (1 = January, 2 = June)",
+            "sequence": "Sequence (1 = Fall, surveyed in January; 2 = Spring, surveyed in May)",
         }
 
 
@@ -110,7 +110,8 @@ def period_new(request):
         initial = {
             "grant_year": gy,
             "sequence": seq,
-            "short_label": f"Y{gy} {'Jan' if seq == 1 else 'June'}",
+            "short_label": f"Y{gy} {'Fall' if seq == 1 else 'Spring'}",
+            "name": f"Year {gy} {'Fall' if seq == 1 else 'Spring'}",
         }
     form = PeriodForm(request.POST or None, initial=initial)
     if request.method == "POST" and form.is_valid():

@@ -155,7 +155,7 @@ def title_case(text):
 
 
 def period_title(period):
-    """'Y10 Jan' -> 'Year 10 January'."""
+    """'Y10 Fall' -> 'Year 10 Fall' (older 'Jan'-style labels are spelled out)."""
     word = period.short_label.split()[-1]
     return f"Year {period.grant_year} {MONTHS.get(word, word)}"
 

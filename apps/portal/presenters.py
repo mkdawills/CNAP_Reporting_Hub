@@ -220,7 +220,7 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
     schema = FormSchema(a.form_version)
     resp = rs.current_response(a)
     answers, rows, files = rs.answers_of(resp, schema)
-    if request.method == "POST" and errors:
+    if request.method == "POST" and (errors or missing):
         # keep what was typed on the page when something couldn't be saved
         for q in schema.questions:
             if f"q-{q.code}" in request.POST:
@@ -280,7 +280,9 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
             (hide_targets if r.action == "hide" else show_targets).setdefault(
                 r.target_section.code, True
             )
+    missing_list = [{"code": q.code, "prompt": q.prompt or "Response"} for q in missing]
     return {
+        "missing_list": missing_list,
         "a": a,
         "fd": fd,
         "noun": _noun(fd),
