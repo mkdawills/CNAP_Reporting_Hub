@@ -502,3 +502,7 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .ttitle2 { color: var(--muted); }
 .kpis { border-bottom: 1px solid var(--line); padding-bottom: 18px; margin-bottom: 18px; }
 .kpi { width: 150px; }
+/* centered rings; bars span the card */
+.kpis { justify-content: space-evenly; }
+.vbars { grid-auto-columns: 1fr; width: 100%; gap: 0 clamp(8px, 2vw, 28px); }
+.vb-b { width: min(70%, 140px); }

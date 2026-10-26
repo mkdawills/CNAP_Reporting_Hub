@@ -8,7 +8,6 @@
   <div class="kpi"><div class="ring" style="--p:{{ g.top_pct }};--c:#1f6857"><span class="ring-v pos">{{ g.top_pct }}%</span></div><span class="kpi-l">{{ g.top_label }}</span></div>
   <div class="kpi"><div class="ring" style="--p:{{ g.bot_pct }};--c:#b2432f"><span class="ring-v neg">{{ g.bot_pct }}%</span></div><span class="kpi-l">{{ g.bot_label }}</span></div>
 </div>
-</div>
 <div class="vbars" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}
   <div class="vb"><span class="vb-v">{{ sg.pct }}%</span><span class="vb-b" style="height:calc((100% - 46px) * {{ sg.h }} / 100);background:{{ sg.color }}"></span><span class="vb-l">{{ sg.text }}</span></div>{% endfor %}
 </div>
