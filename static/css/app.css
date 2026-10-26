@@ -506,3 +506,4 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .kpis { justify-content: space-evenly; }
 .vbars { grid-auto-columns: 1fr; width: 100%; gap: 0 clamp(8px, 2vw, 28px); }
 .vb-b { width: min(70%, 140px); }
+.ttitle2 { margin-bottom: 28px; }
