@@ -66,28 +66,32 @@ working in, this repository is sufficient on its own.
 
 | # | Milestone | Status |
 | --- | --- | --- |
-| 1 | Scaffold, database with integrity rules, auth, roles, audit, admin | Done 2026-10-21 (commit 74ffbee) |
-| 2 | People, relationships, projects, cores: admin workflows, roster import, director handoff | Next |
-| 3 | Forms engine: definitions, versions, questions, answer sets, measures, conditional rules | — |
-| 4 | Form runner: My Tasks, drafts, repeatable sections, opt-out pathways, My History | — |
-| 5 | Assignment engine and reporting-period lifecycle | — |
-| 6 | Portal: profile, rich profile, dashboards for respondents | — |
-| 7 | Administrator home, drill-downs, exemptions, reopen, data-quality checks | — |
-| 8 | Analytics: metric registry, survey results, snapshots, themes, longitudinal tables, exports | — |
-| 9 | Deployment hardening, SSO switch, backups, operator runbook | — |
+| 1 | Scaffold, database with integrity rules, auth, roles, audit, admin | Done 2026-10-21 |
+| 2 | People, relationships, projects, cores: admin workflows, roster import, director handoff | Done |
+| 3 | Forms engine: definitions, versions, questions, answer sets, measures, conditional rules | Done |
+| 4 | Form runner: My Tasks, drafts, repeatable sections, opt-out pathways, My History | Done |
+| 5 | Assignment engine and reporting-period lifecycle (incl. "open for preview") | Done |
+| 6 | Portal: profile, rich profile, dashboards for respondents | Done |
+| 7 | Administrator home, drill-downs, exemptions, reopen, data-quality checks | Done |
+| 8 | Analytics: survey results, snapshots, themes, year-over-year tables with Y6–Y9 averages, exports | Done |
+| — | Publications, presentations, grants (MW's flows), RPPR C.1 / Tables 1A, 1B, 2 / D.1, site-visit tables | Done 2026-10-26 |
+| 9 | Deployment hardening, emailed sign-in links, period e-mails, SSO switch, backups, operator runbook | Links, codes, throttling, period e-mails and hardening done 2026-10-26; SSO adapter waits for K-State IT; runbook in `docs/runbook.md` |
 
 Each milestone ends with: tests passing (`make test`), `ruff check .` clean, `docs/decisions.md`
 updated, data dictionary regenerated if models changed, one commit, and a zip for MW.
 
-## Working rules that keep sessions cheap
+## Working rules (MW, 2026-10-26: accuracy and thoroughness come first; never trade them for speed or cost)
 
-1. One milestone per session. Start from this file and the milestone's section of the plan; do not
-   read the whole repository or any uploaded report unless the milestone needs a specific file.
-2. Build in one pass, run the tests once at the end, report in a few lines. MW reviews on their side
-   and sends fixes as a short follow-up.
-3. Do not re-derive settled decisions. If a milestone seems to need one reopened, say so in one line
-   and continue with the decision as written.
-4. Put findings and choices in `docs/decisions.md`, not in the conversation.
+1. Check anything that must match a source (MW's specs, NIH guidance, the site-visit reports) line by line
+   against that source before building it. If the source isn't in the workspace, ask MW for it; don't work
+   from memory or notes, and say so whenever something rests on an assumption.
+2. Run the full test suite and look at the real screens (desktop and phone width) before calling anything done.
+3. High-stakes checks (privacy review, final sanity check, numbers that go to NIH) get an independent review by
+   a reviewer who hasn't seen the work.
+4. Do not re-derive settled decisions. If one seems wrong, say so in one line and ask.
+5. Put findings and choices in `docs/decisions.md`. Follow MW's design preferences (clean, low cognitive load,
+   plain words for respondents, consistent spacing; see decisions.md) on every screen, and carry every
+   prototype tweak into the real build.
 
 ## Running it
 

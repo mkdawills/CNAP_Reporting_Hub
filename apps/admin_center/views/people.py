@@ -389,3 +389,21 @@ def project(request, pk):
         "effective_to", "relationship_type__sort_order"
     )
     return render(request, "manage/project_form.html", {"form": form, "project": pr, "rels": rels})
+
+
+@manage_action
+def person_account(request, pk):
+    """Turn a person's sign-in off or back on. Records are kept; open sessions end on their next page."""
+    p = get_object_or_404(Person, pk=pk)
+    user = getattr(p, "user", None)
+    if user is None:
+        messages.error(request, "This person has no account yet.")
+    elif user == request.user:
+        messages.error(request, "You can’t turn off your own sign-in.")
+    else:
+        enable = request.POST.get("enable") == "1"
+        user.is_enabled = enable
+        user.save(update_fields=["is_enabled"])
+        record_event(request.user, AuditLog.Action.UPDATE, user, new={"is_enabled": enable})
+        messages.success(request, f"Sign-in turned {'back on' if enable else 'off'} for {p}.")
+    return redirect("manage:person", pk)

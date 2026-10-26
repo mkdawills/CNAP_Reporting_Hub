@@ -36,3 +36,27 @@
   try { saved = localStorage.getItem("cnap-sdview") || "mean"; } catch (err) {}
   if (document.querySelector(".sdview")) apply(saved);
 })();
+// "Show all / Collapse all" for the item-by-item tables on results pages (MW, 2026-10-26).
+(function () {
+  function label(btn) {
+    var all = document.querySelectorAll("details.tmore");
+    var anyClosed = Array.prototype.some.call(all, function (d) { return !d.open; });
+    btn.textContent = anyClosed ? "Show all tables" : "Collapse all tables";
+    btn.setAttribute("aria-expanded", anyClosed ? "false" : "true");
+  }
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-expand-all]");
+    if (!btn) return;
+    var all = document.querySelectorAll("details.tmore");
+    var open = Array.prototype.some.call(all, function (d) { return !d.open; });
+    all.forEach(function (d) { d.open = open; });
+    document.querySelectorAll("[data-expand-all]").forEach(label);
+  });
+  document.addEventListener("toggle", function (e) {
+    if (e.target.matches && e.target.matches("details.tmore")) document.querySelectorAll("[data-expand-all]").forEach(label);
+  }, true);
+  document.querySelectorAll("[data-expand-all]").forEach(function (b) {
+    if (!document.querySelector("details.tmore")) { b.hidden = true; return; }
+    label(b);
+  });
+})();

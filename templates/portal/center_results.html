@@ -6,11 +6,12 @@
 {% if not selected %}
   <div class="panel"><p class="muted">{{ "No results yet. They appear here once a reporting period’s results are finalized."|stack }}</p></div>
 {% else %}
-  <h2 style="margin:4px 0 14px">{{ selected.name }}</h2>
+  <div class="restools"><h2>{{ selected.name }}</h2><button type="button" class="btn small ghost" data-expand-all aria-expanded="false">Show all tables</button></div>
   {% for c in cards %}
   <div class="panel">
     <h2 class="sectionhead">{{ c.fd.name }}</h2>
-    <p class="facts2"><b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered all the survey items.</p>
+    {% if c.historical %}<p class="facts2 muted">Averages from the {{ selected.name }} site-visit report.</p>
+    {% else %}<p class="facts2"><b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered all the survey items.</p>{% endif %}
     {% include "manage/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd %}
   </div>
   {% empty %}<div class="panel"><p class="muted">No survey results for this period.</p></div>{% endfor %}

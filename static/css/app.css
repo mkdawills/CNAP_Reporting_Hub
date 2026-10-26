@@ -647,3 +647,6 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 .t2tab th.num, .t2tab td.num { width: 6em; }
 /* a quiet "still needed" marker: readable at a glance without a wall of red */
 .gap { color: var(--progress); font-weight: 600; }
+/* results pages: one button opens or closes every item-by-item table */
+.restools { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 4px 0 14px; }
+.restools h2 { margin: 0; }

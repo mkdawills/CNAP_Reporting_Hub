@@ -7,6 +7,7 @@
   <div class="small"><a href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.short_label }}</a>{% if tables %} · <a href="{% url 'manage:export_report' period.short_label fd.code %}">Download tables (CSV)</a>{% endif %}</div>
 </div>
 
+{% if tables %}<div class="restools"><span></span><button type="button" class="btn small ghost" data-expand-all aria-expanded="false">Show all tables</button></div>{% endif %}
 {% if period.assignments.exists %}
 <div class="panel">
   {% if tables %}<p class="facts2"><b>{{ completion.assigned }}</b> {{ completion.assigned|pluralize:"person,people" }} received the survey and <b>{{ opened }}</b> responded{% if opted_out %}: <b>{{ full }}</b> answered all the survey items and <b>{{ opted_out }}</b> skipped them because they {{ optout_name|default:"opted out" }}{% endif %}.</p>

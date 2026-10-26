@@ -371,8 +371,10 @@ def center_results(period):
         .distinct()
         .order_by("sort_order")
     )
+    historical = not period.assignments.exists()
     for fd in forms:
         data = build(fd, period, audience="respondent")
+        data["historical"] = historical
         if any(t["rows"] or t["left_out"] for t in data["tables"]):
             cards.append(data)
     return cards

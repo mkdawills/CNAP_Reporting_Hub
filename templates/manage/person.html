@@ -53,7 +53,9 @@
     </div>
     <div class="panel small">
       <h2 class="sectionhead">Sign-in</h2>
-      {% if user_account %}<p>Account: {{ user_account.username }}{% if not user_account.is_enabled %} (disabled){% endif %}</p>
+      {% if user_account %}<p>Account: {{ user_account.username }}{% if not user_account.is_enabled %} <span class="gap">(disabled: can’t sign in)</span>{% endif %}</p>
+      {% if can_manage and user_account != request.user %}<form method="post" action="{% url 'manage:person_account' p.pk %}" {% if user_account.is_enabled %}onsubmit="return confirm('Stop {{ p }} from signing in? Their records stay. You can turn sign-in back on any time.')"{% endif %}>{% csrf_token %}
+        <input type="hidden" name="enable" value="{% if user_account.is_enabled %}0{% else %}1{% endif %}"><button class="btn small ghost" type="submit">{% if user_account.is_enabled %}Turn off sign-in{% else %}Turn sign-in back on{% endif %}</button></form>{% endif %}
       {% else %}<p class="muted">{{ "No account yet. One is created the first time they sign in with an emailed link."|stack }}</p>{% endif %}
     </div>
   </div>

@@ -177,3 +177,24 @@ def test_admin_email_page(client, center):
     assert "will get" in html and "Personal link" in html
     r = client.post(f"/manage/periods/{center.pk}/emails/send/", {"kind": "open"})
     assert r.status_code == 302 and len(mail.outbox) > 0
+
+
+def test_turn_off_sign_in_ends_open_sessions(client, center):
+    from django.test import Client
+
+    okafor = User.objects.get(username="okafor")
+    other = Client()
+    other.force_login(okafor)
+    assert other.get("/tasks/").status_code == 200
+    client.force_login(User.objects.get(username="mwills"))
+    client.post(f"/manage/people/{okafor.person.pk}/account/", {"enable": "0"})
+    okafor.refresh_from_db()
+    assert okafor.is_enabled is False
+    r = other.get("/tasks/")
+    assert r.status_code == 302 and "/accounts/login/" in r["Location"]
+    # and no emailed link either
+    client.post("/accounts/link/", {"email": okafor.person.primary_email})
+    assert not any(okafor.person.primary_email in m.to for m in mail.outbox)
+    client.post(f"/manage/people/{okafor.person.pk}/account/", {"enable": "1"})
+    okafor.refresh_from_db()
+    assert okafor.is_enabled is True
