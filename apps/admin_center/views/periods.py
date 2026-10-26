@@ -211,6 +211,31 @@ def launch(request, pk):
     people = {
         pp.pk: pp for pp in Person.objects.filter(pk__in=by_person).prefetch_related("emails")
     }
+    from apps.forms_engine.models import FormAssignmentRule
+    from apps.people.models import PersonRelationship
+
+    rel_ids = {x.source_relationship_id for x in plan if x.source_relationship_id}
+    rels = {
+        r.pk: r
+        for r in PersonRelationship.objects.filter(pk__in=rel_ids).select_related(
+            "relationship_type", "core"
+        )
+    }
+
+    def why(x):
+        if x.source == "universal":
+            return "Everyone on the roster"
+        r = rels.get(x.source_relationship_id)
+        if not r:
+            return ""
+        return r.relationship_type.name + (f" ({r.core.code} Core)" if r.core_id else "")
+
+    # Deliberate skips: universal rules with an excluded relationship (e.g. a core director's own core survey).
+    skip_rules = list(
+        FormAssignmentRule.objects.filter(
+            is_active=True, excluded_relationship_type__isnull=False
+        ).select_related("form_definition", "excluded_relationship_type")
+    )
     rows_by_group = {k: [] for k, *_ in GROUPS}
     for pid in sorted(by_person, key=lambda i: (people[i].last_name, people[i].first_name)):
         person = people[pid]
@@ -227,11 +252,26 @@ def launch(request, pk):
                     "label": (fd.display or {}).get("short_name") or fd.name,
                     "ctx": ctx,
                     "report": fd.category == "report",
+                    "why": why(x),
                 }
             )
+        skips = []
+        held = list(person.current_relationships(on).select_related("relationship_type", "core"))
+        for rule in skip_rules:
+            fd = rule.form_definition
+            for r in held:
+                if r.relationship_type_id == rule.excluded_relationship_type_id and (
+                    not fd.about_core_id or r.core_id == fd.about_core_id
+                ):
+                    skips.append(
+                        f"{(fd.display or {}).get('short_name') or fd.name}, because they are "
+                        f"{r.relationship_type.name.lower()}{f' of the {r.core.code} Core' if r.core_id else ''}"
+                    )
+                    break
         row = {
             "person": person,
             "chips": chips,
+            "skips": skips,
             "external": is_external(person),
             "on_roster": "cnap_member" in codes,
             "also": [t for k, t, _ in GROUPS if k in groups],
@@ -267,6 +307,18 @@ def launch(request, pk):
                     "url": f"/manage/people/{pid}/",
                 }
             )
+    nothing = (
+        Person.objects.filter(is_active=True, archived_at__isnull=True)
+        .exclude(pk__in=by_person)
+        .order_by("last_name", "first_name")
+    )
+    for person in nothing:
+        warnings.append(
+            {
+                "text": f"{person} is active but has no current CNAP role, so they won’t receive anything.",
+                "url": f"/manage/people/{person.pk}/",
+            }
+        )
     totals = {}
     for x in plan:
         totals[x.form_definition_id] = totals.get(x.form_definition_id, 0) + 1

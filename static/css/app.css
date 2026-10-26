@@ -561,3 +561,5 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .footnote { margin-top: 36px !important; padding-top: 14px; }
 .life { grid-template-columns: repeat(7, minmax(0, 1fr)); }
 .life li { font-size: .8rem; padding-right: 4px; }
+.fchip .why { display: block; font-size: .7rem; color: var(--muted); font-weight: 400; margin-top: 1px; }
+.skips { margin-top: 6px; }

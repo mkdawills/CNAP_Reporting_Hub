@@ -248,3 +248,9 @@ MW: set up the next session right away so people can sign in and look at the sur
 - It opens by itself at opens_at (derived from the date; no job or button needed). Tests: tests/test_preview_period.py.
 - Prototype: a "Demo: show as preview / open answering now" switch on Reporting periods (prototype only) shows both states.
 - Footnote under My tasks ("* Opt out of any survey …") has clear space above so it reads as applying to the whole list. Task summary is one line: "5 of 10 remaining. About 34 min in total. Due in 102 days (Feb 1)."
+
+## 2026-10-25 — Who gets what, before launch
+
+MW was worried about assignments being right. The launch review now shows, for every person, each form with the reason under it ("Everyone on the roster", "Research Project Leader (RPL)", "Core Director (CN Core)" …), what was deliberately not sent and why ("Not sent: CN Core, because they are core director of the CN Core"), and a warning for anyone active with no current CNAP role ("won’t receive anything").
+
+Outcomes (grants, awards, publications, presentations) — MW's direction so far: both people and administrators enter them; faculty can let a student enter on their behalf; the person can credit one outcome to several projects and/or cores (the schema already links one outcome to many projects and resources). UI is Build 2 per the original plan; a short plan goes to MW before building.

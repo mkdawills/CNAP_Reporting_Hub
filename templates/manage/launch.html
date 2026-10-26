@@ -18,7 +18,7 @@
       {% if r.external %}<div class="small muted">External · {{ r.person.institution }} · {% if r.on_roster %}on the roster{% else %}not on the roster{% endif %}</div>{% endif %}
       {% if r.also|length > 1 %}<div class="small muted">Also: {% for t in r.also %}{% if t != g.title %}{{ t }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %}</div>{% endif %}
       {% if can_manage and r.external and not r.on_roster %}<form method="post" action="{% url 'manage:roster_from_launch' p.pk r.person.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit">Add to roster</button></form>{% endif %}</td>
-    <td><span class="small muted">{{ r.chips|length }} forms</span><div class="chips">{% for c in r.chips %}<span class="fchip{% if c.report %} report{% endif %}">{{ c.label }}{% if c.ctx %} · {{ c.ctx|truncatechars:28 }}{% endif %}</span>{% endfor %}</div></td>
+    <td><span class="small muted">{{ r.chips|length }} forms</span><div class="chips">{% for c in r.chips %}<span class="fchip{% if c.report %} report{% endif %}" title="Why: {{ c.why }}">{{ c.label }}{% if c.ctx %} · {{ c.ctx|truncatechars:28 }}{% endif %}<span class="why">{{ c.why }}</span></span>{% endfor %}</div>{% if r.skips %}<div class="skips small muted">Not sent: {% for s in r.skips %}{{ s }}{% if not forloop.last %}; {% endif %}{% endfor %}</div>{% endif %}</td>
   </tr>{% endfor %}</tbody></table></div>
 </details>
 {% endfor %}
