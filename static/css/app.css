@@ -653,3 +653,12 @@ fieldset.yn legend { font-weight: 600; margin-bottom: 6px; }
 /* one column everywhere (MW, 2026-10-26: avoid two-column layouts): panels stack in reading order */
 .grid2 { grid-template-columns: minmax(0, 1fr); max-width: 820px; gap: 0; }
 .grid2 > * + *::before { display: none; }
+/* eRA Commons help: smaller text, clear space between its three questions (MW 2026-10-26) */
+.helpbox { padding: 10px 14px 12px; }
+.helpbox > summary { font-size: .82rem; }
+.helpbox dl.qa { margin: 6px 0 12px; font-size: .78rem; line-height: 1.5; color: var(--muted); }
+.helpbox dl.qa dt { font-size: .8rem; margin-top: 16px; color: var(--ink); }
+.helpbox dl.qa dt:first-child { margin-top: 6px; }
+.helpbox dl.qa dd { margin: 3px 0 0; }
+.helpbox .btn.small { font-size: .78rem; }
+.helpbox .ok-note { font-size: .78rem; }
