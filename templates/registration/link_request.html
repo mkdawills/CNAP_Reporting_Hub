@@ -6,7 +6,7 @@
   {% if sent %}
     <p class="okmsg">If <strong>{{ email }}</strong> is on file with the Center, a sign-in link is on its way.</p>
     <p class="small muted">{{ "The link works once and expires in 7 days. Check your spam folder if it doesn’t arrive in a few minutes."|stack }}</p>
-    <p class="small muted">{{ "Still nothing? Make sure it’s the address the Center has for you, or contact the evaluator."|stack }}</p>
+    <p class="small muted">Still nothing? Make sure it’s the address the Center has for you.<br>Or contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
     <div class="actions"><a class="btn ghost" href="{% url 'link_request' %}">Send to a different address</a></div>
   {% else %}
     <p class="small muted">{{ "Enter the e-mail address the Center has for you. We’ll send a link that signs you in."|stack }}</p>

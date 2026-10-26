@@ -1,5 +1,7 @@
 """Values every template needs: what the signed-in person may see and do."""
 
+from django.conf import settings
+
 from apps.accounts import access
 
 
@@ -20,7 +22,7 @@ def role_summary(rels):
 def cnap(request):
     user = getattr(request, "user", None)
     if not user or not user.is_authenticated:
-        return {"platform_name": "CNAP Reporting Hub"}
+        return {"platform_name": "CNAP Reporting Hub", "evaluator_email": settings.EVALUATOR_EMAIL}
     person = getattr(user, "person", None)
     rels = (
         list(person.current_relationships().select_related("relationship_type", "core"))
@@ -36,6 +38,7 @@ def cnap(request):
     keeps_outcomes = bool(person and owners_for(person))
     return {
         "platform_name": "CNAP Reporting Hub",
+        "evaluator_email": settings.EVALUATOR_EMAIL,
         "keeps_outcomes": keeps_outcomes,
         "can_view_admin": access.can_view_admin(user),
         "can_manage": access.can_manage(user),

@@ -31,3 +31,19 @@ def test_menu_highlights_the_current_page(client, center):
     html = client.get("/profile/").content.decode()
     assert '<a href="/profile/" aria-current="page">' in html
     assert "&quot;page&quot;" not in html
+
+
+def test_profile_help_and_evaluator_contact(client, center):
+    from apps.people.models import Person
+
+    okafor = User.objects.get(username="okafor")  # K-State
+    client.force_login(okafor)
+    html = client.get("/profile/").content.decode()
+    assert "mailto:mkwills@ksu.edu" in html and "research@k-state.edu" in html
+    santos = User.objects.get(username="santos")  # outside K-State
+    assert Person.objects.get(pk=santos.person_id).institution != "Kansas State University"
+    client.force_login(santos)
+    html = client.get("/profile/").content.decode()
+    assert (
+        "Contact your institution’s research office" in html and "research@k-state.edu" not in html
+    )

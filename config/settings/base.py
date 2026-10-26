@@ -26,6 +26,7 @@ env = environ.Env(
     OUTCOME_REOPEN_DAYS=(int, 7),
     CNAP_GRANT_NUMBERS=(list, ["P20GM113109"]),
     PUBMED_CONTACT_EMAIL=(str, ""),
+    EVALUATOR_EMAIL=(str, "mkwills@ksu.edu"),
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
@@ -154,6 +155,9 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 # Mail server as one URL, e.g. smtp+tls://user:password@smtp.k-state.edu:587 (K-State's relay). Default: print to
 # the console, which sends nothing.
 vars().update(env.email_url("EMAIL_URL", default="consolemail://"))
+
+# Shown to respondents wherever they're told to contact the evaluator (MW, 2026-10-26).
+EVALUATOR_EMAIL = env("EVALUATOR_EMAIL")
 
 # Emailed sign-in links (decisions.md 2026-10-24). K-State people may use links only until single sign-on is on.
 SIGNIN_LINK_DAYS = 7

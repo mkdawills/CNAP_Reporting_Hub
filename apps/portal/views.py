@@ -16,7 +16,7 @@ from django.views.decorators.http import require_POST
 from apps.accounts import access
 from apps.common.enums import COMPLETE_STATUSES, PeriodStatus
 from apps.people.models import Person
-from apps.people.services import update_person
+from apps.people.services import is_external, update_person
 from apps.reporting.models import Assignment, File, ReportingPeriod
 from apps.reporting.services import responses as rs
 from apps.reporting.services.assignments import due_label
@@ -237,6 +237,7 @@ def profile(request):
                 r.relationship_type.code in ("project_student", "student_trainee") for r in rels
             ),
             "in_d1": in_d1,
+            "is_external": is_external(person),
             "gy": gy,
             "gy_start": 2016 + gy,
             "effort": effort,

@@ -12,9 +12,11 @@
         <p class="small muted">{{ "Your NIH eRA Commons user name. The Center lists it in its yearly NIH progress report."|stack }}</p>
         {% if not person.era_commons_id %}<details class="helpbox"{% if person.era_commons_help_requested_at %} open{% endif %}><summary class="small">I need help with eRA Commons, or I’m not sure I need one</summary>
           <dl class="small qa">
-            <dt>Do I need one?</dt><dd>Yes, if you have a CNAP role (PD/PI, core director, mentor, project leader, trainee or staff) <em>and</em> work on CNAP at least 1 calendar month a year (about 8% of your time). NIH requires it for everyone in the Center’s yearly progress report, students included. Core users and event participants usually don’t need one.</dd>
-            <dt>Have one already?</dt><dd>Keep it, even if it’s from another school or job. Type it above.</dd>
-            <dt>Need one?</dt><dd>Your institution’s research office creates it; you can’t make it yourself. Tell us and the Center will help.</dd>
+            <dt>Do I need one?</dt><dd>Yes, if you have a CNAP role (PD/PI, core director, mentor, project leader, graduate student, or staff) and work on CNAP at least 1 calendar month a year (about 8% of your time).<br>NIH requires it for everyone in the Center’s yearly progress report, students included.<br>Core users and event participants usually don’t need one.</dd>
+            {% if not is_external %}<dt>Have one already?</dt><dd>Great. You’ll keep it.<br>If it is from another school, reach out to K-State’s central research office to have your affiliation switched to K-State.</dd>
+            <dt>Need one?</dt><dd>K-State’s central research office creates your eRA Commons ID on your behalf; you’re restricted from making it yourself.<br>Email <a href="mailto:research@k-state.edu">research@k-state.edu</a> to create your eRA Commons ID or have your ID switched to your current institution.</dd>
+            {% else %}<dt>Have one already?</dt><dd>Great. You’ll keep it. Type it above.</dd>
+            <dt>Need one?</dt><dd>Your institution’s research office creates your eRA Commons ID on your behalf; you’re restricted from making it yourself.<br>Contact your institution’s research office to create one.</dd>{% endif %}
           </dl>
           {% if person.era_commons_help_requested_at %}<p class="small ok-note">You asked for help on {{ person.era_commons_help_requested_at|date:"M j, Y" }}. The Center evaluator will be in touch by e-mail.</p>
           {% else %}<div class="fieldrow" style="gap:8px">
@@ -27,7 +29,7 @@
       {% if in_d1 %}<div class="field"><label>Calendar months on CNAP work, Year {{ gy }} (June 1, {{ gy_start }} – May 31, {{ gy_start|add:1 }})<input type="number" name="calendar_months" min="0" max="12" step="0.1" value="{{ effort.calendar_months|default_if_none:'' }}" style="max-width:8em"></label>
         <p class="small muted">{{ "Your share of full-time effort × 12. For example, 10% of your time all year = 1.2; one full-time summer month = 1.0. Your best estimate is fine."|stack }}</p></div>{% endif %}
       <p class="small muted">E-mail: {{ person.primary_email|default:"none on file" }}</p>
-      <p class="small muted">{{ "To change your name, institution or e-mail, contact the evaluator."|stack }}</p>
+      <p class="small muted">To change your name, institution or e-mail, contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
       <div class="actions"><button class="btn" type="submit">Save</button></div>
     </form>
     <form method="post" id="commonshelp">{% csrf_token %}<input type="hidden" name="action" value="commons_help"></form>
@@ -36,7 +38,7 @@
     <h2 class="sectionhead">Your CNAP roles</h2>
     {% for r in rels %}<div style="padding:8px 0;border-bottom:1px solid var(--line)"><strong>{{ r.relationship_type.name }}</strong><div class="small muted">{% if r.project %}{{ r.project.title }}{% elif r.core %}{{ r.core.name }}{% else %}Center-level{% endif %} · since {{ r.effective_from|date:"M Y" }}</div></div>
     {% empty %}<p class="muted">No project or core roles.</p>{% endfor %}
-    <p class="small muted mt">{% if on_roster %}You’re on the CNAP roster.{% endif %} {{ "Your roles decide which forms you receive. If something here is wrong, contact the evaluator."|stack }}</p>
+    <p class="small muted mt">{% if on_roster %}You’re on the CNAP roster.{% endif %} Your roles decide which forms you receive.<br>If something here is wrong, contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
   </div>
 </div>
 {% endblock %}
