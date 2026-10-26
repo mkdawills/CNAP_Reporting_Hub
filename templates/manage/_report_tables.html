@@ -8,8 +8,9 @@
   <div class="kpi"><span class="kpi-v pos">{{ g.top_pct }}%</span><span class="kpi-l">{{ g.top_label }}</span></div>
   <div class="kpi"><span class="kpi-v neg">{{ g.bot_pct }}%</span><span class="kpi-l">{{ g.bot_label }}</span></div>
 </div>
-<div class="stack" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}{% if sg.pct %}<span style="width:{{ sg.w }}%;background:{{ sg.color }}" class="{% if sg.dark %}dk{% endif %}">{% if sg.inside %}{{ sg.pct }}%{% endif %}</span>{% endif %}{% endfor %}</div>
-<ul class="legend">{% for sg in g.segments %}<li><i style="background:{{ sg.color }}"></i>{{ sg.text }} <b>{{ sg.pct }}%</b></li>{% endfor %}</ul>
+<div class="hbars" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}
+  <span class="hb-l">{{ sg.text }}</span><span class="hb-t"><span class="hb-f" style="width:{{ sg.w }}%;background:{{ sg.color }}"></span></span><span class="hb-v">{{ sg.pct }}%</span>{% endfor %}
+</div>
 <p class="tnote">All {{ t.rows|length }} item{{ t.rows|length|pluralize }} combined.</p>
 {% endif %}{% endwith %}
 <details class="tmore"><summary><span class="tmore-open">Show item-by-item table</span><span class="tmore-close">Hide item-by-item table</span></summary>

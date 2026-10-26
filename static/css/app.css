@@ -470,3 +470,11 @@ h1, h2, h3, .brand { font-weight: 700; letter-spacing: -.01em; }
 .legend b { color: var(--ink); margin-left: 2px; }
 .tnote { font-size: .78rem; color: var(--muted); margin: 8px 0 14px; }
 .wording { background: var(--bg, #f4f4f7); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+.hbars { display: grid; grid-template-columns: max-content minmax(120px, 420px) 3.2em; align-items: center; gap: 6px 12px; }
+.hb-l { font-size: .84rem; text-align: right; }
+.hb-t { height: 16px; background: #f0f0f2; border-radius: 3px; overflow: hidden; }
+.hb-f { display: block; height: 100%; border-radius: 3px 0 0 3px; }
+.hb-v { font-size: .86rem; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.hbars { grid-template-columns: max-content minmax(120px, 420px) max-content; }
+.hb-v { text-align: left; }
+.hb-t { background: #f6f6f8; }
