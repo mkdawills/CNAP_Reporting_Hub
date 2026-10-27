@@ -446,6 +446,8 @@ D1_ORDER = list(dict.fromkeys(D1_CATEGORY.values()))
 
 def d1(gy):
     """One row per person active in a personnel role at any time in the budget year."""
+    from apps.people.services import is_senior_key
+
     start, end = period(gy)
     rels = (
         PersonRelationship.objects.filter(
@@ -488,6 +490,7 @@ def d1(gy):
                 "aca": getattr(efforts.get(p.pk), "academic_months", None),
                 "sum": getattr(efforts.get(p.pk), "summer_months", None),
                 "degrees": p.degrees,
+                "senior_key": is_senior_key(p),
                 "orcid": p.orcid,
                 "foreign": ", ".join(x for x in (p.foreign_org, p.foreign_country) if x),
                 "help": p.get_era_commons_help_kind_display() if p.era_commons_help_kind else "",

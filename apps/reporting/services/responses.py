@@ -146,6 +146,23 @@ def _set_value(response, q, raw, repeat_index=0):
     return None
 
 
+def system_value(assignment, q):
+    """Answers the site fills in itself (hidden questions), e.g. whether the person is named on the NoA."""
+    if q.config.get("source") == "senior_key":
+        from apps.people.services import is_senior_key
+
+        return "yes" if is_senior_key(assignment.person) else "no"
+    return ""
+
+
+def system_answers(assignment, schema):
+    return {
+        q.code: system_value(assignment, q)
+        for q in schema.questions
+        if q.config.get("widget") == "system"
+    }
+
+
 def store_upload(user, uploaded, question):
     accept = [x.lower() for x in question.config.get("accept", [])]
     ext = Path(uploaded.name).suffix.lower()
@@ -212,6 +229,8 @@ def save_draft(assignment, user, post, files=None, *, row_action=None):
                 continue
             raw = post.get(f"q-{q.code}", "")
             raw = raw.strip() if isinstance(raw, str) else raw
+            if q.config.get("widget") == "system":  # set by the site, never by the person
+                raw = system_value(assignment, q)
             if q.config.get("widget") == "optout_checkbox":
                 raw = "yes" if raw else ""
             err = _set_value(resp, q, raw)
@@ -252,6 +271,7 @@ def submit(assignment, user, *, request=None):
     schema = FormSchema(assignment.form_version)
     resp = _draft(assignment, user)
     answers, rows, _ = answers_of(resp, schema)
+    answers |= system_answers(assignment, schema)
     missing = schema.missing_required(answers, rows)
     if missing:
         raise SubmitError(missing)

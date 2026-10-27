@@ -29,6 +29,7 @@ class PersonEditForm(forms.ModelForm):
             "position_title",
             "era_commons_id",
             "orcid",
+            "senior_key",
             "degrees",
             "foreign_org",
             "foreign_country",
@@ -36,7 +37,16 @@ class PersonEditForm(forms.ModelForm):
             "is_active",
             "notes",
         ]
-        widgets = {"notes": forms.Textarea(attrs={"rows": 3})}
+        widgets = {
+            "notes": forms.Textarea(attrs={"rows": 3}),
+            "senior_key": forms.Select(
+                choices=[
+                    ("unknown", "Automatic (PD/PI and RP Leaders)"),
+                    ("true", "Yes"),
+                    ("false", "No"),
+                ]
+            ),
+        }
         labels = {"is_active": "Active (receives forms)"}
 
     def clean_orcid(self):

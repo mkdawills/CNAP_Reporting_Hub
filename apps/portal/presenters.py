@@ -171,6 +171,7 @@ def section_progress(a, s):
     The opt-out question's own section and instruction-only sections aren't counted.
     """
     answers, rows, _ = rs.answers_of(rs.current_response(a), s)
+    answers |= rs.system_answers(a, s)
     optq = s.optout_question
 
     def filled(v):
@@ -285,6 +286,7 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
     schema = FormSchema(a.form_version)
     resp = rs.current_response(a)
     answers, rows, files = rs.answers_of(resp, schema)
+    answers |= rs.system_answers(a, schema)
     if request.method == "POST" and (errors or missing):
         # keep what was typed on the page when something couldn't be saved
         for q in schema.questions:

@@ -256,3 +256,51 @@ def test_mftrp_form_has_their_name_and_nih_file_name(client, center):
     other = User.objects.exclude(person=a.person).filter(person__isnull=False).first()
     client.force_login(other)
     assert client.get(f"/tasks/{a.pk}/mftrp-form/").status_code == 403
+
+
+def test_biosketch_and_mftrp_only_for_people_named_on_the_noa(client, center):
+    """MW 2026-10-27: everyone gives Current and Pending; only NoA-named people give a biosketch and MFTRP."""
+    from apps.forms_engine.runtime import FormSchema
+    from apps.people.services import is_senior_key
+
+    rows = list(
+        Assignment.objects.filter(reporting_period=center, form_definition__code="nih_documents")
+        .select_related("person")
+        .order_by("pk")
+    )
+    rpl = next(
+        a
+        for a in rows
+        if a.person.relationships.filter(relationship_type__code="project_leader").exists()
+    )
+    other = next(
+        a
+        for a in rows
+        if not a.person.relationships.filter(
+            relationship_type__code__in=("project_leader", "pd_pi")
+        ).exists()
+    )
+    assert is_senior_key(rpl.person) and not is_senior_key(other.person)
+    for a, needs in ((rpl, True), (other, False)):
+        a = _open(a)
+        s = FormSchema(a.form_version)
+        missing = {q.code for q in s.missing_required(rs.system_answers(a, s))}
+        assert "current_pending" in missing
+        assert ("biosketch" in missing) is needs and ("mftrp_cert" in missing) is needs
+        client.force_login(User.objects.get(person=a.person))
+        page = client.get(f"/tasks/{a.pk}/").content.decode()
+        sec = page[
+            page.index('id="sec-biosketch"') : page.index(">", page.index('id="sec-biosketch"'))
+        ]
+        assert ("hidden" in sec) is (not needs)
+        assert "Named on the Notice of Award (set by the site)" not in page
+    # the evaluator can mark someone else as named on the NoA
+    other.person.senior_key = True
+    other.person.save()
+    s = FormSchema(other.form_version)
+    assert "biosketch" in {q.code for q in s.missing_required(rs.system_answers(other, s))}
+    client.force_login(User.objects.get(username="mwills"))
+    csv = client.get(f"/manage/outcomes/export/d1/?year={center.grant_year}").content.decode(
+        "utf-8-sig"
+    )
+    assert "Sr/Key (named on the NoA)" in csv

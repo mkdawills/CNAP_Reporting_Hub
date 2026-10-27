@@ -228,6 +228,18 @@ def remove_from_roster(actor, person, *, end=None, reason=""):
 SENIOR_KEY_TYPES = ("pd_pi", "project_leader", "pilot_awardee", "core_director")
 
 
+NOA_DEFAULT_TYPES = ("pd_pi", "project_leader")
+
+
+def is_senior_key(person):
+    """Named on the Notice of Award? The evaluator's setting, or by default the PD/PI and RP Leaders (FY27 guidance)."""
+    if person.senior_key is not None:
+        return person.senior_key
+    return (
+        current_relationships(person).filter(relationship_type__code__in=NOA_DEFAULT_TYPES).exists()
+    )
+
+
 def normalize_orcid(raw):
     """Return an ORCID iD as 0000-0000-0000-000X, or "" for blank. Raise ValueError if it isn't valid.
 

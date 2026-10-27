@@ -43,6 +43,12 @@ class Person(ArchivableModel):
         blank=True,
         help_text="16 digits, like 0000-0002-1825-0097. NIH requires senior/key personnel to link it in SciENcv.",
     )
+    senior_key = models.BooleanField(
+        "Named on the Notice of Award (senior/key)",
+        null=True,
+        blank=True,
+        help_text="Leave as automatic: the PD/PI and RP Leaders count as senior/key. Set Yes for anyone else named on the NoA.",
+    )
     degrees = models.CharField(
         "Degree(s)",
         max_length=100,

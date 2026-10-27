@@ -14,6 +14,7 @@ import re
 
 from apps.common.enums import AssignmentStatus
 from apps.forms_engine.runtime import FormSchema
+from apps.people.services import is_senior_key
 from apps.reporting.models import Assignment, ReportingPeriod
 from apps.reporting.services import responses as rs
 
@@ -26,7 +27,8 @@ DOC_FILES = [
     ("mftrp_cert", "MFTRP certification"),
     ("foreign_docs", "Foreign-activity documents"),
 ]
-REQUIRED_FILES = ("biosketch", "current_pending", "mftrp_cert")
+REQUIRED_FILES = ("current_pending",)  # everyone on the list (MW 2026-10-27)
+NOA_FILES = ("biosketch", "mftrp_cert")  # only people named on the Notice of Award
 PROGRESS_FORMS = ("progress_research", "progress_pilot", "progress_core")
 TEAM_COLS = [
     ("first_name", "First name"),
@@ -89,10 +91,12 @@ def documents(gy):
                 "files": [
                     (code, label, files.get(code), checks.get(code)) for code, label in DOC_FILES
                 ],
+                "senior_key": (sk := is_senior_key(a.person)),
                 "missing": [
                     label
                     for code, label in DOC_FILES
-                    if code in REQUIRED_FILES and not files.get(code)
+                    if (code in REQUIRED_FILES or (sk and code in NOA_FILES))
+                    and not files.get(code)
                 ],
             }
         )
