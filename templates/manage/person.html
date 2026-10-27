@@ -43,6 +43,7 @@
     <div class="panel small">
       <h2 class="sectionhead">NIH reporting (RPPR D.1)</h2>
       <p>eRA Commons ID: {% if p.era_commons_id %}<strong>{{ p.era_commons_id }}</strong>{% else %}<span class="error" style="padding:1px 6px">none on file</span>{% endif %}{% if p.trainee_level %} · {{ p.get_trainee_level_display }}{% endif %}</p>
+      <p>ORCID iD: {% if p.orcid %}<strong>{{ p.orcid }}</strong>{% else %}<span class="muted">none on file</span>{% endif %}</p>
       {% if p.era_commons_help_requested_at and not p.era_commons_id %}<p>Asked for help {{ p.era_commons_help_requested_at|date:"M j, Y" }}: {{ p.get_era_commons_help_kind_display|lower }}.</p>{% endif %}
       <p>Calendar months on CNAP: {% for e in efforts %}Year {{ e.grant_year }}: <strong>{{ e.calendar_months }}</strong>{% if not forloop.last %} · {% endif %}{% empty %}<span class="muted">none entered</span>{% endfor %}</p>
       {% if can_manage %}<form method="post" action="{% url 'manage:person_effort' p.pk %}" class="fieldrow">{% csrf_token %}

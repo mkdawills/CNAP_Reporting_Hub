@@ -128,6 +128,37 @@ def _answer_like(q, rng, lean=4):
     return next((o for o in nums if o.value == target), nums[-1])
 
 
+SAMPLE_PDF = (
+    b"%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
+    b"3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R/Resources<<"
+    b"/Font<</F1<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>>>>>>>endobj\n"
+    b"4 0 obj<</Length 58>>stream\nBT /F1 18 Tf 72 700 Td (Fictional sample document) Tj ET\nendstream endobj\n"
+    b"trailer<</Root 1 0 R>>\n%%EOF\n"
+)
+
+
+def _sample_pdf(resp, q, user, a):
+    """A one-page fictional PDF, so sample NIH documents can be downloaded like real ones."""
+    import hashlib
+
+    from django.core.files.base import ContentFile
+
+    from apps.reporting.models import AnswerFile, File
+
+    name = f"{a.person.last_name}_{q.code}_sample.pdf"
+    f = File(
+        original_filename=name,
+        content_type="application/pdf",
+        byte_size=len(SAMPLE_PDF),
+        sha256=hashlib.sha256(SAMPLE_PDF).hexdigest(),
+        uploaded_by=user,
+    )
+    f.storage_key.save(name, ContentFile(SAMPLE_PDF), save=False)
+    f.save()
+    ans = Answer.objects.create(response=resp, question=q)
+    AnswerFile.objects.create(answer=ans, file=f)
+
+
 def _fill(a, user, rng, *, opt_out=False):
     schema = FormSchema(a.form_version)
     resp = Response.objects.create(assignment=a)
@@ -153,6 +184,8 @@ def _fill(a, user, rng, *, opt_out=False):
                     question=q,
                     value_text="(Fictional comment for the sample center.)",
                 )
+            elif q.question_type == "file" and q.config.get("accept") == [".pdf"] and q.is_required:
+                _sample_pdf(resp, q, user, a)
         pathway = schema.pathway({})
         status = AssignmentStatus.SUBMITTED
     now = timezone.now()

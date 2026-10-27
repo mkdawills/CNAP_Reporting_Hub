@@ -10,14 +10,17 @@ or not checked yet (NULL). One outcome can be credited to several projects and c
 from django import forms
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from apps.accounts import access
 from apps.audit.models import AuditLog, record_event
 from apps.common.enums import GrantRole, GrantStatus, PublicationStatus
+from apps.outcomes import nihdocs
 from apps.outcomes import reminders as _rem
 from apps.outcomes.models import (
     GrantFamily,
@@ -506,6 +509,61 @@ def _yn(v):
     return "" if v is None else ("Yes" if v else "No")
 
 
+def _identified(user, form_code):
+    from apps.forms_engine.models import FormDefinition
+    from apps.reporting.access import IDENTIFIED, form_access
+
+    fd = FormDefinition.objects.filter(code=form_code).first()
+    return bool(fd) and form_access(user, fd) == IDENTIFIED
+
+
+def _nihdocs_zip(request, gy):
+    """Every uploaded NIH document for budget year `gy`, named Last_First_Document.pdf, plus a summary CSV."""
+    import csv
+    import io
+    import zipfile
+
+    from django.http import HttpResponse
+
+    data = nihdocs.documents(gy)
+    if not data:
+        raise Http404("No one was asked for NIH documents in that budget year.")
+    buf = io.BytesIO()
+    summary = io.StringIO()
+    w = csv.writer(summary)
+    w.writerow(
+        ["Last name", "First name", "Status", "D.2.a (25% effort reduction)", "D.2.a explanation"]
+        + [label for _, label in nihdocs.DOC_FILES]
+    )
+    used = set()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        for r in data["rows"]:
+            cells = []
+            for _code, label, f in r["files"]:
+                if not f:
+                    cells.append("")
+                    continue
+                name = nihdocs.zip_name(r["person"], label, f)
+                base, n = name, 2
+                while name in used:
+                    name = base.replace(".", f"_{n}.", 1)
+                    n += 1
+                used.add(name)
+                with f.storage_key.open("rb") as fh:
+                    z.writestr(name, fh.read())
+                cells.append(name)
+            d2a = {"yes": "Yes", "no": "No"}.get(r["d2a"], "")
+            w.writerow(
+                [r["person"].last_name, r["person"].first_name, r["status"], d2a, r["d2a_explain"]]
+                + cells
+            )
+        z.writestr("summary.csv", "\ufeff" + summary.getvalue())
+    record_event(request.user, AuditLog.Action.EXPORT, f"outcomes:nihdocs:{gy}")
+    resp = HttpResponse(buf.getvalue(), content_type="application/zip")
+    resp["Content-Disposition"] = f'attachment; filename="CNAP_Year{gy}_NIH_documents.zip"'
+    return resp
+
+
 @admin_view
 def export(request, kind):
     """Citation list, grant list or counts as a spreadsheet-ready CSV."""
@@ -513,6 +571,15 @@ def export(request, kind):
     import io
 
     from django.http import HttpResponse
+
+    if kind in ("nihdocs", "teams"):
+        gy = int(request.GET.get("year") or 0)
+        if not _identified(
+            request.user, nihdocs.DOC_FORM if kind == "nihdocs" else "progress_core"
+        ):
+            raise PermissionDenied("These lists name people; your role can’t download them.")
+        if kind == "nihdocs":
+            return _nihdocs_zip(request, gy)
 
     buf = io.StringIO()
     w = csv.writer(buf)
@@ -939,6 +1006,7 @@ def export(request, kind):
                 [
                     "Name",
                     "eRA Commons ID",
+                    "ORCID",
                     "Role",
                     "All CNAP roles",
                     "Project or core",
@@ -953,6 +1021,7 @@ def export(request, kind):
                     [
                         f"{p.last_name}, {p.first_name}",
                         r["commons"],
+                        p.orcid,
                         r["label"],
                         "; ".join(r["roles"]),
                         "; ".join(r["where"]),
@@ -1114,6 +1183,16 @@ def export(request, kind):
                     ts(d, "not_funded"),
                 ]
             )
+    elif kind == "teams":
+        w.writerow(
+            ["Period", "Project or core", "Reported by"] + [label for _, label in nihdocs.TEAM_COLS]
+        )
+        for t in nihdocs.teams(gy):
+            for r in t["people"]:
+                w.writerow(
+                    [t["period"].short_label, t["where"], str(t["leader"])]
+                    + [r.get(c) or "" for c, _ in nihdocs.TEAM_COLS]
+                )
     else:
         c = counts()
         w.writerow(["Group", "Credited to", "Measure"] + [f"Y{y}" for y in c["years"]] + ["Total"])
@@ -1212,7 +1291,11 @@ def _rppr_ctx(request):
     inc, exc = rppr.c1(gy)
     t1 = rppr.table1(gy)
     start, end = rppr.period(gy)
+    docs_ok = _identified(request.user, nihdocs.DOC_FORM)
     return {
+        "docs": nihdocs.documents(gy) if docs_ok else None,
+        "docs_ok": docs_ok,
+        "teams": nihdocs.teams(gy) if _identified(request.user, "progress_core") else [],
         "year": gy,
         "years": list(range(cur, 5, -1)),
         "start": start,

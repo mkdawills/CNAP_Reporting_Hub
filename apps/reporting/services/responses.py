@@ -151,11 +151,20 @@ def store_upload(user, uploaded, question):
     ext = Path(uploaded.name).suffix.lower()
     if accept and ext not in accept:
         names = " or ".join(accept)
-        raise UploadError(
-            f"Please upload a Word document ({names}). Other file types can’t be accepted."
-        )
+        if accept == [".pdf"]:
+            kind = "a PDF"
+        elif set(accept) <= {".doc", ".docx"}:
+            kind = f"a Word document ({names})"
+        else:
+            kind = f"one of these file types: {', '.join(accept)}"
+        raise UploadError(f"Please upload {kind}. Other file types can’t be accepted.")
     if uploaded.size > MAX_UPLOAD_BYTES:
         raise UploadError("That file is larger than 20 MB. Please upload a smaller file.")
+    if ext == ".pdf":
+        head = uploaded.read(1024)
+        uploaded.seek(0)
+        if b"%PDF-" not in head:
+            raise UploadError("That file doesn’t look like a PDF. Please upload the PDF itself.")
     digest = hashlib.sha256()
     for chunk in uploaded.chunks():
         digest.update(chunk)

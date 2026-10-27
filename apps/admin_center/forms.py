@@ -28,12 +28,21 @@ class PersonEditForm(forms.ModelForm):
             "department",
             "position_title",
             "era_commons_id",
+            "orcid",
             "trainee_level",
             "is_active",
             "notes",
         ]
         widgets = {"notes": forms.Textarea(attrs={"rows": 3})}
         labels = {"is_active": "Active (receives forms)"}
+
+    def clean_orcid(self):
+        from apps.people.services import normalize_orcid
+
+        try:
+            return normalize_orcid(self.cleaned_data.get("orcid"))
+        except ValueError as exc:
+            raise forms.ValidationError(str(exc)) from exc
 
 
 class EmailForm(forms.Form):

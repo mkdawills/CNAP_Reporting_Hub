@@ -10,6 +10,8 @@
     <a href="#rp-t1"><span class="rj-k">Table 1</span><span class="rj-v">{{ r.t1.total.sub }} · {{ r.t1.total.won }}</span><span class="rj-l">applications · awards</span></a>
     <a href="#rp-t2"><span class="rj-k">Table 2</span><span class="rj-v">{{ r.t2_users }}</span><span class="rj-l">core user{{ r.t2_users|pluralize }}</span></a>
     <a href="#rp-d1"><span class="rj-k">D.1</span><span class="rj-v">{{ r.d1.rows|length }}</span><span class="rj-l">participant{{ r.d1.rows|length|pluralize }}</span></a>
+    {% if r.docs %}<a href="#rp-docs"><span class="rj-k">D.2 · NIH documents</span><span class="rj-v">{{ r.docs.n_done }} of {{ r.docs.n }}</span><span class="rj-l">turned in</span></a>{% endif %}
+    {% if r.teams %}<a href="#rp-teams"><span class="rj-k">Progress reports</span><span class="rj-v">{{ r.teams|length }}</span><span class="rj-l">team list{{ r.teams|length|pluralize }} and answers</span></a>{% endif %}
   </nav>
 
   {% if r.carried %}<div class="rnote">
@@ -112,6 +114,42 @@
     {% else %}<p class="muted">No one in a personnel role in this budget year.</p>{% endif %}
     {% if r.d1.below %}<details class="rmore"><summary class="small">Under 1.0 calendar month, not listed ({{ r.d1.below|length }})</summary><ul class="small">{% for x in r.d1.below %}<li>{{ x.person }}: {{ x.months }} months ({{ x.label }})</li>{% endfor %}</ul></details>{% endif %}
   </section>
+
+  <section class="rsec" id="rp-docs">
+    <header class="rhead">
+      <div><h2>D.2 and NIH documents</h2>
+        {% if r.docs %}<p class="rsum"><b>{{ r.docs.n_done }}</b> of {{ r.docs.n }} turned in{% if r.docs.d2a_yes %} · <span class="gap">{{ r.docs.d2a_yes|length }} expect{{ r.docs.d2a_yes|length|pluralize:"s," }} a 25% effort drop (D.2.a)</span>{% endif %}</p>{% endif %}</div>
+      {% if r.docs %}<a class="small" href="{% url 'manage:outcomes_export' 'nihdocs' %}?year={{ r.year }}">Download all (zip)</a>{% endif %}
+    </header>
+    <p class="rdesc">Each year’s certified SciENcv biosketch and Current and Pending (Other) Support, the signed MFTRP certification, and the D.2.a effort answer, from the PD/PI, RP Leaders, PP Leaders and core directors.<br>Current and Pending files attach to each senior/key person’s D.1 row; biosketches go with new senior/key personnel (D.2.b).</p>
+    {% if not r.docs_ok %}<p class="muted">Your role can’t see these documents.</p>
+    {% elif not r.docs %}<p class="muted">No one has been asked for NIH documents in Year {{ r.year }}. They’re requested once a year, in the Fall period.</p>
+    {% else %}
+    <div class="scroll"><table class="rtab"><colgroup><col class="w-name"><col class="w-num"><col><col><col><col><col class="w-num"></colgroup>
+      <thead><tr><th>Name</th><th>Status</th><th>Biosketch</th><th>Current and Pending</th><th>MFTRP</th><th>Foreign docs</th><th>D.2.a</th></tr></thead><tbody>
+      {% for x in r.docs.rows %}<tr><td><a href="{% url 'manage:person' x.person.pk %}">{{ x.person.last_name }}, {{ x.person.first_name }}</a></td><td class="small">{% if x.submitted %}Turned in{% else %}<span class="gap">{{ x.status }}</span>{% endif %}</td>
+        {% for code, label, f in x.files %}<td class="small">{% if f %}<a href="{% url 'portal:download' f.pk %}">Download</a>{% elif code == 'foreign_docs' %}<span class="muted">none</span>{% elif x.submitted %}<span class="gap">missing</span>{% else %}<span class="muted">–</span>{% endif %}</td>{% endfor %}
+        <td class="small">{% if x.d2a == 'yes' %}<span class="gap">Yes</span>{% if x.d2a_explain %}<div class="muted">{{ x.d2a_explain|truncatechars:140 }}</div>{% endif %}{% elif x.d2a == 'no' %}No{% else %}–{% endif %}</td></tr>{% endfor %}
+    </tbody></table></div>
+    <p class="small muted">From {{ r.docs.period.name }}. The zip names each file Last_First_Document.pdf and includes a summary sheet.</p>
+    {% endif %}
+  </section>
+
+  {% if r.teams %}<section class="rsec" id="rp-teams">
+    <header class="rhead">
+      <div><h2>From progress reports</h2>
+        <p class="rsum"><b>{{ r.teams|length }}</b> report{{ r.teams|length|pluralize }} with a team list or RPPR answers</p></div>
+      <a class="small" href="{% url 'manage:outcomes_export' 'teams' %}?year={{ r.year }}">Download teams (CSV)</a>
+    </header>
+    <p class="rdesc">Each leader’s research team (calendar, academic and summer months), their answers to the quick RPPR questions (B.1.a, C.3–C.5, F.3, G.9), and any suggested tables they uploaded.<br>Use it to fill each component’s sections and to check D.1.</p>
+    {% for t in r.teams %}<details class="rmore"><summary class="small"><strong>{{ t.where }}</strong> · {{ t.leader }} · {{ t.period.short_label }}{% if not t.submitted %} · draft{% endif %} · {{ t.people|length }} {{ t.people|length|pluralize:"person,people" }}{% if t.tables %} · tables uploaded{% endif %}{% if t.flags %} · <span class="gap">{{ t.flags|length }} RPPR item{{ t.flags|length|pluralize }} to look at</span>{% endif %}</summary>
+      {% if t.flags %}<div class="rnote small"><p><strong>Needs a closer look:</strong> {{ t.flags|join:"; " }}.</p>{% if t.details %}<p>{{ t.details|linebreaksbr }}</p>{% endif %}</div>{% endif %}
+      {% if t.people %}<div class="scroll"><table class="rtab"><thead><tr><th>Name</th><th>Email</th><th>eRA Commons ID</th><th>Role</th><th class="num">Cal</th><th class="num">Aca</th><th class="num">Sum</th></tr></thead><tbody>
+      {% for p in t.people %}<tr><td>{{ p.last_name }}, {{ p.first_name }}</td><td class="small">{{ p.email }}</td><td class="small">{{ p.commons_id|default:"–" }}</td><td class="small">{{ p.role }}</td><td class="num small">{{ p.cal_months|default:"–" }}</td><td class="num small">{{ p.aca_months|default:"–" }}</td><td class="num small">{{ p.sum_months|default:"–" }}</td></tr>{% endfor %}
+      </tbody></table></div>{% endif %}
+      {% if t.tables %}<p class="small"><a href="{% url 'portal:download' t.tables.pk %}">Download the uploaded tables</a> ({{ t.tables.original_filename }})</p>{% endif %}
+    </details>{% endfor %}
+  </section>{% endif %}
 
   {% if can_edit %}<section class="rsec rdone">
     <h2>When the RPPR has been submitted</h2>

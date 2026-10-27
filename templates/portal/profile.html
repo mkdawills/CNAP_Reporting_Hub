@@ -25,6 +25,8 @@
           </div>{% endif %}
         </details>{% endif %}
       </div>
+      {% if needs_orcid or person.orcid %}<div class="field" id="orcid"><label>ORCID iD<input type="text" name="orcid" value="{{ person.orcid }}" placeholder="0000-0000-0000-0000" autocomplete="off" spellcheck="false" inputmode="text"></label>
+        <p class="small muted">{{ "NIH requires senior/key personnel to link their ORCID iD in SciENcv. No ORCID iD yet? You can get one free at orcid.org."|stack }}</p></div>{% endif %}
       {% if is_trainee or person.trainee_level %}<div class="field"><label>Career level<select name="trainee_level"><option value="">—</option>{% for c, l in levels %}<option value="{{ c }}" {% if person.trainee_level == c %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></label></div>{% endif %}
       {% if in_d1 %}<div class="field"><label>Calendar months on CNAP work, Year {{ gy }} (June 1, {{ gy_start }} – May 31, {{ gy_start|add:1 }})<input type="number" name="calendar_months" min="0" max="12" step="0.1" value="{{ effort.calendar_months|default_if_none:'' }}" style="max-width:8em"></label>
         <p class="small muted">{{ "Your share of full-time effort × 12. For example, 10% of your time all year = 1.2; one full-time summer month = 1.0. Your best estimate is fine."|stack }}</p></div>{% endif %}

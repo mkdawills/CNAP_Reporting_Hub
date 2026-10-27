@@ -89,6 +89,9 @@ def plan(period, on=None):
     versions = {}
     for rule in rules:
         fd = rule.form_definition
+        yearly = (fd.display or {}).get("yearly_sequence")
+        if yearly and period.sequence != yearly:  # a once-a-year form, e.g. NIH documents in Fall
+            continue
         if fd.pk not in versions:
             versions[fd.pk] = fd.versions.get(status=VersionStatus.ACTIVE).pk
         fv = versions[fd.pk]

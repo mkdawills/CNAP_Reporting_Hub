@@ -37,6 +37,12 @@ class Person(ArchivableModel):
         blank=True,
         help_text="NIH eRA Commons user name. Needed for RPPR D.1 for everyone in a personnel role.",
     )
+    orcid = models.CharField(
+        "ORCID iD",
+        max_length=19,
+        blank=True,
+        help_text="16 digits, like 0000-0002-1825-0097. NIH requires senior/key personnel to link it in SciENcv.",
+    )
     trainee_level = models.CharField(
         max_length=20,
         blank=True,

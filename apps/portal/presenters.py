@@ -16,6 +16,7 @@ TASK_GROUPS = [
     ("cores", "Core facilities", "Tell us about the cores you used."),
     ("grant", "Your CNAP grant", "Feedback on your project and your mentoring relationship."),
     ("mycore", "Your core", "Reports for the core you direct: progress and who used the core."),
+    ("nih", "NIH documents", "Once a year, for the Center’s progress report to NIH."),
     ("mentoring", "Projects you mentor", "Your view as a mentor on a CNAP project."),
     ("admin", "Administrative Core", "How the Center’s administration is serving you."),
     ("other", "Other Center features and services", "Center programs and events."),

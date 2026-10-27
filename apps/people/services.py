@@ -225,6 +225,33 @@ def remove_from_roster(actor, person, *, end=None, reason=""):
     return end_relationship(actor, rel, end=end, reason=reason)
 
 
+SENIOR_KEY_TYPES = ("pd_pi", "project_leader", "pilot_awardee", "core_director")
+
+
+def normalize_orcid(raw):
+    """Return an ORCID iD as 0000-0000-0000-000X, or "" for blank. Raise ValueError if it isn't valid.
+
+    Accepts the bare iD or the orcid.org link. Checks the ISO 7064 MOD 11-2 check digit, so a mistyped
+    digit is caught here rather than in SciENcv.
+    """
+    import re
+
+    s = (raw or "").strip()
+    if not s:
+        return ""
+    s = re.sub(r"^(https?://)?(www\.)?orcid\.org/", "", s, flags=re.I).strip("/ ")
+    digits = s.replace("-", "").replace(" ", "").upper()
+    if not re.fullmatch(r"\d{15}[\dX]", digits):
+        raise ValueError("An ORCID iD has 16 digits, like 0000-0002-1825-0097.")
+    total = 0
+    for ch in digits[:15]:
+        total = (total + int(ch)) * 2
+    check = (12 - total % 11) % 11
+    if digits[15] != ("X" if check == 10 else str(check)):
+        raise ValueError("That ORCID iD has a typo: its last digit doesn’t match. Please check it.")
+    return "-".join(digits[i : i + 4] for i in range(0, 16, 4))
+
+
 @transaction.atomic
 def update_person(actor, person, **fields):
     old = {k: getattr(person, k) for k in fields}

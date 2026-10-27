@@ -1,0 +1,136 @@
+{
+  "code": "nih_documents",
+  "name": "NIH Documents: Biosketch, Current and Pending, MFTRP",
+  "category": "report",
+  "context_kind": "none",
+  "confidentiality": "standard",
+  "sort_order": 16,
+  "intro_text": "Once a year, NIH needs current documents from the Center’s senior/key personnel for the yearly progress report (RPPR). Make your biosketch and your Current and Pending (Other) Support in SciENcv, using NIH’s Common Forms, and upload the certified PDFs here.",
+  "display": {
+    "task_group": "nih",
+    "short_name": "NIH documents",
+    "time_label": "3 PDF uploads",
+    "yearly_sequence": 1,
+    "about": [
+      "Each year NIH needs a current biosketch, Current and Pending (Other) Support, and MFTRP certification from the Center’s senior/key personnel.",
+      "They go into the Center’s yearly progress report (RPPR)."
+    ]
+  },
+  "sections": [
+    {
+      "code": "effort",
+      "title": "Planned change in effort (RPPR D.2.a)",
+      "questions": [
+        {
+          "code": "d2a",
+          "prompt": "Will there be, in the next budget period, either (1) a reduction of 25% or more in the level of effort from what was approved by the agency for the PD/PI(s) or other senior/key personnel designated in the Notice of Award, or (2) a reduction in the level of effort below the minimum amount of effort required by the Notice of Award?",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "required": true,
+          "help_text": "This is RPPR question D.2.a, word for word. In short: will your CNAP effort drop by 25% or more next budget year (starting June 1)? NIH treats a Yes as a request for prior approval. If the drop has already happened, tell the evaluator, because a separate request is needed."
+        },
+        {
+          "code": "d2a_explain",
+          "prompt": "If Yes: describe the change, with your current and planned calendar months and when the change starts.",
+          "type": "long_text"
+        }
+      ]
+    },
+    {
+      "code": "documents",
+      "title": "Biosketch and Current and Pending (Other) Support",
+      "instructions": "Make both in SciENcv (www.ncbi.nlm.nih.gov/sciencv), using NIH’s Common Forms.\nCertify each one yourself in SciENcv, then download the PDF. NIH doesn’t accept uncertified or preview versions, and certification can’t be done by someone else on your behalf.",
+      "questions": [
+        {
+          "code": "biosketch",
+          "prompt": "Biosketch (certified PDF from SciENcv)",
+          "type": "file",
+          "required": true,
+          "config": {
+            "accept": [
+              ".pdf"
+            ]
+          }
+        },
+        {
+          "code": "current_pending",
+          "prompt": "Current and Pending (Other) Support (certified PDF from SciENcv)",
+          "type": "file",
+          "required": true,
+          "config": {
+            "accept": [
+              ".pdf"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "code": "mftrp",
+      "title": "MFTRP certification",
+      "instructions": "Download the certification form, sign it with an Adobe digital signature, and upload the signed PDF.",
+      "questions": [
+        {
+          "code": "mftrp_cert",
+          "prompt": "Signed MFTRP certification (PDF)",
+          "type": "file",
+          "required": true,
+          "config": {
+            "accept": [
+              ".pdf"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "code": "foreign",
+      "title": "Foreign-activity documents (only if you have any)",
+      "questions": [
+        {
+          "code": "foreign_docs",
+          "prompt": "Supporting documents for foreign appointments or activities listed in your Current and Pending (optional, one PDF)",
+          "type": "file",
+          "help_text": "NIH takes these as one separate attachment. Leave this blank if you have none.",
+          "config": {
+            "accept": [
+              ".pdf"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "source": "d2a",
+      "operator": "equals",
+      "value": "yes",
+      "action": "require",
+      "target_question": "d2a_explain"
+    }
+  ],
+  "assignment_rules": [
+    {
+      "scope": "relationship",
+      "relationship_type": "pd_pi",
+      "per_context": false
+    },
+    {
+      "scope": "relationship",
+      "relationship_type": "project_leader",
+      "per_context": false
+    },
+    {
+      "scope": "relationship",
+      "relationship_type": "pilot_awardee",
+      "per_context": false
+    },
+    {
+      "scope": "relationship",
+      "relationship_type": "core_director",
+      "per_context": false
+    }
+  ],
+  "_source": "MW 2026-10-27: PPLs, RPLs, core directors and the CNAP Director upload SciENcv biosketch and Current and Pending once a year; MFTRP certification and D.2.a in the same task; optional foreign-activity documents. Piestar thread (Apr 2026) for D.2 and MFTRP. SciENcv Common Forms required for RPPRs from Jan 25, 2026 (Stanford ORA notice)."
+}

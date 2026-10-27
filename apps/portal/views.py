@@ -16,7 +16,7 @@ from django.views.decorators.http import require_POST
 from apps.accounts import access
 from apps.common.enums import COMPLETE_STATUSES, PeriodStatus
 from apps.people.models import Person
-from apps.people.services import is_external, update_person
+from apps.people.services import SENIOR_KEY_TYPES, is_external, normalize_orcid, update_person
 from apps.reporting.models import Assignment, File, ReportingPeriod
 from apps.reporting.services import responses as rs
 from apps.reporting.services.assignments import due_label
@@ -204,9 +204,17 @@ def profile(request):
                 "Thanks. The Center evaluator has your request and will get in touch by e-mail.",
             )
             return redirect(reverse("portal:profile") + "#commons")
+        orcid = person.orcid
+        if "orcid" in request.POST:
+            try:
+                orcid = normalize_orcid(request.POST.get("orcid", "")[:60])
+            except ValueError as exc:
+                messages.error(request, str(exc))
+                return redirect(reverse("portal:profile") + "#orcid")
         update_person(
             request.user,
             person,
+            orcid=orcid,
             department=request.POST.get("department", "")[:200],
             position_title=request.POST.get("position_title", "")[:200],
             era_commons_id=request.POST.get("era_commons_id", "")[:40],
@@ -237,6 +245,7 @@ def profile(request):
                 r.relationship_type.code in ("project_student", "student_trainee") for r in rels
             ),
             "in_d1": in_d1,
+            "needs_orcid": any(r.relationship_type.code in SENIOR_KEY_TYPES for r in rels),
             "is_external": is_external(person),
             "gy": gy,
             "gy_start": 2016 + gy,
