@@ -32,6 +32,12 @@ def _value(q):
     return "Sample text"
 
 
+def _row(html, a):
+    """The My tasks row for one assignment."""
+    i = html.index(f"/tasks/{a.pk}/")
+    return html[html.rindex("<tr", 0, i) : html.index("</tr>", i)]
+
+
 def test_page_wording(client, okafor):
     client.force_login(okafor)
     html = client.get("/tasks/").content.decode()
@@ -80,8 +86,9 @@ def test_started_form_shows_sections_done(client, okafor):
     rs.save_draft(a, okafor, {})
     client.force_login(okafor)
     html = client.get("/tasks/").content.decode()
-    assert "sections done" not in html  # nothing filled in yet: no count (MW 2026-10-27)
-    assert "You previously started this" in html
+    row = _row(html, a)
+    assert "sections done" not in row  # nothing filled in yet: no count (MW 2026-10-27)
+    assert "You previously started this" in row
 
     s = FormSchema(a.form_version)
     sec = next(
@@ -101,4 +108,4 @@ def test_started_form_shows_sections_done(client, okafor):
         },
     )
     html = client.get("/tasks/").content.decode()
-    assert "sections done. Your answers are saved." in html
+    assert "sections done. Your answers are saved." in _row(html, a)
