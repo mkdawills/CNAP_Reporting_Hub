@@ -97,10 +97,10 @@
   <section class="rsec" id="rp-d1">
     <header class="rhead">
       <div><h2>D.1 Participants</h2>
-        <p class="rsum"><b>{{ r.d1.rows|length }}</b> {{ r.d1.rows|length|pluralize:"person,people" }}{% if r.d1.missing_commons %} · <span class="gap">{{ r.d1.missing_commons|length }} need an eRA Commons ID</span>{% endif %}{% if r.d1.missing_months %} · <span class="gap">{{ r.d1.missing_months|length }} need calendar months</span>{% endif %}{% if r.d1.missing_level %} · <span class="gap">{{ r.d1.missing_level|length }} need a career level</span>{% endif %}</p></div>
+        <p class="rsum"><b>{{ r.d1.rows|length }}</b> {{ r.d1.rows|length|pluralize:"person,people" }}{% if r.d1.missing_commons %} · <span class="gap">{{ r.d1.missing_commons|length }} need an eRA Commons ID</span>{% endif %}{% if r.d1.missing_months %} · <span class="gap">{{ r.d1.missing_months|length }} need months</span>{% endif %}{% if r.d1.missing_level %} · <span class="gap">{{ r.d1.missing_level|length }} need a career level</span>{% endif %}</p></div>
       <a class="small" href="{% url 'manage:outcomes_export' 'd1' %}?year={{ r.year }}">Download D.1 (CSV)</a>
     </header>
-    <p class="rdesc">Everyone who worked on CNAP for at least 1.0 calendar month this year, in NIH’s six categories, with their eRA Commons ID.<br>It’s the RPPR’s list of the people who did the work.</p>
+    <p class="rdesc">Everyone who worked on CNAP for at least 1.0 person month this year (calendar, or academic plus summer), in NIH’s six categories, with their eRA Commons ID.<br>It’s the RPPR’s list of the people who did the work.</p>
     <p class="small muted">People under 1.0 month are set aside; people with no months entered stay on the list until they add them.<br>People add their eRA Commons ID and months on their Profile page; you can on their person page.</p>
     {% if r.d1_cats %}<table class="rtab cnttab"><colgroup><col class="w-label"><col class="w-num"><col class="w-num"><col class="w-num"></colgroup>
       <thead><tr><th>Category</th><th class="num">People</th><th class="num">Need an ID</th><th class="num">Need months</th></tr></thead><tbody>
@@ -108,11 +108,11 @@
     </tbody></table>{% endif %}
     {% if r.d1.rows %}<details class="rmore"><summary class="small">Show all {{ r.d1.rows|length }} {{ r.d1.rows|length|pluralize:"person,people" }}</summary>
       <div class="scroll"><table class="rtab"><colgroup><col class="w-name"><col class="w-id"><col class="w-role"><col><col class="w-lvl"><col class="w-num"></colgroup>
-        <thead><tr><th>Name</th><th>eRA Commons ID</th><th>Role</th><th>Project or core</th><th>Career level</th><th class="num">Calendar months</th></tr></thead><tbody>
-        {% for x in r.d1.rows %}<tr><td><a href="{% url 'manage:person' x.person.pk %}">{{ x.person.last_name }}, {{ x.person.first_name }}</a></td><td class="small">{% if x.commons %}{{ x.commons }}{% else %}<span class="gap">needed</span>{% if x.help %}<div class="muted">Asked for help: {{ x.help|lower }}</div>{% endif %}{% endif %}</td><td class="small">{{ x.label }}{% if x.roles|length > 1 %}<div class="muted">also {{ x.roles|slice:"1:"|join:", " }}</div>{% endif %}</td><td class="small">{{ x.where|join:"; " }}</td><td class="small">{% if x.needs_level %}<span class="gap">needed</span>{% else %}{{ x.level|default:"–" }}{% endif %}</td><td class="num small">{% if x.months is None %}<span class="gap">needed</span>{% else %}{{ x.months }}{% endif %}</td></tr>{% endfor %}
+        <thead><tr><th>Name</th><th>eRA Commons ID</th><th>Role</th><th>Project or core</th><th>Career level</th><th class="num">Person months</th></tr></thead><tbody>
+        {% for x in r.d1.rows %}<tr><td><a href="{% url 'manage:person' x.person.pk %}">{{ x.person.last_name }}, {{ x.person.first_name }}</a></td><td class="small">{% if x.commons %}{{ x.commons }}{% else %}<span class="gap">needed</span>{% if x.help %}<div class="muted">Asked for help: {{ x.help|lower }}</div>{% endif %}{% endif %}</td><td class="small">{{ x.label }}{% if x.roles|length > 1 %}<div class="muted">also {{ x.roles|slice:"1:"|join:", " }}</div>{% endif %}</td><td class="small">{{ x.where|join:"; " }}</td><td class="small">{% if x.needs_level %}<span class="gap">needed</span>{% else %}{{ x.level|default:"–" }}{% endif %}</td><td class="num small">{% if x.months is None %}<span class="gap">needed</span>{% else %}{{ x.months }}{% if x.aca is not None or x.sum is not None %}<div class="muted">{% if x.aca is not None %}{{ x.aca }} aca{% endif %}{% if x.sum is not None %} · {{ x.sum }} sum{% endif %}</div>{% endif %}{% endif %}{% if x.degrees %}<div class="muted">{{ x.degrees }}</div>{% endif %}</td></tr>{% endfor %}
       </tbody></table></div></details>
     {% else %}<p class="muted">No one in a personnel role in this budget year.</p>{% endif %}
-    {% if r.d1.below %}<details class="rmore"><summary class="small">Under 1.0 calendar month, not listed ({{ r.d1.below|length }})</summary><ul class="small">{% for x in r.d1.below %}<li>{{ x.person }}: {{ x.months }} months ({{ x.label }})</li>{% endfor %}</ul></details>{% endif %}
+    {% if r.d1.below %}<details class="rmore"><summary class="small">Under 1.0 person month, not listed ({{ r.d1.below|length }})</summary><ul class="small">{% for x in r.d1.below %}<li>{{ x.person }}: {{ x.months }} months ({{ x.label }})</li>{% endfor %}</ul></details>{% endif %}
   </section>
 
   <section class="rsec" id="rp-docs">

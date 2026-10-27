@@ -43,6 +43,19 @@ class Person(ArchivableModel):
         blank=True,
         help_text="16 digits, like 0000-0002-1825-0097. NIH requires senior/key personnel to link it in SciENcv.",
     )
+    degrees = models.CharField(
+        "Degree(s)",
+        max_length=100,
+        blank=True,
+        help_text="As on the RPPR D.1 table, e.g. BS, MA, PhD.",
+    )
+    foreign_org = models.CharField(
+        "Foreign organization",
+        max_length=200,
+        blank=True,
+        help_text="RPPR D.1: only if they are at a foreign organization.",
+    )
+    foreign_country = models.CharField("Country (foreign organization)", max_length=100, blank=True)
     trainee_level = models.CharField(
         max_length=20,
         blank=True,
@@ -359,7 +372,11 @@ class PersonEffort(TimestampedModel):
 
     person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="efforts")
     grant_year = models.PositiveSmallIntegerField()
-    calendar_months = models.DecimalField(max_digits=4, decimal_places=1)
+    calendar_months = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
+    academic_months = models.DecimalField(
+        max_digits=4, decimal_places=1, null=True, blank=True, help_text="For 9-month appointments."
+    )
+    summer_months = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     entered_by = models.ForeignKey(
         "accounts.User", null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -369,10 +386,31 @@ class PersonEffort(TimestampedModel):
         constraints = [
             models.UniqueConstraint(fields=["person", "grant_year"], name="one_effort_per_year"),
             models.CheckConstraint(
-                condition=models.Q(calendar_months__gte=0, calendar_months__lte=12),
+                condition=(
+                    models.Q(calendar_months__isnull=True)
+                    | models.Q(calendar_months__gte=0, calendar_months__lte=12)
+                )
+                & (
+                    models.Q(academic_months__isnull=True)
+                    | models.Q(academic_months__gte=0, academic_months__lte=9)
+                )
+                & (
+                    models.Q(summer_months__isnull=True)
+                    | models.Q(summer_months__gte=0, summer_months__lte=3)
+                ),
                 name="effort_months_0_12",
             ),
         ]
 
+    @property
+    def person_months(self):
+        """Total person months (calendar, or academic + summer), used for D.1's 1.0-month threshold."""
+        vals = [
+            v
+            for v in (self.calendar_months, self.academic_months, self.summer_months)
+            if v is not None
+        ]
+        return sum(vals) if vals else None
+
     def __str__(self):
-        return f"{self.person} Y{self.grant_year}: {self.calendar_months} months"
+        return f"{self.person} Y{self.grant_year}: {self.person_months} person months"

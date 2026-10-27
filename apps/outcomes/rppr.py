@@ -456,7 +456,8 @@ def d1(gy):
     )
     from apps.people.models import PersonEffort
 
-    months = {e.person_id: e.calendar_months for e in PersonEffort.objects.filter(grant_year=gy)}
+    efforts = {e.person_id: e for e in PersonEffort.objects.filter(grant_year=gy)}
+    months = {pid: e.person_months for pid, e in efforts.items()}
     by = {}
     for r in rels:
         p = r.person
@@ -482,7 +483,13 @@ def d1(gy):
                 "commons": p.era_commons_id,
                 "level": p.get_trainee_level_display() if p.trainee_level else "",
                 "needs_level": "Trainee" in roles and not p.trainee_level,
-                "months": months.get(p.pk),
+                "months": months.get(p.pk),  # total person months (calendar, or academic + summer)
+                "cal": getattr(efforts.get(p.pk), "calendar_months", None),
+                "aca": getattr(efforts.get(p.pk), "academic_months", None),
+                "sum": getattr(efforts.get(p.pk), "summer_months", None),
+                "degrees": p.degrees,
+                "orcid": p.orcid,
+                "foreign": ", ".join(x for x in (p.foreign_org, p.foreign_country) if x),
                 "help": p.get_era_commons_help_kind_display() if p.era_commons_help_kind else "",
             }
         )

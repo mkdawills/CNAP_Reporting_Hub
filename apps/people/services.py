@@ -270,28 +270,58 @@ def update_person(actor, person, **fields):
     return person
 
 
-def set_effort(actor, person, grant_year, months):
-    """Record calendar months for one budget year; blank removes it."""
+_KEEP = object()
+
+
+def set_effort(actor, person, grant_year, months, academic=_KEEP, summer=_KEEP):
+    """Record person months for one budget year: calendar months, or academic and summer months.
+
+    Fields not passed are left as they are (the Profile only sends calendar months). Blank values clear a
+    field; when all three are blank the year is removed.
+    """
     from decimal import Decimal, InvalidOperation
 
     from .models import PersonEffort
 
-    raw = (str(months) if months is not None else "").strip()
-    if not raw:
+    def parse(raw, label, top):
+        raw = (str(raw) if raw is not None else "").strip()
+        if not raw:
+            return None
+        try:
+            m = Decimal(raw).quantize(Decimal("0.1"))
+        except InvalidOperation as exc:
+            raise ValueError(f"{label} needs a number, like 1.2.") from exc
+        if not (0 <= m <= top):
+            raise ValueError(f"{label} must be between 0 and {top}.")
+        return m
+
+    row = PersonEffort.objects.filter(person=person, grant_year=grant_year).first()
+    vals = {
+        "calendar_months": parse(months, "Calendar months", 12),
+        "academic_months": parse(academic, "Academic months", 9)
+        if academic is not _KEEP
+        else (row.academic_months if row else None),
+        "summer_months": parse(summer, "Summer months", 3)
+        if summer is not _KEEP
+        else (row.summer_months if row else None),
+    }
+    if all(v is None for v in vals.values()):
         PersonEffort.objects.filter(person=person, grant_year=grant_year).delete()
+        record_event(actor, AuditLog.Action.UPDATE, person, new={f"effort_Y{grant_year}": None})
         return None
-    try:
-        m = Decimal(raw).quantize(Decimal("0.1"))
-    except InvalidOperation as exc:
-        raise ValueError("Calendar months needs a number, like 1.2.") from exc
-    if not (0 <= m <= 12):
-        raise ValueError("Calendar months must be between 0 and 12.")
     row, _ = PersonEffort.objects.update_or_create(
-        person=person,
-        grant_year=grant_year,
-        defaults={"calendar_months": m, "entered_by": actor},
+        person=person, grant_year=grant_year, defaults=vals | {"entered_by": actor}
     )
-    record_event(actor, AuditLog.Action.UPDATE, person, new={f"effort_Y{grant_year}": str(m)})
+    record_event(
+        actor,
+        AuditLog.Action.UPDATE,
+        person,
+        new={
+            f"effort_Y{grant_year}": {
+                k: (str(v) if v is not None else None) for k, v in vals.items()
+            }
+        },
+    )
     return row
 
 

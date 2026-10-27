@@ -1007,12 +1007,17 @@ def export(request, kind):
                     "Name",
                     "eRA Commons ID",
                     "ORCID",
+                    "Degree(s)",
                     "Role",
                     "All CNAP roles",
                     "Project or core",
                     "Career level (trainees)",
                     "Institution",
-                    "Calendar months worked",
+                    "Calendar months",
+                    "Academic months",
+                    "Summer months",
+                    "Total person months",
+                    "Foreign organization and country",
                 ]
             )
             for r in t["rows"]:
@@ -1022,12 +1027,17 @@ def export(request, kind):
                         f"{p.last_name}, {p.first_name}",
                         r["commons"],
                         p.orcid,
+                        r["degrees"],
                         r["label"],
                         "; ".join(r["roles"]),
                         "; ".join(r["where"]),
                         r["level"],
                         p.institution,
+                        "" if r["cal"] is None else r["cal"],
+                        "" if r["aca"] is None else r["aca"],
+                        "" if r["sum"] is None else r["sum"],
                         r["months"] if r["months"] is not None else "missing",
+                        r["foreign"],
                     ]
                 )
     elif kind in ("talks", "presentations"):

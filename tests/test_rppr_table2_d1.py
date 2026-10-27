@@ -206,7 +206,69 @@ def test_admin_sets_months(client, center):
     p = Person.objects.get(last_name="Kim")
     client.post(f"/manage/people/{p.pk}/effort/", {"grant_year": "10", "calendar_months": "3"})
     assert PersonEffort.objects.get(person=p, grant_year=10).calendar_months == 3
-    assert "Year 10: <strong>3.0</strong>" in client.get(f"/manage/people/{p.pk}/").content.decode()
+    assert (
+        "Year 10: <strong>3.0 calendar</strong>"
+        in client.get(f"/manage/people/{p.pk}/").content.decode()
+    )
+
+
+def test_academic_and_summer_months_and_d1_details(client, center):
+    """MW enters the D.1 split and details herself (2026-10-27): academic + summer counts toward 1.0."""
+    from apps.people.models import Person, PersonEffort
+
+    gy = rppr.current_year()
+    u = login(client, "okafor")
+    p = u.person
+    login(client, "mwills")
+    client.post(
+        f"/manage/people/{p.pk}/effort/",
+        {
+            "grant_year": str(gy),
+            "calendar_months": "",
+            "academic_months": "0.6",
+            "summer_months": "0.5",
+        },
+    )
+    e = PersonEffort.objects.get(person=p, grant_year=gy)
+    assert (e.calendar_months, e.academic_months, e.summer_months) == (
+        None,
+        Decimal("0.6"),
+        Decimal("0.5"),
+    )
+    assert e.person_months == Decimal("1.1")
+    row = next(x for x in rppr.d1(gy)["rows"] if x["person"] == p)
+    assert row["months"] == Decimal("1.1") and row["aca"] == Decimal("0.6")
+    # summer months over 3 are refused
+    client.post(f"/manage/people/{p.pk}/effort/", {"grant_year": str(gy), "summer_months": "4"})
+    assert PersonEffort.objects.get(person=p, grant_year=gy).summer_months == Decimal("0.5")
+    # degrees and foreign organization from Edit details, in the D.1 download
+    form = {
+        f: getattr(p, f) or ""
+        for f in (
+            "first_name",
+            "last_name",
+            "institution",
+            "department",
+            "position_title",
+            "era_commons_id",
+            "orcid",
+            "trainee_level",
+            "notes",
+        )
+    }
+    form |= {"degrees": "BS, MA, PhD", "foreign_org": "", "foreign_country": "", "is_active": "on"}
+    client.post(f"/manage/people/{p.pk}/edit/", form)
+    p.refresh_from_db()
+    assert p.degrees == "BS, MA, PhD"
+    csv = client.get(f"/manage/outcomes/export/d1/?year={gy}").content.decode("utf-8-sig")
+    assert "Degree(s)" in csv and "Academic months" in csv and "BS, MA, PhD" in csv
+    # the person's Profile shows the split read-only and saving it keeps the split
+    client.force_login(u)
+    html = client.get("/profile/").content.decode()
+    assert 'name="calendar_months"' not in html and "entered by the Center" in html
+    client.post("/profile/", {"department": "", "position_title": ""})
+    e = PersonEffort.objects.get(person=Person.objects.get(pk=p.pk), grant_year=gy)
+    assert (e.academic_months, e.summer_months) == (Decimal("0.6"), Decimal("0.5"))
 
 
 def test_project_leader_comes_before_core_director_and_is_flagged(client, center):

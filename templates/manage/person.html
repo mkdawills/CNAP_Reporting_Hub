@@ -44,13 +44,16 @@
       <h2 class="sectionhead">NIH reporting (RPPR D.1)</h2>
       <p>eRA Commons ID: {% if p.era_commons_id %}<strong>{{ p.era_commons_id }}</strong>{% else %}<span class="error" style="padding:1px 6px">none on file</span>{% endif %}{% if p.trainee_level %} · {{ p.get_trainee_level_display }}{% endif %}</p>
       <p>ORCID iD: {% if p.orcid %}<strong>{{ p.orcid }}</strong>{% else %}<span class="muted">none on file</span>{% endif %}</p>
+      <p>Degree(s): {% if p.degrees %}<strong>{{ p.degrees }}</strong>{% else %}<span class="muted">none on file</span>{% endif %}{% if p.foreign_org %} · Foreign organization: <strong>{{ p.foreign_org }}</strong>{% if p.foreign_country %}, {{ p.foreign_country }}{% endif %}{% endif %}</p>
       {% if p.era_commons_help_requested_at and not p.era_commons_id %}<p>Asked for help {{ p.era_commons_help_requested_at|date:"M j, Y" }}: {{ p.get_era_commons_help_kind_display|lower }}.</p>{% endif %}
-      <p>Calendar months on CNAP: {% for e in efforts %}Year {{ e.grant_year }}: <strong>{{ e.calendar_months }}</strong>{% if not forloop.last %} · {% endif %}{% empty %}<span class="muted">none entered</span>{% endfor %}</p>
+      <p>Months on CNAP: {% for e in efforts %}Year {{ e.grant_year }}: <strong>{% if e.calendar_months is not None %}{{ e.calendar_months }} calendar{% endif %}{% if e.academic_months is not None %}{% if e.calendar_months is not None %}, {% endif %}{{ e.academic_months }} academic{% endif %}{% if e.summer_months is not None %}, {{ e.summer_months }} summer{% endif %}</strong>{% if not forloop.last %} · {% endif %}{% empty %}<span class="muted">none entered</span>{% endfor %}</p>
       {% if can_manage %}<form method="post" action="{% url 'manage:person_effort' p.pk %}" class="fieldrow">{% csrf_token %}
         <label>Year<input type="number" name="grant_year" value="{{ cur_gy }}" min="1" max="30" style="max-width:5em"></label>
-        <label>Calendar months<input type="number" name="calendar_months" min="0" max="12" step="0.1" style="max-width:6em"></label>
+        <label>Calendar<input type="number" name="calendar_months" min="0" max="12" step="0.1" style="max-width:6em"></label>
+        <label>Academic<input type="number" name="academic_months" min="0" max="9" step="0.1" style="max-width:6em"></label>
+        <label>Summer<input type="number" name="summer_months" min="0" max="3" step="0.1" style="max-width:6em"></label>
         <button class="btn small ghost" type="submit">Save</button></form>
-      <p class="muted">Leave months blank to remove that year. The Commons ID and career level are under Edit details.</p>{% endif %}
+      <p class="muted">Use calendar months for 12-month appointments, or academic and summer months for 9-month ones. Saving with all three blank removes that year.<br>The Commons ID, ORCID iD, degrees, foreign organization and career level are under Edit details.</p>{% endif %}
     </div>
     <div class="panel small">
       <h2 class="sectionhead">Sign-in</h2>

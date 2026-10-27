@@ -141,11 +141,18 @@ def person_effort(request, pk):
     p = get_object_or_404(Person, pk=pk)
     try:
         gy = int(request.POST.get("grant_year", ""))
-        services.set_effort(request.user, p, gy, request.POST.get("calendar_months", ""))
+        services.set_effort(
+            request.user,
+            p,
+            gy,
+            request.POST.get("calendar_months", ""),
+            academic=request.POST.get("academic_months", ""),
+            summer=request.POST.get("summer_months", ""),
+        )
     except ValueError as exc:
         messages.error(request, str(exc) if "month" in str(exc) else "Choose a budget year.")
     else:
-        messages.success(request, f"Calendar months saved for Year {gy}.")
+        messages.success(request, f"Months saved for Year {gy}.")
     return redirect("manage:person", pk)
 
 
