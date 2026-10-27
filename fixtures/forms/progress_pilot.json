@@ -13,9 +13,41 @@
     "about": [
       "Your semiannual progress report summarizes your pilot project’s accomplishments, plans and changes, including plans for grant submissions.",
       "It feeds directly into the Center’s progress report to NIH."
+    ],
+    "prefill": [
+      [
+        "Project",
+        "project"
+      ],
+      [
+        "Project start date",
+        "start"
+      ]
     ]
   },
   "sections": [
+    {
+      "code": "project_status",
+      "title": "Project status (RPPR B.2)",
+      "instructions": "NIH asks each project’s report for its start date and whether it is ongoing or has ended.",
+      "questions": [
+        {
+          "code": "proj_status",
+          "prompt": "Is this project ongoing, or has it ended?",
+          "type": "single_select",
+          "required": true,
+          "options": [
+            "Ongoing",
+            "Ended"
+          ]
+        },
+        {
+          "code": "ended_on",
+          "prompt": "If it ended: the date it ended",
+          "type": "date"
+        }
+      ]
+    },
     {
       "code": "accomplishments",
       "title": "Accomplishments",
@@ -233,6 +265,13 @@
       "value": "yes",
       "action": "require",
       "target_question": "rppr_details"
+    },
+    {
+      "source": "proj_status",
+      "operator": "equals",
+      "value": "ended",
+      "action": "require",
+      "target_question": "ended_on"
     }
   ],
   "assignment_rules": [
@@ -242,5 +281,5 @@
       "per_context": true
     }
   ],
-  "_source": "Pilot_Project_Semiannual_Progress_Report.pdf (Piestar export). Word only (MW, 2026-10-24). Research team list and optional tables upload added (MW 2026-10-27). Quick RPPR yes/no questions (B.1.a, C.3, C.4, C.5.a, C.5.c, F.3, G.9) added (MW 2026-10-27)."
+  "_source": "Pilot_Project_Semiannual_Progress_Report.pdf (Piestar export). Word only (MW, 2026-10-24). Research team list and optional tables upload added (MW 2026-10-27). Quick RPPR yes/no questions (B.1.a, C.3, C.4, C.5.a, C.5.c, F.3, G.9) added (MW 2026-10-27). Project status (start date; ONGOING or ENDED AS OF) per FY27 COBRE guidance (and FY24), added 2026-10-27."
 }

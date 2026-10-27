@@ -97,9 +97,11 @@ def test_reporting_hub_has_no_optout(instruments):
 def test_progress_report_file_required(instruments):
     s = schema("progress_pilot")
     quick = ["b1a", "c3", "c4", "c5a", "c5c", "f3", "g9"]  # quick RPPR questions (MW 2026-10-27)
-    assert [q.code for q in s.missing_required({})] == ["file"] + quick
+    assert [q.code for q in s.missing_required({})] == ["proj_status", "file"] + quick
     no = {c: "no" for c in quick} | {"c5c": "yes"}
-    assert s.missing_required({"file": "12"} | no) == []
+    assert s.missing_required({"file": "12", "proj_status": "ongoing"} | no) == []
+    ended = [q.code for q in s.missing_required({"file": "12", "proj_status": "ended"} | no)]
+    assert ended == ["ended_on"]  # FY27 guidance: "ENDED AS OF MM/DD/YYYY"
     assert s.time_label() == "1–2 page upload, plus 5 min"
 
 

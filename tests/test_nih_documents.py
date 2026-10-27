@@ -207,10 +207,15 @@ def test_quick_rppr_items_flag_for_a_closer_look(center):
         a,
         u,
         {f"q-{c}": v for c, v in (all_no | {"c4": "yes"}).items()}
-        | {"q-rppr_details": "C.4: a provisional patent"},
+        | {
+            "q-rppr_details": "C.4: a provisional patent",
+            "q-proj_status": "ended",
+            "q-ended_on": "2026-09-30",
+        },
     )
     t = [x for x in nihdocs.teams(center.grant_year) if x["a"].pk == a.pk][0]
     assert t["flags"] == ["C.4 inventions, patents, licenses"] and "provisional" in t["details"]
+    assert t["status"] == "ENDED AS OF 09/30/2026"
 
 
 def test_mftrp_form_has_their_name_and_nih_file_name(client, center):

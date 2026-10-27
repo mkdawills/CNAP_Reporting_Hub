@@ -129,7 +129,19 @@ def teams(gy):
                 if any((r.get(c) or "").strip() for c, _ in TEAM_COLS)
             ]
             tables = files.get("tables_file")
-            answered = any(answers.get(code) for code, _ in QUICK_ITEMS)
+            answered = any(answers.get(code) for code, _ in QUICK_ITEMS) or answers.get(
+                "proj_status"
+            )
+            status = ""
+            if answers.get("proj_status") == "ongoing":
+                status = "ONGOING"
+            elif answers.get("proj_status") == "ended":
+                d = answers.get("ended_on") or ""
+                status = (
+                    f"ENDED AS OF {d[5:7]}/{d[8:10]}/{d[:4]}"
+                    if len(d) == 10
+                    else "ENDED (date missing)"
+                )
             if not people and not tables and not answered:
                 continue
             out.append(
@@ -144,6 +156,8 @@ def teams(gy):
                     "people": people,
                     "tables": tables,
                     "flags": flags,
+                    "status": status,
+                    "start": a.project.start_date if a.project_id else None,
                     "details": answers.get("rppr_details") or "",
                 }
             )

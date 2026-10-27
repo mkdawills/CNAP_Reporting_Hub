@@ -222,6 +222,11 @@ def _prefill(a, fd):
         "mentor": a.person.full_name,
         "institution": a.person.institution or "",
         "project": a.project.title if a.project_id else "",
+        "start": (
+            f"{a.project.start_date:%B} {a.project.start_date.day}, {a.project.start_date:%Y}"
+            if a.project_id and a.project.start_date
+            else "Not on file; tell the evaluator"
+        ),
         "holder": holder or "",
         "period": a.reporting_period.name,
     }
