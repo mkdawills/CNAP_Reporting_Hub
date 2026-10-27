@@ -151,7 +151,19 @@ def _doc_suggestions(user, p):
     cp = docs.get("current_pending", {}).get("info", {})
     orcid = bio.get("orcid") or cp.get("orcid") or ""
     degrees = ", ".join(bio.get("degrees", []))
+    from apps.outcomes import rppr
+
+    gy = rppr.current_year()
+    sp = (
+        sciencv.spans(cp.get("cnap_start"), cp.get("cnap_end"), cp.get("cnap_months"))
+        if cp
+        else None
+    )
     return {
+        "spans": sp,
+        "gy": gy,
+        "estimate": sciencv.budget_year_estimate(sp, gy),
+        "estimate_prev": sciencv.budget_year_estimate(sp, gy - 1),
         "bio": docs.get("biosketch"),
         "cp": docs.get("current_pending"),
         "degrees": degrees,

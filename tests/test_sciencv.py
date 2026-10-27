@@ -78,6 +78,10 @@ Proposal/Award Number:
 5P20GM113109-09
 *Source of Support:
 HHS - National Institutes of Health (NIH)
+*Proposal/Active Project Start Date: (MM/YYYY):
+07/2024
+*Proposal/Active Project End Date: (MM/YYYY):
+05/2026
 * Person Months per budget period Devoted to the Proposal/Active Project:
 Year
 Person Months
@@ -122,6 +126,26 @@ def test_reads_cnap_months_only_from_the_cnap_award():
     c = sciencv.read_current_pending(CPOS, awards=["P20GM113109"])
     assert c["form_ok"] and c["certified"] == "2026-03-31" and c["cnap_found"]
     assert c["cnap_months"] == [(2024, "6"), (2025, "1.8"), (2026, "3")]
+    assert c["cnap_start"] == (2024, 7) and c["cnap_end"] == (2026, 5)
+
+
+def test_years_are_read_from_the_project_start_and_end_months():
+    from decimal import Decimal
+
+    # five calendar years for Jul 2022 - May 2026: the first and last are partial
+    sp = sciencv.spans(
+        (2022, 7), (2026, 5), [(2022, "3"), (2023, "6"), (2024, "6"), (2025, "6"), (2026, "3")]
+    )
+    assert [x["label"] for x in sp][0] == "Jul 2022 – Dec 2022" and sp[-1][
+        "label"
+    ] == "Jan 2026 – May 2026"
+    assert sciencv.budget_year_estimate(sp, 8) == Decimal("6.0")  # Jun 2024 - May 2025
+    # 12-month periods from the start month, named by the year they begin
+    sp = sciencv.spans((2025, 6), (2027, 5), [(2025, "2"), (2026, "2")])
+    assert sp[0]["how"] == "budget" and sp[0]["label"] == "Jun 2025 – May 2026"
+    assert sciencv.budget_year_estimate(sp, 9) == Decimal("2.0")
+    # years that fit neither reading are not matched
+    assert sciencv.spans((2025, 6), (2027, 5), [(2024, "2")]) is None
 
 
 def test_uncertified_and_wrong_files_get_a_plain_message():
@@ -170,7 +194,7 @@ def test_real_pdf_round_trip_and_suggestions(client, center):
     p.degrees = ""
     p.save()
     html = client.get(f"/manage/people/{p.pk}/").content.decode()
-    assert "PhD, MA, BS" in html and "1.8 person months in 2025" in html
+    assert "PhD, MA, BS" in html and "1.8 person months in 2025 (Jan 2025 – Dec 2025)" in html
     client.post(f"/manage/people/{p.pk}/apply-docs/", {"degrees": "PhD, MA, BS"})
     client.post(f"/manage/people/{p.pk}/apply-docs/", {"orcid": "0000-0002-1694-233X"})
     p.refresh_from_db()

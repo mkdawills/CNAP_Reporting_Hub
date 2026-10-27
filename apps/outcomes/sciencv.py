@@ -107,6 +107,7 @@ def read_current_pending(text, awards=None):
     keys = [a[-8:] for a in awards]  # GM113109: matches 5P20GM113109-09, P20 GM113109, ...
     out["cnap_months"] = []
     out["cnap_found"] = False
+    out["cnap_start"] = out["cnap_end"] = None
     entries = re.split(r"\*Proposal/Active Project Title:", text)[1:]
     for e in entries:
         num = re.search(r"Proposal/Award Number:\s*(\S[^\n]*)", e)
@@ -114,6 +115,10 @@ def read_current_pending(text, awards=None):
         if not any(k and k in flat for k in keys):
             continue
         out["cnap_found"] = True
+        st = re.search(r"Start Date:\s*\(MM/YYYY\):\s*(\d{1,2})/(\d{4})", e)
+        en = re.search(r"End Date:\s*\(MM/YYYY\):\s*(\d{1,2})/(\d{4})", e)
+        out["cnap_start"] = (int(st.group(2)), int(st.group(1))) if st else None
+        out["cnap_end"] = (int(en.group(2)), int(en.group(1))) if en else None
         block = e.split("Devoted to the Proposal/Active Project:", 1)
         if len(block) == 2:
             table = block[1].split("*Overall Objectives", 1)[0]
@@ -180,3 +185,69 @@ def latest_for(person):
                 "info": read_file(link.file, code),
             }
     return out
+
+
+MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
+
+
+def _idx(ym):
+    return ym[0] * 12 + ym[1] - 1
+
+
+def _ym(i):
+    return (i // 12, i % 12 + 1)
+
+
+def spans(start, end, pairs):
+    """What each listed year covers, worked out from the project's start and end months (MW 2026-10-27).
+
+    SciENcv lists person months by year. Two readings are possible: calendar years (cut at the project's start
+    and end), or 12-month budget periods counted from the start month and named by the year they begin. The
+    reading whose list of years matches the one in the PDF is used; if neither matches, None.
+    """
+    if not (start and end and pairs) or _idx(end) < _idx(start):
+        return None
+    s, e = _idx(start), _idx(end)
+    years = [y for y, _ in pairs]
+    cal = list(range(start[0], end[0] + 1))
+    budget = [_ym(i)[0] for i in range(s, e + 1, 12)]
+    if years == cal:
+        how = "calendar"
+        rng = {y: (max(s, y * 12), min(e, y * 12 + 11)) for y in cal}
+    elif years == budget:
+        how = "budget"
+        rng = {_ym(i)[0]: (i, min(e, i + 11)) for i in range(s, e + 1, 12)}
+    else:
+        return None
+    out = []
+    for y, m in pairs:
+        a, b = rng[y]
+        out.append(
+            {
+                "year": y,
+                "months": m,
+                "from": a,
+                "to": b,
+                "how": how,
+                "label": f"{MONTHS[_ym(a)[1] - 1]} {_ym(a)[0]} – {MONTHS[_ym(b)[1] - 1]} {_ym(b)[0]}",
+            }
+        )
+    return out
+
+
+def budget_year_estimate(sp, gy):
+    """Person months falling in CNAP budget year `gy` (June 1, 2016+gy – May 31, 2017+gy), spread evenly within
+    each listed period. An estimate for checking D.1, not a figure from the form."""
+    from decimal import Decimal
+
+    if not sp:
+        return None
+    lo, hi = (2016 + gy) * 12 + 5, (2017 + gy) * 12 + 4  # June .. May
+    total = Decimal(0)
+    hit = False
+    for x in sp:
+        ov = min(hi, x["to"]) - max(lo, x["from"]) + 1
+        if ov > 0:
+            hit = True
+            total += Decimal(str(x["months"])) * ov / (x["to"] - x["from"] + 1)
+    return total.quantize(Decimal("0.1")) if hit else None
