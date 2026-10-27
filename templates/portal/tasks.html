@@ -7,8 +7,8 @@
 {% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong> {{ "You can read every form now with Preview. Answering opens that day; nothing you do here before then is saved."|stack }}</div>{% endif %}
 <div class="head"><div>
   <h1>My tasks</h1>
-  <p style="max-width:none">{% if todo %}{{ todo }} of {{ total }} remaining.{% if minutes_left %} About {{ minutes_left }} min in total.{% endif %}{% else %}All {{ total }} done.{% endif %} {{ due }}.</p>
-  <div class="taskprog"><div class="bar" role="progressbar" aria-label="Tasks done" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done_n }}"><span style="width:{{ pct }}%"></span></div><span class="small muted">{{ done_n }} of {{ total }} done</span></div>
+  <p class="taskline" style="max-width:none">{% if not todo %}All {{ total }} done.{% elif done_n %}<strong>{{ done_n }} of {{ total }} done.</strong>{% if minutes_left %} About {{ minutes_left }} min left.{% endif %}{% else %}<strong>{{ total }} to do.</strong>{% if minutes_left %} About {{ minutes_left }} min in all.{% endif %}{% endif %} {{ due }}.</p>
+  <div class="taskprog"><div class="bar" role="progressbar" aria-label="Tasks done" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done_n }}" aria-valuetext="{{ done_n }} of {{ total }} done"><span style="width:{{ pct }}%"></span></div></div>
   {% for d in is_core_director %}<p class="small muted">{{ "You direct the "|add:d.core.name|add:", so you don’t receive its user survey. You still receive the other core surveys."|stack }}</p>{% endfor %}
 </div></div>
 
@@ -28,19 +28,18 @@
   <div class="scroll"><table class="tasks"><tbody>
   {% for g in groups %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
-    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div><span class="ghcount">{{ g.count }} to do</span></div></td></tr>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div>{% if g.count > 1 %}<span class="ghcount">{{ g.count }} to do</span>{% endif %}</div></td></tr>
     {% for r in g.used %}{% include "portal/_task_row.html" %}{% endfor %}
     {% if g.used and g.rows %}<tr class="subhead"><td colspan="5">{% if g.rows|length == 1 %}Did you also use this core?{% else %}Did you also use these cores?{% endif %}</td></tr>{% endif %}
     {% for r in g.rows %}{% include "portal/_task_row.html" %}{% endfor %}
   {% endfor %}
   {% if outcome and not outcome.done %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
-    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>Publications and grants</h3><p>{{ "Keep your papers and grant proposals up to date."|stack }}</p></div><span class="ghcount">1 to do</span></div></td></tr>
-    {% for i in outcome.items %}{% if not i.done %}<tr><td><strong>{% if i.self %}Update your publications and grants{% else %}Update publications and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">{{ i.todo }} thing{{ i.todo|pluralize }} to look at</div></td>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>Publications and grants</h3><p>{{ "Keep your papers and grant proposals up to date."|stack }}</p></div></div></td></tr>
+    {% for i in outcome.items %}{% if not i.done %}<tr class="openrow"><td><strong>{% if i.self %}Update your publications and grants{% else %}Update publications and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">{{ i.todo }} thing{{ i.todo|pluralize }} to look at</div></td>
       <td class="acts">{% if period.in_preview %}<span class="small muted">Opens with the period</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins">About {{ outcome.minutes }} min</td></tr>{% endif %}{% endfor %}
   {% endif %}
   </tbody></table></div>
-  {% if has_optouts %}<p class="small muted footnote">{{ "* Opt out of any survey that doesn’t apply to you since the last reporting period: for example, a core you didn’t use, NeuroSync if you didn’t attend, or the grant writing program if you didn’t use it."|stack }}</p>{% endif %}
 </div>
 {% endif %}
 

@@ -729,3 +729,22 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 .t2tab col.w-num { width: 7rem; } .rtab col.w-pay { width: 6.5rem; } .rtab col.w-yes { width: 7rem; } .rtab col.w-lab { width: 8rem; }
 .rdesc { margin: -8px 0 18px; font-size: .86rem; color: var(--muted); max-width: 72ch; line-height: 1.55; }
 .rsub + .rdesc { margin: 0 0 10px; }
+
+/* My tasks, calmer (MW 2026-10-27): no vertical rules between buttons; "What's this?" instead of a ▸ */
+.tasks td + td { border-left: 0; }
+.taskline strong { color: var(--ink); font-weight: 600; }
+.about { margin-top: 2px; }
+.about summary { list-style: none; cursor: pointer; display: inline; font-size: .8rem; font-weight: 400; color: var(--purple); text-decoration: underline; text-underline-offset: 3px; }
+.about summary::after, .about[open] summary::after { content: none; }
+.about summary:hover { text-decoration-thickness: 2px; }
+.about .a-hide, .about[open] .a-show { display: none; }
+.about[open] .a-hide { display: inline; }
+
+/* My tasks: easier to read (MW 2026-10-27) */
+.gh p{font-size:.9rem;color:color-mix(in srgb,var(--ink) 78%,var(--muted))}
+.tasks td div.small,.tasks td.mins{font-size:.86rem;color:color-mix(in srgb,var(--ink) 78%,var(--muted))}
+.tasks td div.small.pinned{color:var(--done)}
+.about summary,.whatbtn{font-size:.86rem}
+.taskline{font-size:1rem}
+
+.tasks tr.openrow td{background:color-mix(in srgb,var(--idle-wash) 28%,var(--surface))}

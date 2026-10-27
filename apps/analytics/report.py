@@ -24,7 +24,7 @@ from apps.forms_engine.runtime import FormSchema
 from apps.reporting.models import Answer, ReportingPeriod
 
 from .models import ReportingSnapshot, SnapshotNote, SnapshotResult
-from .results import completion, full_responses
+from .results import _ids, completion, full_responses
 
 
 def heat(pct, top=100.0):
@@ -254,7 +254,7 @@ def build(form_definition, period, *, audience="admin"):
     schema = FormSchema(version)
     optout_q = schema.optout_question
     answers = (
-        Answer.objects.filter(response__in=responses)
+        Answer.objects.filter(response_id__in=_ids(responses))
         .select_related("question", "option")
         .order_by("question__form_section__sort_order", "question__sort_order")
     )

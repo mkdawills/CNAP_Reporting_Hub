@@ -13,12 +13,12 @@ from apps.people.models import PersonRelationship
 from apps.reporting.services import responses as rs
 
 TASK_GROUPS = [
-    ("cores", "Core facilities", "Tell us about the cores you used. Opt out of any you didn’t."),
+    ("cores", "Core facilities", "Tell us about the cores you used."),
     ("grant", "Your CNAP grant", "Feedback on your project and your mentoring relationship."),
     ("mycore", "Your core", "Reports for the core you direct: progress and who used the core."),
     ("mentoring", "Projects you mentor", "Your view as a mentor on a CNAP project."),
     ("admin", "Administrative Core", "How the Center’s administration is serving you."),
-    ("other", "Other Center features and services", "Opt out of any you didn’t use."),
+    ("other", "Other Center features and services", "Center programs and events."),
     (
         "hub",
         "CNAP Reporting Hub",
@@ -89,6 +89,9 @@ def task_list(person, period, mine, just_done=None):
                 "preview_only": period.in_preview,
                 "noun": _noun(fd),
                 "pathway": a.completion_pathway.name if a.completion_pathway_id else "",
+                "progress": section_progress(a, s)
+                if a.status == AssignmentStatus.IN_PROGRESS
+                else None,
             }
         )
     open_rows = sorted(
@@ -106,6 +109,13 @@ def task_list(person, period, mine, just_done=None):
             continue
         used_rows = [r for r in g if r["used_core"]] if code == "cores" else []
         others = [r for r in g if r not in used_rows]
+        n_opt = sum(1 for r in g if r["can_opt_out"])
+        if n_opt:  # say what Opt out is for right where the button is (MW 2026-10-27)
+            sub += (
+                " Opt out of any you didn’t use since the last reporting period."
+                if n_opt > 1
+                else " Opt out if you didn’t use it since the last reporting period."
+            )
         groups.append(
             {
                 "code": code,
@@ -150,6 +160,41 @@ def task_list(person, period, mine, just_done=None):
         .exclude(effective_to__lt=today)
         .select_related("core"),
     }
+
+
+def section_progress(a, s):
+    """(done, total) sections of a started form, counting only sections the person can see.
+
+    A section is done when every required question in it is answered; a section with no required
+    questions is done once anything in it is answered; a repeatable section once a row has a value.
+    The opt-out question's own section and instruction-only sections aren't counted.
+    """
+    answers, rows, _ = rs.answers_of(rs.current_response(a), s)
+    optq = s.optout_question
+
+    def filled(v):
+        return v not in (None, "", [])
+
+    done = total = 0
+    for sec in s.visible_sections(answers):
+        if optq and sec.pk == optq.form_section_id:
+            continue
+        qs = [q for q in sec.questions.all() if q.question_type != QuestionType.INSTRUCTIONS]
+        if not qs:
+            continue
+        total += 1
+        if sec.is_repeatable:
+            ok = any(any(filled(v) for v in r.values()) for r in rows.get(sec.code, []))
+        else:
+            vis = [q for q in qs if s.question_visible(q, answers)]
+            req = [q for q in vis if s.is_required(q, answers)]
+            ok = (
+                all(filled(answers.get(q.code)) for q in req)
+                if req
+                else any(filled(answers.get(q.code)) for q in vis)
+            )
+        done += ok
+    return (done, total)
 
 
 # --------------------------------------------------------------------------- form page

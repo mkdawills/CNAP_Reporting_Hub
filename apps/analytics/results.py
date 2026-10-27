@@ -60,6 +60,11 @@ def completion(form_definition, period):
     return agg
 
 
+def _ids(responses):
+    """Response ids as a plain list. A nested subquery here gets a very slow plan on fresh databases."""
+    return list(responses.values_list("pk", flat=True))
+
+
 def full_responses(form_definition, period):
     return Response.objects.filter(
         is_current=True,
@@ -74,7 +79,7 @@ def item_stats(form_definition, period, responses=None):
     """One ItemStat per rating question, in form order, across all versions used in the period."""
     responses = responses if responses is not None else full_responses(form_definition, period)
     answers = Answer.objects.filter(
-        response__in=responses, question__question_type__in=SCALE_TYPES
+        response_id__in=_ids(responses), question__question_type__in=SCALE_TYPES
     ).select_related("question__form_section", "question__measure", "option")
     by_key, order = {}, []
     for a in answers:
