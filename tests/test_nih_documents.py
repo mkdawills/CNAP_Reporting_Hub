@@ -65,16 +65,27 @@ def test_assigned_once_a_year_to_senior_key_roles(center):
         assert nih.form_definition_id not in codes
 
 
+def _open(a):
+    """Seeded answers are random; make sure the assignment a test uses is still open."""
+    from apps.reporting.models import Response
+
+    if a.status not in ("not_started", "in_progress"):
+        Response.objects.filter(assignment=a).delete()
+        Assignment.objects.filter(pk=a.pk).update(
+            status="not_started", submitted_at=None, completion_pathway=None
+        )
+        a.refresh_from_db()
+    return a
+
+
 def _nih(center):
     a = (
-        Assignment.objects.filter(
-            reporting_period=center,
-            form_definition__code="nih_documents",
-            status__in=("not_started", "in_progress"),
-        )
+        Assignment.objects.filter(reporting_period=center, form_definition__code="nih_documents")
         .select_related("person")
+        .order_by("status", "pk")
         .first()
     )
+    a = _open(a)
     return a, User.objects.get(person=a.person)
 
 
@@ -145,10 +156,11 @@ def test_view_only_admin_cant_download_documents(client, center):
 def test_research_team_rows_feed_the_rppr_tab(client, center):
     a = (
         Assignment.objects.filter(reporting_period=center, form_definition__code="progress_core")
-        .exclude(status="submitted")
         .select_related("person")
+        .order_by("pk")
         .first()
     )
+    a = _open(a)
     u = User.objects.get(person=a.person)
     from apps.forms_engine.runtime import FormSchema
 
@@ -188,14 +200,12 @@ def test_quick_rppr_items_flag_for_a_closer_look(center):
     from apps.outcomes import nihdocs
 
     a = (
-        Assignment.objects.filter(
-            reporting_period=center,
-            form_definition__code="progress_pilot",
-            status__in=("not_started", "in_progress"),
-        )
+        Assignment.objects.filter(reporting_period=center, form_definition__code="progress_pilot")
         .select_related("person")
+        .order_by("pk")
         .first()
     )
+    a = _open(a)
     u = User.objects.get(person=a.person)
     s = FormSchema(a.form_version)
     codes = [c for c, _ in nihdocs.QUICK_ITEMS]

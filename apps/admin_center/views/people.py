@@ -133,7 +133,56 @@ def person(request, pk):
 
     ctx["efforts"] = p.efforts.order_by("-grant_year")
     ctx["cur_gy"] = rppr.current_year()
+    ctx["docs"] = _doc_suggestions(request.user, p)
     return render(request, "manage/person.html", ctx)
+
+
+def _doc_suggestions(user, p):
+    """What their latest SciENcv biosketch and Current and Pending say, for the evaluator to use or ignore."""
+    from apps.admin_center.views.outcomes import _identified
+    from apps.outcomes import sciencv
+
+    if not _identified(user, "nih_documents"):
+        return None
+    docs = sciencv.latest_for(p)
+    if not docs:
+        return None
+    bio = docs.get("biosketch", {}).get("info", {})
+    cp = docs.get("current_pending", {}).get("info", {})
+    orcid = bio.get("orcid") or cp.get("orcid") or ""
+    degrees = ", ".join(bio.get("degrees", []))
+    return {
+        "bio": docs.get("biosketch"),
+        "cp": docs.get("current_pending"),
+        "degrees": degrees,
+        "degrees_new": bool(degrees) and degrees != p.degrees,
+        "orcid": orcid,
+        "orcid_new": bool(orcid) and not p.orcid,
+        "orcid_differs": bool(orcid and p.orcid and orcid != p.orcid),
+        "bio_msg": sciencv.message("biosketch", bio) if bio else "",
+        "cp_msg": sciencv.message("current_pending", cp) if cp else "",
+    }
+
+
+@manage_action
+def person_apply_docs(request, pk):
+    """Copy degrees and/or an ORCID iD read from their SciENcv PDFs onto the person (the evaluator chose to)."""
+    from apps.people.services import normalize_orcid
+
+    p = get_object_or_404(Person, pk=pk)
+    fields = {}
+    if request.POST.get("degrees"):
+        fields["degrees"] = request.POST["degrees"][:100]
+    if request.POST.get("orcid"):
+        try:
+            fields["orcid"] = normalize_orcid(request.POST["orcid"])
+        except ValueError as exc:
+            messages.error(request, str(exc))
+            return redirect("manage:person", pk)
+    if fields:
+        services.update_person(request.user, p, **fields)
+        messages.success(request, "Saved from their NIH documents.")
+    return redirect("manage:person", pk)
 
 
 @manage_action

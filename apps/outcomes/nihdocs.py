@@ -17,6 +17,8 @@ from apps.forms_engine.runtime import FormSchema
 from apps.reporting.models import Assignment, ReportingPeriod
 from apps.reporting.services import responses as rs
 
+from . import sciencv
+
 DOC_FORM = "nih_documents"
 DOC_FILES = [
     ("biosketch", "Biosketch"),
@@ -68,6 +70,14 @@ def documents(gy):
     cache, rows = {}, []
     for a in sorted(asg, key=lambda x: (x.person.last_name, x.person.first_name)):
         answers, _, files = _answers(a, cache)
+        checks = {}
+        for code in ("biosketch", "current_pending"):
+            if files.get(code):
+                info = sciencv.read_file(files[code], code)
+                checks[code] = {
+                    "certified": info.get("certified"),
+                    "msg": sciencv.message(code, info),
+                }
         rows.append(
             {
                 "a": a,
@@ -76,7 +86,9 @@ def documents(gy):
                 "status": a.get_status_display(),
                 "d2a": answers.get("d2a"),
                 "d2a_explain": answers.get("d2a_explain") or "",
-                "files": [(code, label, files.get(code)) for code, label in DOC_FILES],
+                "files": [
+                    (code, label, files.get(code), checks.get(code)) for code, label in DOC_FILES
+                ],
                 "missing": [
                     label
                     for code, label in DOC_FILES

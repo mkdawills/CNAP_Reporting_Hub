@@ -334,6 +334,13 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
                 )
                 for q in qs
             ]
+            if fd.code == "nih_documents":  # catch an uncertified or wrong PDF right away
+                from apps.outcomes import sciencv
+
+                for v in sv["questions"]:
+                    if v["file"] and v["code"] in ("biosketch", "current_pending"):
+                        info = sciencv.read_file(v["file"], v["code"])
+                        v["check"] = sciencv.message(v["code"], info)
         sections.append(sv)
     preview_followup = None
     if preview and followup:

@@ -539,7 +539,7 @@ def _nihdocs_zip(request, gy):
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         for r in data["rows"]:
             cells = []
-            for _code, label, f in r["files"]:
+            for _code, label, f, _check in r["files"]:
                 if not f:
                     cells.append("")
                     continue
