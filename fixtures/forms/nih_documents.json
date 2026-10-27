@@ -22,6 +22,10 @@
           "view": "portal:mftrp_form"
         },
         {
+          "label": "How to sign it with an Adobe digital signature (step-by-step guide, PDF)",
+          "static": "forms/Adobe_Digital_Signature_Guide.pdf"
+        },
+        {
           "label": "Or the blank form (Word)",
           "static": "forms/NIH_Annual_MFTRP_Certification.docx"
         }
@@ -80,7 +84,7 @@
     {
       "code": "mftrp",
       "title": "MFTRP certification",
-      "instructions": "Every year, NIH requires each senior/key person to certify in the RPPR whether they are a party to a Malign Foreign Talent Recruitment Program (MFTRP).\nDownload the form below. Sign it with an Adobe digital signature, save it as a flattened PDF, as NIH asks, and upload it here.",
+      "instructions": "Every year, NIH requires each senior/key person to certify in the RPPR whether they are a party to a Malign Foreign Talent Recruitment Program (MFTRP).\n\nFour steps:\n- Download your form below.\n- Sign it with an Adobe digital signature; the guide below walks you through it.\n- Flatten it, as NIH asks: print it to PDF (Microsoft Print to PDF on Windows, or Save as PDF on a Mac).\n- Upload the flattened PDF here.",
       "questions": [
         {
           "code": "mftrp_cert",
