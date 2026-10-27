@@ -121,7 +121,7 @@
         {% if r.docs %}<p class="rsum"><b>{{ r.docs.n_done }}</b> of {{ r.docs.n }} turned in{% if r.docs.d2a_yes %} · <span class="gap">{{ r.docs.d2a_yes|length }} expect{{ r.docs.d2a_yes|length|pluralize:"s," }} a 25% effort drop (D.2.a)</span>{% endif %}</p>{% endif %}</div>
       {% if r.docs %}<a class="small" href="{% url 'manage:outcomes_export' 'nihdocs' %}?year={{ r.year }}">Download all (zip)</a>{% endif %}
     </header>
-    <p class="rdesc">Each year’s certified SciENcv biosketch and Current and Pending (Other) Support, the signed MFTRP certification, and the D.2.a effort answer, from the PD/PI, RP Leaders, PP Leaders and core directors.<br>Current and Pending files attach to each senior/key person’s D.1 row; biosketches go with new senior/key personnel (D.2.b).</p>
+    <p class="rdesc">Each year’s certified SciENcv biosketch and Current and Pending (Other) Support, the signed MFTRP certification, and the D.2.a effort answer, from the PD/PI, RP Leaders, PP Leaders and core directors.<br>Current and Pending files attach to each senior/key person’s D.1 row; biosketches go with new senior/key personnel (D.2.b). MFTRP certifications go in G.1, one per person; the zip names them MFTRPcert_[Name].pdf, as NIH requires.</p>
     {% if not r.docs_ok %}<p class="muted">Your role can’t see these documents.</p>
     {% elif not r.docs %}<p class="muted">No one has been asked for NIH documents in Year {{ r.year }}. They’re requested once a year, in the Fall period.</p>
     {% else %}

@@ -98,8 +98,12 @@ def safe_name(s):
 
 
 def zip_name(person, label, f):
+    """Last_First_Document.pdf; the MFTRP certification uses NIH's required MFTRPcert_[Name].pdf (NOT-OD-26-018)."""
     ext = (f.original_filename.rsplit(".", 1)[-1] if "." in f.original_filename else "pdf").lower()
-    return f"{safe_name(person.last_name)}_{safe_name(person.first_name)}_{safe_name(label)}.{ext}"
+    who = f"{safe_name(person.last_name)}_{safe_name(person.first_name)}"
+    if label == "MFTRP certification":
+        return f"MFTRPcert_{who}.{ext}"
+    return f"{who}_{safe_name(label)}.{ext}"
 
 
 def teams(gy):

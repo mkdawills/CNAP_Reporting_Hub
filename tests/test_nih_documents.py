@@ -123,6 +123,10 @@ def test_rppr_tab_lists_and_zip(client, center):
     names = z.namelist()
     last = "".join(ch for ch in a.person.last_name if ch.isalnum())
     assert "summary.csv" in names
+    assert any(
+        n == f"MFTRPcert_{last}_{''.join(ch for ch in a.person.first_name if ch.isalnum())}.pdf"
+        for n in names
+    )
     assert any(n.startswith(last) and n.endswith("_Biosketch.pdf") for n in names)
     mine = [n for n in names if n.startswith(last) and n.endswith("_Biosketch.pdf")]
     assert z.read(mine[0]) == PDF

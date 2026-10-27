@@ -39,11 +39,11 @@
     {
       "code": "documents",
       "title": "Biosketch and Current and Pending (Other) Support",
-      "instructions": "Make both in SciENcv (www.ncbi.nlm.nih.gov/sciencv), using NIH’s Common Forms.\nCertify each one yourself in SciENcv, then download the PDF. NIH doesn’t accept uncertified or preview versions, and certification can’t be done by someone else on your behalf.",
+      "instructions": "Make both in SciENcv (www.ncbi.nlm.nih.gov/sciencv), using NIH’s Common Forms. Your biosketch PDF includes the NIH Biographical Sketch Supplement.\nCertify each one yourself in SciENcv, then download the PDF. Don’t flatten it afterward: NIH checks the certification. Your ORCID iD must show in the Persistent Identifier (PID) section.",
       "questions": [
         {
           "code": "biosketch",
-          "prompt": "Biosketch (certified PDF from SciENcv)",
+          "prompt": "Biosketch: Common Form with the NIH Supplement (certified PDF from SciENcv)",
           "type": "file",
           "required": true,
           "config": {
@@ -54,7 +54,7 @@
         },
         {
           "code": "current_pending",
-          "prompt": "Current and Pending (Other) Support (certified PDF from SciENcv)",
+          "prompt": "Current and Pending (Other) Support: Common Form (certified PDF from SciENcv)",
           "type": "file",
           "required": true,
           "config": {
@@ -68,11 +68,11 @@
     {
       "code": "mftrp",
       "title": "MFTRP certification",
-      "instructions": "Download the certification form, sign it with an Adobe digital signature, and upload the signed PDF.",
+      "instructions": "Every year, NIH requires each senior/key person to certify in the RPPR whether they are a party to a Malign Foreign Talent Recruitment Program (MFTRP).\nDownload the certification form, sign it with an Adobe digital signature, and upload it as a flattened PDF, as NIH asks.",
       "questions": [
         {
           "code": "mftrp_cert",
-          "prompt": "Signed MFTRP certification (PDF)",
+          "prompt": "Signed MFTRP certification (flattened PDF)",
           "type": "file",
           "required": true,
           "config": {
@@ -89,9 +89,9 @@
       "questions": [
         {
           "code": "foreign_docs",
-          "prompt": "Supporting documents for foreign appointments or activities listed in your Current and Pending (optional, one PDF)",
+          "prompt": "Supporting documentation: copies of contracts for foreign appointments, or for employment with a foreign institution (optional, one flattened PDF)",
           "type": "file",
-          "help_text": "NIH takes these as one separate attachment. Leave this blank if you have none.",
+          "help_text": "NIH takes these as a separate attachment, not inside your Current and Pending. Leave this blank if you have none.",
           "config": {
             "accept": [
               ".pdf"
@@ -132,5 +132,5 @@
       "per_context": false
     }
   ],
-  "_source": "MW 2026-10-27: PPLs, RPLs, core directors and the CNAP Director upload SciENcv biosketch and Current and Pending once a year; MFTRP certification and D.2.a in the same task; optional foreign-activity documents. Piestar thread (Apr 2026) for D.2 and MFTRP. SciENcv Common Forms required for RPPRs from Jan 25, 2026 (Stanford ORA notice)."
+  "_source": "MW 2026-10-27: PPLs, RPLs, core directors and the CNAP Director upload SciENcv biosketch and Current and Pending once a year; MFTRP certification and D.2.a in the same task; optional foreign-activity documents. Piestar thread (Apr 2026) for D.2 and MFTRP. SciENcv Common Forms required for RPPRs from Jan 25, 2026 (Stanford ORA notice). Wording per NOT-OD-26-018 (Common Forms; NIH Biosketch Supplement; don't flatten SciENcv PDFs; annual MFTRP certification in RPPR G.1 as a flattened PDF named MFTRPcert_[Name].pdf; supporting documentation as a separate flattened attachment) and NOT-OD-26-033 (enforced from May 8, 2026)."
 }
