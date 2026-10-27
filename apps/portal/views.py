@@ -81,6 +81,21 @@ def _own_assignment(request, pk):
 
 
 @login_required
+def mftrp_form(request, pk):
+    """The MFTRP certification with the person's own name filled in, from their NIH documents task."""
+    from django.http import HttpResponse
+
+    from apps.outcomes import mftrp
+
+    a = _own_assignment(request, pk)
+    if a.form_definition.code != "nih_documents":
+        raise Http404
+    resp = HttpResponse(mftrp.build(a.person), content_type="application/pdf")
+    resp["Content-Disposition"] = f'attachment; filename="{mftrp.filename(a.person)}"'
+    return resp
+
+
+@login_required
 def form(request, pk):
     a = _own_assignment(request, pk)
     gate = presenters.confidential_gate(request, a)

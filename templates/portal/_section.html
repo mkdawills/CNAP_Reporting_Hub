@@ -1,6 +1,7 @@
 {% load cnap %}<section class="section" id="sec-{{ sv.s.code }}" data-sec="{{ sv.s.code }}" {% if not sv.visible %}hidden{% endif %}>
   {% if sv.s.title %}<h2>{{ sv.s.title }}</h2>{% endif %}
   {% if sv.s.instructions %}{% if sv.caption %}<p class="instructions secintro">{{ sv.s.instructions|caption }}</p>{% else %}{{ sv.s.instructions|guidance }}{% endif %}{% endif %}
+  {% if sv.downloads %}<ul class="secdl">{% for d in sv.downloads %}<li><a href="{{ d.url }}" download>{{ d.label }}</a></li>{% endfor %}</ul>{% endif %}
   {% for v in sv.questions %}{% if v.narrative and v.q.help_text %}<p class="small muted qnote" style="margin-top:14px">{{ v.q.help_text|stack }}</p>{% endif %}{% include "portal/_question.html" %}{% endfor %}
   {% if sv.s.is_repeatable %}
     <input type="hidden" name="rep-{{ sv.s.code }}-count" value="{{ sv.rows|length }}">

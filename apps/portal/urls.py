@@ -10,6 +10,7 @@ urlpatterns = [
     path("tasks/<int:pk>/", views.form, name="form"),
     path("tasks/<int:pk>/preview/", views.preview, name="preview"),
     path("tasks/<int:pk>/opt-out/", views.opt_out, name="opt_out"),
+    path("tasks/<int:pk>/mftrp-form/", views.mftrp_form, name="mftrp_form"),
     path("history/", views.history, name="history"),
     path("results/", views.center_results, name="center_results"),
     path("profile/", views.profile, name="profile"),

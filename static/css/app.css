@@ -748,3 +748,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 .taskline{font-size:1rem}
 
 .tasks tr.openrow td{background:color-mix(in srgb,var(--idle-wash) 28%,var(--surface))}
+
+/* download links under a section (MFTRP form, MW 2026-10-27) */
+.secdl { list-style: none; padding: 0; margin: 4px 0 18px; display: flex; flex-direction: column; gap: 6px; }
+.secdl a { font-weight: 600; }

@@ -14,7 +14,19 @@
     "about": [
       "Each year NIH needs a current biosketch, Current and Pending (Other) Support, and MFTRP certification from the Center’s senior/key personnel.",
       "They go into the Center’s yearly progress report (RPPR)."
-    ]
+    ],
+    "section_downloads": {
+      "mftrp": [
+        {
+          "label": "Download your certification form (PDF, your name already filled in)",
+          "view": "portal:mftrp_form"
+        },
+        {
+          "label": "Or the blank form (Word)",
+          "static": "forms/NIH_Annual_MFTRP_Certification.docx"
+        }
+      ]
+    }
   },
   "sections": [
     {
@@ -68,7 +80,7 @@
     {
       "code": "mftrp",
       "title": "MFTRP certification",
-      "instructions": "Every year, NIH requires each senior/key person to certify in the RPPR whether they are a party to a Malign Foreign Talent Recruitment Program (MFTRP).\nDownload the certification form, sign it with an Adobe digital signature, and upload it as a flattened PDF, as NIH asks.",
+      "instructions": "Every year, NIH requires each senior/key person to certify in the RPPR whether they are a party to a Malign Foreign Talent Recruitment Program (MFTRP).\nDownload the form below. Sign it with an Adobe digital signature, save it as a flattened PDF, as NIH asks, and upload it here.",
       "questions": [
         {
           "code": "mftrp_cert",

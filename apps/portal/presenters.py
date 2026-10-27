@@ -262,6 +262,19 @@ def _question_view(q, value, *, missing_ids, file_obj=None, schema=None):
     return view
 
 
+def _downloads(a, specs):
+    """Links shown under a section's instructions: a page of this site (given the assignment) or a static file."""
+    from django.templatetags.static import static
+
+    out = []
+    for d in specs:
+        if d.get("view"):
+            out.append({"label": d["label"], "url": reverse(d["view"], args=[a.pk])})
+        elif d.get("static"):
+            out.append({"label": d["label"], "url": static(d["static"])})
+    return out
+
+
 def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
     fd = a.form_definition
     schema = FormSchema(a.form_version)
@@ -277,6 +290,7 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
     followup = schema.followup_section
     opted = bool(optout_q and answers.get(optout_q.code) == "yes")
     add_to = request.GET.get("add")
+    disp_downloads = (fd.display or {}).get("section_downloads", {})
     sections = []
     for sec in schema.sections:
         if optout_q and sec.pk == optout_q.form_section_id:
@@ -296,6 +310,7 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
             ),
             "questions": [],
             "rows": [],
+            "downloads": _downloads(a, disp_downloads.get(sec.code, [])),
         }
         qs = [q for q in sec.questions.all() if q.question_type != QuestionType.INSTRUCTIONS]
         if sec.is_repeatable:

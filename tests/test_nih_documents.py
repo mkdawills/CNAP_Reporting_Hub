@@ -211,3 +211,33 @@ def test_quick_rppr_items_flag_for_a_closer_look(center):
     )
     t = [x for x in nihdocs.teams(center.grant_year) if x["a"].pk == a.pk][0]
     assert t["flags"] == ["C.4 inventions, patents, licenses"] and "provisional" in t["details"]
+
+
+def test_mftrp_form_has_their_name_and_nih_file_name(client, center):
+    import subprocess
+    import tempfile
+
+    a, u = _nih(center)
+    client.force_login(u)
+    page = client.get(f"/tasks/{a.pk}/").content.decode()
+    assert f"/tasks/{a.pk}/mftrp-form/" in page and "NIH_Annual_MFTRP_Certification.docx" in page
+    r = client.get(f"/tasks/{a.pk}/mftrp-form/")
+    assert r.status_code == 200 and r["Content-Type"] == "application/pdf"
+    assert 'filename="MFTRPcert_' in r["Content-Disposition"]
+    with tempfile.NamedTemporaryFile(suffix=".pdf") as fh:
+        fh.write(r.content)
+        fh.flush()
+        text = " ".join(
+            subprocess.run(
+                ["pdftotext", fh.name, "-"], capture_output=True, text=True
+            ).stdout.split()
+        )
+    name = f"{a.person.first_name} {a.person.last_name}"
+    assert (
+        f"I, {name}, certify that, at the time of submission, I am not a party to a malign foreign talent recruitment program."
+        in text
+    )
+    # someone else's task: refused
+    other = User.objects.exclude(person=a.person).filter(person__isnull=False).first()
+    client.force_login(other)
+    assert client.get(f"/tasks/{a.pk}/mftrp-form/").status_code == 403
