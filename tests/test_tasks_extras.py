@@ -55,3 +55,12 @@ def test_evaluator_adds_a_document_everyone_sees(client, center):
     client.force_login(User.objects.get(username="okafor"))
     assert f"/documents/{d.pk}/" not in client.get("/tasks/").content.decode()
     assert client.get(f"/documents/{d.pk}/").status_code == 404
+
+
+def test_default_documents(client, center):
+    call_command("add_default_documents", verbosity=0)
+    call_command("add_default_documents", verbosity=0)  # twice: no duplicates
+    assert HelpfulDocument.objects.filter(is_active=True).count() == 3
+    client.force_login(User.objects.get(username="okafor"))
+    html = client.get("/tasks/").content.decode()
+    assert "CNAP Phase 2 PL Guidelines" in html and "https://www.k-state.edu/cnap/" in html
