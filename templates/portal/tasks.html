@@ -40,7 +40,7 @@
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
     <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>Publications and grants</h3><p>{{ "Keep your papers and grant proposals up to date."|stack }}</p></div></div></td></tr>
     {% for i in outcome.items %}{% if not i.done %}<tr class="openrow"><td><strong>{% if i.self %}Update your publications and grants{% else %}Update publications and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">{{ i.todo }} thing{{ i.todo|pluralize }} to look at</div></td>
-      <td class="acts">{% if period.in_preview %}<span class="small muted">Opens with the period</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins">About {{ outcome.minutes }} min</td></tr>{% endif %}{% endfor %}
+      <td class="acts">{% if period.in_preview %}<span class="small muted">Opens with the period</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins"><span class="tpill">About {{ outcome.minutes }} min</span></td></tr>{% endif %}{% endfor %}
   {% endif %}
   </tbody></table></div>
 </div>

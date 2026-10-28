@@ -17,5 +17,5 @@
   {% else %}
     <td class="acts"><a class="btn small ghost" href="{% url 'portal:form' r.a.pk %}">View</a></td><td class="acts"></td><td class="acts"></td>
   {% endif %}
-  <td class="mins">{{ r.time }}</td>
+  <td class="mins">{% if r.time %}<span class="tpill">{{ r.time }}</span>{% endif %}</td>
 </tr>
