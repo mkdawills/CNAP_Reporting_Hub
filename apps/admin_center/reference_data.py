@@ -103,6 +103,17 @@ RELATIONSHIP_TYPES = [
     # RPPR D.1 "PD/PI" and Table 1B "Core Staff (including the PD/PI)" (decisions.md 2026-10-26)
     ("pd_pi", "PD/PI (Center Director)", ContextKind.NONE, [], False, False, 14),
     ("associate_director", "Associate Director", ContextKind.NONE, [], False, False, 15),
+    # RPPR D.1: someone who contributes in a substantive way but commits no measurable effort; the 2026 RPPR
+    # accepts them at 0.0 person months (MW's handbook ch. 6; MW 2026-10-28)
+    (
+        "osc",
+        "Other Significant Contributor (OSC)",
+        ContextKind.NONE,
+        [],
+        False,
+        False,
+        16,
+    ),
 ]
 
 # Shared answer sets: name, scale kind, options as (code, label, value, is_na)

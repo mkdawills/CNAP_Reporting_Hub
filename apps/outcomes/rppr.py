@@ -25,6 +25,8 @@ evaluator does); anyone under 1.0 is set aside, and anyone with no months entere
 Core users, general members and event participants are left out.
 """
 
+from decimal import Decimal
+
 import datetime as dt
 import re
 
@@ -438,6 +440,7 @@ D1_CATEGORY = {
     "core_staff": "Other",
     "project_staff": "Other",
     "collaborator": "Other",
+    "osc": "Other",  # listed as Other (the guidance's six categories), labeled OSC
 }
 # Someone with several roles is listed once, in the first category of this order (MW 2026-10-26: Project Leader
 # before Core Director; she expects a core director not to also be an RPL/PPL, see the data check).
@@ -465,8 +468,9 @@ def d1(gy):
         p = r.person
         if p.archived_at:
             continue
-        e = by.setdefault(p.pk, {"person": p, "roles": set(), "where": set()})
+        e = by.setdefault(p.pk, {"person": p, "roles": set(), "where": set(), "codes": set()})
         e["roles"].add(D1_CATEGORY[r.relationship_type.code])
+        e["codes"].add(r.relationship_type.code)
         ctx = getattr(r, "project", None) or getattr(r, "core", None)
         if ctx:
             e["where"].add(str(ctx))
@@ -474,18 +478,29 @@ def d1(gy):
     for e in by.values():
         p = e["person"]
         roles = sorted(e["roles"], key=D1_ORDER.index)
+        osc_only = e["codes"] == {"osc"}
         level = p.get_trainee_level_display() if p.trainee_level else ""
         out.append(
             {
                 "person": p,
                 "category": roles[0],
-                "label": (f"Trainee ({level})" if roles[0] == "Trainee" and level else roles[0]),
+                "label": (
+                    f"Trainee ({level})"
+                    if roles[0] == "Trainee" and level
+                    else "Other (Other Significant Contributor)"
+                    if osc_only
+                    else roles[0]
+                ),
                 "roles": roles,
                 "where": sorted(e["where"]),
                 "commons": p.era_commons_id,
                 "level": p.get_trainee_level_display() if p.trainee_level else "",
                 "needs_level": "Trainee" in roles and not p.trainee_level,
-                "months": months.get(p.pk),  # total person months (calendar, or academic + summer)
+                # total person months (calendar, or academic + summer); an OSC with none entered is 0.0
+                "months": months.get(p.pk)
+                if months.get(p.pk) is not None or not osc_only
+                else Decimal("0.0"),
+                "osc": "osc" in e["codes"],
                 "cal": getattr(efforts.get(p.pk), "calendar_months", None),
                 "aca": getattr(efforts.get(p.pk), "academic_months", None),
                 "sum": getattr(efforts.get(p.pk), "summer_months", None),
@@ -501,7 +516,10 @@ def d1(gy):
     )
     # Senior/key people (named on the NoA, Common Form filers) are listed even under 1.0 person month
     # (MW's COBRE Administrator Handbook, ch. 6; the 2026 RPPR accepts them at 0.0).
-    listed = [x for x in out if x["months"] is None or x["months"] >= 1 or x["senior_key"]]
+    # OSCs are listed at any effort, including 0.0 (2026 RPPR; MW 2026-10-28).
+    listed = [
+        x for x in out if x["months"] is None or x["months"] >= 1 or x["senior_key"] or x["osc"]
+    ]
     return {
         "rows": listed,
         "below": [x for x in out if x not in listed],

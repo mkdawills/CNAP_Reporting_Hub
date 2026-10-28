@@ -50,6 +50,7 @@ PEOPLE = [
     ("tanaka", "Ken", "Tanaka", KSU),
     ("haddad", "Leila", "Haddad", KSU),
     ("novak", "Petra", "Novak", KSU),
+    ("rowe", "Imogen", "Rowe", "University of Kansas"),
 ]
 ADMINS = [
     ("mwills", "Morgan", "Wills", ApplicationRole.Code.ADMINISTRATOR, True),
@@ -88,8 +89,9 @@ RELS = [
     ("tanaka", "project_staff", "rp1"),
     ("haddad", "core_user", "BN"),
     ("novak", "collaborator", "rp1"),
+    ("rowe", "osc", None),  # advises on methods, no measurable effort: D.1 at 0.0 months
 ]
-NOT_ON_ROSTER = {"santos", "ferris"}
+NOT_ON_ROSTER = {"santos", "ferris", "rowe"}
 
 
 def _person(first, last, institution, username):

@@ -46,6 +46,9 @@ class GenerationResult:
     existing: int = 0
 
 
+NO_FORMS_TYPES = ("osc",)
+
+
 def generation_date(period):
     """Relationships count if current on the later of today and the period's opening day."""
     opens = timezone.localtime(period.opens_at).date()
@@ -64,7 +67,8 @@ def plan(period, on=None):
         .filter(person__is_active=True, person__archived_at__isnull=True)
         .select_related("relationship_type")
     )
-    audience = sorted({r.person_id for r in rels})
+    # An Other Significant Contributor only appears in RPPR D.1; that role alone brings no forms (MW 2026-10-28).
+    audience = sorted({r.person_id for r in rels if r.relationship_type.code not in NO_FORMS_TYPES})
     held = {}
     for r in rels:
         held.setdefault(r.person_id, []).append(r)

@@ -423,3 +423,9 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - The "How to acknowledge CNAP" box now gives the RRID citation for each core. The fee-for-service wording no longer cites the grant number and says "No IDeA funds were used to support this work" (handbook ch. 14, NIH's suggested approach). Old wording: "We acknowledge the CNAP COBRE (P20GM113109) for the use of the [BN / NI / CN] Core as fee-for-service. The Core was used for [describe the use of the Core]."
 - Evaluator: RRID tags on the Papers tab, a "Core RRID not cited" filter and summary line, a "Papers citing its RRID" row per core on Counts, a column in the citation CSV, and two data checks: published papers that used a core without citing its RRID, and papers with foreign co-authors that cite the grant without NIGMS approval.
 - The sample center uses fictional RRIDs (SCR_990001, SCR_990002) for BN and NI; CN has none so its question stays hidden.
+
+## 2026-10-28 · Other Significant Contributors (handbook ch. 6)
+- New relationship type "Other Significant Contributor (OSC)", center-level. Added from a person's page like any role.
+- RPPR D.1 lists OSCs at any effort, under the guidance's "Other" category, labeled "Other (Other Significant Contributor)"; an OSC with no months entered shows 0.0 (the 2026 RPPR accepts 0.0). The D.1 note says a new OSC needs a biosketch in the RPPR.
+- The OSC role alone brings no forms: it is left out of the audience for universal surveys. Someone who is an OSC and also holds another role gets that role's forms as before.
+- The sample center has one fictional OSC (Imogen Rowe, University of Kansas), not on the roster.
