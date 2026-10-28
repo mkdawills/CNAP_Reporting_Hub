@@ -32,11 +32,12 @@ OPTION_TYPES = (
 
 
 class SubmitError(ValueError):
-    def __init__(self, missing):
+    def __init__(self, missing, message=None):
         self.missing = missing
         n = len(missing)
         super().__init__(
-            f"Answer {n} required question{'s' if n != 1 else ''} marked with * before submitting, "
+            message
+            or f"Answer {n} required question{'s' if n != 1 else ''} marked with * before submitting, "
             "or save a draft for later."
         )
 
@@ -270,11 +271,24 @@ def submit(assignment, user, *, request=None):
         raise LockedError("This form can’t be submitted now.")
     schema = FormSchema(assignment.form_version)
     resp = _draft(assignment, user)
-    answers, rows, _ = answers_of(resp, schema)
+    answers, rows, files = answers_of(resp, schema)
     answers |= system_answers(assignment, schema)
     missing = schema.missing_required(answers, rows)
     if missing:
         raise SubmitError(missing)
+    if assignment.form_definition.code == "nih_documents":  # SciENcv PDFs must pass (MW 2026-10-28)
+        from apps.outcomes import sciencv
+
+        labels = {"biosketch": "Biosketch", "current_pending": "Current and Pending"}
+        problems = []
+        for code, label in labels.items():
+            q = schema.by_code.get(code)
+            if files.get(code) and q and schema.question_visible(q, answers):
+                msg = sciencv.message(code, sciencv.read_file(files[code], code))
+                if msg:
+                    problems.append(f"{label}: {msg}")
+        if problems:
+            raise SubmitError([], "Not submitted yet. " + " ".join(problems))
     pathway = schema.pathway(answers)
     hidden = [q.pk for q in schema.questions if not schema.question_visible(q, answers)]
     resp.answers.filter(question_id__in=hidden).delete()

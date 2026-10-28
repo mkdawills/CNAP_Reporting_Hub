@@ -118,9 +118,13 @@ def test_d2a_yes_needs_an_explanation(center):
 
 def test_rppr_tab_lists_and_zip(client, center):
     a, u = _nih(center)
+    from tests.test_sciencv import BIO, CPOS, _pdf
+
+    cp = _pdf(CPOS)
     files = {
-        f"file-{c}": SimpleUploadedFile(f"{c}.pdf", PDF, "application/pdf")
-        for c in ("biosketch", "current_pending", "mftrp_cert")
+        "file-biosketch": SimpleUploadedFile("biosketch.pdf", _pdf(BIO), "application/pdf"),
+        "file-current_pending": SimpleUploadedFile("current_pending.pdf", cp, "application/pdf"),
+        "file-mftrp_cert": SimpleUploadedFile("mftrp_cert.pdf", PDF, "application/pdf"),
     }
     assert rs.save_draft(a, u, {"q-d2a": "yes", "q-d2a_explain": "Fewer months"}, files) == []
     rs.submit(a, u)
@@ -141,7 +145,7 @@ def test_rppr_tab_lists_and_zip(client, center):
 
     first = safe_name(a.person.first_name)
     assert f"{last}_{first}_CurrentandPending.pdf" in names
-    assert z.read(f"{last}_{first}_CurrentandPending.pdf") == PDF
+    assert z.read(f"{last}_{first}_CurrentandPending.pdf") == cp
     # biosketch and MFTRP only for people named on the NoA; anyone else's stray upload is dropped
     noa = is_senior_key(a.person)
     assert (f"MFTRPcert_{last}_{first}.pdf" in names) is noa
@@ -309,3 +313,30 @@ def test_biosketch_and_mftrp_only_for_people_named_on_the_noa(client, center):
         "utf-8-sig"
     )
     assert "Sr/Key (named on the NoA)" in csv
+
+
+def test_submit_waits_for_certified_sciencv_pdfs(client, center):
+    """MW 2026-10-28: an uncertified or wrong PDF can't be submitted; the page says why."""
+    from tests.test_sciencv import BIO, CPOS, _pdf
+
+    a, u = _nih(center)
+    bad = {
+        "file-current_pending": SimpleUploadedFile(
+            "cp.pdf", _pdf(CPOS.replace("Certified by", "Previewed by")), "application/pdf"
+        ),
+        "file-biosketch": SimpleUploadedFile("b.pdf", _pdf(BIO), "application/pdf"),
+        "file-mftrp_cert": SimpleUploadedFile("m.pdf", PDF, "application/pdf"),
+    }
+    assert rs.save_draft(a, u, {"q-d2a": "no"}, bad) == []
+    with pytest.raises(rs.SubmitError, match="Current and Pending: This copy isn’t certified"):
+        rs.submit(a, u)
+    client.force_login(u)
+    r = client.post(f"/tasks/{a.pk}/", {"action": "submit", "q-d2a": "no"})
+    assert "Not submitted yet." in r.content.decode()
+    a.refresh_from_db()
+    assert a.status != "submitted"
+    good = {"file-current_pending": SimpleUploadedFile("cp2.pdf", _pdf(CPOS), "application/pdf")}
+    assert rs.save_draft(a, u, {"q-d2a": "no"}, good) == []
+    rs.submit(a, u)
+    a.refresh_from_db()
+    assert a.status == "submitted"

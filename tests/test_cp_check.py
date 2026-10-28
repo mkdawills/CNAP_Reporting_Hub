@@ -36,9 +36,14 @@ def _turn_in(fall):
         .first()
     )
     u = User.objects.get(person=a.person)
+    from tests.test_sciencv import BIO
+
     files = {
-        f"file-{c}": SimpleUploadedFile(f"{c}.pdf", PDF, "application/pdf")
-        for c in ("biosketch", "current_pending", "mftrp_cert")
+        "file-biosketch": SimpleUploadedFile("biosketch.pdf", _pdf(BIO), "application/pdf"),
+        "file-current_pending": SimpleUploadedFile(
+            "current_pending.pdf", _pdf(CPOS), "application/pdf"
+        ),
+        "file-mftrp_cert": SimpleUploadedFile("mftrp_cert.pdf", PDF, "application/pdf"),
     }
     assert rs.save_draft(a, u, {"q-d2a": "no"}, files) == []
     rs.submit(a, u)
