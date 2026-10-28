@@ -166,6 +166,18 @@ class PublicationResource(models.Model):
         default=False, help_text="Entered while Planned; confirmed later."
     )
 
+    class RridCited(models.TextChoices):
+        YES = "yes", "Yes"
+        NO = "no", "No"
+        UNSURE = "unsure", "Not sure"
+
+    rrid_cited = models.CharField(
+        max_length=8,
+        choices=RridCited.choices,
+        blank=True,
+        help_text="Did the paper cite this core's RRID in its methods? Blank = not asked (no RRID then, or not a core).",
+    )
+
     class Meta:
         db_table = "publication_resources"
         constraints = [

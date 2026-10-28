@@ -3,6 +3,7 @@
 from django.contrib import messages
 from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 
 from apps.accounts import access
@@ -407,6 +408,33 @@ def projects(request):
             }
         )
     return render(request, "manage/projects.html", {"rows": rows, "cores": cores})
+
+
+@manage_action
+def core_rrid(request, pk):
+    """Set a core's RRID (MW 2026-10-28). Users are asked whether their paper cited it."""
+    core = get_object_or_404(Core, pk=pk)
+    try:
+        rrid = services.normalize_rrid(request.POST.get("rrid", ""))
+    except ValueError as exc:
+        messages.error(request, f"{core.name}: {exc}")
+        return redirect(reverse("manage:projects") + "#cores")
+    clash = Core.objects.exclude(pk=core.pk).filter(rrid=rrid).first() if rrid else None
+    if clash:
+        messages.error(request, f"{rrid} is already saved for {clash.name}. Each core has its own RRID.")
+        return redirect(reverse("manage:projects") + "#cores")
+    old = core.rrid
+    if rrid != old:
+        core.rrid = rrid
+        core.save(update_fields=["rrid", "updated_at"])
+        record_event(request.user, AuditLog.Action.UPDATE, core, old={"rrid": old}, new={"rrid": rrid})
+    messages.success(
+        request,
+        f"{core.name}: RRID saved as {rrid}. People who add a paper that used this core will now be asked whether they cited it."
+        if rrid
+        else f"{core.name}: RRID removed. The question about it is hidden.",
+    )
+    return redirect(reverse("manage:projects") + "#cores")
 
 
 @manage_page

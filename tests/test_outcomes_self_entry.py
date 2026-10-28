@@ -101,6 +101,7 @@ def test_publication_lifecycle(client, center):
             "has_foreign_authors": "no",
             "has_non_idea_coauthors": "no",
             "resources": [bn.pk],
+            f"rrid_{bn.pk}": "yes",  # the sample BN Core has an RRID (MW 2026-10-28)
         },
     )
     p.refresh_from_db()

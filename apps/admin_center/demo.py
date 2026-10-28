@@ -437,6 +437,12 @@ def _seed_outcomes(people):
             ["NI"],
         ),
     ]
+    # Sample RRIDs (fictional numbers) for two cores; the CN Core has none, so its question stays hidden.
+    for x in core_res:
+        if x.core.code in ("BN", "NI") and not x.core.rrid:
+            x.core.rrid = {"BN": "RRID:SCR_990001", "NI": "RRID:SCR_990002"}[x.core.code]
+            x.core.save(update_fields=["rrid"])
+    rrid_turn = iter(["yes", "no", "yes", "unsure", "yes", "yes"] * 5)
     for title, journal, when, cited, who, prj, cores in pubs:
         p = Publication.objects.create(
             title=title,
@@ -455,7 +461,9 @@ def _seed_outcomes(people):
         for c in cores:
             r = next((x for x in core_res if x.core.code == c), None)
             if r:
-                PublicationResource.objects.create(publication=p, resource=r)
+                PublicationResource.objects.create(
+                    publication=p, resource=r, rrid_cited=next(rrid_turn) if r.core.rrid else ""
+                )
     grants = [
         (
             "Sample R01: circuits of sustained attention",

@@ -1008,3 +1008,11 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 .pl-src { font-style: normal; color: var(--muted); }
 .pl-date { flex: none; color: var(--muted); font-size: .86rem; white-space: nowrap; }
 @media (max-width: 560px) { .prodlist li { flex-direction: column; gap: 2px; } }
+
+/* Core RRIDs (MW 2026-10-28) */
+.rridform { display: flex; gap: 6px; align-items: center; }
+.rridform input { font: inherit; font-size: .86rem; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; width: 11.5em; }
+.rridtag { display: inline-block; margin-left: 4px; padding: 0 7px; border-radius: 999px; font-size: .74rem; font-weight: 600; background: var(--idle-wash); color: var(--muted); }
+.rridtag.yes { background: color-mix(in srgb, var(--done, #1f6857) 14%, transparent); color: var(--done, #1f6857); }
+.rridtag.no, .rridtag.unsure { background: var(--lock-wash); color: var(--lock); }
+.rridq .help { margin-top: 4px; }

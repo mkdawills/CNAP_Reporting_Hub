@@ -211,6 +211,10 @@ def update(request, kind, pk):
     if "resources" in F.base_fields:
         initial["resources"] = _initial_resources(obj, actual=to != "planned")
         initial["projects"] = [x.project for x in obj.project_links.all()]
+    if kind == "pub":  # "did you cite the core's RRID?" answers already given
+        for x in obj.resource_links.all():
+            if x.rrid_cited:
+                initial[f"rrid_{x.resource_id}"] = x.rrid_cited
     if kind == "grant" and "role" in F.base_fields:
         link = obj.people.filter(person=owner).first()
         initial["role"] = link.role if link else None
@@ -245,7 +249,7 @@ def update(request, kind, pk):
             messages.success(request, note)
         typed = {
             k: (data.getlist(k) if k in ("resources", "projects") else data.get(k))
-            for k in F.base_fields
+            for k in [*F.base_fields, *(k for k in data if k.startswith("rrid_"))]
         }
         form = F(initial={**initial, **{k: v for k, v in typed.items() if v not in (None, "", [])}})
         affs = found.get("affiliations", []) if "found" in locals() else []
@@ -273,8 +277,15 @@ def update(request, kind, pk):
         res = d.pop("resources", None)
         prj = d.pop("projects", None)
         other = d.pop("resources_other_text", None)
+        rrid = None
+        if kind == "pub" and hasattr(form, "rrid_fields"):
+            from .outcome_forms import rrid_answers
+
+            rrid = rrid_answers(form)
+            for name in form.rrid_fields.values():
+                d.pop(name, None)
         if kind == "pub":
-            created = os.update_publication(request.user, obj, to, d, res, prj, other)
+            created = os.update_publication(request.user, obj, to, d, res, prj, other, rrid=rrid)
         else:
             created = os.update_grant(request.user, obj, to, d, res, prj, other, owner=owner)
         if (

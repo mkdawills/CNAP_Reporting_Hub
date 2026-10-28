@@ -416,3 +416,10 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 
 ## 2026-10-28 · PL Guidelines retired
 - The CNAP Phase 2 PL Guidelines are removed from Helpful documents as outdated (MW). add_default_documents now hides it if present.
+
+## 2026-10-28 · Core RRIDs (handbook chapter 14)
+- Each core has an RRID (Core.rrid), set on Projects and cores. Input is normalized to RRID:SCR_nnnn; other RRID kinds are refused; two cores can't share one. Changes are audited.
+- Marking a paper Published asks, for each ticked core that has an RRID: "Did you cite the [core]'s RRID (RRID:SCR_…) in your methods?" Yes / No / Not sure, required once that core is ticked; hidden otherwise. Saved on PublicationResource.rrid_cited. The evaluator can correct it on the paper's edit page.
+- The "How to acknowledge CNAP" box now gives the RRID citation for each core. The fee-for-service wording no longer cites the grant number and says "No IDeA funds were used to support this work" (handbook ch. 14, NIH's suggested approach). Old wording: "We acknowledge the CNAP COBRE (P20GM113109) for the use of the [BN / NI / CN] Core as fee-for-service. The Core was used for [describe the use of the Core]."
+- Evaluator: RRID tags on the Papers tab, a "Core RRID not cited" filter and summary line, a "Papers citing its RRID" row per core on Counts, a column in the citation CSV, and two data checks: published papers that used a core without citing its RRID, and papers with foreign co-authors that cite the grant without NIGMS approval.
+- The sample center uses fictional RRIDs (SCR_990001, SCR_990002) for BN and NI; CN has none so its question stays hidden.

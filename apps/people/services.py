@@ -264,6 +264,24 @@ def normalize_orcid(raw):
     return "-".join(digits[i : i + 4] for i in range(0, 16, 4))
 
 
+def normalize_rrid(raw):
+    """Return a core's RRID as RRID:SCR_012345, or "" for blank. Raise ValueError if it isn't one.
+
+    Accepts the bare SCR_ number, "RRID: SCR_…", or a SciCrunch / rrid.site link. Cores are registered as
+    SCR_ resources, so other RRID kinds (antibodies, cell lines) are refused here."""
+    import re
+
+    s = (raw or "").strip()
+    if not s:
+        return ""
+    m = re.search(r"(?<![A-Z0-9])SCR[_ -]?(\d{4,9})(?!\d)", s, flags=re.I)
+    if not m:
+        raise ValueError(
+            "A core’s RRID looks like RRID:SCR_012345. Find it by searching the core’s name at scicrunch.org/resources."
+        )
+    return "RRID:SCR_" + m.group(1)
+
+
 @transaction.atomic
 def update_person(actor, person, **fields):
     old = {k: getattr(person, k) for k in fields}

@@ -11,6 +11,8 @@
   {% for field in credit %}
     <fieldset class="field checks"><legend>{{ field.label }}</legend>{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}<div class="checkgrid{% if field.name == 'projects' %} onecol{% endif %}">{% for c in field %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div></fieldset>
   {% endfor %}
+  {% if rrid and rrid.fields %}<h3 class="small" style="margin:18px 0 6px">Core RRIDs</h3>
+  {% for field in rrid %}<div class="field"><label>{{ field.label }}{{ field }}</label><div class="help">{{ field.help_text }}</div></div>{% endfor %}{% endif %}
   <div class="actions"><button class="btn" type="submit">Save</button><a href="{% url 'manage:outcomes' %}{% if kind == 'grant' %}?tab=grants{% endif %}">Cancel</a></div>
 </form>
 {% endblock %}

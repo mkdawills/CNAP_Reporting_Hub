@@ -150,6 +150,13 @@ class PersonEmail(TimestampedModel):
 class Core(ArchivableModel):
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=200)
+    rrid = models.CharField(
+        "RRID",
+        max_length=40,
+        blank=True,
+        help_text="Research Resource Identifier, like RRID:SCR_012345. Users cite it in their methods so "
+        "every paper that used the core can be found, with or without the grant number (MW 2026-10-28).",
+    )
     is_active = models.BooleanField(default=True)
     sort_order = models.PositiveSmallIntegerField(default=0)
 

@@ -36,9 +36,13 @@ document.querySelectorAll("[data-show-other]").forEach(function (el) {
     {% else %}
       <p class="small">NIH requires COBRE-supported work to cite the grant. Suggested wording:</p>
       <div class="acktext"><span>Research reported in this {% if kind == 'presentation' %}presentation{% else %}publication{% endif %} was supported by the National Institute of General Medical Sciences of the National Institutes of Health under Award Number P20GM113109. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health.</span><button type="button" class="btn small ghost copy">Copy</button></div>
-      <p class="small">If you used a CNAP core, for example as fee-for-service:</p>
-      <div class="acktext"><span>We acknowledge the CNAP COBRE (P20GM113109) for the use of the [BN / NI / CN] Core as fee-for-service. The Core was used for [describe the use of the Core].</span><button type="button" class="btn small ghost copy">Copy</button></div>
-      <p class="small muted">{{ "Papers with foreign co-authors may cite the grant only if NIGMS approved the foreign component in advance; the acknowledgment should make clear the foreign component wasn’t supported with IDeA funds."|stack }}</p>
+      {% core_rrids as rr %}{% if rr %}
+      <p class="small">If you used a CNAP core, also cite its RRID in your methods, right after the core’s name:</p>
+      {% for c in rr %}<div class="acktext"><span>{{ c.name }} ({{ c.rrid }}), Kansas State University</span><button type="button" class="btn small ghost copy">Copy</button></div>{% endfor %}
+      <p class="small muted">{{ "The RRID lets anyone find every paper that used the core, even without the grant number."|stack }}</p>{% endif %}
+      <p class="small">If you paid for a core as fee-for-service, with no CNAP project funding, don’t cite the grant number. Suggested wording:</p>
+      <div class="acktext"><span>We acknowledge the [core name]{% if rr %} ([its RRID]){% endif %} of the CNAP COBRE at Kansas State University, an NIH Institutional Development Award (IDeA) program resource. No IDeA funds were used to support this work.</span><button type="button" class="btn small ghost copy">Copy</button></div>
+      <p class="small muted">{{ "Papers with foreign co-authors may cite the grant only if NIGMS approved the foreign component in advance. Otherwise, credit the core with its RRID and leave the grant number out."|stack }}</p>
     {% endif %}
   </details>{% endif %}
   {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
@@ -47,7 +51,7 @@ document.querySelectorAll("[data-show-other]").forEach(function (el) {
       <fieldset class="field checks"><legend>{{ field.label }}{% if field.name == 'resources' and form.resources_required %} <span class="req">*</span>{% endif %}</legend><div class="checkgrid{% if field.name == 'projects' %} onecol{% endif %}">{% for c in field %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</fieldset>
     {% elif field.field.widget.input_type == 'radio' %}
       {% if field.name == 'has_foreign_authors' and affiliations %}<details class="affs"><summary class="small">Author affiliations from PubMed ({{ affiliations|length }}), to help answer the next question</summary><ul class="small">{% for a in affiliations %}<li>{{ a }}</li>{% endfor %}</ul></details>{% endif %}
-      <fieldset class="field yn" {% if field.name == 'foreign_component_approved' %}data-show-if="has_foreign_authors"{% endif %}><legend>{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</legend><div class="fieldrow">{% for c in field %}<label class="ynopt">{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</fieldset>
+      <fieldset class="field yn{% if field.field.res_pk %} rridq{% endif %}" {% if field.name == 'foreign_component_approved' %}data-show-if="has_foreign_authors"{% elif field.field.res_pk %}data-show-res="{{ field.field.res_pk }}"{% endif %}><legend>{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</legend><div class="fieldrow">{% for c in field %}<label class="ynopt">{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div>{% if field.field.res_pk and field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</fieldset>
     {% else %}
       <div class="field" {% if field.name == 'program_officer_name' or field.name == 'discussion_date' %}data-show-if="discussed_with_program_officer"{% elif field.name == 'resources_other_text' %}data-show-other="1"{% endif %}><label><span class="lt">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</span>{{ field }}</label>{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}
       {% if field.name == 'pubmed_url' %}<button class="btn small ghost" type="submit" name="lookup" value="1" formnovalidate style="margin-top:6px">Fill in from PubMed</button>{% endif %}</div>
@@ -75,6 +79,13 @@ document.querySelectorAll("[data-show-other]").forEach(function (el) {
   var other = Array.from(document.querySelectorAll('input[name="resources"]')).find(function (i) { return i.closest("label").textContent.trim() === "Other"; });
   function sync() { el.hidden = !(other && other.checked); }
   if (other) other.addEventListener("change", sync);
+  sync();
+});
+// "Did you cite the core's RRID?" appears when that core is ticked (MW 2026-10-28).
+document.querySelectorAll("[data-show-res]").forEach(function (el) {
+  var box = document.querySelector('input[name="resources"][value="' + el.getAttribute("data-show-res") + '"]');
+  function sync() { el.hidden = !(box && box.checked); }
+  if (box) box.addEventListener("change", sync);
   sync();
 });
 </script>

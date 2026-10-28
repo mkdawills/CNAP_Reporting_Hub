@@ -57,6 +57,27 @@ def _ack_q(field, f):
     }.get(f, Q())
 
 
+def _rrid_missing_q():
+    """Published papers that used a core with an RRID but haven't said Yes to citing it."""
+    from apps.outcomes.services import rrid_missing_ids
+
+    return Q(pk__in=rrid_missing_ids())
+
+
+def _rrid_summary(published):
+    """How many published papers that used a core with an RRID cited it (MW 2026-10-28)."""
+    from apps.outcomes.models import PublicationResource
+
+    links = PublicationResource.objects.filter(
+        publication__in=published, resource__core__isnull=False
+    ).exclude(resource__core__rrid="")
+    used = links.values("publication").distinct().count()
+    if not used:
+        return None
+    missing = published.filter(_rrid_missing_q()).distinct().count()
+    return {"used": used, "cited": used - missing, "missing": missing}
+
+
 def _share(qs, field):
     """(acknowledged, checked, total) for a queryset."""
     total = qs.count()
@@ -76,7 +97,7 @@ def outcomes(request):
     tab = request.GET.get("tab", "pubs")
     f = request.GET.get("ack", "all")
     pubs = Publication.objects.filter(archived_at__isnull=True).prefetch_related(
-        "people__person", "project_links__project", "resource_links__resource"
+        "people__person", "project_links__project", "resource_links__resource__core"
     )
     grants = (
         GrantSubmission.objects.filter(archived_at__isnull=True)
@@ -96,6 +117,8 @@ def outcomes(request):
     elif tab == "grants":
         rows = sent.filter(_ack_q("cnap_acknowledged", f)) if f != "all" else grants
         rows = rows.order_by("-submission_date", "-updated_at")
+    elif f == "rrid":
+        rows = published.filter(_rrid_missing_q()).distinct().order_by("-publication_date", "-updated_at")
     else:
         rows = published.filter(_ack_q("cnap_cited", f)) if f != "all" else pubs
         rows = rows.order_by("-publication_date", "-updated_at")
@@ -122,6 +145,7 @@ def outcomes(request):
             "tab": tab,
             "ack": f,
             "filters": ACK_FILTERS,
+            "rrid_summary": _rrid_summary(published) if tab == "pubs" else None,
             "rows": rows,
             "summary": summary,
             "can_edit": access.can_manage(request.user),
@@ -153,6 +177,7 @@ def counts():
     )
     metrics = [
         ("pubs", "Papers published"),
+        ("rrid", "Papers citing its RRID"),
         ("talks", "Presentations"),
         ("sub", "Grants submitted"),
         ("won", "Grants awarded"),
@@ -177,6 +202,9 @@ def counts():
 
     for p in pubs:
         add(groups_of(p), "pubs", grant_year(p.publication_date))
+        for x in p.resource_links.all():
+            if x.rrid_cited == "yes":  # MW 2026-10-28: core use the grant citation can't show
+                add([("core", x.resource.name)], "rrid", grant_year(p.publication_date))
     for t in talks:
         add(groups_of(t), "talks", grant_year(t.presented_on))
     for g in grants:
@@ -368,6 +396,30 @@ def _sync(model, owner_field, owner, field, values, **extra):
             model.objects.create(**{owner_field: owner, field: v}, **extra)
 
 
+class _Rrid(forms.Form):
+    """Admin view of "did the paper cite the core's RRID?", one select per core with an RRID (MW 2026-10-28)."""
+
+    def __init__(self, *args, links=(), **kwargs):
+        super().__init__(*args, **kwargs)
+        from apps.outcomes.services import rrid_resources
+
+        have = {x.resource_id: x.rrid_cited for x in links}
+        self.by_pk = {}
+        for r in rrid_resources():
+            name = f"rrid_{r.pk}"
+            self.fields[name] = forms.ChoiceField(
+                label=f"{r.core.name} ({r.core.rrid}) cited in the methods?",
+                choices=[("", "Not recorded"), ("yes", "Yes"), ("no", "No"), ("unsure", "Not sure")],
+                required=False,
+                initial=have.get(r.pk, ""),
+                help_text="Only counts if this core is ticked under Credit.",
+            )
+            self.by_pk[r.pk] = name
+
+    def answers(self, picked):
+        return {pk: self.cleaned_data.get(n) or "" for pk, n in self.by_pk.items() if pk in picked}
+
+
 @manage_page
 def publication_edit(request, pk=None):
     obj = get_object_or_404(Publication, pk=pk) if pk else None
@@ -388,7 +440,8 @@ def publication_edit(request, pk=None):
             "resources": [x.resource for x in obj.resource_links.all()] if obj else [],
         },
     )
-    if request.method == "POST" and form.is_valid() and credit.is_valid():
+    rrid = _Rrid(request.POST or None, links=obj.resource_links.all() if obj else ())
+    if request.method == "POST" and form.is_valid() and credit.is_valid() and rrid.is_valid():
         with transaction.atomic():
             p = form.save(commit=False)
             p.cnap_cited = _tri(form.cleaned_data["cnap_cited_tri"])
@@ -409,6 +462,9 @@ def publication_edit(request, pk=None):
             _sync(
                 PublicationResource, "publication", p, "resource", credit.cleaned_data["resources"]
             )
+            from apps.outcomes.services import set_rrid_answers
+
+            set_rrid_answers(p, rrid.answers({r.pk for r in credit.cleaned_data["resources"]}))
             if p.status != old_status:
                 PublicationStatusHistory.objects.create(
                     publication=p,
@@ -422,7 +478,7 @@ def publication_edit(request, pk=None):
     return render(
         request,
         "manage/outcome_form.html",
-        {"form": form, "credit": credit, "obj": obj, "kind": "publication"},
+        {"form": form, "credit": credit, "rrid": rrid, "obj": obj, "kind": "publication"},
     )
 
 
@@ -624,6 +680,7 @@ def export(request, kind):
                 "Published Date (timestamp)",
                 "Declined Date (timestamp)",
                 "CNAP People",
+                "Core RRIDs cited",
             ]
         )
         qs = (
@@ -631,7 +688,7 @@ def export(request, kind):
             .prefetch_related(
                 "people__person",
                 "project_links__project",
-                "resource_links__resource",
+                "resource_links__resource__core",
                 "status_history",
             )
             .order_by("-updated_at")
@@ -662,6 +719,11 @@ def export(request, kind):
                     ts(d, "published"),
                     ts(d, "declined"),
                     "; ".join(str(x.person) for x in p.people.all()),
+                    "; ".join(
+                        f"{x.resource.name}: {x.get_rrid_cited_display() or 'not asked'}"
+                        for x in p.resource_links.all()
+                        if x.resource.core_id and x.resource.core.rrid
+                    ),
                 ]
             )
     elif kind in ("c1", "table1"):

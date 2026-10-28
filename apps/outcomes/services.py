@@ -248,6 +248,37 @@ def _set_projects(link_model, owner_field, obj, projects):
         link_model.objects.get_or_create(**{owner_field: obj, "project": p})
 
 
+def set_rrid_answers(p, answers):
+    """Save "did you cite the core's RRID?" per core resource (MW 2026-10-28). `answers` maps resource pk to
+    yes / no / unsure; a core left out (not used, or no RRID) is cleared."""
+    for link in p.resource_links.select_related("resource__core"):
+        v = answers.get(link.resource_id, "")
+        if link.rrid_cited != v:
+            link.rrid_cited = v
+            link.save(update_fields=["rrid_cited"])
+
+
+def rrid_missing_ids():
+    """Publication ids with at least one core (that has an RRID) not answered Yes to "did you cite it?"."""
+    return (
+        PublicationResource.objects.filter(resource__core__isnull=False)
+        .exclude(resource__core__rrid="")
+        .exclude(rrid_cited="yes")
+        .values("publication_id")
+    )
+
+
+def rrid_resources():
+    """Active resources that belong to a core with an RRID, in display order."""
+    from apps.people.models import Resource
+
+    return list(
+        Resource.objects.filter(is_active=True, core__isnull=False)
+        .exclude(core__rrid="")
+        .select_related("core")
+    )
+
+
 def resources_of(obj, anticipated):
     return [
         x.resource
@@ -281,7 +312,9 @@ def create_publication(user, owner, data, resources=(), projects=(), other_text=
 
 
 @transaction.atomic
-def update_publication(user, p, new_status, data, resources=None, projects=None, other_text=None):
+def update_publication(
+    user, p, new_status, data, resources=None, projects=None, other_text=None, rrid=None
+):
     old = p.status
     for f in (
         "title",
@@ -318,6 +351,8 @@ def update_publication(user, p, new_status, data, resources=None, projects=None,
             resources,
             anticipated=new_status == PublicationStatus.PLANNED,
         )
+    if rrid is not None:
+        set_rrid_answers(p, rrid)
     if projects is not None:
         _set_projects(PublicationProject, "publication", p, projects)
     if new_status != old:

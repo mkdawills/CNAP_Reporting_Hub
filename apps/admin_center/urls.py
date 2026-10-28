@@ -42,6 +42,7 @@ urlpatterns = [
     # projects and cores
     path("projects/", people.projects, name="projects"),
     path("projects/new/", people.project_new, name="project_new"),
+    path("cores/<int:pk>/rrid/", people.core_rrid, name="core_rrid"),
     path("projects/<int:pk>/", people.project, name="project"),
     # roster import
     path("roster/", roster.roster_imports, name="roster_imports"),

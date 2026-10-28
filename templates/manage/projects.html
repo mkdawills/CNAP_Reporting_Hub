@@ -22,14 +22,17 @@
     </tbody>
   </table>
 </div>
-<div class="panel scroll">
+<div class="panel scroll" id="cores">
   <h2 class="sectionhead">Cores</h2>
+  <p class="small muted">{{ "Each core’s RRID lets anyone find every paper that used it, even when the grant isn’t cited. Look one up by searching the core’s name at scicrunch.org/resources. Once it’s saved here, people adding a paper that used the core are asked whether they cited it."|stack }}</p>
   <table>
-    <thead><tr><th>Core</th><th>Directors</th><th>Staff</th><th>Recorded users</th></tr></thead>
+    <thead><tr><th>Core</th><th>RRID</th><th>Directors</th><th>Staff</th><th>Recorded users</th></tr></thead>
     <tbody>
     {% for c in cores %}
       <tr>
         <td><strong>{{ c.core.name }}</strong></td>
+        <td class="rridcell">{% if can_manage %}<form method="post" action="{% url 'manage:core_rrid' c.core.pk %}" class="rridform">{% csrf_token %}<input name="rrid" value="{{ c.core.rrid }}" placeholder="RRID:SCR_012345" aria-label="RRID for {{ c.core.name }}" size="16"><button class="btn small ghost" type="submit">Save</button></form>{% else %}{{ c.core.rrid|default:"None yet" }}{% endif %}
+          {% if c.core.rrid %}<div class="small"><a href="https://scicrunch.org/resolver/{{ c.core.rrid }}" rel="noopener">Check it at SciCrunch</a></div>{% endif %}</td>
         <td>{% for x in c.directors %}<div><a href="{% url 'manage:person' x.person.pk %}">{{ x.person }}</a></div>{% empty %}<span class="muted">None</span>{% endfor %}</td>
         <td>{% for x in c.staff %}<div>{{ x.person }}</div>{% empty %}<span class="muted">None</span>{% endfor %}</td>
         <td>{{ c.users|length }}<div class="small muted">{{ "Only needed for users outside the roster. Everyone on the roster already receives every core survey."|stack }}</div></td>

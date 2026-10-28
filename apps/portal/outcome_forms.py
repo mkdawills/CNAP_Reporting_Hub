@@ -136,8 +136,56 @@ class PubPublished(_Resources):
     ]
 
 
+RRID_CHOICES = [("yes", "Yes"), ("no", "No"), ("unsure", "Not sure")]
+
+
+def _pub_published_init(self, *args, **kwargs):
+    """One question per core that has an RRID, shown when that core is ticked (MW 2026-10-28)."""
+    from apps.outcomes.services import rrid_resources
+
+    forms.Form.__init__(self, *args, **kwargs)
+    self.rrid_fields = {}
+    for r in rrid_resources():
+        name = f"rrid_{r.pk}"
+        f = forms.ChoiceField(
+            label=f"Did you cite the {r.core.name}’s RRID ({r.core.rrid}) in your methods?",
+            choices=RRID_CHOICES,
+            widget=forms.RadioSelect,
+            required=False,
+            help_text=f"For example: “…recorded in the {r.core.name} ({r.core.rrid}) at Kansas State University.” "
+            "The RRID lets the Center find every paper that used the core, even without the grant number.",
+        )
+        f.res_pk = r.pk
+        self.fields[name] = f
+        self.rrid_fields[r.pk] = name
+    # keep each RRID question right after the resources it depends on
+    order = list(self.fields)
+    for name in self.rrid_fields.values():
+        order.remove(name)
+    at = order.index("resources_other_text") + 1 if "resources_other_text" in order else len(order)
+    order[at:at] = list(self.rrid_fields.values())
+    self.order_fields(order)
+
+
+def rrid_answers(form):
+    """{resource pk: answer} for the cores ticked on a cleaned PubPublished form."""
+    picked = {r.pk for r in form.cleaned_data.get("resources") or []}
+    return {
+        pk: form.cleaned_data.get(name) or ""
+        for pk, name in getattr(form, "rrid_fields", {}).items()
+        if pk in picked
+    }
+
+
+PubPublished.__init__ = _pub_published_init
+
+
 def _pub_published_clean(self):
     data = _Resources.clean(self)
+    picked = {r.pk for r in data.get("resources") or []}
+    for pk, name in self.rrid_fields.items():
+        if pk in picked and not data.get(name):
+            self.add_error(name, "Please answer, or choose Not sure.")
     if data.get("has_foreign_authors") and data.get("foreign_component_approved") is None:
         self.add_error(
             "foreign_component_approved",

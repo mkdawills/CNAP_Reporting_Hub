@@ -31,6 +31,18 @@ CHECKS = [
         "A core director normally isn’t also an RPL or PPL (MW). Check their roles, or dismiss if it’s right.",
     ),
     (
+        "rrid_not_cited",
+        "Published papers that used a core but didn’t cite its RRID",
+        "Without the RRID, the core’s use can only be found if the paper cites the grant. Ask the author to add "
+        "it next time, or dismiss if there’s a reason.",
+    ),
+    (
+        "foreign_cites_grant",
+        "Papers with foreign co-authors that cite the grant without approval",
+        "NIH may treat this as an unapproved foreign component. Credit the core with its RRID instead, or seek "
+        "NIGMS approval (handbook chapters 12 and 14).",
+    ),
+    (
         "overdue",
         "Past due and not started",
         "Forms in an open period that are past due and untouched.",
@@ -111,6 +123,23 @@ def run():
                     f"/manage/dashboard/?period={a.reporting_period.short_label}",
                 )
             )
+    from apps.common.enums import PublicationStatus
+    from apps.outcomes.models import Publication
+
+    published = Publication.objects.filter(archived_at__isnull=True, status=PublicationStatus.PUBLISHED)
+    from apps.outcomes.services import rrid_missing_ids
+
+    missing = published.filter(pk__in=rrid_missing_ids())
+    for pub in missing:
+        out["rrid_not_cited"].append(
+            ("publication", pub.pk, pub.title, f"/manage/outcomes/publications/{pub.pk}/")
+        )
+    for pub in published.filter(has_foreign_authors=True, cnap_cited=True).exclude(
+        foreign_component_approved=True
+    ):
+        out["foreign_cites_grant"].append(
+            ("publication", pub.pk, pub.title, f"/manage/outcomes/publications/{pub.pk}/")
+        )
     for p in director_and_leader(today):
         out["director_and_leader"].append(("person", p.pk, str(p), f"/manage/people/{p.pk}/"))
     seen = {}
