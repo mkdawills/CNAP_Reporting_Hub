@@ -759,5 +759,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 /* My tasks: group headers read as headings, above the task names (MW 2026-10-28) */
 .gh h3 { font-size: 1.12rem; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink); }
 
-/* time to complete as a soft pill, rounded ends (MW 2026-10-28) */
-.tasks td.mins span.tpill { display: inline-block; padding: 3px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); white-space: nowrap; }
+/* time to complete, set off by a curved panel, like a half moon (MW 2026-10-28) */
+.tasks td.mins { position: relative; min-width: 150px; padding-left: 34px; }
+.tasks td.mins::before { content: ""; position: absolute; inset: 0; border-radius: 46px 0 0 46px / 50% 0 0 50%; background: color-mix(in srgb, var(--surface) 70%, transparent); border-left: 1px solid var(--line); }
+.tasks td.mins > span { position: relative; }
+.donebox .tasks td.mins::before { display: none; }
