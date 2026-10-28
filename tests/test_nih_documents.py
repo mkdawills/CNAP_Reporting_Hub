@@ -136,11 +136,16 @@ def test_rppr_tab_lists_and_zip(client, center):
 
     last = safe_name(a.person.last_name)
     assert "summary.csv" in names
-    assert f"MFTRPcert_{last}_{safe_name(a.person.first_name)}.pdf" in names
     assert safe_name("Tomás") == "Tomas"
-    assert any(n.startswith(last) and n.endswith("_Biosketch.pdf") for n in names)
-    mine = [n for n in names if n.startswith(last) and n.endswith("_Biosketch.pdf")]
-    assert z.read(mine[0]) == PDF
+    from apps.people.services import is_senior_key
+
+    first = safe_name(a.person.first_name)
+    assert f"{last}_{first}_CurrentandPending.pdf" in names
+    assert z.read(f"{last}_{first}_CurrentandPending.pdf") == PDF
+    # biosketch and MFTRP only for people named on the NoA; anyone else's stray upload is dropped
+    noa = is_senior_key(a.person)
+    assert (f"MFTRPcert_{last}_{first}.pdf" in names) is noa
+    assert (f"{last}_{first}_Biosketch.pdf" in names) is noa
     assert "Fewer months" in z.read("summary.csv").decode("utf-8-sig")
 
 

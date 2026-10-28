@@ -137,6 +137,88 @@ SAMPLE_PDF = (
 )
 
 
+def _sciencv_like(person, code):
+    """A fictional biosketch or Current and Pending laid out like SciENcv output, so the sample center shows
+    the certification check and the degrees/months suggestions. Everything in it is made up."""
+    import io
+
+    from reportlab.lib.pagesizes import letter
+    from reportlab.pdfgen import canvas
+
+    who = f"{person.last_name}, {person.first_name}"
+    if code == "biosketch":
+        lines = [
+            "NIH BIOGRAPHICAL SKETCH COMMON FORM",
+            f"Name: {who}",
+            "Persistent Identifier (PID) of the Senior/Key",
+            "Person:",
+            "https://orcid.org/0000-0002-1825-0097",
+            "Position Title: Associate Professor (fictional)",
+            "PROFESSIONAL PREPARATION",
+            "INSTITUTION AND LOCATION",
+            "DEGREE",
+            "FIELD OF STUDY",
+            "Sample University, Sampletown, Kansas, United States",
+            "Doctor of Philosophy (PHD)",
+            "05/2012",
+            "Sample College, Sampleburg, Iowa, United States",
+            "Bachelor of Science (BS)",
+            "05/2006",
+            "APPOINTMENTS AND POSITIONS",
+            "2020 - present Associate Professor (fictional)",
+            f"Certified by {who} in SciENcv on 2026-10-20 09:00:00",
+            "NIH BIOGRAPHICAL SKETCH SUPPLEMENT",
+        ]
+    elif code == "current_pending":
+        lines = [
+            "NIH Current and Pending (Other) Support Common Form",
+            "CURRENT AND PENDING (OTHER) SUPPORT INFORMATION",
+            "*NAME:",
+            who,
+            "PERSISTENT IDENTIFIER (PID):",
+            "https://orcid.org/0000-0002-1825-0097",
+            "*Proposal/Active Project Title:",
+            "Cognitive and Neurobiological Approaches to Plasticity (CNAP) Center",
+            "*Status of Support:",
+            "Current",
+            "Proposal/Award Number:",
+            "5P20GM113109-10",
+            "*Proposal/Active Project Start Date: (MM/YYYY):",
+            "07/2022",
+            "*Proposal/Active Project End Date: (MM/YYYY):",
+            "05/2027",
+            "* Person Months per budget period Devoted to the Proposal/Active Project:",
+            "Year",
+            "Person Months",
+            "2022",
+            "1.5",
+            "2023",
+            "3",
+            "2024",
+            "3",
+            "2025",
+            "3",
+            "2026",
+            "3",
+            "2027",
+            "1.5",
+            "*Overall Objectives:",
+            "(Fictional sample.)",
+            "Certification:",
+            f"Certified by {who} in SciENcv on 2026-10-20 09:00:00",
+        ]
+    else:
+        return None
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter)
+    y = 760
+    for line in lines:
+        c.drawString(48, y, line)
+        y -= 14
+    c.save()
+    return buf.getvalue()
+
+
 def _sample_pdf(resp, q, user, a):
     """A one-page fictional PDF, so sample NIH documents can be downloaded like real ones."""
     import hashlib
@@ -146,14 +228,15 @@ def _sample_pdf(resp, q, user, a):
     from apps.reporting.models import AnswerFile, File
 
     name = f"{a.person.last_name}_{q.code}_sample.pdf"
+    data = _sciencv_like(a.person, q.code) or SAMPLE_PDF
     f = File(
         original_filename=name,
         content_type="application/pdf",
-        byte_size=len(SAMPLE_PDF),
-        sha256=hashlib.sha256(SAMPLE_PDF).hexdigest(),
+        byte_size=len(data),
+        sha256=hashlib.sha256(data).hexdigest(),
         uploaded_by=user,
     )
-    f.storage_key.save(name, ContentFile(SAMPLE_PDF), save=False)
+    f.storage_key.save(name, ContentFile(data), save=False)
     f.save()
     ans = Answer.objects.create(response=resp, question=q)
     AnswerFile.objects.create(answer=ans, file=f)

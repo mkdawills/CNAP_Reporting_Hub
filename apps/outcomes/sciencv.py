@@ -250,4 +250,6 @@ def budget_year_estimate(sp, gy):
         if ov > 0:
             hit = True
             total += Decimal(str(x["months"])) * ov / (x["to"] - x["from"] + 1)
-    return total.quantize(Decimal("0.1")) if hit else None
+    from decimal import ROUND_HALF_UP
+
+    return total.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP) if hit else None
