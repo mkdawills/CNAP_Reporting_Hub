@@ -485,3 +485,32 @@ class CurrentPendingCheck(TimestampedModel):
 
     def __str__(self):
         return f"C&P check: {self.assignment}"
+
+
+class HelpfulDocument(TimestampedModel):
+    """A document or link the evaluator puts on everyone's My tasks page (MW 2026-10-28), e.g. the PL Guidelines."""
+
+    title = models.CharField(max_length=200)
+    note = models.CharField(
+        max_length=300, blank=True, help_text="One short line, e.g. who it's for."
+    )
+    file = models.ForeignKey(
+        File, null=True, blank=True, on_delete=models.PROTECT, related_name="+"
+    )
+    url = models.URLField(blank=True, help_text="Or a link, instead of a file.")
+    sort_order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "helpful_documents"
+        ordering = ["sort_order", "title"]
+        constraints = [
+            models.CheckConstraint(
+                condition=(models.Q(file__isnull=False) & models.Q(url=""))
+                | (models.Q(file__isnull=True) & ~models.Q(url="")),
+                name="helpful_doc_file_or_url",
+            )
+        ]
+
+    def __str__(self):
+        return self.title

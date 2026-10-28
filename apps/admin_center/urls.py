@@ -6,6 +6,8 @@ app_name = "manage"
 
 urlpatterns = [
     path("", home.home, name="home"),
+    path("documents/add/", home.doc_add, name="doc_add"),
+    path("documents/<int:pk>/remove/", home.doc_remove, name="doc_remove"),
     # people and relationships
     path("people/", people.people, name="people"),
     path("people/new/", people.person_new, name="person_new"),

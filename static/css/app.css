@@ -764,3 +764,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 .tasks td.mins::before { content: ""; position: absolute; inset: 0; border-radius: 46px 0 0 46px / 50% 0 0 50%; background: color-mix(in srgb, var(--surface) 70%, transparent); border-left: 1px solid var(--line); }
 .tasks td.mins > span { position: relative; }
 .donebox .tasks td.mins::before { display: none; }
+
+/* My tasks: the Center's output this year, and helpful documents (MW 2026-10-28) */
+.made { margin: 40px 0 18px; padding: 22px 24px; border-radius: 14px; background: var(--purple-wash); }
+.made-h { margin: 0 0 14px; font-weight: 700; font-size: 1.02rem; }
+.made-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 10px; }
+.made-row > div { display: flex; flex-direction: column; gap: 2px; }
+.made-n { font-size: 1.9rem; font-weight: 700; line-height: 1.1; color: var(--purple-ink, var(--purple)); }
+.made-l { font-size: .86rem; color: color-mix(in srgb, var(--ink) 78%, var(--muted)); }
+@media (max-width: 640px) { .made-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.doclist { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 8px; }
+.doclist a { font-weight: 600; }

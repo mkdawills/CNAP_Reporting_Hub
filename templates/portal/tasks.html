@@ -52,4 +52,16 @@
   {% if outcome.done %}<tr><td><strong>Publications and grants</strong><div class="small muted">Up to date for this period</div></td><td class="acts"><a class="btn small ghost" href="{% url 'portal:outcomes' %}">View</a></td><td class="acts"></td><td class="acts"></td><td class="mins"></td></tr>{% endif %}</tbody></table></div>
 </details>{% endif %}
 {% endif %}
+
+<section class="made" aria-label="What CNAP produced this year">
+  <p class="made-h">What CNAP produced this year <span class="small muted">(Year {{ made.gy }}, since June 1, {{ made.start.year }})</span></p>
+  <div class="made-row">
+    <div><span class="made-n">{{ made.papers }}</span><span class="made-l">paper{{ made.papers|pluralize }} published</span></div>
+    <div><span class="made-n">{{ made.talks }}</span><span class="made-l">talk{{ made.talks|pluralize }} and posters</span></div>
+    <div><span class="made-n">{{ made.proposals }}</span><span class="made-l">grant proposal{{ made.proposals|pluralize }}</span></div>
+    <div><span class="made-n">{{ made.awards }}</span><span class="made-l">award{{ made.awards|pluralize }}</span></div>
+  </div>
+  <p class="small muted">{{ "These come from what people enter under Publications, talks and grants, so yours count too."|stack }}</p>
+</section>
+{% if docs %}<section class="panel helpdocs"><h2 class="sectionhead">Helpful documents</h2><ul class="doclist">{% for d in docs %}<li><a href="{% if d.file %}{% url 'portal:helpful_doc' d.pk %}{% else %}{{ d.url }}{% endif %}">{{ d.title }}</a>{% if d.note %} <span class="small muted">· {{ d.note }}</span>{% endif %}</li>{% endfor %}</ul></section>{% endif %}
 {% endblock %}

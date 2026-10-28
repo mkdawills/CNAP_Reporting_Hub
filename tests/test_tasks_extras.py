@@ -1,0 +1,57 @@
+"""Below the tasks: the Center's output this year and helpful documents (MW 2026-10-28)."""
+
+import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.management import call_command
+
+from apps.accounts.models import User
+from apps.outcomes import snapshot
+from apps.reporting.models import HelpfulDocument
+
+
+@pytest.fixture
+def center(db):
+    call_command("seed", "--fictional", verbosity=0)
+
+
+def test_strip_counts_this_budget_year(client, center):
+    from apps.outcomes.models import Presentation
+    from apps.outcomes.rppr import current_year, period
+
+    start, end = period(current_year())
+    n = Presentation.objects.filter(
+        presented_on__range=(start, end), archived_at__isnull=True
+    ).count()
+    assert snapshot.this_year()["talks"] == n
+    client.force_login(User.objects.get(username="okafor"))
+    html = client.get("/tasks/").content.decode()
+    assert "What CNAP produced this year" in html and "grant proposal" in html
+
+
+def test_evaluator_adds_a_document_everyone_sees(client, center):
+    client.force_login(User.objects.get(username="mwills"))
+    client.post(
+        "/manage/documents/add/",
+        {
+            "title": "PL Guidelines",
+            "note": "For project leaders",
+            "file": SimpleUploadedFile("g.pdf", b"%PDF-1.4 x", "application/pdf"),
+        },
+    )
+    d = HelpfulDocument.objects.get(title="PL Guidelines")
+    client.post("/manage/documents/add/", {"title": "Bad", "url": "ftp://x"})
+    assert not HelpfulDocument.objects.filter(title="Bad").exists()
+    client.force_login(User.objects.get(username="okafor"))
+    html = client.get("/tasks/").content.decode()
+    assert "PL Guidelines" in html and f"/documents/{d.pk}/" in html
+    assert client.get(f"/documents/{d.pk}/").status_code == 200
+    # view-only administrators can't add or remove
+    client.force_login(User.objects.get(username="hbailey"))
+    assert client.post(f"/manage/documents/{d.pk}/remove/").status_code == 403
+    client.force_login(User.objects.get(username="mwills"))
+    client.post(f"/manage/documents/{d.pk}/remove/")
+    d.refresh_from_db()
+    assert not d.is_active
+    client.force_login(User.objects.get(username="okafor"))
+    assert f"/documents/{d.pk}/" not in client.get("/tasks/").content.decode()
+    assert client.get(f"/documents/{d.pk}/").status_code == 404

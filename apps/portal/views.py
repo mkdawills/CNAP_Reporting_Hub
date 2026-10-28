@@ -48,7 +48,9 @@ def tasks(request):
         from apps.outcomes import cpcheck
 
         return render(
-            request, "portal/tasks.html", {"period": None, "cp_check": cpcheck.pending_for(person)}
+            request,
+            "portal/tasks.html",
+            {"period": None, "cp_check": cpcheck.pending_for(person), **_extras()},
         )
     mine = list(
         Assignment.objects.filter(person=person, reporting_period=period).select_related(
@@ -64,6 +66,7 @@ def tasks(request):
     from apps.outcomes import cpcheck
 
     ctx["cp_check"] = cpcheck.pending_for(person)
+    ctx.update(_extras())
     ctx["done_count"] = len(ctx["done"]) + (1 if oc and oc["done"] else 0)
     if oc:  # the publications-and-grants check-in counts as one task
         ctx["total"] += 1
@@ -85,6 +88,30 @@ def _own_assignment(request, pk):
     if a.person_id != request.user.person_id:
         raise PermissionDenied("Only the person who received a form can open it here.")
     return a
+
+
+@login_required
+def helpful_doc(request, pk):
+    """A file the evaluator shared with everyone (Helpful documents)."""
+    from apps.reporting.models import HelpfulDocument
+
+    d = get_object_or_404(HelpfulDocument.objects.select_related("file"), pk=pk, is_active=True)
+    if not d.file_id:
+        raise Http404
+    return FileResponse(
+        d.file.storage_key.open("rb"), as_attachment=True, filename=d.file.original_filename
+    )
+
+
+def _extras():
+    """What sits below the tasks: the Center's output this year and the helpful documents (MW 2026-10-28)."""
+    from apps.outcomes import snapshot
+    from apps.reporting.models import HelpfulDocument
+
+    return {
+        "made": snapshot.this_year(),
+        "docs": list(HelpfulDocument.objects.filter(is_active=True).select_related("file")),
+    }
 
 
 @login_required
