@@ -158,6 +158,7 @@ def test_foreign_approval_required_and_warned(client, center):
         "has_foreign_authors": "yes",
         "has_non_idea_coauthors": "no",
         "resources": [bn],
+        f"rrid_{bn}": "yes",  # the sample BN Core has an RRID
     }
     r = client.post(f"/outcomes/pub/{p.pk}/", base)
     assert (
