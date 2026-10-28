@@ -499,10 +499,13 @@ def d1(gy):
     out.sort(
         key=lambda x: (D1_ORDER.index(x["category"]), x["person"].last_name, x["person"].first_name)
     )
-    listed = [x for x in out if x["months"] is None or x["months"] >= 1]
+    # Senior/key people (named on the NoA, Common Form filers) are listed even under 1.0 person month
+    # (MW's COBRE Administrator Handbook, ch. 6; the 2026 RPPR accepts them at 0.0).
+    listed = [x for x in out if x["months"] is None or x["months"] >= 1 or x["senior_key"]]
     return {
         "rows": listed,
-        "below": [x for x in out if x["months"] is not None and x["months"] < 1],
+        "below": [x for x in out if x not in listed],
+        "missing_orcid": [x for x in listed if x["senior_key"] and not x["orcid"]],
         "missing_months": [x for x in listed if x["months"] is None],
         "missing_commons": [x for x in listed if not x["commons"]],
         "missing_level": [x for x in listed if x["needs_level"]],

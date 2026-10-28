@@ -302,3 +302,23 @@ def test_late_items_carry_into_next_rppr(center):
     p.rppr_year = 9
     p.save()
     assert p not in rppr.c1(10)[0]
+
+
+def test_senior_key_listed_in_d1_even_under_one_month(client, center):
+    from apps.people.models import PersonEffort, PersonRelationship
+
+    gy = rppr.current_year()
+    rel = (
+        PersonRelationship.objects.filter(relationship_type__code="project_leader")
+        .select_related("person")
+        .first()
+    )
+    p = rel.person
+    p.orcid = ""
+    p.save()
+    PersonEffort.objects.update_or_create(
+        person=p, grant_year=gy, defaults={"calendar_months": Decimal("0.5")}
+    )
+    d = rppr.d1(gy)
+    assert p in [x["person"] for x in d["rows"]] and p not in [x["person"] for x in d["below"]]
+    assert p in [x["person"] for x in d["missing_orcid"]]

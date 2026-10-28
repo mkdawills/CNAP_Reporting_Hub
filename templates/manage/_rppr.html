@@ -97,11 +97,11 @@
   <section class="rsec" id="rp-d1">
     <header class="rhead">
       <div><h2>D.1 Participants</h2>
-        <p class="rsum"><b>{{ r.d1.rows|length }}</b> {{ r.d1.rows|length|pluralize:"person,people" }}{% if r.d1.missing_commons %} · <span class="gap">{{ r.d1.missing_commons|length }} need an eRA Commons ID</span>{% endif %}{% if r.d1.missing_months %} · <span class="gap">{{ r.d1.missing_months|length }} need months</span>{% endif %}{% if r.d1.missing_level %} · <span class="gap">{{ r.d1.missing_level|length }} need a career level</span>{% endif %}</p></div>
+        <p class="rsum"><b>{{ r.d1.rows|length }}</b> {{ r.d1.rows|length|pluralize:"person,people" }}{% if r.d1.missing_commons %} · <span class="gap">{{ r.d1.missing_commons|length }} need an eRA Commons ID</span>{% endif %}{% if r.d1.missing_months %} · <span class="gap">{{ r.d1.missing_months|length }} need months</span>{% endif %}{% if r.d1.missing_level %} · <span class="gap">{{ r.d1.missing_level|length }} need a career level</span>{% endif %}{% if r.d1.missing_orcid %} · <span class="gap">{{ r.d1.missing_orcid|length }} senior/key need an ORCID iD</span>{% endif %}</p></div>
       <a class="small" href="{% url 'manage:outcomes_export' 'd1' %}?year={{ r.year }}">Download D.1 (CSV)</a>
     </header>
     <p class="rdesc">Everyone who worked on CNAP for at least 1.0 person month this year (calendar, or academic plus summer), in NIH’s six categories, with their eRA Commons ID.<br>It’s the RPPR’s list of the people who did the work.</p>
-    <p class="small muted">People under 1.0 month are set aside; people with no months entered stay on the list until they add them.<br>People add their eRA Commons ID and months on their Profile page; you can on their person page.</p>
+    <p class="small muted">People under 1.0 month are set aside, except senior/key people named on the Notice of Award, who are always listed. People with no months entered stay on the list until they add them.<br>People add their eRA Commons ID and months on their Profile page; you can on their person page.</p>
     {% if r.d1_cats %}<table class="rtab cnttab"><colgroup><col class="w-label"><col class="w-num"><col class="w-num"><col class="w-num"></colgroup>
       <thead><tr><th>Category</th><th class="num">People</th><th class="num">Need an ID</th><th class="num">Need months</th></tr></thead><tbody>
       {% for c in r.d1_cats %}<tr><td>{{ c.label }}</td><td class="num">{{ c.n }}</td><td class="num">{% if c.no_id %}<span class="gap">{{ c.no_id }}</span>{% else %}–{% endif %}</td><td class="num">{% if c.no_months %}<span class="gap">{{ c.no_months }}</span>{% else %}–{% endif %}</td></tr>{% endfor %}
@@ -121,7 +121,7 @@
         {% if r.docs %}<p class="rsum"><b>{{ r.docs.n_done }}</b> of {{ r.docs.n }} turned in{% if r.docs.d2a_yes %} · <span class="gap">{{ r.docs.d2a_yes|length }} expect{{ r.docs.d2a_yes|length|pluralize:"s," }} a 25% effort drop (D.2.a)</span>{% endif %}</p>{% endif %}</div>
       {% if r.docs %}<a class="small" href="{% url 'manage:outcomes_export' 'nihdocs' %}?year={{ r.year }}">Download all (zip)</a>{% endif %}
     </header>
-    <p class="rdesc">Each year’s certified SciENcv Current and Pending (Other) Support and the D.2.a effort answer from the PD/PI, RP Leaders, PP Leaders and core directors, plus the biosketch and signed MFTRP certification from those named on the Notice of Award (marked “NoA”).<br>Current and Pending files attach to each senior/key person’s D.1 row; biosketches go with new senior/key personnel (D.2.b). MFTRP certifications go in G.1, one per person; the zip names them MFTRPcert_[Name].pdf, as NIH requires.</p>
+    <p class="rdesc">Each year’s certified SciENcv Current and Pending (Other) Support and the D.2.a effort answer from the PD/PI, RP Leaders, PP Leaders and core directors, plus the biosketch and signed MFTRP certification from those named on the Notice of Award (marked “NoA”).<br>Since 2026 these attach to each person’s D.1 row (the old D.2.b–D.2.d were merged into D.1). MFTRP certifications go in G.1, one per person; the zip names them MFTRPcert_[Name].pdf, as NIH requires.</p>
     {% if not r.docs_ok %}<p class="muted">Your role can’t see these documents.</p>
     {% elif not r.docs %}<p class="muted">No one has been asked for NIH documents in Year {{ r.year }}. They’re requested once a year, in the Fall period.</p>
     {% else %}
