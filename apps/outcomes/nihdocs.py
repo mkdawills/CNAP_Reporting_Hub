@@ -15,7 +15,7 @@ import re
 from apps.common.enums import AssignmentStatus
 from apps.forms_engine.runtime import FormSchema
 from apps.people.services import is_senior_key
-from apps.reporting.models import Assignment, ReportingPeriod
+from apps.reporting.models import Assignment, CurrentPendingCheck, ReportingPeriod
 from apps.reporting.services import responses as rs
 
 from . import sciencv
@@ -72,6 +72,9 @@ def documents(gy):
     cache, rows = {}, []
     for a in sorted(asg, key=lambda x: (x.person.last_name, x.person.first_name)):
         answers, _, files = _answers(a, cache)
+        feb = CurrentPendingCheck.objects.filter(assignment=a).select_related("file").first()
+        if feb and feb.changed and feb.file_id:  # the February update replaces the fall copy
+            files = dict(files, current_pending=feb.file)
         checks = {}
         for code in ("biosketch", "current_pending"):
             if files.get(code):
@@ -92,6 +95,7 @@ def documents(gy):
                     (code, label, files.get(code), checks.get(code)) for code, label in DOC_FILES
                 ],
                 "senior_key": (sk := is_senior_key(a.person)),
+                "feb": feb,
                 "missing": [
                     label
                     for code, label in DOC_FILES

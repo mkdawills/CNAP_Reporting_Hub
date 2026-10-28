@@ -456,3 +456,32 @@ class PeriodEmail(models.Model):
     class Meta:
         db_table = "period_emails"
         indexes = [models.Index(fields=["period", "kind", "person"])]
+
+
+class CurrentPendingCheck(TimestampedModel):
+    """February check (MW 2026-10-28): has this person's Current and Pending changed since the fall upload?
+
+    One per fall NIH documents task. `changed` is None until they answer; a Yes comes with a new PDF.
+    """
+
+    assignment = models.OneToOneField(Assignment, on_delete=models.CASCADE, related_name="cp_check")
+    asked_at = models.DateTimeField(null=True, blank=True)
+    last_emailed_at = models.DateTimeField(null=True, blank=True)
+    emails_sent = models.PositiveSmallIntegerField(default=0)
+    answered_at = models.DateTimeField(null=True, blank=True)
+    changed = models.BooleanField(null=True, blank=True)
+    file = models.ForeignKey(
+        File, null=True, blank=True, on_delete=models.PROTECT, related_name="+"
+    )
+
+    class Meta:
+        db_table = "current_pending_checks"
+        constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(changed=True) | models.Q(file__isnull=False),
+                name="cp_check_changed_needs_file",
+            )
+        ]
+
+    def __str__(self):
+        return f"C&P check: {self.assignment}"

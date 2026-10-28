@@ -3,6 +3,7 @@
 {% block content %}
 {% if not period %}
   <div class="head"><div><h1>My tasks</h1><p>{{ "No reporting period is open right now. We’ll e-mail you when the next one opens."|stack }}</p></div></div>
+  {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for the spring progress report.</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 {% else %}
 {% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong> {{ "You can read every form now with Preview. Answering opens that day; nothing you do here before then is saved."|stack }}</div>{% endif %}
 <div class="head"><div>
@@ -11,6 +12,8 @@
   <div class="taskprog"><div class="bar" role="progressbar" aria-label="Tasks done" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done_n }}" aria-valuetext="{{ done_n }} of {{ total }} done"><span style="width:{{ pct }}%"></span></div></div>
   {% for d in is_core_director %}<p class="small muted">{{ "You direct the "|add:d.core.name|add:", so you don’t receive its user survey. You still receive the other core surveys."|stack }}</p>{% endfor %}
 </div></div>
+
+{% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for the spring progress report.</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 
 {% if just_done %}
 <div class="panel nextup" role="status" data-confetti="{{ just_done.a.pk }}">

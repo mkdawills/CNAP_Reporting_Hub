@@ -45,7 +45,11 @@ def tasks(request):
         .first()
     )
     if not period:
-        return render(request, "portal/tasks.html", {"period": None})
+        from apps.outcomes import cpcheck
+
+        return render(
+            request, "portal/tasks.html", {"period": None, "cp_check": cpcheck.pending_for(person)}
+        )
     mine = list(
         Assignment.objects.filter(person=person, reporting_period=period).select_related(
             "form_definition", "form_version", "project", "core", "completion_pathway"
@@ -57,6 +61,9 @@ def tasks(request):
 
     oc = task_item(person, period)
     ctx["outcome"] = oc
+    from apps.outcomes import cpcheck
+
+    ctx["cp_check"] = cpcheck.pending_for(person)
     ctx["done_count"] = len(ctx["done"]) + (1 if oc and oc["done"] else 0)
     if oc:  # the publications-and-grants check-in counts as one task
         ctx["total"] += 1
@@ -78,6 +85,29 @@ def _own_assignment(request, pk):
     if a.person_id != request.user.person_id:
         raise PermissionDenied("Only the person who received a form can open it here.")
     return a
+
+
+@login_required
+def cp_check(request, pk):
+    """The February question: has your Current and Pending changed since the fall?"""
+    from apps.outcomes import cpcheck
+    from apps.reporting.models import CurrentPendingCheck
+
+    c = get_object_or_404(CurrentPendingCheck.objects.select_related("assignment__person"), pk=pk)
+    if c.assignment.person_id != request.user.person_id:
+        raise PermissionDenied("Only the person asked can answer.")
+    error = ""
+    if request.method == "POST" and not c.answered_at:
+        changed = request.POST.get("action") == "changed"
+        try:
+            cpcheck.answer(
+                c, request.user, changed=changed, upload=request.FILES.get("file-current_pending")
+            )
+        except cpcheck.CheckError as exc:
+            error = str(exc)
+        else:
+            return redirect("portal:cp_check", pk)
+    return render(request, "portal/cp_check.html", {"c": c, "error": error})
 
 
 @login_required
@@ -274,9 +304,15 @@ def download(request, file_pk):
     """A file is downloadable by its uploader, or by an administrator allowed to read that response."""
     f = get_object_or_404(File, pk=file_pk)
     link = f.answer_links.select_related("answer__response__assignment").first()
-    if not link:
-        raise Http404
-    assignment = link.answer.response.assignment
+    if link:
+        assignment = link.answer.response.assignment
+    else:  # a Current and Pending sent in at the February check
+        from apps.reporting.models import CurrentPendingCheck
+
+        c = CurrentPendingCheck.objects.filter(file=f).select_related("assignment").first()
+        if not c:
+            raise Http404
+        assignment = c.assignment
     from apps.reporting.access import response_access
 
     if (

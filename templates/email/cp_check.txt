@@ -1,0 +1,19 @@
+{% autoescape off %}Hello {{ person.first_name }},
+
+{% if kind == "ask" %}You turned in your Current and Pending (Other) Support on {{ fall }}. NIH needs it to be current when the Center's progress report goes in this spring.{% else %}A reminder about one quick question for the Center's progress report to NIH.{% endif %}
+
+Has your Current and Pending changed since then? For example, a new proposal submitted, an award, or a change in your effort.
+
+- No changes: one click.
+- It changed: upload the new certified PDF from SciENcv.
+
+Please answer by {{ due }}:
+{{ url }}
+{% if with_link %}
+This link signs you in. It works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
+{% else %}
+Sign in with your K-State eID.
+{% endif %}
+Thank you,
+The CNAP evaluation team
+{% endautoescape %}
