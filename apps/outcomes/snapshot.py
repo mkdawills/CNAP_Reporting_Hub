@@ -24,3 +24,65 @@ def this_year(gy=None):
             status=GrantStatus.AWARDED, award_notice_date__range=(start, end), **live
         ).count(),
     }
+
+
+MEASURES = (
+    ("papers", "Papers published"),
+    ("talks", "Talks and posters"),
+    ("proposals", "Proposals submitted"),
+    ("awards", "Proposals awarded"),
+)
+
+
+def by_year(gy=None):
+    """The same four counts for every budget year that has any, up to this one (MW 2026-10-28). Counts only.
+
+    Years run from the earliest with an entry to the current year, with empty years kept so the trend is honest.
+    Returns None when only the current year has data (nothing to compare yet)."""
+    gy = gy or current_year()
+    live = {"archived_at__isnull": True}
+
+    def year_of(d):
+        return current_year(d)
+
+    dates = {
+        "papers": Publication.objects.filter(status=PublicationStatus.PUBLISHED, **live)
+        .exclude(publication_date=None)
+        .values_list("publication_date", flat=True),
+        "talks": Presentation.objects.filter(**live)
+        .exclude(presented_on=None)
+        .values_list("presented_on", flat=True),
+        "proposals": GrantSubmission.objects.filter(**live)
+        .exclude(status=GrantStatus.PLANNED)
+        .exclude(submission_date=None)
+        .values_list("submission_date", flat=True),
+        "awards": GrantSubmission.objects.filter(status=GrantStatus.AWARDED, **live)
+        .exclude(award_notice_date=None)
+        .values_list("award_notice_date", flat=True),
+    }
+    counts = {k: {} for k in dates}
+    for k, qs in dates.items():
+        for d in qs:
+            y = year_of(d)
+            if 1 <= y <= gy:
+                counts[k][y] = counts[k].get(y, 0) + 1
+    first = min((y for c in counts.values() for y in c), default=gy)
+    if first >= gy:
+        return None
+    years = list(range(first, gy + 1))
+    rows = []
+    for k, label in MEASURES:
+        vals = [counts[k].get(y, 0) for y in years]
+        top = max(vals) or 1
+        rows.append(
+            {
+                "key": k,
+                "label": label,
+                "total": sum(vals),
+                "bars": [
+                    {"year": y, "n": n, "h": round(100 * n / top), "now": y == gy}
+                    for y, n in zip(years, vals)
+                ],
+            }
+        )
+    return {"years": years, "first": first, "rows": rows}

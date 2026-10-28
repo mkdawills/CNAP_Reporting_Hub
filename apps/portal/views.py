@@ -116,6 +116,7 @@ def _extras():
 
     return {
         "made": snapshot.this_year(),
+        "trend": snapshot.by_year(),
         "docs": list(HelpfulDocument.objects.filter(is_active=True).select_related("file")),
     }
 

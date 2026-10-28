@@ -94,3 +94,19 @@ def test_answers_save_as_you_go(client, center):
     other = User.objects.get(username="reyes")
     client.force_login(other)
     assert client.post(f"/tasks/{a.pk}/autosave/", {"q-item_01": "agree"}).status_code == 403
+
+
+def test_year_by_year_counts_every_year_from_the_first(db):
+    import datetime as dt
+
+    from apps.outcomes import snapshot
+    from apps.outcomes.models import Presentation
+    from apps.outcomes.rppr import current_year, period
+
+    assert snapshot.by_year() is None  # nothing earlier to compare
+    gy = current_year()
+    Presentation.objects.create(presentation_type="invited_talk", title="Older talk", presented_on=period(gy - 2)[0] + dt.timedelta(days=3))
+    t = snapshot.by_year()
+    assert t["years"] == [gy - 2, gy - 1, gy]
+    talks = next(r for r in t["rows"] if r["key"] == "talks")
+    assert [b["n"] for b in talks["bars"]] == [1, 0, 0] and talks["bars"][-1]["now"]

@@ -406,3 +406,7 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - Intros shortened for ten forms, with MW's approval; question wording unchanged. Each original is kept in the form's _source note.
 - One motion moment when a form opens: a light line traces the title once and the directions appear line by line. Nothing moves while people read; all of it is off for reduced-motion users.
 - The name in the sidebar links to the Profile.
+
+## 2026-10-28 · My tasks: year by year
+- The "What CNAP produced this year" band has a "See year by year" button. It opens, in place, four small bar charts (papers published, talks and posters, proposals submitted, proposals awarded) from the earliest budget year with an entry to now; empty years are kept so the trend is honest, and the current year is marked as still in progress. Counts only, no names. The button is hidden until there is an earlier year to compare.
+- Labels now read "proposals submitted" and "proposals awarded" (MW).
