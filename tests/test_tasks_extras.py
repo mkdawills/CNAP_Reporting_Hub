@@ -64,3 +64,10 @@ def test_default_documents(client, center):
     client.force_login(User.objects.get(username="okafor"))
     html = client.get("/tasks/").content.decode()
     assert "CNAP Phase 2 PL Guidelines" in html and "https://www.k-state.edu/cnap/" in html
+
+
+def test_welcome_ring_and_group_icons(client, center):
+    client.force_login(User.objects.get(username="okafor"))
+    html = client.get("/tasks/").content.decode()
+    assert "Amara." in html and ('class="ring"' in html) and 'class="gicon"' in html
+    assert any(g in html for g in ("Good morning", "Good afternoon", "Good evening"))

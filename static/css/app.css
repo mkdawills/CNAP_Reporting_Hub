@@ -775,3 +775,71 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 @media (max-width: 640px) { .made-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .doclist { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 8px; }
 .doclist a { font-weight: 600; }
+
+/* =====================================================================
+   Look, 2026-10-28 (MW: "make it beautiful", all six): colour moves from the sidebar into the page;
+   a welcome with a progress ring; softer surfaces with fewer lines; one display face for headings;
+   small line icons for task groups; a calm finish.
+   ===================================================================== */
+:root {
+  --paper: #f5f3f9; --side: #ece6f5; --side-ink: #2a1f3d; --side-muted: #5e5272;
+  --display: "Bricolage Grotesque", "Public Sans", system-ui, sans-serif;
+  --lift: 0 1px 2px rgba(58, 28, 99, .05), 0 6px 24px rgba(58, 28, 99, .05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --side: #1d1828; --side-ink: #ece9f3; --side-muted: #a8a1b9;
+    --lift: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 24px rgba(0, 0, 0, .25); }
+}
+
+/* 1. a light sidebar; purple is kept for actions and progress */
+.side { background: var(--side); color: var(--side-ink); }
+.brand { color: var(--purple-ink); font-family: var(--display); font-weight: 700; font-size: 1.35rem; letter-spacing: -.01em;
+  border-bottom-color: color-mix(in srgb, var(--side-ink) 14%, transparent); }
+.brand small { font-family: "Public Sans", system-ui, sans-serif; font-weight: 500; color: var(--side-muted); opacity: 1; }
+.side .who { border-left-color: color-mix(in srgb, var(--purple) 45%, transparent); }
+.side .who span { color: var(--side-muted); opacity: 1; }
+.side nav { border-left-color: color-mix(in srgb, var(--side-ink) 12%, transparent); }
+.side nav .navhead { text-transform: none; letter-spacing: 0; font-size: .78rem; font-weight: 600; color: var(--side-muted); opacity: 1; }
+.side nav a { color: var(--side-ink); }
+.side nav a:hover { background: color-mix(in srgb, var(--purple) 8%, transparent); }
+.side nav a[aria-current="page"] { background: var(--surface); color: var(--purple-ink); box-shadow: var(--lift); }
+.side .foot, .side .foot a { color: var(--side-muted); opacity: 1; }
+.side .foot button { color: var(--side-ink); border-color: color-mix(in srgb, var(--side-ink) 25%, transparent); }
+main { border-left: 0; }
+
+/* 3. softer surfaces: white panels lifted off the page, fewer lines */
+.panel { border: 0; border-radius: 16px; box-shadow: var(--lift); padding: 22px 24px; }
+.panel h2.sectionhead, .sectionhead { border-bottom: 0; padding-bottom: 0; margin-bottom: 14px; }
+
+/* 4. one display face, for headings only */
+h1, .panel h2, .sectionhead, .gh h3, .made-n, .ring-n, .stat { font-family: var(--display); }
+h1 { font-weight: 700; letter-spacing: -.015em; }
+.panel h2, .sectionhead { font-weight: 650; }
+
+/* 2. welcome and progress ring (My tasks) */
+.welcome { display: flex; align-items: center; gap: 26px; margin: 6px 0 26px; }
+.welcome h1 { font-size: clamp(1.7rem, 3.4vw, 2.3rem); margin-bottom: 6px; }
+.welcome .taskline { font-size: 1.05rem; margin: 0 0 2px; }
+.ring { position: relative; width: 104px; height: 104px; flex: none; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 11; }
+.ring-track { stroke: var(--purple-wash); }
+.ring-fill { stroke: var(--purple); stroke-linecap: round; transition: stroke-dasharray .6s ease; }
+.ring-n { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 1.7rem; font-weight: 700; color: var(--purple-ink); line-height: 1; }
+.ring-n small { font-family: "Public Sans", system-ui, sans-serif; font-size: .72rem; font-weight: 500; color: var(--muted); margin-top: 4px; }
+@media (max-width: 560px) { .welcome { gap: 16px; } .ring { width: 80px; height: 80px; } .ring-n { font-size: 1.3rem; } }
+@media (prefers-reduced-motion: reduce) { .ring-fill { transition: none; } }
+
+/* 5. group icons */
+.gh h3 { display: flex; align-items: center; gap: 10px; }
+.gicon { flex: none; color: var(--purple); }
+.gh p { padding-left: 32px; }
+
+/* 6. a calm finish */
+.finish { display: flex; align-items: center; gap: 24px; border-left: 0; background: var(--surface); }
+.finish-art { width: 150px; flex: none; color: var(--purple); }
+.finish-art .spark { fill: var(--done); stroke: none; }
+.finish h2 { font-size: 1.45rem; margin-bottom: 6px; }
+@media (max-width: 560px) { .finish { flex-direction: column; align-items: flex-start; } .finish-art { width: 110px; } }
+.gh { border-bottom: 1px solid var(--line); }

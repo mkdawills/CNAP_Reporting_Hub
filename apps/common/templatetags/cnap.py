@@ -131,3 +131,27 @@ def cut_end_period(text):
     """Drop one trailing period so a quoted item doesn't end in .”."""
     text = str(text or "")
     return text[:-1] if text.endswith(".") else text
+
+
+_ICONS = {
+    # simple 24px line icons, drawn for this site (MW 2026-10-28: one per My tasks group)
+    "cores": '<path d="M9 3.5l3.2 1.6-3.6 7.2-3.2-1.6z"/><path d="M10.6 4.3l1-2"/><path d="M8.2 12.4l-.8 1.6"/><path d="M5 20h13"/><path d="M14.5 20a6.5 6.5 0 0 0 1.4-10.3"/><path d="M6 16.5h6.5"/>',
+    "grant": '<path d="M12 21v-9"/><path d="M12 12c0-4 3-6 7-6 0 4-3 6-7 6z"/><path d="M12 15c0-3-2.5-5-6-5 0 3 2.5 5 6 5z"/>',
+    "mycore": '<path d="M4 9l8-5 8 5"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8"/><path d="M4 20h16"/>',
+    "mentoring": '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.3"/><path d="M3.5 19c.5-3.5 3-5 5.5-5s5 1.5 5.5 5"/><path d="M14.5 15.5c.8-.6 1.7-.9 2.5-.9 2 0 3.6 1.3 4 4"/>',
+    "admin": '<rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5h6v2.5H9z"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4"/>',
+    "other": '<rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><circle cx="12" cy="14.5" r="1.4"/>',
+    "hub": '<path d="M5 5h14a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 19 16h-8l-4.5 3.5V16H5a1.5 1.5 0 0 1-1.5-1.5v-8A1.5 1.5 0 0 1 5 5z"/><path d="M8 9.5h8M8 12.5h5"/>',
+    "nih": '<path d="M6.5 3.5h8l4 4v13h-12z"/><path d="M14.5 3.5v4h4"/><path d="M9 12h6M9 15h6M9 18h4"/>',
+    "outcomes": '<path d="M5 4.5h10a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M5 16.5a3 3 0 0 1 3-3h10"/>',
+}
+
+
+@register.simple_tag
+def group_icon(code):
+    """An inline line icon for a My tasks group (decorative: hidden from screen readers)."""
+    body = _ICONS.get(code, _ICONS["other"])
+    return mark_safe(
+        '<svg class="gicon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" '
+        f'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{body}</svg>'
+    )

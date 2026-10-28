@@ -6,12 +6,18 @@
   {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for the spring progress report.</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 {% else %}
 {% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong> {{ "You can read every form now with Preview. Answering opens that day; nothing you do here before then is saved."|stack }}</div>{% endif %}
-<div class="head"><div>
-  <h1>My tasks</h1>
-  <p class="taskline" style="max-width:none">{% if not todo %}All {{ total }} done.{% elif done_n %}<strong>{{ done_n }} of {{ total }} done.</strong>{% if minutes_left %} About {{ minutes_left }} min left.{% endif %}{% else %}<strong>{{ total }} to do.</strong>{% if minutes_left %} About {{ minutes_left }} min in all.{% endif %}{% endif %} {{ due }}.</p>
-  <div class="taskprog"><div class="bar" role="progressbar" aria-label="Tasks done" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ done_n }}" aria-valuetext="{{ done_n }} of {{ total }} done"><span style="width:{{ pct }}%"></span></div></div>
-  {% for d in is_core_director %}<p class="small muted">{{ "You direct the "|add:d.core.name|add:", so you don’t receive its user survey. You still receive the other core surveys."|stack }}</p>{% endfor %}
-</div></div>
+<header class="welcome">
+  <div class="ring" role="img" aria-label="{{ done_n }} of {{ total }} done">
+    <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-track" cx="60" cy="60" r="52"/><circle class="ring-fill" cx="60" cy="60" r="52" pathLength="100" stroke-dasharray="{{ pct }} 100"/></svg>
+    <span class="ring-n">{{ done_n }}<small>of {{ total }}</small></span>
+  </div>
+  <div class="welcome-text">
+    <h1>{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
+    <p class="taskline">{% if not todo %}All {{ total }} done for {{ period.short_label }}.{% elif done_n %}{{ todo }} to go, about {{ minutes_left }} min.{% else %}{{ total }} to do this period, about {{ minutes_left }} min in all.{% endif %}</p>
+    <p class="small muted">{{ due }}.</p>
+    {% for d in is_core_director %}<p class="small muted">{{ "You direct the "|add:d.core.name|add:", so you don’t receive its user survey. You still receive the other core surveys."|stack }}</p>{% endfor %}
+  </div>
+</header>
 
 {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for the spring progress report.</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 
@@ -23,7 +29,16 @@
 </div>{% endif %}
 
 {% if not todo %}
-<div class="panel finish"><h2>You’re all set for {{ period.short_label }}.</h2><p>{{ "Thank you for your time. We’ll e-mail you when the next reporting period opens."|stack }}</p></div>
+<div class="panel finish">
+  <svg class="finish-art" viewBox="0 0 160 120" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="58" cy="60" r="13"/>
+    <path d="M47 52 30 38M30 38 18 40M30 38 27 24M46 66 28 80M28 80 16 78M28 80 30 95M58 47 56 26M56 26 46 16M56 26 66 15"/>
+    <path d="M71 60h34c8 0 10 6 16 6"/>
+    <path d="M121 66l10-9M121 66l12 4M121 66l6 12"/>
+    <circle cx="134" cy="55" r="3.5" class="spark"/><circle cx="137" cy="71" r="3.5" class="spark"/><circle cx="129" cy="81" r="3.5" class="spark"/>
+  </svg>
+  <div><h2>You’re all set for {{ period.short_label }}.</h2><p>{{ "Thank you for your time. Everything you sent feeds the Center’s report to NIH. We’ll e-mail you when the next reporting period opens."|stack }}</p></div>
+</div>
 {% else %}
 <p class="privacy">Other respondents never see your answers.</p>
 <div class="panel">
@@ -31,14 +46,14 @@
   <div class="scroll"><table class="tasks"><tbody>
   {% for g in groups %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
-    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div>{% if g.count > 1 %}<span class="ghcount">{{ g.count }} to do</span>{% endif %}</div></td></tr>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon g.code %}{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div>{% if g.count > 1 %}<span class="ghcount">{{ g.count }} to do</span>{% endif %}</div></td></tr>
     {% for r in g.used %}{% include "portal/_task_row.html" %}{% endfor %}
     {% if g.used and g.rows %}<tr class="subhead"><td colspan="5">{% if g.rows|length == 1 %}Did you also use this core?{% else %}Did you also use these cores?{% endif %}</td></tr>{% endif %}
     {% for r in g.rows %}{% include "portal/_task_row.html" %}{% endfor %}
   {% endfor %}
   {% if outcome and not outcome.done %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
-    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>Publications and grants</h3><p>{{ "Keep your papers and grant proposals up to date."|stack }}</p></div></div></td></tr>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon 'outcomes' %}Publications and grants</h3><p>{{ "Keep your papers and grant proposals up to date."|stack }}</p></div></div></td></tr>
     {% for i in outcome.items %}{% if not i.done %}<tr class="openrow"><td><strong>{% if i.self %}Update your publications and grants{% else %}Update publications and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">{{ i.todo }} thing{{ i.todo|pluralize }} to look at</div></td>
       <td class="acts">{% if period.in_preview %}<span class="small muted">Opens with the period</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins"><span>About {{ outcome.minutes }} min</span></td></tr>{% endif %}{% endfor %}
   {% endif %}

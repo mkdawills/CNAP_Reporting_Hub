@@ -66,6 +66,12 @@ def tasks(request):
     from apps.outcomes import cpcheck
 
     ctx["cp_check"] = cpcheck.pending_for(person)
+    from django.utils import timezone as _tz
+
+    hour = _tz.localtime().hour
+    ctx["greeting"] = (
+        "Good morning" if hour < 12 else "Good afternoon" if hour < 17 else "Good evening"
+    )
     ctx.update(_extras())
     ctx["done_count"] = len(ctx["done"]) + (1 if oc and oc["done"] else 0)
     if oc:  # the publications-and-grants check-in counts as one task
