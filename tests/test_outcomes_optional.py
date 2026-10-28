@@ -202,3 +202,28 @@ def test_entry_closed_for_a_week_after_a_period_closes(client, center):
     open_p.save()
     assert entry_window()[0] is True
     assert client.get("/outcomes/new/pub/").status_code == 200
+
+
+def test_talks_are_entered_after_they_happen(db):
+    """MW 2026-10-28: a talk is added once given, not before."""
+    import datetime as dt
+
+    from django.utils import timezone
+
+    from apps.portal.outcome_forms import PresentationForm
+
+    tomorrow = timezone.localdate() + dt.timedelta(days=1)
+    f = PresentationForm(
+        data={"presentation_type": "conference", "title": "T", "presented_on": tomorrow.isoformat()}
+    )
+    f.is_valid()
+    assert "hasn’t happened yet" in " ".join(f.errors.get("presented_on", []))
+    f = PresentationForm(
+        data={
+            "presentation_type": "conference",
+            "title": "T",
+            "presented_on": timezone.localdate().isoformat(),
+        }
+    )
+    f.is_valid()
+    assert "presented_on" not in f.errors

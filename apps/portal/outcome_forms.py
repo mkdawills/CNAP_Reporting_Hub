@@ -326,7 +326,11 @@ class PresentationForm(_Resources):
     title = forms.CharField(label="Title", max_length=500)
     event = forms.CharField(label="Event or meeting", max_length=300, required=False)
     location = forms.CharField(label="Location", max_length=300, required=False)
-    presented_on = forms.DateField(label="Date presented", widget=DATE)
+    presented_on = forms.DateField(
+        label="Date presented",
+        widget=DATE,
+        help_text="Add a talk or poster after you’ve given it.",
+    )
     author_display_text = forms.CharField(
         label="Presenters and authors (as listed)",
         widget=forms.Textarea(attrs={"rows": 2}),
@@ -342,6 +346,17 @@ class PresentationForm(_Resources):
         "author_display_text",
         "cnap_cited",
     ]
+
+    def clean_presented_on(self):
+        """Talks are entered once given (MW 2026-10-28): counts stay real, and the acknowledgment is known."""
+        from django.utils import timezone
+
+        d = self.cleaned_data["presented_on"]
+        if d and d > timezone.localdate():
+            raise forms.ValidationError(
+                "That date hasn’t happened yet. Please add this talk or poster after you’ve given it."
+            )
+        return d
 
 
 PUB_FORMS = {

@@ -26,6 +26,7 @@
   <div class="sechead"><h2 class="sectionhead">Presentations</h2>{% if window.0 %}<a class="btn small ghost" href="{% url 'portal:presentation_new' %}?for={{ owner.pk }}">Add a presentation</a>{% endif %}</div>
   {% for t in presentations %}<div class="orow"><div class="orow-main"><div><strong>{{ t.title }}</strong></div><div class="small muted">{{ t.get_presentation_type_display }}{% if t.event %} · {{ t.event }}{% endif %}{% if t.presented_on %} · {{ t.presented_on|date:"M j, Y" }}{% endif %}</div></div><span class="ostatus">{% if t.cnap_cited %}Acknowledges CNAP{% elif t.cnap_cited is False %}No CNAP acknowledgment{% else %}—{% endif %}</span><div class="orow-acts">{% if window.0 %}<a class="linkbtn small" href="{% url 'portal:presentation_edit' t.pk %}?for={{ owner.pk }}">Edit</a>{% endif %}</div></div>
   {% empty %}<p class="small muted">No presentations recorded.</p>{% endfor %}
+  <p class="small muted">Add a talk or poster after you’ve given it.</p>
 </div>
 
 <div class="panel">
