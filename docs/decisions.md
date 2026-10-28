@@ -413,3 +413,6 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 
 ## 2026-10-28 · Center results: Products tab
 - Respondents get a Products tab under Center results: papers published, talks and posters, and proposals awarded, by budget year, with a year picker. Submitted proposals are a count only; pending and unfunded proposals stay private. Linked from the My tasks band ("See the full list"). A line now separates this year's numbers from the year-by-year button.
+
+## 2026-10-28 · PL Guidelines retired
+- The CNAP Phase 2 PL Guidelines are removed from Helpful documents as outdated (MW). add_default_documents now hides it if present.

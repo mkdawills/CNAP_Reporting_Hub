@@ -60,10 +60,10 @@ def test_evaluator_adds_a_document_everyone_sees(client, center):
 def test_default_documents(client, center):
     call_command("add_default_documents", verbosity=0)
     call_command("add_default_documents", verbosity=0)  # twice: no duplicates
-    assert HelpfulDocument.objects.filter(is_active=True).count() == 3
+    assert HelpfulDocument.objects.filter(is_active=True).count() == 2
     client.force_login(User.objects.get(username="okafor"))
     html = client.get("/tasks/").content.decode()
-    assert "CNAP Phase 2 PL Guidelines" in html and "https://www.k-state.edu/cnap/" in html
+    assert "PL Guidelines" not in html and "Adobe" in html and "https://www.k-state.edu/cnap/" in html
 
 
 def test_welcome_ring_and_group_icons(client, center):

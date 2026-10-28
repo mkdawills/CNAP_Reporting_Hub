@@ -13,12 +13,6 @@ from apps.reporting.models import File, HelpfulDocument
 DIR = Path(settings.BASE_DIR) / "fixtures" / "documents"
 DEFAULTS = [
     (
-        "CNAP Phase 2 PL Guidelines",
-        "For project leaders: milestones, reporting, grant submission and graduation",
-        "CNAP_Phase_2_PL_Guidelines.pdf",
-        "",
-    ),
-    (
         "How to sign with an Adobe digital signature",
         "Step-by-step, for the MFTRP certification",
         "Adobe_Digital_Signature_Guide.pdf",
@@ -29,9 +23,13 @@ DEFAULTS = [
 
 
 class Command(BaseCommand):
-    help = "Add the CNAP PL Guidelines, the Adobe signing guide and the CNAP website to Helpful documents."
+    help = "Add the Adobe signing guide and the CNAP website to Helpful documents."
 
     def handle(self, *args, **kw):
+        # The Phase 2 PL Guidelines were retired as outdated (MW 2026-10-28)
+        n = HelpfulDocument.objects.filter(title="CNAP Phase 2 PL Guidelines", is_active=True).update(is_active=False)
+        if n:
+            self.stdout.write("CNAP Phase 2 PL Guidelines: removed (outdated)")
         owner = (
             User.objects.filter(is_superuser=True).first() or User.objects.order_by("pk").first()
         )
