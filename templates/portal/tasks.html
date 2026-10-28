@@ -57,7 +57,7 @@
   <p class="made-h">What CNAP produced this year <span class="small muted">(Year {{ made.gy }}, since June 1, {{ made.start.year }})</span></p>
   <div class="made-row">
     <div><span class="made-n">{{ made.papers }}</span><span class="made-l">paper{{ made.papers|pluralize }} published</span></div>
-    <div><span class="made-n">{{ made.talks }}</span><span class="made-l">talk{{ made.talks|pluralize }} and posters</span></div>
+    <div><span class="made-n">{{ made.talks }}</span><span class="made-l">{% if made.talks == 1 %}talk or poster{% else %}talks and posters{% endif %}</span></div>
     <div><span class="made-n">{{ made.proposals }}</span><span class="made-l">grant proposal{{ made.proposals|pluralize }}</span></div>
     <div><span class="made-n">{{ made.awards }}</span><span class="made-l">award{{ made.awards|pluralize }}</span></div>
   </div>
