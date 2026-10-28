@@ -76,7 +76,7 @@
   <ul class="made-row">
     <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg><span class="made-n" data-n="{{ made.papers }}">{{ made.papers }}</span><span class="made-l">paper{{ made.papers|pluralize }} published</span></li>
     <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg><span class="made-n" data-n="{{ made.talks }}">{{ made.talks }}</span><span class="made-l">{% if made.talks == 1 %}talk or poster{% else %}talks and posters{% endif %}</span></li>
-    <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3M4 20h16"/></svg><span class="made-n" data-n="{{ made.proposals }}">{{ made.proposals }}</span><span class="made-l">grant proposal{{ made.proposals|pluralize }}</span></li>
+    <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3M4 20h16"/></svg><span class="made-n" data-n="{{ made.proposals }}">{{ made.proposals }}</span><span class="made-l">proposal{{ made.proposals|pluralize }} submitted</span></li>
     <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/></svg><span class="made-n" data-n="{{ made.awards }}">{{ made.awards }}</span><span class="made-l">award{{ made.awards|pluralize }}</span></li>
   </ul>
   <p class="made-foot">{{ "These come from what people enter under Publications, talks and grants, so yours count too."|stack }}</p>
