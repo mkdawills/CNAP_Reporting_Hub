@@ -9,7 +9,8 @@ from apps.common.enums import (
     PrimeOrSubaward,
     PublicationType,
 )
-from apps.people.models import Project, Resource
+from apps.people.fields import ProjectChoiceField
+from apps.people.models import Resource
 
 YN = [("yes", "Yes"), ("no", "No")]
 MONTH = forms.DateInput(attrs={"type": "month"}, format="%Y-%m")
@@ -53,9 +54,7 @@ class _Resources(forms.Form):
         label="Center resources utilized",
     )
     resources_other_text = forms.CharField(required=False, label="If Other, what?", max_length=300)
-    projects = forms.ModelMultipleChoiceField(
-        queryset=Project.objects.filter(archived_at__isnull=True, is_active=True).order_by("title"),
-        widget=forms.CheckboxSelectMultiple,
+    projects = ProjectChoiceField(
         required=False,
         label="Which CNAP projects? (choose any that apply)",
     )

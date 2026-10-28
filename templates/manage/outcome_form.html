@@ -9,7 +9,7 @@
   {% endif %}{% endfor %}
   <h2 class="sectionhead" style="margin-top:28px">Credit</h2>
   {% for field in credit %}
-    <fieldset class="field checks"><legend>{{ field.label }}</legend>{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}<div class="checkgrid">{% for c in field %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div></fieldset>
+    <fieldset class="field checks"><legend>{{ field.label }}</legend>{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}<div class="checkgrid{% if field.name == 'projects' %} onecol{% endif %}">{% for c in field %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div></fieldset>
   {% endfor %}
   <div class="actions"><button class="btn" type="submit">Save</button><a href="{% url 'manage:outcomes' %}{% if kind == 'grant' %}?tab=grants{% endif %}">Cancel</a></div>
 </form>

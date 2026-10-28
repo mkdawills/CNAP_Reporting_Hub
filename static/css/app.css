@@ -752,3 +752,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 /* download links under a section (MFTRP form, MW 2026-10-27) */
 .secdl { list-style: none; padding: 0; margin: 4px 0 18px; display: flex; flex-direction: column; gap: 6px; }
 .secdl a { font-weight: 600; }
+
+/* projects: one per line with PI and years (MW 2026-10-28) */
+.checkgrid.onecol { grid-template-columns: 1fr; max-height: none; }

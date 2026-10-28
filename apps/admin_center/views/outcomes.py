@@ -36,6 +36,7 @@ from apps.outcomes.models import (
     PublicationResource,
     PublicationStatusHistory,
 )
+from apps.people.fields import ProjectChoiceField
 from apps.people.models import Person, Project, Resource
 
 from ..decorators import admin_view, manage_action, manage_page
@@ -251,10 +252,11 @@ class _Credit(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         label="CNAP people on it",
     )
-    projects = forms.ModelMultipleChoiceField(
-        queryset=Project.objects.filter(archived_at__isnull=True).order_by("title"),
+    projects = ProjectChoiceField(
+        queryset=Project.objects.filter(archived_at__isnull=True)
+        .prefetch_related("relationships__person", "relationships__relationship_type")
+        .order_by("title"),
         required=False,
-        widget=forms.CheckboxSelectMultiple,
         label="Credit to projects",
         help_text="Choose every project that supported it.",
     )
