@@ -71,3 +71,26 @@ def test_welcome_ring_and_group_icons(client, center):
     html = client.get("/tasks/").content.decode()
     assert "Amara." in html and ('class="ring"' in html) and 'class="gicon"' in html
     assert any(g in html for g in ("Good morning", "Good afternoon", "Good evening"))
+
+
+def test_answers_save_as_you_go(client, center):
+    from apps.reporting.models import Assignment, ReportingPeriod
+    from apps.reporting.services import assignments as asg
+    from apps.reporting.services import responses as rs
+
+    asg.generate(ReportingPeriod.objects.get(status="open"))
+    u = User.objects.get(username="okafor")
+    a = Assignment.objects.filter(person=u.person, form_definition__code="ts_admin_core").first()
+    client.force_login(u)
+    page = client.get(f"/tasks/{a.pk}/").content.decode()
+    assert f"/tasks/{a.pk}/autosave/" in page and "unless it says optional" in page
+    r = client.post(f"/tasks/{a.pk}/autosave/", {"q-item_01": "agree"})
+    assert r.status_code == 200 and r.json()["ok"]
+    from apps.forms_engine.runtime import FormSchema
+
+    assert (
+        rs.answers_of(rs.current_response(a), FormSchema(a.form_version))[0]["item_01"] == "agree"
+    )
+    other = User.objects.get(username="reyes")
+    client.force_login(other)
+    assert client.post(f"/tasks/{a.pk}/autosave/", {"q-item_01": "agree"}).status_code == 403

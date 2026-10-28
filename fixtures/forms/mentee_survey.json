@@ -5,7 +5,7 @@
   "context_kind": "project",
   "confidentiality": "mentoring",
   "sort_order": 9,
-  "intro_text": "Think about the mentoring relationship you have with your mentor. Please indicate your level of agreement/disagreement with the following statements about the CNAP Center mentoring program. For those of you with more than one mentor, please consider these multiple mentors when responding to the statements rather than just focusing on a single mentor.",
+  "intro_text": "Think about your mentoring through CNAP, and how much you agree with each statement. If you have more than one mentor, keep them all in mind.",
   "display": {
     "task_group": "grant",
     "short_name": "Mentee Survey",
@@ -211,6 +211,6 @@
       "per_context": true
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md section 7 (verified text). Name shortened from 'Pilot and Primary Mentee Survey' (MW, 2026-10-24).",
+  "_source": "CNAP_Forms_Reconstructed.md section 7 (verified text). Name shortened from 'Pilot and Primary Mentee Survey' (MW, 2026-10-24). Intro shortened 2026-10-28 (MW approved); original: \"Think about the mentoring relationship you have with your mentor. Please indicate your level of agreement/disagreement with the following statements about the CNAP Center mentoring program. For those of you with more than one mentor, please consider these multiple mentors when responding to the statements rather than just focusing on a single mentor.\"",
   "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

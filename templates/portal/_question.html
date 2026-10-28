@@ -1,28 +1,28 @@
 {% load cnap %}<div class="q{% if v.error %} has-error{% endif %}" id="q-{{ v.code }}">
 {% if v.type == 'likert' or v.type == 'yes_no' %}
   <fieldset class="scale{% if v.type == 'yes_no' %} yn{% endif %}">
-    <legend class="qt">{{ v.q.prompt }}{% if v.required %} <span class="req" aria-label="required">*</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</legend>
+    <legend class="qt">{{ v.q.prompt }}{% if not v.required and not v.conditional %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</legend>
     <div class="scale-pts" style="--n:{{ v.pts|length }}">
       {% for o in v.pts %}<label><input type="radio" name="{{ prefix|default:'q-' }}{{ v.code }}" value="{{ o.code }}" {% if v.value == o.code %}checked{% endif %} {% if not editable %}disabled{% endif %}>{% if o.num %}<span class="num">{{ o.num }}</span>{% endif %}<span>{{ o.text }}</span></label>{% endfor %}
     </div>
     {% if v.na %}<div class="scale-na">{% for o in v.na %}<label><input type="radio" name="{{ prefix|default:'q-' }}{{ v.code }}" value="{{ o.code }}" {% if v.value == o.code %}checked{% endif %} {% if not editable %}disabled{% endif %}><span>{{ o.text }}</span></label>{% endfor %}</div>{% endif %}
   </fieldset>
 {% elif v.type == 'single_select' %}
-  <fieldset class="scale" style="display:block"><legend class="qt">{{ v.q.prompt }}{% if v.required %} <span class="req">*</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</legend>
+  <fieldset class="scale" style="display:block"><legend class="qt">{{ v.q.prompt }}{% if not v.required and not v.conditional %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</legend>
     <div class="opts">{% for o in v.options %}<label><input type="radio" name="q-{{ v.code }}" value="{{ o.code }}" {% if v.value == o.code %}checked{% endif %} {% if not editable %}disabled{% endif %}>{{ o.label }}</label>{% endfor %}</div>
   </fieldset>
 {% elif v.type == 'file' %}
-  <div class="qt">{{ v.q.prompt }}{% if v.required %} <span class="req">*</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</div>
+  <div class="qt">{{ v.q.prompt }}{% if not v.required and not v.conditional %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</div>
   {% if v.file %}<p class="filename">Uploaded: <a href="{% url 'portal:download' v.file.pk %}">{{ v.file.original_filename }}</a></p>{% if v.check %}<p class="error small" role="alert">{{ v.check }}</p>{% endif %}{% endif %}
   {% if editable %}<div class="fileup mt"><input type="file" name="file-{{ v.code }}" accept="{{ v.accept }}" aria-label="{{ v.q.prompt }}">{% if v.file %}<label class="small" style="display:inline-flex;gap:6px"><input type="checkbox" name="remove-{{ v.code }}" value="1"> Remove this file</label>{% endif %}</div>{% endif %}
 {% elif v.type == 'long_text' %}
-  {% if not v.narrative %}<label class="qt" for="f-{{ v.code }}">{{ v.q.prompt }}{% if v.required %} <span class="req">*</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</label>{% endif %}
+  {% if not v.narrative %}<label class="qt" for="f-{{ v.code }}">{{ v.q.prompt }}{% if not v.required and not v.conditional %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</label>{% endif %}
   <textarea id="f-{{ v.code }}" name="q-{{ v.code }}" {% if v.narrative %}aria-label="{{ v.q.prompt }}" rows="8"{% endif %} {% if not editable %}readonly{% endif %}>{{ v.value }}</textarea>
 {% elif v.type == 'date' %}
-  <label class="qt" for="f-{{ v.code }}">{{ v.q.prompt }}{% if v.required %} <span class="req">*</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</label>
+  <label class="qt" for="f-{{ v.code }}">{{ v.q.prompt }}{% if not v.required and not v.conditional %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</label>
   <input type="date" id="f-{{ v.code }}" name="q-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}>
 {% else %}
-  <label class="qt" for="f-{{ v.code }}">{{ v.q.prompt }}{% if v.required %} <span class="req">*</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</label>
+  <label class="qt" for="f-{{ v.code }}">{{ v.q.prompt }}{% if not v.required and not v.conditional %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</label>
   <input type="text" id="f-{{ v.code }}" name="q-{{ v.code }}" value="{{ v.value }}" style="width:100%" {% if not editable %}readonly{% endif %}>
 {% endif %}
 {% if v.q.help_text and not v.narrative %}<p class="small muted qnote">{{ v.q.help_text|stack }}</p>{% endif %}

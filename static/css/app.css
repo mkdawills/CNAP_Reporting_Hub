@@ -852,3 +852,57 @@ h1 { font-weight: 700; letter-spacing: -.015em; }
 .runner .head .chip { box-shadow: 0 0 0 1px rgba(255,255,255,.35); }
 /* the read-only note sits centered under it */
 .runner .readonly { text-align: center; padding: 14px 18px; border-radius: 12px; }
+
+/* Forms, 2026-10-28 (MW, all six): optional marked instead of required; a strip that follows; one-row scales */
+.opt { font-weight: 400; font-size: .82em; color: var(--muted); }
+.reqnote { margin: -4px 0 18px; }
+.savestate { align-self: center; margin-left: 6px; }
+.formprog { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 14px; margin: 0 0 8px;
+  padding: 9px 16px; border-radius: 0 0 12px 12px; background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: var(--lift); font-size: .86rem; color: var(--ink); backdrop-filter: blur(6px); }
+.formprog[hidden] { display: none; }
+.formprog-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--purple-wash); overflow: hidden; max-width: 320px; }
+.formprog-bar span { display: block; height: 100%; background: var(--purple); border-radius: 3px; transition: width .3s ease; }
+@media (prefers-reduced-motion: reduce) { .formprog-bar span { transition: none; } }
+
+/* rating scales in one row of rounded choices (stacked on narrow screens) */
+.runner .q .scale-pts { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 8px; max-width: 640px;
+  border: 0; border-radius: 0; background: none; overflow: visible; }
+.runner .q .scale-pts label { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; min-height: 64px; padding: 8px 6px; text-align: center; border: 1px solid var(--line) !important; border-radius: 12px;
+  background: var(--surface); cursor: pointer; font-size: .82rem; line-height: 1.2; transition: background .15s, border-color .15s; }
+.runner .q .scale-pts label + label { border-top: 1px solid var(--line) !important; }
+.runner .q .scale-pts label .num { font-family: var(--display); font-size: 1.15rem; font-weight: 700; color: var(--purple-ink); }
+.runner .q .scale-pts input { position: absolute; opacity: 0; pointer-events: none; }
+.runner .q .scale-pts label:hover { border-color: var(--purple) !important; }
+.runner .q .scale-pts label:has(input:checked) { background: var(--purple); border-color: var(--purple) !important; color: #fff; }
+.runner .q .scale-pts label:has(input:checked) .num { color: #fff; }
+.runner .q .scale-pts label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.runner .q .scale-pts label:has(input:disabled) { cursor: default; }
+.runner .q .scale.yn .scale-pts { max-width: 280px; }
+.runner .q .scale-na { border-left: 0; padding-left: 0; margin-top: 8px; }
+@media (max-width: 640px) {
+  .runner .q .scale-pts { grid-template-columns: 1fr; }
+  .runner .q .scale-pts label { flex-direction: row; justify-content: flex-start; min-height: 0; gap: 10px; text-align: left; padding: 10px 14px; }
+}
+.nu-thanks { font-family: var(--display); font-size: 1.3rem; font-weight: 700; margin: 0 0 4px; color: var(--ink); }
+.nextup { border-left: 0; }
+.runner .instructions:not(.secintro) { font-size: 1.02rem; color: var(--ink); max-width: 62ch; line-height: 1.6; }
+
+/* One quiet moment when a form opens (MW 2026-10-28): a light line traces the title once,
+   and the directions appear line by line. Nothing moves while people read; off for reduced motion. */
+.runner .head { position: relative; }
+.runner .head .trace { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.runner .head .trace rect { width: calc(100% - 3px); height: calc(100% - 3px); fill: none; stroke: rgba(255,255,255,.55);
+  stroke-width: 1.5; stroke-dasharray: 100 100; stroke-dashoffset: 100; animation: trace 2.2s .2s ease-out forwards; }
+@keyframes trace { 70% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: .25; } }
+.reveal .rl { display: block; opacity: 0; transform: translateY(4px); animation: rl .5s ease-out forwards; animation-delay: calc(.35s + var(--i) * .22s); }
+@keyframes rl { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .runner .head .trace { display: none; }
+  .reveal .rl { opacity: 1; transform: none; animation: none; }
+}
+.runner .head > * + * { border-left: 0; padding-left: 0; }
+a.who { display: block; color: var(--side-ink); text-decoration: none; border-radius: 0 8px 8px 0; padding: 6px 10px; margin-left: -1px; }
+a.who:hover { background: color-mix(in srgb, var(--purple) 8%, transparent); }
+a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem; color: var(--purple); margin-top: 4px; }

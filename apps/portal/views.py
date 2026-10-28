@@ -159,6 +159,25 @@ def mftrp_form(request, pk):
 
 
 @login_required
+@require_POST
+def autosave(request, pk):
+    """Save answers as they're typed (MW 2026-10-28). Files are saved only with Save draft or Submit."""
+    from django.http import JsonResponse
+    from django.utils import timezone as _tz
+
+    a = _own_assignment(request, pk)
+    if not rs.is_editable(a, request.user) or a.reporting_period.in_preview:
+        return JsonResponse({"ok": False, "reason": "locked"}, status=409)
+    try:
+        problems = rs.save_draft(a, request.user, request.POST, None)
+    except rs.LockedError:
+        return JsonResponse({"ok": False, "reason": "locked"}, status=409)
+    return JsonResponse(
+        {"ok": True, "problems": problems, "at": _tz.localtime().strftime("%-I:%M %p")}
+    )
+
+
+@login_required
 def form(request, pk):
     a = _own_assignment(request, pk)
     gate = presenters.confidential_gate(request, a)

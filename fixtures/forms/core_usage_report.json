@@ -5,7 +5,7 @@
   "context_kind": "core",
   "confidentiality": "standard",
   "sort_order": 15,
-  "intro_text": "List each project that used your core during this reporting period. Use one row per project. A lab may be listed more than once if different projects were supported. The Center combines these lists into its yearly NIH progress report.",
+  "intro_text": "List each project that used your core this period, one row per project. A lab can appear more than once if it had different projects. These lists go into the Center’s yearly report to NIH.",
   "display": {
     "task_group": "mycore",
     "short_name": "Core usage report",
@@ -23,7 +23,7 @@
       "per_context": true
     }
   ],
-  "_source": "RPPR Table 2 'COBRE Core Users', FY27 COBRE Reporting Guidance p.10 (MW, 2026-10-26, item 7a). One table per core except the Admin Core.",
+  "_source": "RPPR Table 2 'COBRE Core Users', FY27 COBRE Reporting Guidance p.10 (MW, 2026-10-26, item 7a). One table per core except the Admin Core. Intro shortened 2026-10-28 (MW approved); original: \"List each project that used your core during this reporting period. Use one row per project. A lab may be listed more than once if different projects were supported. The Center combines these lists into its yearly NIH progress report.\"",
   "sections": [
     {
       "code": "users",

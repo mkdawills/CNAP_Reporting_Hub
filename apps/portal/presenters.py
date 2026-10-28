@@ -356,6 +356,12 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
             (hide_targets if r.action == "hide" else show_targets).setdefault(
                 r.target_section.code, True
             )
+    conditional = {
+        r.target_question_id for r in schema.rules if r.action == "require" and r.target_question_id
+    }
+    for sv in sections:
+        for v in sv["questions"]:
+            v["conditional"] = v["q"].pk in conditional
     missing_list = [{"code": q.code, "prompt": q.prompt or "Response"} for q in missing]
     return {
         "missing_list": missing_list,
@@ -383,6 +389,7 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
         "context_line": _context_line(a)
         or (a.core.name if a.core_id and fd.code == "progress_core" else ""),
         "time_label": schema.time_label(),
+        "minutes": schema.minutes(),
         "max_upload_mb": 20,
         "debug": settings.DEBUG,
     }

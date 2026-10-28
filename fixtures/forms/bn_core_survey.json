@@ -6,7 +6,7 @@
   "about_core": "BN",
   "confidentiality": "standard",
   "sort_order": 1,
-  "intro_text": "Please rate on a 1 to 5 scale the quality of the following services and functions. Select N/A for any you did not use. Then, indicate the frequency you've used each service or function.",
+  "intro_text": "Rate each service you used, from 1 to 5. Choose N/A for anything you didn’t use. Then tell us how often you used each one.",
   "display": {
     "task_group": "cores",
     "short_name": "BN Core",
@@ -364,6 +364,6 @@
       "excluded": "core_director"
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md sections 1-3; opt-out follow-ups are MW's wording (2026-10-22).",
+  "_source": "CNAP_Forms_Reconstructed.md sections 1-3; opt-out follow-ups are MW's wording (2026-10-22). Intro shortened 2026-10-28 (MW approved); original: \"Please rate on a 1 to 5 scale the quality of the following services and functions. Select N/A for any you did not use. Then, indicate the frequency you've used each service or function.\"",
   "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

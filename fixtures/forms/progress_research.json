@@ -5,7 +5,7 @@
   "context_kind": "project",
   "confidentiality": "standard",
   "sort_order": 13,
-  "intro_text": "Provide a 2-3 page summary of your accomplishments toward achieving your aims, your plans for the next reporting period, and any actual or anticipated plans for changes. You can use the file upload below to upload a MS Word document. Please use the following file naming convention: Last Name + Project Type + File Designation + Date (e.g., Cain_Accomplishments_3-20-20, Bailey_ProjectGrantReviews_6-1-19, etc.). Your document should contain the following:",
+  "intro_text": "Upload a 2–3 page Word document covering your accomplishments, your plans for the next period, and any changes. Name it Last name + Project type + Designation + Date, for example Cain_Accomplishments_3-20-20. Include the following:",
   "display": {
     "task_group": "grant",
     "short_name": "Progress Report (RPL)",
@@ -287,5 +287,5 @@
       "per_context": true
     }
   ],
-  "_source": "Primary Project & Core Semi-Annual Progress Report (Piestar screenshot). Renamed (MW, 2026-10-24); Word only (MW, 2026-10-24). Two definitions share one form because one is per project and one per core. Research team list and optional tables upload added (MW 2026-10-27). Quick RPPR yes/no questions (B.1.a, C.3, C.4, C.5.a, C.5.c, F.3, G.9) added (MW 2026-10-27). Project status (start date; ONGOING or ENDED AS OF) per FY27 COBRE guidance (and FY24), added 2026-10-27."
+  "_source": "Primary Project & Core Semi-Annual Progress Report (Piestar screenshot). Renamed (MW, 2026-10-24); Word only (MW, 2026-10-24). Two definitions share one form because one is per project and one per core. Research team list and optional tables upload added (MW 2026-10-27). Quick RPPR yes/no questions (B.1.a, C.3, C.4, C.5.a, C.5.c, F.3, G.9) added (MW 2026-10-27). Project status (start date; ONGOING or ENDED AS OF) per FY27 COBRE guidance (and FY24), added 2026-10-27. Intro shortened 2026-10-28 (MW approved); original: \"Provide a 2-3 page summary of your accomplishments toward achieving your aims, your plans for the next reporting period, and any actual or anticipated plans for changes. You can use the file upload below to upload a MS Word document. Please use the following file naming convention: Last Name + Project Type + File Designation + Date (e.g., Cain_Accomplishments_3-20-20, Bailey_ProjectGrantReviews_6-1-19, etc.). Your document should contain the following:\""
 }

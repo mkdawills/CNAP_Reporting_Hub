@@ -23,7 +23,8 @@
 
 {% if just_done %}
 <div class="panel nextup" role="status" data-confetti="{{ just_done.a.pk }}">
-  <p class="nu-done">{% if just_done.a.status == 'completed_opt_out' %}Recorded{% else %}Submitted{% endif %}: {{ just_done.name }}.</p>
+  <p class="nu-thanks">Thank you, {{ request.user.person.first_name|default:request.user.username }}. {% if just_done.a.status == 'completed_opt_out' %}Your opt-out is recorded{% else %}Your answers are in{% endif %}.</p>
+  <p class="nu-done">{{ just_done.name }}{% if not next_up %} · {% if todo %}{{ todo }} left on your list{% else %}that was your last one{% endif %}{% endif %}.</p>
   {% if next_up %}<p class="nu-next">Next: {{ next_up.name }}, {{ next_up.time|lower }}.</p>
   <div class="fieldrow"><a class="btn" href="{% url 'portal:form' next_up.a.pk %}">Start now</a><a class="btn ghost" href="{% url 'portal:tasks' %}">Back to my list</a></div>{% endif %}
 </div>{% endif %}

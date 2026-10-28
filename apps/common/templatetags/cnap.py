@@ -27,6 +27,20 @@ def stack(value):
 
 
 @register.filter(is_safe=True)
+def reveal(value):
+    """Like stack, but each sentence is its own line that fades in once, one after another (MW 2026-10-28)."""
+    if value is None:
+        return ""
+    text = str(conditional_escape(str(value)))
+    parts = _SPLIT.sub("\\1\x00", text).split("\x00")
+    return mark_safe(
+        "".join(
+            f'<span class="rl" style="--i:{i}">{p}</span>' for i, p in enumerate(parts) if p.strip()
+        )
+    )
+
+
+@register.filter(is_safe=True)
 def guidance(value):
     """
     Section instructions: blank lines separate paragraphs; lines starting with

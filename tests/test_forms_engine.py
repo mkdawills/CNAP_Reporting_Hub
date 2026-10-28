@@ -62,7 +62,8 @@ def test_source_wording_is_verbatim(instruments):
     assert ts.instructions.startswith("Please indicate your level of agreement")
     na = schema("ts_synergy").by_code["item_01"].answer_set.options.get(code="neither")
     assert na.label == "3 - Neither Disagree nor Agree"
-    assert "MS Word document" in schema("progress_research").version.intro_text
+    # intros shortened with MW's approval (2026-10-28); question wording stays verbatim
+    assert "Word document" in schema("progress_research").version.intro_text
     assert "PDF" not in schema("progress_pilot").version.intro_text
 
 

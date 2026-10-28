@@ -14,7 +14,7 @@
 <div class="app">
   <aside class="side">
     <a class="brand" href="{% url 'home' %}">CNAP<br>Reporting Hub<small>Kansas State University</small></a>
-    <div class="who">{{ user.person.first_name|default:user.username }} {{ user.person.last_name }}<span>{{ access_label }}</span></div>
+    {% if has_cnap_roles %}<a class="who" href="{% url 'portal:profile' %}" title="Your profile">{{ user.person.first_name|default:user.username }} {{ user.person.last_name }}<span>{{ access_label }}</span></a>{% else %}<div class="who">{{ user.person.first_name|default:user.username }} {{ user.person.last_name }}<span>{{ access_label }}</span></div>{% endif %}
     <nav aria-label="Main">
       {% if has_cnap_roles %}
         <div class="navhead">My work</div>

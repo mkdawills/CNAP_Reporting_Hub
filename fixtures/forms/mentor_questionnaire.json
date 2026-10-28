@@ -5,7 +5,7 @@
   "context_kind": "none",
   "confidentiality": "mentoring",
   "sort_order": 10,
-  "intro_text": "Think about the mentoring relationship you have with your mentee. Please indicate your level of agreement/disagreement with the following statements about the CNAP Center mentoring program. For those of you with more than one mentee, please consider these multiple mentees when responding to the statements rather than just focusing on a single mentee. As a reminder, this mentoring questionnaire is meant to evaluate the mentoring program more broadly, not necessarily specific individuals within the program.",
+  "intro_text": "Think about your mentoring through CNAP, and how much you agree with each statement. If you have more than one mentee, keep them all in mind. These questions evaluate the mentoring program, not any one person.",
   "display": {
     "task_group": "mentoring",
     "short_name": "Mentor Questionnaire",
@@ -209,6 +209,6 @@
       "relationship_type": "primary_mentor"
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md section 6. Assigned once per mentor per period (decisions.md 2026-10-22).",
+  "_source": "CNAP_Forms_Reconstructed.md section 6. Assigned once per mentor per period (decisions.md 2026-10-22). Intro shortened 2026-10-28 (MW approved); original: \"Think about the mentoring relationship you have with your mentee. Please indicate your level of agreement/disagreement with the following statements about the CNAP Center mentoring program. For those of you with more than one mentee, please consider these multiple mentees when responding to the statements rather than just focusing on a single mentee. As a reminder, this mentoring questionnaire is meant to evaluate the mentoring program more broadly, not necessarily specific individuals within the program.\"",
   "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }
