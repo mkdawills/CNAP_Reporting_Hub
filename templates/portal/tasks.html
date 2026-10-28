@@ -70,14 +70,29 @@
 {% endif %}
 
 <section class="made" aria-label="What CNAP produced this year">
-  <p class="made-h">What CNAP produced this year <span class="small muted">(Year {{ made.gy }}, since June 1, {{ made.start.year }})</span></p>
-  <div class="made-row">
-    <div><span class="made-n">{{ made.papers }}</span><span class="made-l">paper{{ made.papers|pluralize }} published</span></div>
-    <div><span class="made-n">{{ made.talks }}</span><span class="made-l">{% if made.talks == 1 %}talk or poster{% else %}talks and posters{% endif %}</span></div>
-    <div><span class="made-n">{{ made.proposals }}</span><span class="made-l">grant proposal{{ made.proposals|pluralize }}</span></div>
-    <div><span class="made-n">{{ made.awards }}</span><span class="made-l">award{{ made.awards|pluralize }}</span></div>
-  </div>
-  <p class="small muted">{{ "These come from what people enter under Publications, talks and grants, so yours count too."|stack }}</p>
+  <svg class="made-art" viewBox="0 0 240 160" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M40 120 C 80 100, 90 60, 140 58 S 210 30, 236 8"/><path d="M140 58 C 150 90, 190 110, 238 118"/><path d="M90 84 C 70 60, 40 54, 6 60"/><path d="M180 44 C 186 22, 200 12, 214 2"/></g><g fill="currentColor"><circle cx="140" cy="58" r="7"/><circle cx="90" cy="84" r="4"/><circle cx="180" cy="44" r="3.5"/><circle cx="40" cy="120" r="3"/></g></svg>
+  <h2 class="made-h">What CNAP produced this year</h2>
+  <p class="made-sub">Year {{ made.gy }}, since June 1, {{ made.start.year }}</p>
+  <ul class="made-row">
+    <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg><span class="made-n" data-n="{{ made.papers }}">{{ made.papers }}</span><span class="made-l">paper{{ made.papers|pluralize }} published</span></li>
+    <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg><span class="made-n" data-n="{{ made.talks }}">{{ made.talks }}</span><span class="made-l">{% if made.talks == 1 %}talk or poster{% else %}talks and posters{% endif %}</span></li>
+    <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l4-1L19 8l-3-3L5 16z"/><path d="M14 7l3 3M4 20h16"/></svg><span class="made-n" data-n="{{ made.proposals }}">{{ made.proposals }}</span><span class="made-l">grant proposal{{ made.proposals|pluralize }}</span></li>
+    <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/></svg><span class="made-n" data-n="{{ made.awards }}">{{ made.awards }}</span><span class="made-l">award{{ made.awards|pluralize }}</span></li>
+  </ul>
+  <p class="made-foot">{{ "These come from what people enter under Publications, talks and grants, so yours count too."|stack }}</p>
 </section>
+<script>
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var els = document.querySelectorAll(".made-n[data-n]"); if (!els.length || !("IntersectionObserver" in window)) return;
+  var io = new IntersectionObserver(function (en) {
+    if (!en[0].isIntersecting) return; io.disconnect();
+    els.forEach(function (el) { var n = +el.dataset.n, t0 = null; if (!n) return;
+      function step(t) { t0 = t0 || t; var k = Math.min(1, (t - t0) / 900); el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); }
+      el.textContent = 0; requestAnimationFrame(step); });
+  }, { threshold: .4 });
+  io.observe(els[0].closest(".made"));
+})();
+</script>
 {% if docs %}<section class="panel helpdocs"><h2 class="sectionhead">Helpful documents</h2><ul class="doclist">{% for d in docs %}<li><a href="{% if d.file %}{% url 'portal:helpful_doc' d.pk %}{% else %}{{ d.url }}{% endif %}">{{ d.title }}</a>{% if d.note %} <span class="small muted">· {{ d.note }}</span>{% endif %}</li>{% endfor %}</ul></section>{% endif %}
 {% endblock %}

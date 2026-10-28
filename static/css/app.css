@@ -906,3 +906,37 @@ h1 { font-weight: 700; letter-spacing: -.015em; }
 a.who { display: block; color: var(--side-ink); text-decoration: none; border-radius: 0 8px 8px 0; padding: 6px 10px; margin-left: -1px; }
 a.who:hover { background: color-mix(in srgb, var(--purple) 8%, transparent); }
 a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem; color: var(--purple); margin-top: 4px; }
+
+/* My tasks, 2026-10-28 (MW): group text starts under the icon; welcome set off and 12% larger; a bolder "produced" band */
+.gh p { padding-left: 0; }
+.welcome { gap: 30px; margin: 6px 0 30px; padding: 26px 32px; border-radius: 20px;
+  background: linear-gradient(120deg, var(--purple-wash) 0%, color-mix(in srgb, var(--purple-wash) 45%, var(--surface)) 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--purple) 10%, transparent); }
+.welcome h1 { font-size: clamp(1.9rem, 3.8vw, 2.6rem); }
+.welcome .taskline { font-size: 1.18rem; }
+.welcome .small { font-size: .98rem; }
+.ring { width: 116px; height: 116px; }
+.ring-track { stroke: color-mix(in srgb, var(--purple) 14%, var(--surface)); }
+.ring-n { font-size: 1.9rem; }
+.ring-n small { font-size: .8rem; }
+@media (max-width: 560px) { .welcome { padding: 20px 18px; gap: 16px; } .ring { width: 88px; height: 88px; } .ring-n { font-size: 1.45rem; } }
+
+.made { position: relative; overflow: hidden; margin: 44px 0 20px; padding: 30px 32px 24px; border-radius: 20px;
+  background: radial-gradient(120% 140% at 100% 0%, #6a3aa8 0%, #512888 45%, #3a1c63 100%); color: #fff;
+  box-shadow: 0 10px 30px rgba(58, 28, 99, .22); }
+.made-art { position: absolute; right: -10px; top: -6px; width: 260px; color: rgba(255,255,255,.14); pointer-events: none; }
+.made-h { position: relative; margin: 0; color: #fff; font-family: var(--display); font-size: 1.35rem; font-weight: 700; }
+.made-sub { position: relative; margin: 2px 0 22px; color: rgba(255,255,255,.72); font-size: .92rem; }
+.made-row { position: relative; list-style: none; margin: 0 0 18px; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.made-row li { display: flex; flex-direction: column; gap: 4px; padding: 4px 20px; border-left: 1px solid rgba(255,255,255,.18); }
+.made-row li:first-child { border-left: 0; padding-left: 0; }
+.made-i { width: 26px; height: 26px; fill: none; stroke: #d9c9f5; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 6px; }
+.made-n { font-family: var(--display); font-size: 2.7rem; font-weight: 700; line-height: 1; color: #fff; font-variant-numeric: tabular-nums; }
+.made-l { font-size: .92rem; color: rgba(255,255,255,.86); }
+.made-foot { position: relative; margin: 0; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.16); font-size: .86rem; color: rgba(255,255,255,.74); }
+@media (max-width: 640px) {
+  .made { padding: 24px 20px 20px; }
+  .made-row { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; }
+  .made-row li:nth-child(3) { border-left: 0; padding-left: 0; }
+  .made-n { font-size: 2.2rem; }
+}
