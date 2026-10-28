@@ -266,6 +266,22 @@ def history(request):
 
 @login_required
 def center_results(request):
+    from apps.outcomes import rppr, snapshot
+
+    view = "products" if request.GET.get("view") == "products" else "surveys"
+    ctx = {"view": view}
+    if view == "products":
+        now = rppr.current_year()
+        trend = snapshot.by_year(now)
+        first = trend["first"] if trend else now
+        years = list(range(now, first - 1, -1))
+        try:
+            gy = int(request.GET.get("year", now))
+        except ValueError:
+            gy = now
+        gy = gy if gy in years else now
+        ctx.update({"years": years, "prod": snapshot.products(gy), "now": now})
+        return render(request, "portal/center_results.html", ctx)
     periods = ReportingPeriod.objects.filter(status=PeriodStatus.FINALIZED).order_by(
         "-display_order"
     )
@@ -274,11 +290,8 @@ def center_results(request):
         label = request.GET.get("period")
         selected = next((p for p in periods if p.short_label == label), periods[0])
     cards = presenters.center_results(selected) if selected else []
-    return render(
-        request,
-        "portal/center_results.html",
-        {"periods": periods, "selected": selected, "cards": cards},
-    )
+    ctx.update({"periods": periods, "selected": selected, "cards": cards})
+    return render(request, "portal/center_results.html", ctx)
 
 
 LEVELS = [c for c in Person._meta.get_field("trainee_level").choices]

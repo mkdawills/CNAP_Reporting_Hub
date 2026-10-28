@@ -110,3 +110,25 @@ def test_year_by_year_counts_every_year_from_the_first(db):
     assert t["years"] == [gy - 2, gy - 1, gy]
     talks = next(r for r in t["rows"] if r["key"] == "talks")
     assert [b["n"] for b in talks["bars"]] == [1, 0, 0] and talks["bars"][-1]["now"]
+
+
+def test_products_tab_lists_public_items_and_counts_proposals(client, db):
+    import datetime as dt
+
+    from django.core.management import call_command
+
+    from apps.accounts.models import User
+    from apps.common.enums import GrantStatus
+    from apps.outcomes.models import GrantFamily, GrantSubmission
+    from apps.outcomes.rppr import current_year, period
+
+    call_command("seed", "--fictional", verbosity=0)
+    gy = current_year()
+    day = period(gy)[0] + dt.timedelta(days=2)
+    fam = GrantFamily.objects.create(title="Fam")
+    GrantSubmission.objects.create(grant_family=fam, project_title="Secret pending idea", status=GrantStatus.SUBMITTED, submission_date=day)
+    client.force_login(User.objects.get(username="santos"))
+    html = client.get("/results/?view=products").content.decode()
+    assert "Papers published" in html and "proposals submitted" in html.replace("proposal submitted", "proposals submitted")
+    assert "Secret pending idea" not in html  # pending proposals are counted, never listed
+    assert client.get("/results/?view=products&year=abc").status_code == 200

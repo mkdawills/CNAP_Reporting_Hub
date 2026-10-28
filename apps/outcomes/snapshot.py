@@ -86,3 +86,82 @@ def by_year(gy=None):
             }
         )
     return {"years": years, "first": first, "rows": rows}
+
+
+def products(gy=None):
+    """The Center's products in one budget year, for the respondent Center results page (MW 2026-10-28).
+
+    Published papers, talks and posters given, and funded grants are public, so they are listed. Submitted
+    proposals are counted only: pending and unfunded proposals stay private."""
+    from apps.common.enums import GrantRole
+
+    gy = gy or current_year()
+    start, end = period(gy)
+    live = {"archived_at__isnull": True}
+
+    def names(links, key="person"):
+        return ", ".join(str(getattr(x, key)) for x in links)
+
+    papers = (
+        Publication.objects.filter(status=PublicationStatus.PUBLISHED, publication_date__range=(start, end), **live)
+        .prefetch_related("people__person")
+        .order_by("-publication_date", "title")
+    )
+    talks = (
+        Presentation.objects.filter(presented_on__range=(start, end), **live)
+        .prefetch_related("people__person")
+        .order_by("-presented_on", "title")
+    )
+    awards = (
+        GrantSubmission.objects.filter(status=GrantStatus.AWARDED, award_notice_date__range=(start, end), **live)
+        .prefetch_related("people__person")
+        .order_by("-award_notice_date", "project_title")
+    )
+    submitted = (
+        GrantSubmission.objects.filter(submission_date__range=(start, end), **live)
+        .exclude(status=GrantStatus.PLANNED)
+        .count()
+    )
+    out_papers = [
+        {
+            "authors": p.author_display_text
+            or names(sorted(p.people.all(), key=lambda x: x.author_order)),
+            "title": p.title,
+            "journal": p.journal,
+            "date": p.publication_date,
+            "url": p.pubmed_url,
+        }
+        for p in papers
+    ]
+    out_talks = [
+        {
+            "title": t.title,
+            "kind": t.get_presentation_type_display(),
+            "event": t.event,
+            "date": t.presented_on,
+            "who": names([x for x in sorted(t.people.all(), key=lambda x: x.author_order) if x.is_presenter])
+            or t.author_display_text
+            or names(sorted(t.people.all(), key=lambda x: x.author_order)),
+        }
+        for t in talks
+    ]
+    out_awards = [
+        {
+            "title": g.project_title,
+            "agency": " ".join(x for x in (g.funding_agency, g.mechanism) if x),
+            "number": g.grant_number,
+            "start": g.project_start_date,
+            "end": g.project_end_date,
+            "pis": names([x for x in g.people.all() if x.role in (GrantRole.PI, GrantRole.MPI)]),
+        }
+        for g in awards
+    ]
+    return {
+        "gy": gy,
+        "start": start,
+        "end": end,
+        "papers": out_papers,
+        "talks": out_talks,
+        "awards": out_awards,
+        "submitted": submitted,
+    }

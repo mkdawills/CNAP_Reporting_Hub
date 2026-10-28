@@ -410,3 +410,6 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 ## 2026-10-28 · My tasks: year by year
 - The "What CNAP produced this year" band has a "See year by year" button. It opens, in place, four small bar charts (papers published, talks and posters, proposals submitted, proposals awarded) from the earliest budget year with an entry to now; empty years are kept so the trend is honest, and the current year is marked as still in progress. Counts only, no names. The button is hidden until there is an earlier year to compare.
 - Labels now read "proposals submitted" and "proposals awarded" (MW).
+
+## 2026-10-28 · Center results: Products tab
+- Respondents get a Products tab under Center results: papers published, talks and posters, and proposals awarded, by budget year, with a year picker. Submitted proposals are a count only; pending and unfunded proposals stay private. Linked from the My tasks band ("See the full list"). A line now separates this year's numbers from the year-by-year button.

@@ -989,3 +989,22 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 @media (prefers-reduced-motion: reduce) {
   .made-trend { transition: none; } .made-trend.open .bb, .made-btn:hover svg path { animation: none; } .made-btn { transition: none; }
 }
+
+/* produced band: a line above the year-by-year button; foot link (MW 2026-10-28) */
+.made-row:has(+ .made-btn) { padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.16); margin-bottom: 20px; }
+.made-foot a { color: #fff; font-weight: 600; margin-left: 4px; }
+
+/* Center results: Products (MW 2026-10-28) */
+.prodsum { list-style: none; margin: 4px 0 8px; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.prodsum li > * { display: inline-flex; align-items: baseline; gap: 6px; padding: 9px 16px; border-radius: 999px; background: var(--purple-wash);
+  color: var(--purple-ink); text-decoration: none; font-size: .92rem; }
+.prodsum a:hover { box-shadow: inset 0 0 0 1px var(--purple); }
+.prodsum b { font-family: var(--display); font-size: 1.15rem; }
+.prodnote { margin: 0 0 18px; }
+.prodlist { list-style: none; margin: 0; padding: 0; }
+.prodlist li { display: flex; justify-content: space-between; gap: 18px; padding: 12px 0; border-top: 1px solid var(--line); }
+.prodlist li:first-child { border-top: 0; padding-top: 4px; }
+.pl-main { max-width: 70ch; line-height: 1.5; }
+.pl-src { font-style: normal; color: var(--muted); }
+.pl-date { flex: none; color: var(--muted); font-size: .86rem; white-space: nowrap; }
+@media (max-width: 560px) { .prodlist li { flex-direction: column; gap: 2px; } }
