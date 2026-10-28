@@ -843,3 +843,12 @@ h1 { font-weight: 700; letter-spacing: -.015em; }
 .finish h2 { font-size: 1.45rem; margin-bottom: 6px; }
 @media (max-width: 560px) { .finish { flex-direction: column; align-items: flex-start; } .finish-art { width: 110px; } }
 .gh { border-bottom: 1px solid var(--line); }
+
+/* Form title: K-State purple with white text and a soft gray glow (MW 2026-10-28) */
+.runner .head { background: #512888; color: #fff; border-radius: 16px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 6px 26px rgba(40, 32, 56, .22); }
+.runner .head h1 { color: #fff; border-bottom-color: rgba(255,255,255,.22); }
+.runner .head p, .runner .head .small { color: rgba(255,255,255,.86); }
+.runner .head .chip { box-shadow: 0 0 0 1px rgba(255,255,255,.35); }
+/* the read-only note sits centered under it */
+.runner .readonly { text-align: center; padding: 14px 18px; border-radius: 12px; }

@@ -45,7 +45,7 @@ def test_page_wording(client, okafor):
     assert "since the last reporting period." in html  # said in the section, next to the button
     assert "1 to do</span>" not in html
     assert "What’s this?" in html and "▸" not in html
-    assert " to do.</strong>" in html or " done.</strong>" in html
+    assert "to go, about" in html or "to do this period" in html or "done for" in html
 
 
 def test_section_progress_counts_only_finished_sections(okafor):
