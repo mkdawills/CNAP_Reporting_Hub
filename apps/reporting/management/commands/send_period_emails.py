@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("period", help="Short label, e.g. 'Y10 Fall'")
-        parser.add_argument("kind", choices=["open", "reminder"])
+        parser.add_argument("kind", choices=["open", "reminder", "overdue"])
         parser.add_argument(
             "--dry-run", action="store_true", help="List who would get an e-mail; send nothing."
         )

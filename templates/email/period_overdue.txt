@@ -1,0 +1,18 @@
+{% autoescape off %}Hello {{ person.first_name }},
+
+Your {{ period.name }} CNAP {% if forms|length == 1 %}form was{% else %}forms were{% endif %} due {{ due }}, and the session is still open, so there's still time. Still to do:
+{% for f in forms %}
+- {{ f }}{% endfor %}
+
+Open your forms:
+{{ url }}
+{% if with_link %}
+This link signs you in. It works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
+{% else %}
+Sign in with your K-State eID.
+{% endif %}
+Anything you've started is saved.
+
+Thank you,
+The CNAP evaluation team
+{% endautoescape %}

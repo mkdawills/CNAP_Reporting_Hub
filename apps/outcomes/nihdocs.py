@@ -110,7 +110,11 @@ def documents(gy):
 
 
 def safe_name(s):
-    return re.sub(r"[^A-Za-z0-9]+", "", s or "") or "X"
+    """ASCII letters and digits only, for file names NIH's system accepts: "Tomás" -> "Tomas"."""
+    import unicodedata
+
+    s = unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode()
+    return re.sub(r"[^A-Za-z0-9]+", "", s) or "X"
 
 
 def zip_name(person, label, f):

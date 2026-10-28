@@ -42,6 +42,7 @@ Publications and grants → **RPPR** tab, budget year June 1 – May 31.
 | When | What | How |
 | --- | --- | --- |
 | Daily 07:00 | Reminders for papers and proposals not reviewed in 120 days | `python manage.py send_outcome_reminders` (cron) |
+| Daily 08:00 | Period e-mails on schedule: opening day, every 4 days to the due date, daily after it until the period closes | `python manage.py send_scheduled_emails` (cron) |
 | Daily 03:00 | Remove expired sessions | `python manage.py clearsessions` (cron) |
 | Nightly | Database backup, copied off the server | `make backup` (cron; see backup-and-restore.md) |
 | Each period | Restore a backup to a scratch machine and open it | backup-and-restore.md, record the date |

@@ -60,6 +60,10 @@ class ReportingPeriod(TimestampedModel):
     closed_at = models.DateTimeField(null=True, blank=True)
     finalized_at = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(blank=True)
+    auto_emails = models.BooleanField(
+        default=True,
+        help_text="Send e-mails on schedule: opening day, every 4 days until the due date, then daily until the period closes.",
+    )
 
     class Meta:
         db_table = "reporting_periods"
@@ -436,6 +440,7 @@ class PeriodEmail(models.Model):
     class Kind(models.TextChoices):
         OPEN = "open", "Forms are open"
         REMINDER = "reminder", "Reminder"
+        OVERDUE = "overdue", "After the due date"
 
     period = models.ForeignKey(ReportingPeriod, on_delete=models.CASCADE, related_name="emails")
     person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="period_emails")

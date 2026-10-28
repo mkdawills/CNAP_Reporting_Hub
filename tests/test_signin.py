@@ -157,12 +157,14 @@ def test_period_open_and_reminder_emails(client, center):
     asg.exempt(None, a, "test")
     rem = next(r for r in emails.plan(center, "reminder") if r["person"] == santos["person"])
     assert len(rem["forms"]) == open_before - 1
+    assert rem["skip"].startswith("E-mailed")  # within 4 days of the "open" e-mail (MW 2026-10-28)
+    PeriodEmail.objects.filter(period=center).update(sent_at=timezone.now() - timedelta(days=4))
     emails.send(center, "reminder")
     assert PeriodEmail.objects.filter(
         period=center, kind="reminder", person=santos["person"]
     ).exists()
     rem = next(r for r in emails.plan(center, "reminder") if r["person"] == santos["person"])
-    assert rem["skip"].startswith("Reminded")
+    assert rem["skip"].startswith("E-mailed")
 
 
 def test_emails_only_while_open(center):

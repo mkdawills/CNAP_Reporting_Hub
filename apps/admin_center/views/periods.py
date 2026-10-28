@@ -524,8 +524,25 @@ def period_emails(request, pk):
             .annotate(n=Count("id"))
             .order_by("kind"),
             "can_send": p.accepting_responses,
+            "sched": emails.schedule_preview(p),
+            "today_kind": emails.scheduled_kind(p),
         },
     )
+
+
+@manage_action
+def period_emails_auto(request, pk):
+    """Turn a period's automatic e-mails on or off."""
+    p = get_object_or_404(ReportingPeriod, pk=pk)
+    on = request.POST.get("on") == "1"
+    if p.auto_emails != on:
+        p.auto_emails = on
+        p.save(update_fields=["auto_emails", "updated_at"])
+        record_event(request.user, AuditLog.Action.UPDATE, p, new={"auto_emails": on})
+    messages.success(
+        request, "Automatic e-mails are on." if on else "Automatic e-mails are paused."
+    )
+    return redirect(f"/manage/periods/{p.pk}/emails/")
 
 
 @manage_action
