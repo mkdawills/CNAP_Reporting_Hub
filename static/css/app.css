@@ -755,3 +755,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
 
 /* projects: one per line with PI and years (MW 2026-10-28) */
 .checkgrid.onecol { grid-template-columns: 1fr; max-height: none; }
+
+/* My tasks: group headers read as headings, above the task names (MW 2026-10-28) */
+.gh h3 { font-size: 1.12rem; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink); }
