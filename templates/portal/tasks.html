@@ -13,7 +13,7 @@
   </div>
   <div class="welcome-text">
     <h1>{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
-    <p class="taskline">{% if not todo %}All {{ total }} done for {{ period.short_label }}.{% elif done_n %}{{ todo }} to go, about {{ minutes_left }} min.{% else %}{{ total }} to do this period, about {{ minutes_left }} min in all.{% endif %}</p>
+    <p class="taskline">{% if not todo %}You’ve finished all {{ total }} tasks for {{ period.short_label }}.{% elif done_n %}You have {{ todo }} task{{ todo|pluralize }} left, about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% else %}You have {{ total }} task{{ total|pluralize }} this period, about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% endif %}</p>
     <p class="small muted">{{ due }}.</p>
     {% for d in is_core_director %}<p class="small muted">{{ "You direct the "|add:d.core.name|add:", so you don’t receive its user survey. You still receive the other core surveys."|stack }}</p>{% endfor %}
   </div>
