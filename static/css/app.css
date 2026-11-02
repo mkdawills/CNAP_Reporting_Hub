@@ -783,7 +783,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--f
    ===================================================================== */
 :root {
   --paper: #f5f3f9; --side: #ece6f5; --side-ink: #2a1f3d; --side-muted: #5e5272;
-  --display: "Bricolage Grotesque", "Public Sans", system-ui, sans-serif;
+  --display: "IBM Plex Sans", "Public Sans", system-ui, sans-serif;
   --lift: 0 1px 2px rgba(58, 28, 99, .05), 0 6px 24px rgba(58, 28, 99, .05);
 }
 @media (prefers-color-scheme: dark) {
@@ -1119,3 +1119,4 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 .made-art.brainnet { width: 210px; top: 6px; right: 14px;
   -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 90%); mask-image: linear-gradient(180deg, #000 58%, transparent 90%); }
 @media (max-width: 900px) { .made-art.brainnet { width: 150px; opacity: .8; } }
+.cheer { left: 50%; top: -20px; transform-origin: center; translate: -50% 0; }

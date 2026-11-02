@@ -445,3 +445,4 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - Group headers 1.3rem; "To do" and "Done" 1.55rem. The time half-moon spans the row's height and hugs the time; its edge is light purple.
 - Produced band: "What CNAP has produced this year"; the art is a brain drawn as a network, with one pathway that lights up once when the band comes into view (plasticity). Reduced motion: no animation.
 - Rating scales: N/A sits on the same line as 1–5, after a dashed divider, as a dashed tile, so it's seen but not read as a scale point.
+- 2026-11-02: headings switched from Bricolage Grotesque to IBM Plex Sans (MW: sturdier, academic, less curvy).
