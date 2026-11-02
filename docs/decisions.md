@@ -437,3 +437,11 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 ## 2026-11-02 · February Current and Pending check: dates and the fall copy
 - The question, its page and the first e-mail now say the progress report is due April 1 (60 days before the June 1 budget start) and to answer by February 15, and link to the Current and Pending they turned in so they can look it over first.
 - My tasks line reads as a sentence: "You have 2 tasks left, about 4 minutes in all."
+
+## 2026-11-02 · Review-round edits (MW)
+- Full-sentence status lines throughout the respondent pages ("You have 4 tasks left, about 37 minutes in all."; "They’re due in 16 days, on November 18."; "You’ve finished 2 of 3 sections."). Dense admin counters stay short.
+- Core directors: "Since you’re the Behavioral Neuroscience (BN) Core Director, you do not receive the BN Core user survey." plus MW's note about opting out of the other core user surveys.
+- Welcome: bigger, thicker ring that fills once; a "Next up" card with the first task and a Start button; a "Keep it up!" note with a thumbs-up that fades after a few seconds (only once something is done and something is left).
+- Group headers 1.3rem; "To do" and "Done" 1.55rem. The time half-moon spans the row's height and hugs the time; its edge is light purple.
+- Produced band: "What CNAP has produced this year"; the art is a brain drawn as a network, with one pathway that lights up once when the band comes into view (plasticity). Reduced motion: no animation.
+- Rating scales: N/A sits on the same line as 1–5, after a dashed divider, as a dashed tile, so it's seen but not read as a scale point.

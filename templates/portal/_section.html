@@ -17,7 +17,7 @@
         {% endfor %}
         {% if editable %}<div class="rmv"><button class="btn small ghost" type="submit" name="action" value="remove:{{ sv.s.code }}:{{ i }}" formnovalidate>Remove</button></div>{% endif %}
       </div>
-    {% endwith %}{% empty %}<p class="small muted">No entries.</p>{% endfor %}
+    {% endwith %}{% empty %}<p class="small muted">There are no entries yet.</p>{% endfor %}
     {% if editable %}<button class="btn small ghost" type="submit" name="action" value="add:{{ sv.s.code }}" formnovalidate>{{ sv.s.repeat_label|default:"Add an entry" }}</button>{% endif %}
   {% endif %}
 </section>

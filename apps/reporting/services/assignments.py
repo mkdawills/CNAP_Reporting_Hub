@@ -201,11 +201,11 @@ def due_label(period, today=None):
     today = today or timezone.localdate()
     due = timezone.localtime(period.due_at).date()
     days = (due - today).days
-    nice = f"{due:%b} {due.day}"
+    nice = f"{due:%B} {due.day}"
     if days > 1:
-        return f"Due in {days} days ({nice})"
+        return f"They’re due in {days} days, on {nice}"
     if days == 1:
-        return f"Due tomorrow ({nice})"
+        return f"They’re due tomorrow, {nice}"
     if days == 0:
-        return f"Due today ({nice})"
-    return f"Was due {nice}"
+        return f"They’re due today, {nice}"
+    return f"They were due {nice}, and you can still finish them"

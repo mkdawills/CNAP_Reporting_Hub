@@ -40,7 +40,7 @@
     var mark = window.innerHeight * 0.35, cur = 0;
     secs.forEach(function (s, i) { if (s.getBoundingClientRect().top < mark) cur = i; });
     var left = Math.max(1, Math.round(minutes * (secs.length - cur) / secs.length));
-    txt.textContent = "Section " + (cur + 1) + " of " + secs.length + (minutes ? " · about " + left + " min left" : "");
+    txt.textContent = "Section " + (cur + 1) + " of " + secs.length + "." + (minutes ? " About " + left + " minute" + (left === 1 ? "" : "s") + " left." : "");
     fill.style.width = Math.round(100 * (cur + 1) / secs.length) + "%";
     bar.hidden = window.scrollY < 200;
   }

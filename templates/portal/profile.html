@@ -40,7 +40,7 @@
   <div class="panel">
     <h2 class="sectionhead">Your CNAP roles</h2>
     {% for r in rels %}<div style="padding:8px 0;border-bottom:1px solid var(--line)"><strong>{{ r.relationship_type.name }}</strong><div class="small muted">{% if r.project %}{{ r.project.title }}{% elif r.core %}{{ r.core.name }}{% else %}Center-level{% endif %} · since {{ r.effective_from|date:"M Y" }}</div></div>
-    {% empty %}<p class="muted">No project or core roles.</p>{% endfor %}
+    {% empty %}<p class="muted">You have no project or core roles.</p>{% endfor %}
     <p class="small muted mt">{% if on_roster %}You’re on the CNAP roster.{% endif %} Your roles decide which forms you receive.<br>If something here is wrong, contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
   </div>
 </div>

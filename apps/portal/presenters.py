@@ -129,6 +129,10 @@ def task_list(person, period, mine, just_done=None):
         )
     done_rows = [r for r in rows if not r["is_open"]]
     total, todo = len(rows), len(open_rows)
+    # the first task in page order, offered at the top of the page (MW 2026-11-02)
+    first_up = next(
+        (r for g in groups for r in (g["used"] + g["rows"]) if not r.get("preview_only")), None
+    )
     next_up = None
     done_item = None
     if just_done:
@@ -145,6 +149,7 @@ def task_list(person, period, mine, just_done=None):
             next_up = (same or sorted(open_rows, key=lambda r: r["minutes"] or 99))[0]
     return {
         "period": period,
+        "first_up": first_up,
         "groups": groups,
         "done": done_rows,
         "total": total,

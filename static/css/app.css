@@ -1027,3 +1027,95 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 .tasks td.mins::before { display: block; }
 .donebox .tasks td.mins::before { display: none; }
 .tasks td.mins::before { border-left-color: color-mix(in srgb, var(--purple) 35%, var(--line)); }
+
+/* Welcome, 2026-11-02 (MW): a bigger, thicker ring that fills once; a "Next up" card; a brief "Keep it up!" */
+.welcome { position: relative; }
+.ring { width: 136px; height: 136px; }
+.ring circle { stroke-width: 15; }
+.ring-n { font-size: 2.15rem; }
+.ring-n small { font-size: .84rem; }
+.ring-fill { animation: ringfill 1.1s cubic-bezier(.2,.8,.2,1) .15s both; }
+@keyframes ringfill { from { stroke-dasharray: 0 100; } }
+.cheer { position: absolute; left: 92px; top: -14px; z-index: 2; display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px 6px 10px; border-radius: 999px; background: var(--surface); color: var(--purple-ink);
+  font: 700 .86rem/1 "Public Sans", system-ui, sans-serif; white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(58, 28, 99, .18), inset 0 0 0 1px color-mix(in srgb, var(--purple) 18%, transparent);
+  animation: cheer 3.6s ease 1.1s both; pointer-events: none; }
+.cheer svg { width: 16px; height: 16px; fill: none; stroke: var(--purple); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+@keyframes cheer { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 12% { opacity: 1; transform: none; }
+  78% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-6px); } }
+.welcome-next { margin-left: auto; flex: 0 1 300px; display: grid; gap: 4px; padding: 18px 20px; border-radius: 16px; text-decoration: none;
+  background: var(--surface); color: var(--ink); box-shadow: 0 4px 16px rgba(58, 28, 99, .10), inset 0 0 0 1px color-mix(in srgb, var(--purple) 12%, transparent);
+  transition: transform .18s ease, box-shadow .18s ease; }
+.welcome-next:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(58, 28, 99, .16), inset 0 0 0 1px color-mix(in srgb, var(--purple) 30%, transparent); }
+.welcome-next:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.wn-l { font-size: .8rem; font-weight: 700; color: var(--purple); }
+.wn-t { font-family: var(--display); font-weight: 700; font-size: 1.05rem; line-height: 1.3; }
+.wn-m { font-size: .86rem; color: var(--muted); }
+.wn-b { justify-self: start; margin-top: 8px; padding: 9px 22px; border-radius: 999px; background: var(--purple); color: #fff; font-weight: 700; font-size: .95rem; }
+@media (max-width: 900px) { .welcome { flex-wrap: wrap; } .welcome-next { flex-basis: 100%; margin-left: 0; } }
+@media (max-width: 560px) { .ring { width: 100px; height: 100px; } .ring-n { font-size: 1.6rem; } .cheer { left: 62px; } }
+@media (prefers-reduced-motion: reduce) { .ring-fill { animation: none; } .cheer { animation: cheerstill 4.5s step-end both; } }
+@keyframes cheerstill { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+/* Produced band art: two neurons meeting at a synapse, with a new spine forming (plasticity) (MW 2026-11-02) */
+.made-art { right: -6px; top: -4px; width: 330px; color: rgba(255,255,255,.2); }
+.made-art .ma-axon { stroke: rgba(255,255,255,.34); }
+.made-art .ma-soma { fill: rgba(255,255,255,.26); }
+.made-art .ma-newspine { stroke-dasharray: 2 3; stroke: rgba(255,255,255,.3); }
+.made-art .ma-newspine-head { fill: rgba(217,201,245,.5); }
+.made-art .ma-nt { fill: rgba(255,255,255,.7); }
+.made-art .ma-pulse { opacity: 0; }
+.made-art .ma-glow { opacity: .35; transform-box: fill-box; transform-origin: center; }
+.made-art.fired .ma-pulse { animation: mapulse 1.6s ease both; }
+.made-art.fired .ma-glow { animation: maglow 1.4s ease 1.5s both; }
+.made-art.fired .ma-newspine { animation: masprout 1.2s ease 2.2s both; }
+@keyframes mapulse { 0% { opacity: 0; } 15% { opacity: .9; } 85% { opacity: .9; } 100% { opacity: 0; } }
+@keyframes maglow { 0% { opacity: .35; transform: scale(.7); } 45% { opacity: 1; transform: scale(1.25); } 100% { opacity: .45; transform: scale(1); } }
+@keyframes masprout { from { stroke-dashoffset: 20; opacity: 0; } to { stroke-dashoffset: 0; opacity: 1; } }
+@media (max-width: 640px) { .made-art { width: 220px; } }
+@media (prefers-reduced-motion: reduce) { .made-art.fired .ma-pulse, .made-art.fired .ma-glow, .made-art.fired .ma-newspine { animation: none; } }
+/* thumbs-up: filled so it reads at a small size */
+.cheer svg.thumb { width: 17px; height: 17px; fill: color-mix(in srgb, var(--purple) 22%, transparent); stroke: var(--purple); stroke-width: 1.8; }
+.made-art { width: 250px; top: -2px; right: 0;
+  -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent 88%); mask-image: linear-gradient(180deg, #000 52%, transparent 88%); }
+@media (max-width: 640px) { .made-art { width: 180px; } }
+.made-art { width: 280px; -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 92%); mask-image: linear-gradient(180deg, #000 55%, transparent 92%); }
+.made-art { top: -16px; right: -18px; }
+
+/* N/A sits on the same line as 1–5, set apart so it isn't read as a point on the scale (MW 2026-11-02) */
+.runner .q .scale-row { display: flex; align-items: stretch; gap: 14px; max-width: 740px; }
+.runner .q .scale-row .scale-pts { flex: 1; }
+.runner .q .scale-row .scale-na { display: flex; margin: 0; padding-left: 14px; border-left: 1px dashed var(--line); }
+.runner .q .na-tile { position: relative; display: flex; align-items: center; justify-content: center; min-width: 76px; min-height: 64px;
+  padding: 8px 10px; border: 1px dashed color-mix(in srgb, var(--muted) 55%, var(--line)); border-radius: 12px; background: transparent;
+  color: var(--muted); font-size: .86rem; font-weight: 600; cursor: pointer; transition: background .15s, border-color .15s; }
+.runner .q .na-tile input { position: absolute; opacity: 0; pointer-events: none; }
+.runner .q .na-tile:hover { border-color: var(--muted); }
+.runner .q .na-tile:has(input:checked) { background: var(--muted); border-style: solid; border-color: var(--muted); color: #fff; }
+.runner .q .na-tile:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+@media (max-width: 640px) {
+  .runner .q .scale-row { flex-direction: column; gap: 8px; }
+  .runner .q .scale-row .scale-na { padding-left: 0; border-left: 0; }
+  .runner .q .na-tile { justify-content: flex-start; min-height: 0; padding: 10px 14px; width: 100%; }
+}
+
+/* Produced band art, v3 (MW 2026-11-02): a brain drawn as a network; one pathway strengthens once (plasticity) */
+.made-art.brainnet { width: 270px; top: -6px; right: -4px; color: #fff;
+  -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 96%); mask-image: linear-gradient(180deg, #000 60%, transparent 96%); }
+.brainnet .mb-outline { stroke: rgba(201, 173, 245, .45); stroke-width: 1.4; }
+.brainnet .mb-folds { stroke: rgba(201, 173, 245, .18); stroke-width: 1.1; stroke-linecap: round; }
+.brainnet .mb-edges { stroke: rgba(255, 255, 255, .16); stroke-width: .9; }
+.brainnet .mb-chain { stroke: #f3b8ff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: .55; }
+.brainnet .mb-nodes { fill: rgba(255, 255, 255, .55); }
+.brainnet .mb-hot { opacity: .5; transform-box: fill-box; transform-origin: center; }
+.made-art.brainnet.fired .mb-chain { animation: mbdraw 1.8s cubic-bezier(.4,0,.2,1) .2s both; stroke-dasharray: 100; }
+.made-art.brainnet.fired .mb-hot { animation: mbhot 1.2s ease both; }
+.made-art.brainnet.fired .mb-hot:nth-of-type(2) { animation-delay: .9s; } .made-art.brainnet.fired .mb-hot:nth-of-type(3) { animation-delay: 1.7s; }
+@keyframes mbdraw { from { stroke-dashoffset: 100; opacity: .2; } to { stroke-dashoffset: 0; opacity: .9; } }
+@keyframes mbhot { 0% { opacity: .3; transform: scale(.6); } 50% { opacity: 1; transform: scale(1.5); } 100% { opacity: .7; transform: scale(1); } }
+@media (max-width: 640px) { .made-art.brainnet { width: 190px; } }
+@media (prefers-reduced-motion: reduce) { .made-art.brainnet.fired .mb-chain, .made-art.brainnet.fired .mb-hot { animation: none; } .brainnet .mb-chain { opacity: .9; } }
+.made-art.brainnet { width: 210px; top: 6px; right: 14px;
+  -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 90%); mask-image: linear-gradient(180deg, #000 58%, transparent 90%); }
+@media (max-width: 900px) { .made-art.brainnet { width: 150px; opacity: .8; } }

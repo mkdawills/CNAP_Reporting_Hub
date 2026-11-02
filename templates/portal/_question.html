@@ -2,10 +2,10 @@
 {% if v.type == 'likert' or v.type == 'yes_no' %}
   <fieldset class="scale{% if v.type == 'yes_no' %} yn{% endif %}">
     <legend class="qt">{{ v.q.prompt }}{% if not v.required and not v.conditional %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</legend>
-    <div class="scale-pts" style="--n:{{ v.pts|length }}">
+    <div class="scale-row"><div class="scale-pts" style="--n:{{ v.pts|length }}">
       {% for o in v.pts %}<label><input type="radio" name="{{ prefix|default:'q-' }}{{ v.code }}" value="{{ o.code }}" {% if v.value == o.code %}checked{% endif %} {% if not editable %}disabled{% endif %}>{% if o.num %}<span class="num">{{ o.num }}</span>{% endif %}<span>{{ o.text }}</span></label>{% endfor %}
     </div>
-    {% if v.na %}<div class="scale-na">{% for o in v.na %}<label><input type="radio" name="{{ prefix|default:'q-' }}{{ v.code }}" value="{{ o.code }}" {% if v.value == o.code %}checked{% endif %} {% if not editable %}disabled{% endif %}><span>{{ o.text }}</span></label>{% endfor %}</div>{% endif %}
+    {% if v.na %}<div class="scale-na">{% for o in v.na %}<label class="na-tile"><input type="radio" name="{{ prefix|default:'q-' }}{{ v.code }}" value="{{ o.code }}" {% if v.value == o.code %}checked{% endif %} {% if not editable %}disabled{% endif %}><span>{{ o.text }}</span></label>{% endfor %}</div>{% endif %}</div>
   </fieldset>
 {% elif v.type == 'single_select' %}
   <fieldset class="scale" style="display:block"><legend class="qt">{{ v.q.prompt }}{% if not v.required and not v.conditional %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</legend>

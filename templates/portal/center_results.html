@@ -16,15 +16,15 @@
 
   <section class="panel" id="papers"><h2 class="sectionhead">Papers published</h2>
   {% if prod.papers %}<ol class="prodlist">{% for p in prod.papers %}<li><span class="pl-main">{% if p.authors %}{{ p.authors }}. {% endif %}{% if p.url %}<a href="{{ p.url }}" rel="noopener">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}.{% if p.journal %} <span class="pl-src">{{ p.journal }}</span>.{% endif %}</span><span class="pl-date">{{ p.date|date:"M j, Y" }}</span></li>{% endfor %}</ol>
-  {% else %}<p class="muted">No papers published {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
+  {% else %}<p class="muted">There are no papers published {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
 
   <section class="panel" id="talks"><h2 class="sectionhead">Talks and posters</h2>
   {% if prod.talks %}<ol class="prodlist">{% for t in prod.talks %}<li><span class="pl-main"><strong>{{ t.title }}</strong><br><span class="small muted">{{ t.kind }}{% if t.event %} · {{ t.event }}{% endif %}{% if t.who %} · {{ t.who }}{% endif %}</span></span><span class="pl-date">{{ t.date|date:"M j, Y" }}</span></li>{% endfor %}</ol>
-  {% else %}<p class="muted">No talks or posters {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
+  {% else %}<p class="muted">There are no talks or posters {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
 
   <section class="panel" id="awards"><h2 class="sectionhead">Proposals awarded</h2>
   {% if prod.awards %}<ol class="prodlist">{% for g in prod.awards %}<li><span class="pl-main"><strong>{{ g.title }}</strong><br><span class="small muted">{% if g.agency %}{{ g.agency }}{% endif %}{% if g.number %} · {{ g.number }}{% endif %}{% if g.pis %} · PI: {{ g.pis }}{% endif %}{% if g.start %} · {{ g.start|date:"Y" }}–{% if g.end %}{{ g.end|date:"Y" }}{% endif %}{% endif %}</span></span></li>{% endfor %}</ol>
-  {% else %}<p class="muted">No awards {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
+  {% else %}<p class="muted">There are no awards {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
   <p class="small muted">{{ "Missing something of yours? Add it under Publications, talks and grants."|stack }} <a href="{% url 'portal:outcomes' %}">Go there</a></p>
 {% elif not selected %}
   <div class="panel"><p class="muted">{{ "No results yet. They appear here once a reporting period’s results are finalized."|stack }}</p></div>
@@ -37,6 +37,6 @@
     {% else %}<p class="facts2"><b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered all the survey items.</p>{% endif %}
     {% include "manage/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd %}
   </div>
-  {% empty %}<div class="panel"><p class="muted">No survey results for this period.</p></div>{% endfor %}
+  {% empty %}<div class="panel"><p class="muted">There are no survey results for this period.</p></div>{% endfor %}
 {% endif %}
 {% endblock %}

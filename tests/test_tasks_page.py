@@ -43,7 +43,7 @@ def test_page_wording(client, okafor):
     html = client.get("/tasks/").content.decode()
     assert "Opt out*" not in html and "footnote" not in html
     assert "since the last reporting period." in html  # said in the section, next to the button
-    assert "1 to do</span>" not in html
+    assert "You have 1 forms here" not in html
     assert "What’s this?" in html and "▸" not in html
     assert "left, about" in html or "this period, about" in html or "You’ve finished all" in html
 
@@ -87,7 +87,7 @@ def test_started_form_shows_sections_done(client, okafor):
     client.force_login(okafor)
     html = client.get("/tasks/").content.decode()
     row = _row(html, a)
-    assert "sections done" not in row  # nothing filled in yet: no count (MW 2026-10-27)
+    assert "sections. Your answers" not in row  # nothing filled in yet: no count (MW 2026-10-27)
     assert "You previously started this" in row
 
     s = FormSchema(a.form_version)
@@ -108,4 +108,4 @@ def test_started_form_shows_sections_done(client, okafor):
         },
     )
     html = client.get("/tasks/").content.decode()
-    assert "sections done. Your answers are saved." in _row(html, a)
+    assert "sections. Your answers are saved." in _row(html, a)

@@ -8,15 +8,22 @@
 {% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong> {{ "You can read every form now with Preview. Answering opens that day; nothing you do here before then is saved."|stack }}</div>{% endif %}
 <header class="welcome">
   <div class="ring" role="img" aria-label="{{ done_n }} of {{ total }} done">
+    {% if done_n and todo %}<span class="cheer" aria-hidden="true"><svg viewBox="0 0 24 24" class="thumb"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>Keep it up!</span>{% endif %}
     <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="ring-track" cx="60" cy="60" r="52"/><circle class="ring-fill" cx="60" cy="60" r="52" pathLength="100" stroke-dasharray="{{ pct }} 100"/></svg>
     <span class="ring-n">{{ done_n }}<small>of {{ total }}</small></span>
   </div>
   <div class="welcome-text">
     <h1>{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
     <p class="taskline">{% if not todo %}You’ve finished all {{ total }} tasks for {{ period.short_label }}.{% elif done_n %}You have {{ todo }} task{{ todo|pluralize }} left, about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% else %}You have {{ total }} task{{ total|pluralize }} this period, about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% endif %}</p>
-    <p class="small muted">{{ due }}.</p>
-    {% for d in is_core_director %}<p class="small muted">Since you’re the {{ d.core.name|cut:" Core" }} ({{ d.core.code }}) Core Director, you do not receive the {{ d.core.code }} Core user survey.</p>{% endfor %}
+    {% if todo %}<p class="small muted">{{ due }}.</p>{% endif %}
+    {% for d in is_core_director %}<p class="small muted">Since you’re the {{ d.core.name|cut:" Core" }} ({{ d.core.code }}) Core Director, you do not receive the {{ d.core.code }} Core user survey.</p>{% endfor %}{% if is_core_director %}<p class="small muted">{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Simply opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p>{% endif %}
   </div>
+  {% if first_up and not period.in_preview %}<a class="welcome-next" href="{% url 'portal:form' first_up.a.pk %}">
+    <span class="wn-l">Next up</span>
+    <span class="wn-t">{{ first_up.name }}</span>
+    <span class="wn-m">{{ first_up.time }}</span>
+    <span class="wn-b">{% if first_up.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</span>
+  </a>{% endif %}
 </header>
 
 {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s progress report, due {{ cp_check.rppr_due|date:"F j" }}. Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %} <a href="{% url 'portal:download' cp_check.prev_file.pk %}">Open the one you turned in (PDF)</a>{% endif %}</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
@@ -47,7 +54,7 @@
   <div class="scroll"><table class="tasks"><tbody>
   {% for g in groups %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
-    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon g.code %}{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div>{% if g.count > 1 %}<span class="ghcount">{{ g.count }} to do</span>{% endif %}</div></td></tr>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon g.code %}{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div>{% if g.count > 1 %}<span class="ghcount">You have {{ g.count }} forms here.</span>{% endif %}</div></td></tr>
     {% for r in g.used %}{% include "portal/_task_row.html" %}{% endfor %}
     {% if g.used and g.rows %}<tr class="subhead"><td colspan="5">{% if g.rows|length == 1 %}Did you also use this core?{% else %}Did you also use these cores?{% endif %}</td></tr>{% endif %}
     {% for r in g.rows %}{% include "portal/_task_row.html" %}{% endfor %}
@@ -55,8 +62,8 @@
   {% if outcome and not outcome.done %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
     <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon 'outcomes' %}Publications and grants</h3><p>{{ "Keep your papers and grant proposals up to date."|stack }}</p></div></div></td></tr>
-    {% for i in outcome.items %}{% if not i.done %}<tr class="openrow"><td><strong>{% if i.self %}Update your publications and grants{% else %}Update publications and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">{{ i.todo }} thing{{ i.todo|pluralize }} to look at</div></td>
-      <td class="acts">{% if period.in_preview %}<span class="small muted">Opens with the period</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins"><span>About {{ outcome.minutes }} min</span></td></tr>{% endif %}{% endfor %}
+    {% for i in outcome.items %}{% if not i.done %}<tr class="openrow"><td><strong>{% if i.self %}Update your publications and grants{% else %}Update publications and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">You have {{ i.todo }} thing{{ i.todo|pluralize }} to look at.</div></td>
+      <td class="acts">{% if period.in_preview %}<span class="small muted">This opens when the period starts.</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins"><span>About {{ outcome.minutes }} min</span></td></tr>{% endif %}{% endfor %}
   {% endif %}
   </tbody></table></div>
 </div>
@@ -65,12 +72,21 @@
 {% if done or outcome.done %}
 <details class="panel donebox" {% if not todo %}open{% endif %}><summary>Done ({{ done_count }})</summary>
   <div class="scroll"><table class="tasks"><tbody>{% for r in done %}{% include "portal/_task_row.html" %}{% endfor %}
-  {% if outcome.done %}<tr><td><strong>Publications and grants</strong><div class="small muted">Up to date for this period</div></td><td class="acts"><a class="btn small ghost" href="{% url 'portal:outcomes' %}">View</a></td><td class="acts"></td><td class="acts"></td><td class="mins"></td></tr>{% endif %}</tbody></table></div>
+  {% if outcome.done %}<tr><td><strong>Publications and grants</strong><div class="small muted">This is up to date for this period.</div></td><td class="acts"><a class="btn small ghost" href="{% url 'portal:outcomes' %}">View</a></td><td class="acts"></td><td class="acts"></td><td class="mins"></td></tr>{% endif %}</tbody></table></div>
 </details>{% endif %}
 {% endif %}
 
 <section class="made" aria-label="What CNAP has produced this year">
-  <svg class="made-art" viewBox="0 0 240 160" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M40 120 C 80 100, 90 60, 140 58 S 210 30, 236 8"/><path d="M140 58 C 150 90, 190 110, 238 118"/><path d="M90 84 C 70 60, 40 54, 6 60"/><path d="M180 44 C 186 22, 200 12, 214 2"/></g><g fill="currentColor"><circle cx="140" cy="58" r="7"/><circle cx="90" cy="84" r="4"/><circle cx="180" cy="44" r="3.5"/><circle cx="40" cy="120" r="3"/></g></svg>
+  <svg class="made-art brainnet" viewBox="28 10 222 166" aria-hidden="true">
+    <defs><radialGradient id="mb-glow"><stop offset="0" stop-color="#f3b8ff" stop-opacity=".9"/><stop offset="1" stop-color="#f3b8ff" stop-opacity="0"/></radialGradient></defs>
+    <path class="mb-outline" fill="none" d="M46 112 C34 98 34 72 50 58 C56 38 78 26 100 28 C116 16 146 14 166 24 C190 20 214 32 224 52 C240 62 244 86 232 102 C228 114 214 120 200 118 C192 128 176 130 164 124 L150 122 C140 134 118 138 104 130 C88 136 66 132 58 122 C50 122 46 118 46 112 Z"/>
+    <path class="mb-outline mb-cb" fill="none" d="M200 119 C214 120 228 128 223 141 C217 151 196 151 186 141 C181 133 187 125 200 119 Z M168 127 C171 142 169 156 163 172"/>
+    <path class="mb-folds" fill="none" d="M84 106 C106 97 132 98 158 107 M150 22 C141 46 152 66 140 90 M74 60 C86 70 84 84 96 90 M118 32 C122 52 112 62 122 74 M190 30 C184 48 196 60 188 76 M210 64 C200 76 210 88 200 98 M192 132 C202 136 212 136 220 132 M190 140 C200 144 210 144 218 140"/>
+    <path class="mb-edges" fill="none" d="M62 96L70 66M62 96L90 110M62 96L84 84M70 66L92 48M70 66L84 84M92 48L118 38M92 48L84 84M118 38L146 32M118 38L140 74M146 32L176 40M146 32L140 74M176 40L200 52M176 40L170 84M200 52L216 74M200 52L196 90M216 74L222 96M216 74L196 90M222 96L204 104M222 96L196 90M204 104L180 112M204 104L196 90M180 112L170 84M180 112L196 90M180 112L156 98M146 112L118 118M146 112L156 98M146 112L128 100M118 118L90 110M118 118L128 100M90 110L110 86M90 110L84 84M110 86L84 84M110 86L128 100M140 74L170 84M140 74L156 98M140 74L128 100M170 84L196 90M170 84L156 98"/>
+    <path class="mb-chain" fill="none" pathLength="100" d="M62 96 L84 84 L110 86 L140 74 L170 84 L196 90 L216 74"/>
+    <circle class="mb-hot" cx="62" cy="96" r="9" fill="url(#mb-glow)"/><circle class="mb-hot" cx="140" cy="74" r="9" fill="url(#mb-glow)"/><circle class="mb-hot" cx="216" cy="74" r="9" fill="url(#mb-glow)"/>
+    <g class="mb-nodes"><circle cx="62" cy="96" r="2.6"/><circle cx="70" cy="66" r="1.9"/><circle cx="92" cy="48" r="1.9"/><circle cx="118" cy="38" r="1.9"/><circle cx="146" cy="32" r="1.9"/><circle cx="176" cy="40" r="1.9"/><circle cx="200" cy="52" r="1.9"/><circle cx="216" cy="74" r="2.6"/><circle cx="222" cy="96" r="1.9"/><circle cx="204" cy="104" r="1.9"/><circle cx="180" cy="112" r="1.9"/><circle cx="146" cy="112" r="1.9"/><circle cx="118" cy="118" r="1.9"/><circle cx="90" cy="110" r="1.9"/><circle cx="110" cy="86" r="2.6"/><circle cx="140" cy="74" r="2.6"/><circle cx="170" cy="84" r="2.6"/><circle cx="196" cy="90" r="2.6"/><circle cx="84" cy="84" r="2.6"/><circle cx="156" cy="98" r="1.9"/><circle cx="128" cy="100" r="1.9"/></g>
+  </svg>
   <h2 class="made-h">What CNAP has produced this year</h2>
   <p class="made-sub">Year {{ made.gy }}, since June 1, {{ made.start.year }}</p>
   <ul class="made-row">
@@ -105,11 +121,13 @@
   var els = document.querySelectorAll(".made-n[data-n]"); if (!els.length || !("IntersectionObserver" in window)) return;
   var io = new IntersectionObserver(function (en) {
     if (!en[0].isIntersecting) return; io.disconnect();
+    document.querySelector(".made-art").classList.add("fired");  // one pathway lights up, once (plasticity)
     els.forEach(function (el) { var n = +el.dataset.n, t0 = null; if (!n) return;
       function step(t) { t0 = t0 || t; var k = Math.min(1, (t - t0) / 900); el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); }
       el.textContent = 0; requestAnimationFrame(step); });
   }, { threshold: .4 });
   io.observe(els[0].closest(".made"));
+
 })();
 (function () {
   var b = document.querySelector(".made-btn"), t = document.getElementById("made-trend"); if (!b || !t) return;

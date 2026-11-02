@@ -7,8 +7,8 @@
 </div>
 
 <div class="kpis ack-kpis">
-  <a class="kpi{% if tab == 'pubs' %} on{% endif %}" href="?tab=pubs"><span class="ring" style="--p:{{ summary.pubs.pct|default:0 }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v">{% if summary.pubs.pct is not None %}{{ summary.pubs.pct }}%{% else %}—{% endif %}</span><span class="kpi-l">of checked published papers acknowledge CNAP</span><span class="kpi-l">{{ summary.pubs.unchecked }} of {{ summary.pubs.total }} still to check</span></span></a>
-  <a class="kpi{% if tab == 'grants' %} on{% endif %}" href="?tab=grants"><span class="ring" style="--p:{{ summary.grants.pct|default:0 }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v">{% if summary.grants.pct is not None %}{{ summary.grants.pct }}%{% else %}—{% endif %}</span><span class="kpi-l">of checked submitted proposals acknowledge CNAP</span><span class="kpi-l">{{ summary.grants.unchecked }} of {{ summary.grants.total }} still to check</span></span></a>
+  <a class="kpi{% if tab == 'pubs' %} on{% endif %}" href="?tab=pubs"><span class="ring" style="--p:{{ summary.pubs.pct|default:0 }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v">{% if summary.pubs.pct is not None %}{{ summary.pubs.pct }}%{% else %}—{% endif %}</span><span class="kpi-l">of checked published papers acknowledge CNAP</span><span class="kpi-l">You still need to check {{ summary.pubs.unchecked }} of {{ summary.pubs.total }}.</span></span></a>
+  <a class="kpi{% if tab == 'grants' %} on{% endif %}" href="?tab=grants"><span class="ring" style="--p:{{ summary.grants.pct|default:0 }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v">{% if summary.grants.pct is not None %}{{ summary.grants.pct }}%{% else %}—{% endif %}</span><span class="kpi-l">of checked submitted proposals acknowledge CNAP</span><span class="kpi-l">You still need to check {{ summary.grants.unchecked }} of {{ summary.grants.total }}.</span></span></a>
 </div>
 
 <div class="panel">

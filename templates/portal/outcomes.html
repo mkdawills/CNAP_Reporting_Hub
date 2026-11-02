@@ -10,7 +10,7 @@
 
 {% if not window.0 %}<div class="checkin" role="status"><strong>Adding and updating opens again on {{ window.1|date:"l, F j" }}.</strong> {{ "The Center is finishing this period’s report. Your records are safe and you can read them below."|stack }}</div>{% elif not period %}<p class="small muted">{{ "You can add or update publications, presentations and grant proposals any time. Each reporting period we’ll also ask you to look them over."|stack }}</p>{% endif %}
 {% if period %}<div class="checkin {% if st.done %}ok{% endif %}" role="status">
-  {% if st.done %}<strong>All caught up for {{ period.name }}.</strong> Thank you.{% else %}<strong>For {{ period.name }}: {{ st.todo }} thing{{ st.todo|pluralize }} to look at.</strong> {{ "Answer the questions below, then confirm or update each planned or submitted record."|stack }}{% endif %}
+  {% if st.done %}<strong>All caught up for {{ period.name }}.</strong> Thank you.{% else %}<strong>For {{ period.name }}, you have {{ st.todo }} thing{{ st.todo|pluralize }} to look at.</strong> {{ "Answer the questions below, then confirm or update each planned or submitted record."|stack }}{% endif %}
 </div>{% endif %}
 
 <div class="panel">
@@ -18,14 +18,14 @@
   {% if st.ask_pubs %}
     <div class="ask"><p><strong>Do you plan to submit any publications?</strong></p>
       <form method="post" action="{% url 'portal:outcome_plans' 'pubs' %}" class="fieldrow">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><button class="btn" name="answer" value="yes">Yes, add one</button><button class="btn ghost" name="answer" value="no">No, not right now</button></form></div>
-  {% elif not st.pubs %}<p class="small muted">No publications recorded. {% if st.checkin.plans_publications is False %}You said you don’t plan to submit any right now.{% endif %}</p>{% endif %}
+  {% elif not st.pubs %}<p class="small muted">You haven’t recorded any publications. {% if st.checkin.plans_publications is False %}You said you don’t plan to submit any right now.{% endif %}</p>{% endif %}
   {% for p in st.pubs %}{% include "portal/_outcome_row.html" with kind="pub" o=p title=p.title sub=p.journal %}{% endfor %}
 </div>
 
 <div class="panel">
   <div class="sechead"><h2 class="sectionhead">Presentations</h2>{% if window.0 %}<a class="btn small ghost" href="{% url 'portal:presentation_new' %}?for={{ owner.pk }}">Add a presentation</a>{% endif %}</div>
   {% for t in presentations %}<div class="orow"><div class="orow-main"><div><strong>{{ t.title }}</strong></div><div class="small muted">{{ t.get_presentation_type_display }}{% if t.event %} · {{ t.event }}{% endif %}{% if t.presented_on %} · {{ t.presented_on|date:"M j, Y" }}{% endif %}</div></div><span class="ostatus">{% if t.cnap_cited %}Acknowledges CNAP{% elif t.cnap_cited is False %}No CNAP acknowledgment{% else %}—{% endif %}</span><div class="orow-acts">{% if window.0 %}<a class="linkbtn small" href="{% url 'portal:presentation_edit' t.pk %}?for={{ owner.pk }}">Edit</a>{% endif %}</div></div>
-  {% empty %}<p class="small muted">No presentations recorded.</p>{% endfor %}
+  {% empty %}<p class="small muted">You haven’t recorded any talks or posters.</p>{% endfor %}
   <p class="small muted">Add a talk or poster after you’ve given it.</p>
 </div>
 
@@ -34,7 +34,7 @@
   {% if st.ask_grants %}
     <div class="ask"><p><strong>Do you plan to submit any grant proposals?</strong></p>
       <form method="post" action="{% url 'portal:outcome_plans' 'grants' %}" class="fieldrow">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><button class="btn" name="answer" value="yes">Yes, add one</button><button class="btn ghost" name="answer" value="no">No, not right now</button></form></div>
-  {% elif not st.grants %}<p class="small muted">No grant proposals recorded. {% if st.checkin.plans_grants is False %}You said you don’t plan to submit any right now.{% endif %}</p>{% endif %}
+  {% elif not st.grants %}<p class="small muted">You haven’t recorded any grant proposals. {% if st.checkin.plans_grants is False %}You said you don’t plan to submit any right now.{% endif %}</p>{% endif %}
   {% for g in st.grants %}{% include "portal/_outcome_row.html" with kind="grant" o=g title=g.project_title sub=g.funding_agency %}{% endfor %}
 </div>
 
@@ -42,7 +42,7 @@
 <div class="panel">
   <h2 class="sectionhead">Who can enter for you</h2>
   <p class="small muted">{{ "You can let someone, such as a student in your lab, keep these records for you. They see and edit only your publications, presentations and grants, never your surveys."|stack }}</p>
-  {% for d in delegates %}<div class="fieldrow" style="align-items:center"><span>{{ d.delegate }}</span><form method="post" action="{% url 'portal:outcome_delegate_end' d.pk %}">{% csrf_token %}<button class="btn small ghost">Remove</button></form></div>{% empty %}<p class="small">Nobody yet.</p>{% endfor %}
+  {% for d in delegates %}<div class="fieldrow" style="align-items:center"><span>{{ d.delegate }}</span><form method="post" action="{% url 'portal:outcome_delegate_end' d.pk %}">{% csrf_token %}<button class="btn small ghost">Remove</button></form></div>{% empty %}<p class="small">No one has been added yet.</p>{% endfor %}
   <form method="post" action="{% url 'portal:outcome_delegate_add' %}" class="fieldrow" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}">
     <label class="small">Add a person <select name="person" required><option value="">Choose…</option>{% for p in roster %}{% if p != owner %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label><button class="btn small">Add</button></form>
 </div>{% endif %}
