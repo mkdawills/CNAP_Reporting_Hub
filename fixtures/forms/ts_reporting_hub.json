@@ -15,8 +15,8 @@
   "sections": [
     {
       "code": "reporting_hub",
-      "title": "Survey Questions:",
-      "instructions": "Please indicate your level of agreement with each of the following statements regarding the CNAP Reporting Hub:",
+      "title": "Survey questions",
+      "instructions": "Please indicate how much you agree with each statement about the CNAP Reporting Hub.",
       "questions": [
         {
           "code": "item_01",
@@ -46,7 +46,7 @@
     },
     {
       "code": "open",
-      "title": "Open-ended questions:",
+      "title": "Open-ended questions",
       "questions": [
         {
           "code": "open_1",

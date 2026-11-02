@@ -120,9 +120,9 @@ def nav_current(context, *names):
 
 @register.filter(is_safe=True)
 def caption(value):
-    """Short section directions shown under a heading: in parentheses, no trailing colon."""
+    """Short section directions shown under a heading, as plain sentences (MW 2026-11-02: no parentheses)."""
     text = str(value or "").strip().rstrip(":").strip()
-    return mark_safe(f"({stack(text)})") if text else ""
+    return stack(text) if text else ""
 
 
 @register.filter
@@ -232,3 +232,30 @@ def with_period(value, period):
 @register.filter
 def span(period):
     return period_span(period) if period else ""
+
+
+@register.simple_tag
+def nih_ack(kind="publication"):
+    """The three statements NIH requires on public documents (Stevens Amendment, MW 2026-11-02): grant
+    support, the federal and nongovernmental shares of total costs, and the disclaimer."""
+    from apps.outcomes.models import FundingStatement
+
+    f = FundingStatement.current()
+    support = (
+        f"Research reported in this {kind} was supported by the National Institute of General Medical "
+        f"Sciences of the National Institutes of Health under award number {f.award_number}."
+    )
+    if f.ready:
+        pf, fed, pn, non = f.shares()
+        level = (
+            f"Federal funds paid for {pf}% (${fed:,.0f}) of the project’s total costs, and nongovernmental "
+            f"sources paid for {pn}% (${non:,.0f})."
+        )
+    else:
+        level = "[Funding level: the CNAP office will add the federal and nongovernmental shares here.]"
+    disclaimer = (
+        "The content is solely the responsibility of the authors and does not necessarily represent the "
+        "official views of the National Institutes of Health."
+    )
+    return {"support": support, "level": level, "disclaimer": disclaimer, "ready": f.ready,
+            "all": f"{support} {level} {disclaimer}"}

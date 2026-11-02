@@ -1190,3 +1190,10 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 .runner .section > .sectop + .q, .runner .section > .sectop ~ .q:first-of-type { border-top: 0; padding-top: 0; }
 .runner .section > .sectop:last-child, .runner .section > .sectop:not(:has(~ :is(.q, .repeat, .rsumlist, p, button))) { padding-bottom: 0; }
 .runner .seclead { margin: 36px 0 -24px; }
+/* a narrative box's own note (e.g. the pilot milestones) reads as the section's directions, above the line */
+.runner .section > .sectop:has(+ .qnote) { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+.runner .section > .qnote { margin: 10px 0 0 !important; padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 24px !important;
+  font-size: .95rem; line-height: 1.6; color: color-mix(in srgb, var(--ink) 72%, var(--muted)); }
+/* every numbered prompt the same size and weight, whatever the answer type (MW 2026-11-02) */
+.runner .section .q .qt { font-family: "Public Sans", system-ui, sans-serif; font-size: 1.1rem; font-weight: 600; line-height: 1.45; color: var(--ink); }
+.runner .section .q .qt::before { font-weight: 500; color: var(--muted); }

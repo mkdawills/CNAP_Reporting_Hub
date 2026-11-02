@@ -81,6 +81,7 @@ def _open(a):
 def _nih(center):
     a = (
         Assignment.objects.filter(reporting_period=center, form_definition__code="nih_documents")
+        .exclude(person__last_name="Rowe")  # the sample OSC has the biosketch-only version
         .select_related("person")
         .order_by("status", "pk")
         .first()

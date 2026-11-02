@@ -4,7 +4,7 @@
   {% if sv.s.instructions %}{% if sv.caption %}<p class="instructions secintro">{{ sv.s.instructions|with_period:a.reporting_period|caption }}</p>{% else %}{{ sv.s.instructions|after_lead|with_period:a.reporting_period|guidance }}{% endif %}{% endif %}
   {% if sv.downloads %}<ul class="secdl">{% for d in sv.downloads %}<li><a href="{{ d.url }}" {% if d.external %}target="_blank" rel="noopener"{% else %}download{% endif %}>{{ d.label }}</a></li>{% endfor %}</ul>{% endif %}
   </div>
-  {% for v in sv.questions %}{% if v.widget != 'system' %}{% if v.narrative and v.q.help_text %}<p class="small muted qnote" style="margin-top:14px">{{ v.q.help_text|stack }}</p>{% endif %}{% include "portal/_question.html" %}{% endif %}{% endfor %}
+  {% for v in sv.questions %}{% if v.widget != 'system' %}{% if v.narrative and v.q.help_text %}<p class="qnote">{{ v.q.help_text|stack }}</p>{% endif %}{% include "portal/_question.html" %}{% endif %}{% endfor %}
   {% if sv.s.is_repeatable %}
     <input type="hidden" name="rep-{{ sv.s.code }}-count" value="{{ sv.rows|length }}">
     {% if not editable %}{% if sv.summary %}<div class="rsumlist"><p class="rsum-h">{% if editable %}What you’ve listed so far ({{ sv.summary.rows|length }}){% else %}What you listed ({{ sv.summary.rows|length }}){% endif %}</p>

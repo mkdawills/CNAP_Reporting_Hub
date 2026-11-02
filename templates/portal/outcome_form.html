@@ -1,28 +1,5 @@
 {% extends "base.html" %}{% load cnap %}
-{% block title %}{{ title }} · {{ platform_name }}<script>
-// Follow-up fields appear only after a Yes (Grant flow, Not Funded stage).
-document.querySelectorAll("[data-show-if]").forEach(function (el) {
-  var name = el.getAttribute("data-show-if");
-  function sync() { var y = document.querySelector('input[name="' + name + '"][value="yes"]'); el.hidden = !(y && y.checked); }
-  document.querySelectorAll('input[name="' + name + '"]').forEach(function (i) { i.addEventListener("change", sync); });
-  sync();
-});
-document.querySelectorAll(".acktext .copy").forEach(function (b) {
-  b.addEventListener("click", function () {
-    var t = b.parentNode.querySelector("span").textContent;
-    try { navigator.clipboard.writeText(t); b.textContent = "Copied"; } catch (e) {}
-    setTimeout(function () { b.textContent = "Copy"; }, 1500);
-  });
-});
-// "If Other, what?" appears when Other is ticked.
-document.querySelectorAll("[data-show-other]").forEach(function (el) {
-  var other = Array.from(document.querySelectorAll('input[name="resources"]')).find(function (i) { return i.closest("label").textContent.trim() === "Other"; });
-  function sync() { el.hidden = !(other && other.checked); }
-  if (other) other.addEventListener("change", sync);
-  sync();
-});
-</script>
-{% endblock %}
+{% block title %}{{ title }} · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>{{ title }}</h1>
   {% if obj %}<p>{% if kind == 'pub' %}{{ obj.title }}{% else %}{{ obj.project_title }} · {{ obj.version_label }}{% endif %}</p>{% endif %}
@@ -34,8 +11,10 @@ document.querySelectorAll("[data-show-other]").forEach(function (el) {
       <p class="small">Suggested wording for your proposal:</p>
       <div class="acktext"><span>Preliminary data for this proposal were generated with support from the National Institute of General Medical Sciences of the National Institutes of Health under Award Number P20GM113109 (CNAP COBRE).</span><button type="button" class="btn small ghost copy">Copy</button></div>
     {% else %}
-      <p class="small">NIH requires COBRE-supported work to cite the grant. Suggested wording:</p>
-      <div class="acktext"><span>Research reported in this {% if kind == 'presentation' %}presentation{% else %}publication{% endif %} was supported by the National Institute of General Medical Sciences of the National Institutes of Health under Award Number P20GM113109. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health.</span><button type="button" class="btn small ghost copy">Copy</button></div>
+      {% if kind == 'presentation' %}{% nih_ack "presentation" as ack %}{% else %}{% nih_ack "publication" as ack %}{% endif %}
+      <p class="small">{{ "NIH requires three statements on CNAP-supported publications, talks, posters and other public documents: the grant, how much of the project’s costs federal and nongovernmental sources paid, and a disclaimer. Copy all three:"|stack }}</p>
+      <div class="acktext"><span>{{ ack.all }}</span><button type="button" class="btn small ghost copy">Copy</button></div>
+      {% if not ack.ready %}<p class="small muted">The funding figures aren’t set yet. Ask the CNAP office for them before you submit.</p>{% endif %}
       {% core_rrids as rr %}{% if rr %}
       <p class="small">If you used a CNAP core, also cite its RRID in your methods, right after the core’s name:</p>
       {% for c in rr %}<div class="acktext"><span>{{ c.name }} ({{ c.rrid }}), Kansas State University</span><button type="button" class="btn small ghost copy">Copy</button></div>{% endfor %}

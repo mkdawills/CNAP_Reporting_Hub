@@ -34,8 +34,8 @@
     },
     {
       "code": "grant_writing",
-      "title": "Survey Questions:",
-      "instructions": "Please indicate your level of agreement with each of the following statements regarding the grant writing program. (The grant writing program includes activities such as reviewer analysis, support preparing proposal materials, and grantsmanship training.):",
+      "title": "Survey questions",
+      "instructions": "Please indicate how much you agree with each statement about the grant writing program. The program includes reviewer analysis, help preparing proposal materials, and grantsmanship training.",
       "questions": [
         {
           "code": "item_01",
@@ -65,7 +65,7 @@
     },
     {
       "code": "open",
-      "title": "Open-ended questions:",
+      "title": "Open-ended questions",
       "questions": [
         {
           "code": "open_1",

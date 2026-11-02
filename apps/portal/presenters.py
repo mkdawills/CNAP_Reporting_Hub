@@ -332,7 +332,15 @@ def _intro_for(a, answers):
     by = (a.form_definition.display or {}).get("intro_by") or {}
     src = by.get("source")
     if src:
-        for key in (answers.get(src), "default"):
+        val = answers.get(src)
+        if val in (None, ""):  # an earlier version without that hidden question: work it out the same way
+            from apps.forms_engine.models import Question
+
+            q = Question.objects.filter(
+                form_version__form_definition=a.form_definition, code=src
+            ).order_by("-form_version__version_no").first()
+            val = rs.system_value(a, q) if q else None
+        for key in (val, "default"):
             if key and by.get(key):
                 return by[key]
     return a.form_version.intro_text

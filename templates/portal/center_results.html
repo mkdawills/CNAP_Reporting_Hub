@@ -25,7 +25,7 @@
   <section class="panel" id="awards"><h2 class="sectionhead">Proposals awarded</h2>
   {% if prod.awards %}<ol class="prodlist">{% for g in prod.awards %}<li><span class="pl-main"><strong>{{ g.title }}</strong><br><span class="small muted">{% if g.agency %}{{ g.agency }}{% endif %}{% if g.number %} · {{ g.number }}{% endif %}{% if g.pis %} · PI: {{ g.pis }}{% endif %}{% if g.start %} · {{ g.start|date:"Y" }}–{% if g.end %}{{ g.end|date:"Y" }}{% endif %}{% endif %}</span></span></li>{% endfor %}</ol>
   {% else %}<p class="muted">There are no awards {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
-  <p class="small muted">{{ "Missing something of yours? Add it under Publications, talks and grants."|stack }} <a href="{% url 'portal:outcomes' %}">Go there</a></p>
+  <p class="small muted">Missing something of yours?<br>Add it under <a href="{% url 'portal:outcomes' %}">Publications, talks and grants</a>.</p>
 {% elif not selected %}
   <div class="panel"><p class="muted">{{ "No results yet. They appear here once a reporting period’s results are finalized."|stack }}</p></div>
 {% else %}

@@ -11,7 +11,7 @@
     "short_name": "Core usage report",
     "about": [
       "Your list shows NIH who uses your core and what came of it.",
-      "One row per project. Count students in their own column."
+      "Use one row per project, and give the number of students in its own column."
     ],
     "minutes": 10,
     "section_downloads": {

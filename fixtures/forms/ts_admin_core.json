@@ -34,8 +34,8 @@
     },
     {
       "code": "admin_core",
-      "title": "Survey Questions:",
-      "instructions": "Please indicate your level of agreement with each of the following statements regarding the Administrative Core:",
+      "title": "Survey questions",
+      "instructions": "Please indicate how much you agree with each statement about the Administrative Core.",
       "questions": [
         {
           "code": "item_01",
@@ -113,7 +113,7 @@
     },
     {
       "code": "open",
-      "title": "Open-ended questions:",
+      "title": "Open-ended questions",
       "questions": [
         {
           "code": "open_1",

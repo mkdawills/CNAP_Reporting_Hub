@@ -313,6 +313,8 @@ def launch(request, pk):
         .order_by("last_name", "first_name")
     )
     for person in nothing:
+        if person.current_relationships().filter(relationship_type__code="osc").exists():
+            continue  # an Other Significant Contributor: only the fall NIH documents task, by design
         warnings.append(
             {
                 "text": f"{person} is active but has no current CNAP role, so they won’t receive anything.",

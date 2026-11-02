@@ -54,12 +54,12 @@ def test_item_counts_match_sources(instruments):
 
 def test_source_wording_is_verbatim(instruments):
     me = schema("mentee_survey").by_code
-    assert me["item_05"].prompt == "Enhances(s) my performance within the grant program."
+    assert me["item_05"].prompt == "Enhance(s) my performance within the grant program."
     assert (
-        me["item_06"].prompt == "Make(s) time to regularly meet with me"
+        me["item_06"].prompt == "Make(s) time to regularly meet with me."
     )  # no period, as in the source
     ts = schema("ts_synergy").version.sections.get(code="synergy")
-    assert ts.instructions.startswith("Please indicate your level of agreement")
+    assert ts.instructions.startswith("Please indicate how much you agree")
     na = schema("ts_synergy").by_code["item_01"].answer_set.options.get(code="neither")
     assert na.label == "3 - Neither Disagree nor Agree"
     # intros shortened with MW's approval (2026-10-28); question wording stays verbatim

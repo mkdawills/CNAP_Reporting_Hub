@@ -83,7 +83,7 @@ def test_answers_save_as_you_go(client, center):
     a = Assignment.objects.filter(person=u.person, form_definition__code="ts_admin_core").first()
     client.force_login(u)
     page = client.get(f"/tasks/{a.pk}/").content.decode()
-    assert f"/tasks/{a.pk}/autosave/" in page and "unless it’s marked optional" in page
+    assert f"/tasks/{a.pk}/autosave/" in page and "Your answers save as you go." in page
     r = client.post(f"/tasks/{a.pk}/autosave/", {"q-item_01": "agree"})
     assert r.status_code == 200 and r.json()["ok"]
     from apps.forms_engine.runtime import FormSchema

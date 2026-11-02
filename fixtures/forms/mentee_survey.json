@@ -17,7 +17,7 @@
   "sections": [
     {
       "code": "mentors",
-      "title": "My Mentor(s)...",
+      "title": "My mentor or mentors",
       "questions": [
         {
           "code": "item_01",
@@ -53,7 +53,7 @@
         },
         {
           "code": "item_05",
-          "prompt": "Enhances(s) my performance within the grant program.",
+          "prompt": "Enhance(s) my performance within the grant program.",
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentee_05",
@@ -61,7 +61,7 @@
         },
         {
           "code": "item_06",
-          "prompt": "Make(s) time to regularly meet with me",
+          "prompt": "Make(s) time to regularly meet with me.",
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentee_06",
@@ -175,7 +175,7 @@
     },
     {
       "code": "open",
-      "title": "Open-ended questions:",
+      "title": "Open-ended questions",
       "questions": [
         {
           "code": "open_1",

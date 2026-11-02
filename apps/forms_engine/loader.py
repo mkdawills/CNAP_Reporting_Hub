@@ -268,7 +268,58 @@ def load_all(*, actor=None, draft=False, directory=None, stdout=None):
         results.append((fd, fv, status))
         if stdout:
             stdout.write(f"{fd.code}: v{fv.version_no} {status}")
+        if not draft:
+            n = sync_wording(fd)
+            if n and stdout:
+                stdout.write(f"{fd.code}: wording brought up to date on {n} earlier version(s)")
     return results
+
+
+# Never copied back: a question whose meaning changed between versions (older answers are read by its old prompt).
+KEEP_OLD_PROMPT = {"n_users"}
+
+
+def sync_wording(fd):
+    """Bring the directions on a form's earlier versions up to the current version (MW 2026-11-02: every request
+    applies on every page, including forms already started or submitted). Copies the intro, section titles and
+    directions, and each question's prompt, help text and required flag, matched by code and type. Answers,
+    options and structure are untouched. Returns how many earlier versions changed."""
+    from .models import FormSection, FormVersion, Question
+
+    cur = fd.versions.filter(status=VersionStatus.ACTIVE).first()
+    if not cur:
+        return 0
+    secs = {s.code: s for s in FormSection.objects.filter(form_version=cur)}
+    qs = {q.code: q for q in Question.objects.filter(form_version=cur)}
+    changed = 0
+    for v in fd.versions.exclude(pk=cur.pk):
+        hit = False
+        if v.intro_text != cur.intro_text:
+            FormVersion.objects.filter(pk=v.pk).update(intro_text=cur.intro_text)
+            hit = True
+        # an older Core Usage Report counted students apart from individual users: keep its own directions
+        students_apart = Question.objects.filter(
+            form_version=v, code="n_users", prompt__icontains="exclude student"
+        ).exists()
+        for s in FormSection.objects.filter(form_version=v):
+            c = secs.get(s.code)
+            if students_apart and s.code == "users":
+                continue
+            if c and (s.title, s.instructions) != (c.title, c.instructions):
+                FormSection.objects.filter(pk=s.pk).update(title=c.title, instructions=c.instructions)
+                hit = True
+        for q in Question.objects.filter(form_version=v):
+            c = qs.get(q.code)
+            if not c or c.question_type != q.question_type:
+                continue
+            new = {"help_text": c.help_text, "is_required": c.is_required}
+            if q.code not in KEEP_OLD_PROMPT:
+                new["prompt"] = c.prompt
+            if any(getattr(q, k) != val for k, val in new.items()):
+                Question.objects.filter(pk=q.pk).update(**new)
+                hit = True
+        changed += hit
+    return changed
 
 
 def universal_rule_check():
