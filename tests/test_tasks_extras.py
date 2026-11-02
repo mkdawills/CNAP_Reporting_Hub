@@ -25,7 +25,7 @@ def test_strip_counts_this_budget_year(client, center):
     assert snapshot.this_year()["talks"] == n
     client.force_login(User.objects.get(username="okafor"))
     html = client.get("/tasks/").content.decode()
-    assert "What CNAP produced this year" in html and "submitted</span>" in html
+    assert "What CNAP has produced this year" in html and "submitted</span>" in html
 
 
 def test_evaluator_adds_a_document_everyone_sees(client, center):

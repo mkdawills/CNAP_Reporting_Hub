@@ -69,9 +69,9 @@
 </details>{% endif %}
 {% endif %}
 
-<section class="made" aria-label="What CNAP produced this year">
+<section class="made" aria-label="What CNAP has produced this year">
   <svg class="made-art" viewBox="0 0 240 160" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M40 120 C 80 100, 90 60, 140 58 S 210 30, 236 8"/><path d="M140 58 C 150 90, 190 110, 238 118"/><path d="M90 84 C 70 60, 40 54, 6 60"/><path d="M180 44 C 186 22, 200 12, 214 2"/></g><g fill="currentColor"><circle cx="140" cy="58" r="7"/><circle cx="90" cy="84" r="4"/><circle cx="180" cy="44" r="3.5"/><circle cx="40" cy="120" r="3"/></g></svg>
-  <h2 class="made-h">What CNAP produced this year</h2>
+  <h2 class="made-h">What CNAP has produced this year</h2>
   <p class="made-sub">Year {{ made.gy }}, since June 1, {{ made.start.year }}</p>
   <ul class="made-row">
     <li><svg class="made-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg><span class="made-n" data-n="{{ made.papers }}">{{ made.papers }}</span><span class="made-l">paper{{ made.papers|pluralize }} published</span></li>
