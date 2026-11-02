@@ -5,7 +5,7 @@
   "context_kind": "none",
   "confidentiality": "standard",
   "sort_order": 16,
-  "intro_text": "Once a year, the Center collects everyone’s Current and Pending (Other) Support for its progress report to NIH (RPPR). If you’re named on the Notice of Award, NIH also needs your biosketch and an MFTRP certification.\nMake the biosketch and the Current and Pending in SciENcv, using NIH’s Common Forms, and upload the certified PDFs here.",
+  "intro_text": "Once a year, the Center collects everyone’s Current and Pending (Other) Support for its progress report to NIH (RPPR). If you’re named on the Notice of Award, NIH also needs your biosketch and an MFTRP certification.\nMake the biosketch and the Current and Pending in SciENcv, using NIH’s Common Forms, and upload the certified PDFs here.\nIf you’re an Other Significant Contributor, NIH only needs your biosketch, so that’s the one upload you’ll see.",
   "display": {
     "task_group": "nih",
     "short_name": "NIH documents",
@@ -13,7 +13,8 @@
     "yearly_sequence": 1,
     "about": [
       "Each year the Center reviews the Current and Pending (Other) Support of its project leaders, core directors and PD/PI.",
-      "People named on the Notice of Award also give a biosketch and MFTRP certification for the RPPR."
+      "People named on the Notice of Award also give a biosketch and MFTRP certification for the RPPR.",
+      "Other Significant Contributors give a biosketch only."
     ],
     "section_downloads": {
       "mftrp": [
@@ -59,6 +60,16 @@
             "widget": "system",
             "source": "senior_key"
           }
+        },
+        {
+          "code": "osc_only",
+          "prompt": "Other Significant Contributor only (set by the site)",
+          "type": "yes_no",
+          "answer_set": "Yes / No",
+          "config": {
+            "widget": "system",
+            "source": "osc_only"
+          }
         }
       ]
     },
@@ -83,7 +94,7 @@
     {
       "code": "biosketch",
       "title": "Biosketch",
-      "instructions": "You’re named on the Notice of Award, so NIH also needs your biosketch: the Common Form with the NIH Biographical Sketch Supplement, in one PDF from SciENcv. Certify it there the same way, and don’t flatten it.",
+      "instructions": "NIH needs your biosketch: the Common Form with the NIH Biographical Sketch Supplement, in one PDF from SciENcv. Certify it there and don’t flatten it.",
       "questions": [
         {
           "code": "biosketch",
@@ -155,6 +166,34 @@
       "value": "yes",
       "action": "show",
       "target_section": "mftrp"
+    },
+    {
+      "source": "osc_only",
+      "operator": "equals",
+      "value": "yes",
+      "action": "show",
+      "target_section": "biosketch"
+    },
+    {
+      "source": "osc_only",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "effort"
+    },
+    {
+      "source": "osc_only",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "documents"
+    },
+    {
+      "source": "osc_only",
+      "operator": "equals",
+      "value": "yes",
+      "action": "hide",
+      "target_section": "foreign"
     }
   ],
   "assignment_rules": [
@@ -177,7 +216,12 @@
       "scope": "relationship",
       "relationship_type": "core_director",
       "per_context": false
+    },
+    {
+      "scope": "relationship",
+      "relationship_type": "osc",
+      "per_context": false
     }
   ],
-  "_source": "MW 2026-10-27: PPLs, RPLs, core directors and the CNAP Director upload SciENcv biosketch and Current and Pending once a year; MFTRP certification and D.2.a in the same task; optional foreign-activity documents. Piestar thread (Apr 2026) for D.2 and MFTRP. SciENcv Common Forms required for RPPRs from Jan 25, 2026 (Stanford ORA notice). Wording per NOT-OD-26-018 (Common Forms; NIH Biosketch Supplement; don't flatten SciENcv PDFs; annual MFTRP certification in RPPR G.1 as a flattened PDF named MFTRPcert_[Name].pdf; supporting documentation as a separate flattened attachment) and NOT-OD-26-033 (enforced from May 8, 2026). MW 2026-10-27: Current and Pending from everyone on the list; biosketch and MFTRP only from people named on the Notice of Award (Person.senior_key, default PD/PI and RP Leaders), via a hidden site-set question."
+  "_source": "MW 2026-10-27: PPLs, RPLs, core directors and the CNAP Director upload SciENcv biosketch and Current and Pending once a year; MFTRP certification and D.2.a in the same task; optional foreign-activity documents. Piestar thread (Apr 2026) for D.2 and MFTRP. SciENcv Common Forms required for RPPRs from Jan 25, 2026 (Stanford ORA notice). Wording per NOT-OD-26-018 (Common Forms; NIH Biosketch Supplement; don't flatten SciENcv PDFs; annual MFTRP certification in RPPR G.1 as a flattened PDF named MFTRPcert_[Name].pdf; supporting documentation as a separate flattened attachment) and NOT-OD-26-033 (enforced from May 8, 2026). MW 2026-10-27: Current and Pending from everyone on the list; biosketch and MFTRP only from people named on the Notice of Award (Person.senior_key, default PD/PI and RP Leaders), via a hidden site-set question. MW 2026-11-02: Other Significant Contributors get the task with the biosketch only."
 }

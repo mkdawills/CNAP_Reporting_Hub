@@ -153,6 +153,10 @@ def system_value(assignment, q):
         from apps.people.services import is_senior_key
 
         return "yes" if is_senior_key(assignment.person) else "no"
+    if q.config.get("source") == "osc_only":
+        from apps.people.services import is_osc_only
+
+        return "yes" if is_osc_only(assignment.person) else "no"
     return ""
 
 

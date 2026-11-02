@@ -429,3 +429,7 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - RPPR D.1 lists OSCs at any effort, under the guidance's "Other" category, labeled "Other (Other Significant Contributor)"; an OSC with no months entered shows 0.0 (the 2026 RPPR accepts 0.0). The D.1 note says a new OSC needs a biosketch in the RPPR.
 - The OSC role alone brings no forms: it is left out of the audience for universal surveys. Someone who is an OSC and also holds another role gets that role's forms as before.
 - The sample center has one fictional OSC (Imogen Rowe, University of Kansas), not on the roster.
+
+## 2026-11-02 · OSCs give a biosketch (MW: yes)
+- Other Significant Contributors get the yearly NIH documents task. A hidden site-set answer (osc_only: an OSC holding none of PD/PI, RPL, PPL, core director) hides the effort, Current and Pending and foreign sections and shows the biosketch section only. Someone who is also in a full-task role keeps the full task.
+- The RPPR tab marks them "OSC"; only the biosketch counts as missing for them. nih_documents v9; the intro and biosketch instructions are worded for both groups.

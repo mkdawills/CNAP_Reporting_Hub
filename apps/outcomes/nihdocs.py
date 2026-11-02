@@ -14,7 +14,7 @@ import re
 
 from apps.common.enums import AssignmentStatus
 from apps.forms_engine.runtime import FormSchema
-from apps.people.services import is_senior_key
+from apps.people.services import is_osc_only, is_senior_key
 from apps.reporting.models import Assignment, CurrentPendingCheck, ReportingPeriod
 from apps.reporting.services import responses as rs
 
@@ -95,11 +95,16 @@ def documents(gy):
                     (code, label, files.get(code), checks.get(code)) for code, label in DOC_FILES
                 ],
                 "senior_key": (sk := is_senior_key(a.person)),
+                "osc": (osc := is_osc_only(a.person)),
                 "feb": feb,
                 "missing": [
                     label
                     for code, label in DOC_FILES
-                    if (code in REQUIRED_FILES or (sk and code in NOA_FILES))
+                    if (
+                        code == "biosketch"
+                        if osc  # an OSC gives a biosketch only (MW 2026-11-02)
+                        else code in REQUIRED_FILES or (sk and code in NOA_FILES)
+                    )
                     and not files.get(code)
                 ],
             }

@@ -264,6 +264,24 @@ def normalize_orcid(raw):
     return "-".join(digits[i : i + 4] for i in range(0, 16, 4))
 
 
+NIH_DOC_TYPES = ("pd_pi", "project_leader", "pilot_awardee", "core_director")
+
+
+def is_osc_only(person, on=None):
+    """An Other Significant Contributor who holds none of the roles that give a full NIH documents task
+    (MW 2026-11-02): they give a biosketch only."""
+    from django.db.models import Q
+    from django.utils import timezone
+
+    on = on or timezone.localdate()
+    codes = set(
+        person.relationships.filter(effective_from__lte=on)
+        .filter(Q(effective_to__isnull=True) | Q(effective_to__gte=on))
+        .values_list("relationship_type__code", flat=True)
+    )
+    return "osc" in codes and not codes & set(NIH_DOC_TYPES)
+
+
 def normalize_rrid(raw):
     """Return a core's RRID as RRID:SCR_012345, or "" for blank. Raise ValueError if it isn't one.
 
