@@ -1,6 +1,7 @@
 """Administrator home: where each period stands and what needs attention."""
 
 from django.contrib import messages
+from django.urls import reverse
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -51,8 +52,52 @@ def home(request):
             "issues": sum(len(c["rows"]) for c in checks),
             "checks": [c for c in checks if c["rows"]][:4],
             "docs": HelpfulDocument.objects.filter(is_active=True).select_related("file"),
+            "funding": _funding(),
         },
     )
+
+
+def _funding():
+    from apps.outcomes.models import FundingStatement
+
+    return FundingStatement.current()
+
+
+@manage_action
+def funding_save(request):
+    """Save the Stevens Amendment figures shown in every "How to acknowledge CNAP" box (MW 2026-11-02)."""
+    from decimal import Decimal, InvalidOperation
+
+    from apps.outcomes.models import FundingStatement
+
+    def money(name):
+        raw = (request.POST.get(name) or "").replace("$", "").replace(",", "").strip()
+        if not raw:
+            return None
+        try:
+            v = Decimal(raw)
+        except InvalidOperation:
+            raise ValueError(name)
+        if v < 0:
+            raise ValueError(name)
+        return v.quantize(Decimal("1"))
+
+    try:
+        fed, non = money("federal_total"), money("nonfederal_total")
+    except ValueError:
+        messages.error(request, "Enter the dollar amounts as numbers, for example 11,250,000.")
+        return redirect(reverse("manage:home") + "#funding")
+    f = FundingStatement.objects.order_by("pk").first() or FundingStatement()
+    old = {"federal_total": str(f.federal_total), "nonfederal_total": str(f.nonfederal_total)}
+    f.federal_total = fed
+    f.nonfederal_total = non or 0
+    f.segment_label = (request.POST.get("segment_label") or "").strip()[:80]
+    f.updated_by = request.user
+    f.save()
+    record_event(request.user, AuditLog.Action.UPDATE, f, old=old,
+                 new={"federal_total": str(f.federal_total), "nonfederal_total": str(f.nonfederal_total)})
+    messages.success(request, "Saved. Every “How to acknowledge CNAP” box now uses these figures.")
+    return redirect(reverse("manage:home") + "#funding")
 
 
 DOC_TYPES = (".pdf", ".docx", ".doc", ".xlsx", ".pptx")
