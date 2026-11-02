@@ -1022,9 +1022,7 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 /* keep "To do" and "Done" above the group headers in size */
 .todohead { font-size: 1.55rem; }
 .donebox summary { font-family: var(--display); font-size: 1.55rem; font-weight: 700; }
-/* the half-moon hugs the time instead of filling the cell (MW 2026-11-02) */
-.tasks td.mins { min-width: 0; padding-left: 12px; }
-.tasks td.mins::before { display: none; }
-.tasks td.mins > span { display: inline-block; padding: 6px 14px 6px 18px; border-radius: 999px 8px 8px 999px;
-  background: color-mix(in srgb, var(--surface) 75%, transparent); border: 1px solid var(--line); border-right: 0; }
-.donebox .tasks td.mins > span { background: none; border: 0; padding: 0; }
+/* the half-moon spans the row's height but hugs the time sideways (MW 2026-11-02) */
+.tasks td.mins { min-width: 0; width: 1%; padding: 0 16px 0 30px; }
+.tasks td.mins::before { display: block; }
+.donebox .tasks td.mins::before { display: none; }
