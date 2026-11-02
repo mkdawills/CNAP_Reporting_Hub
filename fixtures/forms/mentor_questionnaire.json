@@ -25,7 +25,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_01",
-          "required": false
+          "required": true
         },
         {
           "code": "item_02",
@@ -33,7 +33,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_02",
-          "required": false
+          "required": true
         },
         {
           "code": "item_03",
@@ -41,7 +41,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_03",
-          "required": false
+          "required": true
         },
         {
           "code": "item_04",
@@ -49,7 +49,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_04",
-          "required": false
+          "required": true
         },
         {
           "code": "item_05",
@@ -57,7 +57,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_05",
-          "required": false
+          "required": true
         },
         {
           "code": "item_06",
@@ -65,7 +65,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_06",
-          "required": false
+          "required": true
         },
         {
           "code": "item_07",
@@ -73,7 +73,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_07",
-          "required": false
+          "required": true
         },
         {
           "code": "item_08",
@@ -81,7 +81,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_08",
-          "required": false
+          "required": true
         },
         {
           "code": "item_09",
@@ -89,7 +89,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_09",
-          "required": false
+          "required": true
         },
         {
           "code": "item_10",
@@ -97,7 +97,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_10",
-          "required": false
+          "required": true
         },
         {
           "code": "item_11",
@@ -105,7 +105,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_11",
-          "required": false
+          "required": true
         },
         {
           "code": "item_12",
@@ -113,7 +113,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_12",
-          "required": false
+          "required": true
         },
         {
           "code": "item_13",
@@ -121,7 +121,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_13",
-          "required": false
+          "required": true
         },
         {
           "code": "item_14",
@@ -129,7 +129,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_14",
-          "required": false
+          "required": true
         },
         {
           "code": "item_15",
@@ -137,7 +137,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_15",
-          "required": false
+          "required": true
         },
         {
           "code": "item_16",
@@ -145,7 +145,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_16",
-          "required": false
+          "required": true
         },
         {
           "code": "item_17",
@@ -153,7 +153,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_17",
-          "required": false
+          "required": true
         },
         {
           "code": "item_18",
@@ -161,7 +161,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_18",
-          "required": false
+          "required": true
         },
         {
           "code": "item_19",
@@ -169,7 +169,7 @@
           "type": "likert",
           "answer_set": "Agreement",
           "measure": "mentor_19",
-          "required": false
+          "required": true
         }
       ]
     },
@@ -209,6 +209,6 @@
       "relationship_type": "primary_mentor"
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md section 6. Assigned once per mentor per period (decisions.md 2026-10-22). Intro shortened 2026-10-28 (MW approved); original: \"Think about the mentoring relationship you have with your mentee. Please indicate your level of agreement/disagreement with the following statements about the CNAP Center mentoring program. For those of you with more than one mentee, please consider these multiple mentees when responding to the statements rather than just focusing on a single mentee. As a reminder, this mentoring questionnaire is meant to evaluate the mentoring program more broadly, not necessarily specific individuals within the program.\"",
+  "_source": "CNAP_Forms_Reconstructed.md section 6. Assigned once per mentor per period (decisions.md 2026-10-22). Intro shortened 2026-10-28 (MW approved); original: \"Think about the mentoring relationship you have with your mentee. Please indicate your level of agreement/disagreement with the following statements about the CNAP Center mentoring program. For those of you with more than one mentee, please consider these multiple mentees when responding to the statements rather than just focusing on a single mentee. As a reminder, this mentoring questionnaire is meant to evaluate the mentoring program more broadly, not necessarily specific individuals within the program.\" MW 2026-11-02: rating questions are required (N/A is the way out).",
   "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

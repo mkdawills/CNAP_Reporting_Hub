@@ -1120,3 +1120,73 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
   -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 90%); mask-image: linear-gradient(180deg, #000 58%, transparent 90%); }
 @media (max-width: 900px) { .made-art.brainnet { width: 150px; opacity: .8; } }
 .cheer { left: 50%; top: -20px; transform-origin: center; translate: -50% 0; }
+
+/* Produced band art, v4 (MW 2026-11-02): a very light network of neurons across the whole band, behind everything */
+.made-art.neuromesh { inset: 0; top: 0; right: 0; width: 100%; height: 100%; color: #fff; opacity: .075;
+  -webkit-mask-image: none; mask-image: none; }
+@media (max-width: 640px) { .made-art.neuromesh { width: 100%; opacity: .06; } }
+/* breathing room under the purple title and between the directions and the note (MW 2026-11-02) */
+.runner .head { margin-bottom: 26px; }
+.runner .instructions.reveal { margin-bottom: 0; }
+.reqnote { margin: 16px 0 24px; }
+/* list of saved entries under a repeating section (MW 2026-11-02) */
+.rsumlist { margin: 18px 0 4px; padding: 14px 18px; border-radius: 12px; background: var(--purple-wash); }
+.rsum-h { margin: 0 0 6px; font-weight: 700; font-size: .92rem; color: var(--purple-ink); }
+.rsumlist ol { margin: 0; padding-left: 22px; font-size: .9rem; line-height: 1.55; }
+.runner .editagain { display: flex; justify-content: center; margin: -4px 0 20px; }
+.readonly-after:empty { display: none; }
+.rsumtab { width: 100%; border-collapse: collapse; font-size: .86rem; background: var(--surface); border-radius: 8px; overflow: hidden; }
+.rsumtab th { text-align: left; font-weight: 600; font-size: .78rem; color: var(--muted); padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: bottom; }
+.rsumtab td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.rsumtab tr:last-child td { border-bottom: 0; }
+.rfull { margin: 10px 0 4px; } .rfull > summary { cursor: pointer; font-weight: 600; font-size: .9rem; color: var(--purple); margin-bottom: 10px; }
+/* directions: full column width, and a little space between sentences so a wrapped line can't be mistaken
+   for a new sentence (MW 2026-11-02) */
+.runner .instructions:not(.secintro) { max-width: 78ch; }
+.reveal .rl + .rl { margin-top: 6px; }
+.runner .head h1 { line-height: 1.3; }
+/* answers, notes and uploads line up with the question's text, not the page edge (MW 2026-11-02) */
+.runner .section .q > :not(.qt):not(fieldset),
+.runner .section .q > fieldset > :not(legend) { margin-left: 2em; }
+.runner .section .q > textarea, .runner .section .q > fieldset > .scale-row,
+.runner .section .q > fieldset > .opts { width: calc(100% - 2em); max-width: calc(740px - 2em); }
+.runner .section .q > textarea { max-width: none; }
+/* one fixed indent (the question text starts 2em of 1.1rem in) so small notes line up too */
+.runner .section .q > :not(.qt):not(fieldset),
+.runner .section .q > fieldset > :not(legend) { margin-left: 2.2rem; }
+.runner .section .q > textarea, .runner .section .q > fieldset > .scale-row,
+.runner .section .q > fieldset > .opts { width: calc(100% - 2.2rem); }
+@media (max-width: 640px) {
+  .runner .section .q > :not(.qt):not(fieldset), .runner .section .q > fieldset > :not(legend) { margin-left: 0; }
+  .runner .section .q > textarea, .runner .section .q > fieldset > .scale-row, .runner .section .q > fieldset > .opts { width: 100%; }
+}
+/* directions span the same width as the title box above them (MW 2026-11-02) */
+.runner .instructions:not(.secintro), .runner .instructions.reveal { max-width: none; }
+.repeat.rgrid > .rmv { grid-column: 1 / -1; justify-self: end; }
+/* a short white rule between the form title and its details (MW 2026-11-02) */
+.runner .head h1 { border-bottom: 0; padding-bottom: 0; margin-bottom: 0; }
+.runner .head h1::after { content: ""; display: block; width: 64px; height: 2px; margin: 14px auto 12px; border-radius: 2px; background: rgba(255,255,255,.7); }
+/* a question with no numbered prompt (a narrative box under section directions) lines up with the directions,
+   not with numbered question text (MW 2026-11-02) */
+.runner .section .q:not(:has(.qt)) > * { margin-left: 0; }
+.runner .section .q:not(:has(.qt)) > textarea { width: 100%; }
+.runner .section .q:not(:has(.qt)) > textarea, .runner .section .q:not(:has(.qt)) > div:not(.qt) { margin-left: 0 !important; width: 100% !important; }
+.runner .seclead { margin: var(--rhythm, 28px) 0 -14px; font-weight: 600; font-size: 1.02rem; color: var(--ink); }
+.runner .seclead { margin-bottom: -4px; }
+
+/* ---- one spacing rhythm for every form section (MW 2026-11-02: "equal padding everywhere") ----
+   purple line · 28 · heading · 10 · directions (10 between paragraphs) · 24 · thin line · 24 · first question.
+   The thin line only appears when something follows the directions. */
+.runner .section { margin-top: 36px; padding-top: 28px; }
+.runner .section > .sectop > h2 { margin: 0; padding: 0; border: 0; }
+.runner .sectop > :not(h2) { margin: 10px 0 0 !important; padding: 0 !important; border: 0 !important; max-width: none !important; }
+.runner .sectop .secintro, .runner .sectop .instructions, .runner .sectop .guide, .runner .sectop .guidehead {
+  font-size: .95rem; line-height: 1.6; color: color-mix(in srgb, var(--ink) 72%, var(--muted)); }
+.runner .sectop .guidehead { color: var(--ink); font-weight: 600; }
+.runner .sectop .guide { padding-left: 22px !important; }
+.runner .sectop .guidehead + .guide { margin-top: 4px !important; }
+.runner .sectop { padding-bottom: 24px; }
+.runner .sectop:has(~ :is(.q, .repeat, .rsumlist, p, button)) { border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+.runner .section > .sectop + .q, .runner .section > .sectop ~ .q:first-of-type { border-top: 0; padding-top: 0; }
+.runner .section > .sectop:last-child, .runner .section > .sectop:not(:has(~ :is(.q, .repeat, .rsumlist, p, button))) { padding-bottom: 0; }
+.runner .seclead { margin: 36px 0 -24px; }

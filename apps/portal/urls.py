@@ -10,6 +10,7 @@ urlpatterns = [
     path("tasks/<int:pk>/", views.form, name="form"),
     path("tasks/<int:pk>/preview/", views.preview, name="preview"),
     path("tasks/<int:pk>/autosave/", views.autosave, name="autosave"),
+    path("tasks/<int:pk>/edit/", views.edit_again, name="edit_again"),
     path("tasks/<int:pk>/opt-out/", views.opt_out, name="opt_out"),
     path("tasks/<int:pk>/mftrp-form/", views.mftrp_form, name="mftrp_form"),
     path("tasks/current-pending/<int:pk>/", views.cp_check, name="cp_check"),

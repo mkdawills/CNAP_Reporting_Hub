@@ -1028,6 +1028,7 @@ def export(request, kind):
                         f"Total User Labs: {c['labs']}",
                         "",
                         f"Total Users: {c['total_users']}",
+                        f"Total Award Costs (entire period of performance): ${c['award_costs']:,.0f}",
                         c["users"],
                         c["students"],
                         "",

@@ -283,7 +283,59 @@ def _downloads(a, specs):
             out.append({"label": d["label"], "url": reverse(d["view"], args=[a.pk])})
         elif d.get("static"):
             out.append({"label": d["label"], "url": static(d["static"])})
+        elif d.get("url"):  # an outside page, e.g. NIGMS's own instructions (MW 2026-11-02)
+            out.append({"label": d["label"], "url": d["url"], "external": True})
     return out
+
+
+# short column heads for forms submitted before the forms carried them
+SHORT_HEADS = {
+    "user_type": "Type",
+    "lab": "Lab",
+    "project_name": "Project",
+    "services": "Services used",
+    "n_users": "Users",
+    "n_students": "Students",
+    "payment": "Payment",
+    "core_data_used": "Data in a grant or paper?",
+}
+
+
+def _row_summary(qs, saved):
+    """A small table of the saved entries in a repeating section, shown under it (MW 2026-11-02)."""
+    import re
+
+    cols = [q for q in qs if q.question_type != QuestionType.LONG_TEXT]
+    labels = {
+        q.pk: {o.code: o.label for o in q.answer_set.options.all()} if q.answer_set_id else {}
+        for q in cols
+    }
+    rows = []
+    for r in saved:
+        vals = [labels[q.pk].get(r.get(q.code), r.get(q.code)) for q in cols]
+        if any(v not in (None, "", []) for v in vals):
+            rows.append(["" if v in (None, []) else v for v in vals])
+    if not rows:
+        return None
+    heads = [
+        (q.config or {}).get("short")
+        or SHORT_HEADS.get(q.code)
+        or re.sub(r"\s*\(.*?\)", "", q.prompt).rstrip("?").strip()
+        for q in cols
+    ]
+    return {"heads": heads, "rows": rows}
+
+
+def _intro_for(a, answers):
+    """Directions written for this person: a form may give one intro per audience, picked by a site-set answer
+    (MW 2026-11-02: an OSC reads only about the biosketch). display.intro_by = {"source": code, value: text}."""
+    by = (a.form_definition.display or {}).get("intro_by") or {}
+    src = by.get("source")
+    if src:
+        for key in (answers.get(src), "default"):
+            if key and by.get(key):
+                return by[key]
+    return a.form_version.intro_text
 
 
 def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
@@ -334,6 +386,7 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
                     [_question_view(q, r.get(q.code), missing_ids=missing_ids) for q in qs]
                 )
             sv["template_row"] = [_question_view(q, "", missing_ids=set()) for q in qs]
+            sv["summary"] = _row_summary(qs, rows.get(sec.code, []))
         else:
             sv["questions"] = [
                 _question_view(
@@ -374,7 +427,7 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
         "fd": fd,
         "noun": _noun(fd),
         "schema": schema,
-        "intro": a.form_version.intro_text,
+        "intro": _intro_for(a, answers),
         "sections": [s for s in sections if not (preview and s["is_followup"])],
         "preview_followup": preview_followup,
         "optout": optout_q,
@@ -386,6 +439,7 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
         "editable": editable and not preview,
         "preview": preview,
         "errors": errors,
+        "can_edit_again": (not editable and not preview and rs.can_self_reopen(a, request.user)),
         "resume": editable
         and not preview
         and a.status == AssignmentStatus.IN_PROGRESS

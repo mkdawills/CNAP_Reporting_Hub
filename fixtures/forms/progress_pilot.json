@@ -5,7 +5,7 @@
   "context_kind": "project",
   "confidentiality": "standard",
   "sort_order": 15,
-  "intro_text": "Upload a 1–2 page Word document covering your accomplishments, your plans for the next period, and any changes. Name it Last name + Designation + Date, for example Cain_Accomplishments_3-20-20. Include the following:",
+  "intro_text": "Upload a 1–2 page Word document covering your accomplishments, your plans for the next period, and any changes. Name it with your last name and what it is, for example Cain_Accomplishments.",
   "display": {
     "task_group": "grant",
     "short_name": "Progress Report (PPL)",
@@ -52,13 +52,13 @@
       "code": "accomplishments",
       "title": "Accomplishments",
       "questions": [],
-      "instructions": "- Activities\n- Objectives\n- Significant Results\n- Key Outcomes\n- Unmet Goals\n- What experiments you completed (give reference to aims/milestones/timeline)\n- What you found\n- Dissemination of information"
+      "instructions": "Your document should contain the following:\n- Activities\n- Objectives\n- Significant Results\n- Key Outcomes\n- Unmet Goals\n- What experiments you completed (give reference to aims/milestones/timeline)\n- What you found\n- Dissemination of information"
     },
     {
       "code": "plans",
       "title": "Plans",
       "questions": [],
-      "instructions": "Provide a summary of what you plan to do during the next reporting period to accomplish the goals and objectives. Discuss efforts to ensure that the approach is scientifically rigorous and results are robust and unbiased.\nRemember that significant changes in objectives and scope require prior approval of the agency (e.g., NIH Grants Policy Statement, 8.1.2.). Include any important modifications to the original plans. Provide a scientific justification for any changes involving research with human subjects or vertebrate animals. A detailed description of such changes must be provided under Changes. Also discuss specific plans for any grant submissions stemming from the pilot grant."
+      "instructions": "Provide a summary of what you plan to do during the next reporting period to accomplish your project goals and objectives. Discuss efforts to ensure that the approach continues to be scientifically rigorous and results are robust and unbiased.\nRemember that significant changes in objectives and scope require prior approval of the agency (e.g., NIH Grants Policy Statement, 8.1.2.). Include any important modifications to the original plans. Provide a scientific justification for any changes involving research with human subjects or vertebrate animals. A detailed description of such changes must be provided under Changes. Also discuss specific plans for any grant submissions stemming from the pilot grant."
     },
     {
       "code": "changes",
@@ -146,7 +146,7 @@
       "title": "Research team (RPPR D.1)",
       "repeatable": true,
       "repeat_label": "Add a person",
-      "instructions": "List everyone who worked on this project or core during this budget year, including you. One row per person.\nGive effort in person months: calendar months for 12-month appointments, or academic and summer months for 9-month appointments.",
+      "instructions": "List everyone who worked on this project or core during this budget year, including you. Use one row per person.\nGive effort in person months: calendar months for 12-month appointments, or academic and summer months for 9-month appointments.",
       "questions": [
         {
           "code": "first_name",

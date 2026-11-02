@@ -18,12 +18,12 @@
         "institution"
       ],
       [
-        "Project title",
-        "project"
+        "Project Leader/Mentee",
+        "holder"
       ],
       [
-        "Project Leader",
-        "holder"
+        "Project Leader’s Project Title",
+        "project"
       ],
       [
         "Reporting period",

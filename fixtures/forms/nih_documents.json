@@ -5,7 +5,7 @@
   "context_kind": "none",
   "confidentiality": "standard",
   "sort_order": 16,
-  "intro_text": "Once a year, the Center collects everyone’s Current and Pending (Other) Support for its progress report to NIH (RPPR). If you’re named on the Notice of Award, NIH also needs your biosketch and an MFTRP certification.\nMake the biosketch and the Current and Pending in SciENcv, using NIH’s Common Forms, and upload the certified PDFs here.\nIf you’re an Other Significant Contributor, NIH only needs your biosketch, so that’s the one upload you’ll see.",
+  "intro_text": "Each year, the Center collects everyone’s Current and Pending for its NIH progress report. If you’re named on the Notice of Award, NIH also needs your biosketch and an MFTRP certification. Make each document in SciENcv with NIH’s Common Forms, and upload the certified PDFs here. If you’re an Other Significant Contributor, you’ll see only the biosketch upload.",
   "display": {
     "task_group": "nih",
     "short_name": "NIH documents",
@@ -31,6 +31,12 @@
           "static": "forms/NIH_Annual_MFTRP_Certification.docx"
         }
       ]
+    },
+    "intro_by": {
+      "source": "audience",
+      "osc": "Each year, the Center collects a biosketch from each Other Significant Contributor for its NIH progress report. Make yours in SciENcv with NIH’s Common Form, and upload the certified PDF here.",
+      "senior_key": "Each year, the Center collects three documents from people named on the Notice of Award for its NIH progress report. They are your Current and Pending, your biosketch, and an MFTRP certification. Make the first two in SciENcv with NIH’s Common Forms, and upload the certified PDFs here.",
+      "default": "Each year, the Center collects everyone’s Current and Pending for its NIH progress report. Make yours in SciENcv with NIH’s Common Form, and upload the certified PDF here."
     }
   },
   "sections": [
@@ -70,13 +76,22 @@
             "widget": "system",
             "source": "osc_only"
           }
+        },
+        {
+          "code": "audience",
+          "prompt": "Which directions to show (set by the site)",
+          "type": "short_text",
+          "config": {
+            "widget": "system",
+            "source": "nih_audience"
+          }
         }
       ]
     },
     {
       "code": "documents",
       "title": "Current and Pending (Other) Support",
-      "instructions": "Make it in SciENcv (www.ncbi.nlm.nih.gov/sciencv), using NIH’s Common Form.\nCertify it yourself in SciENcv, then download the PDF. Don’t flatten it afterward: NIH checks the certification. Your ORCID iD must show in the Persistent Identifier (PID) section.",
+      "instructions": "Make it in SciENcv (www.ncbi.nlm.nih.gov/sciencv), using NIH’s Common Form.\nCertify it yourself in SciENcv, then download the PDF. Don’t flatten it afterward: NIH checks the certification. Your ORCID iD must show in the Persistent Identifier (PID) section. If you need help with SciENcv, you can work with your Central Office grant specialist.",
       "questions": [
         {
           "code": "current_pending",
@@ -94,7 +109,7 @@
     {
       "code": "biosketch",
       "title": "Biosketch",
-      "instructions": "NIH needs your biosketch: the Common Form with the NIH Biographical Sketch Supplement, in one PDF from SciENcv. Certify it there and don’t flatten it.",
+      "instructions": "NIH needs your biosketch. Use the Common Form with the NIH Biographical Sketch Supplement, in one PDF from SciENcv. Certify it there and don’t flatten it. If you need help with SciENcv, you can work with your Central Office grant specialist.",
       "questions": [
         {
           "code": "biosketch",

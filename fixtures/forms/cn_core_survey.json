@@ -45,7 +45,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_01",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_02",
@@ -53,7 +53,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_02",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_03",
@@ -61,7 +61,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_03",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_04",
@@ -69,7 +69,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_04",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_05",
@@ -77,7 +77,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_05",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_06",
@@ -85,7 +85,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_06",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_07",
@@ -93,7 +93,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_07",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_08",
@@ -101,7 +101,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_08",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_09",
@@ -109,7 +109,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_09",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_10",
@@ -117,7 +117,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_10",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_11",
@@ -125,7 +125,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_11",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_12",
@@ -133,7 +133,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_12",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_13",
@@ -141,7 +141,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_13",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_14",
@@ -149,7 +149,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_14",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_15",
@@ -157,7 +157,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_15",
-          "required": false
+          "required": true
         },
         {
           "code": "qual_16",
@@ -165,7 +165,7 @@
           "type": "likert",
           "answer_set": "Quality",
           "measure": "cn_quality_16",
-          "required": false
+          "required": true
         }
       ]
     },
@@ -179,7 +179,7 @@
           "type": "likert",
           "answer_set": "Frequency",
           "measure": "cn_frequency_01",
-          "required": false
+          "required": true
         },
         {
           "code": "freq_02",
@@ -187,7 +187,7 @@
           "type": "likert",
           "answer_set": "Frequency",
           "measure": "cn_frequency_02",
-          "required": false
+          "required": true
         },
         {
           "code": "freq_03",
@@ -195,7 +195,7 @@
           "type": "likert",
           "answer_set": "Frequency",
           "measure": "cn_frequency_03",
-          "required": false
+          "required": true
         },
         {
           "code": "freq_04",
@@ -203,7 +203,7 @@
           "type": "likert",
           "answer_set": "Frequency",
           "measure": "cn_frequency_04",
-          "required": false
+          "required": true
         },
         {
           "code": "freq_05",
@@ -211,7 +211,7 @@
           "type": "likert",
           "answer_set": "Frequency",
           "measure": "cn_frequency_05",
-          "required": false
+          "required": true
         },
         {
           "code": "freq_06",
@@ -219,7 +219,7 @@
           "type": "likert",
           "answer_set": "Frequency",
           "measure": "cn_frequency_06",
-          "required": false
+          "required": true
         },
         {
           "code": "freq_07",
@@ -227,7 +227,7 @@
           "type": "likert",
           "answer_set": "Frequency",
           "measure": "cn_frequency_07",
-          "required": false
+          "required": true
         }
       ]
     },
@@ -274,14 +274,16 @@
         {
           "code": "nonuse_reason",
           "prompt": "Could you share briefly why you didn’t use the core?",
-          "type": "long_text"
+          "type": "long_text",
+          "required": true
         },
         {
           "code": "nonuse_anticipate",
           "prompt": "Do you expect to need the core in the coming weeks or months?",
           "type": "yes_no",
           "answer_set": "Yes / No",
-          "measure": "cn_nonuse_anticipate"
+          "measure": "cn_nonuse_anticipate",
+          "required": true
         },
         {
           "code": "nonuse_contact",
@@ -292,7 +294,8 @@
           "help_text": "If you choose Yes, we’ll share your name and email with the core’s staff so they can get in touch.",
           "config": {
             "contact_request": true
-          }
+          },
+          "required": true
         }
       ]
     }
@@ -340,6 +343,6 @@
       "excluded": "core_director"
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md sections 1-3; opt-out follow-ups are MW's wording (2026-10-22). Intro shortened 2026-10-28 (MW approved); original: \"Please rate on a 1 to 5 scale the quality of the following services and functions. Select N/A for any you did not use. Then, indicate the frequency you've used each service or function.\"",
+  "_source": "CNAP_Forms_Reconstructed.md sections 1-3; opt-out follow-ups are MW's wording (2026-10-22). Intro shortened 2026-10-28 (MW approved); original: \"Please rate on a 1 to 5 scale the quality of the following services and functions. Select N/A for any you did not use. Then, indicate the frequency you've used each service or function.\" MW 2026-11-02: the opt-out follow-up questions are required. MW 2026-11-02: rating questions are required (N/A is the way out).",
   "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

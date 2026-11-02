@@ -72,12 +72,12 @@ def test_submitted_rows_build_table2(client, center):
     assert 'value="3"' in client.get(f"/tasks/{a.pk}/").content.decode()
     bn = next(c for c in rppr.table2(center.grant_year)["cores"] if c["core"].code == "BN")
     assert [r["cells"][0] for r in bn["rows"]] == ["RPL", "External"]
-    assert bn["users"] == 4 and bn["students"] == 2 and bn["said_yes"] == 1
+    assert bn["users"] == 4 and bn["students"] == 2 and bn["said_yes"] == 1  # students are among the 4
     assert u.person not in [p for g in bn["gaps"] for p in g["people"]]
     # one lab listed for two projects counts once
-    assert bn["labs"] == 1 and bn["total_users"] == 6
+    assert bn["labs"] == 1 and bn["total_users"] == 4
     assert bn["summary"] == (
-        "There were 6 users of the Behavioral Neuroscience Core. 5 in-kind users; 1 voucher user."
+        "There were 4 users of the Behavioral Neuroscience Core. 3 in-kind users; 1 voucher user."
     )
 
 
@@ -120,12 +120,12 @@ def test_table2_and_d1_on_rppr_tab_and_csv(client, center):
     html = client.get(f"/manage/outcomes/?tab=rppr&year={gy}").content.decode()
     assert (
         "Table 2: COBRE Core Users" in html
-        and "2A. Behavioral Neuroscience Core" in html
+        and "Table 2. Behavioral Neuroscience Core" in html
         and "D.1 Participants" in html
     )
     assert "not reported yet" in html
     csv2 = client.get(f"/manage/outcomes/export/table2/?year={gy}").content.decode("utf-8-sig")
-    assert "Number of individual users per project (exclude student users)" in csv2
+    assert "Number of individual users per project" in csv2 and "Total Award Costs" in csv2
     d1 = client.get(f"/manage/outcomes/export/d1/?year={gy}").content.decode("utf-8-sig")
     assert "eRA Commons ID" in d1.splitlines()[1]
 

@@ -65,7 +65,7 @@ def guidance(value):
         flush()
         if not line:
             continue
-        if line.endswith(":") and len(line) < 40:
+        if line.endswith(":") and len(line) < 60:
             out.append(format_html('<p class="guidehead">{}</p>', line))
         else:
             out.append(f'<p class="instructions secintro">{stack(line)}</p>')
@@ -177,3 +177,58 @@ def core_rrids():
     from apps.people.models import Core
 
     return list(Core.objects.filter(is_active=True, archived_at__isnull=True).exclude(rrid=""))
+
+
+@register.filter(is_safe=True)
+def title_break(value):
+    """Form titles on two lines (MW 2026-11-02): after a colon, or before "User Survey"."""
+    text = str(conditional_escape(value or ""))
+    if ": " in text:  # "NIH Documents: Biosketch, …": what follows the colon goes on the second line
+        head, tail = text.split(": ", 1)
+        return mark_safe(f"{head}:<br>{tail}")
+    for tail in (" Facility User Survey", " User Survey"):
+        if text.endswith(tail):
+            return mark_safe(text[: -len(tail)] + "<br>" + tail.strip())
+    return mark_safe(text)
+
+
+def _lead_split(value):
+    lines = str(value or "").splitlines()
+    first = lines[0].strip() if lines else ""
+    if first.endswith(":") and not first.startswith("- ") and len(lines) > 1:
+        return first, "\n".join(lines[1:])
+    return "", str(value or "")
+
+
+@register.filter
+def lead(value):
+    """A section's opening line that ends with ":" introduces the section, so it sits just above the section's
+    line (MW 2026-11-02: "Your document should contain the following:")."""
+    return _lead_split(value)[0]
+
+
+@register.filter
+def after_lead(value):
+    return _lead_split(value)[1]
+
+
+def period_span(p):
+    """'June 1 to November 30, 2026' for a reporting period (year shown once when both dates share it)."""
+    s, e = p.start_date, p.end_date
+    first = f"{s:%B} {s.day}" + ("" if s.year == e.year else f", {s.year}")
+    return f"{first} to {e:%B} {e.day}, {e.year}"
+
+
+@register.filter
+def with_period(value, period):
+    """Put the dates after "during the reporting period" in directions (MW 2026-11-02)."""
+    if not value or period is None:
+        return value
+    return str(value).replace(
+        "during the reporting period", f"during the reporting period ({period_span(period)})", 1
+    )
+
+
+@register.filter
+def span(period):
+    return period_span(period) if period else ""

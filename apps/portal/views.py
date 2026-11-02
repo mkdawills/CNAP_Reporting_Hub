@@ -259,6 +259,19 @@ def opt_out(request, pk):
 
 
 @login_required
+@require_POST
+def edit_again(request, pk):
+    """The respondent reopens their own submitted form while the period is open; the submitted copy is kept."""
+    a = _own_assignment(request, pk)
+    if not rs.can_self_reopen(a, request.user):
+        messages.error(request, "This form can’t be changed now. Ask the evaluator if you need to.")
+        return redirect("portal:form", pk)
+    rs.reopen(request.user, a, reason="Reopened by the respondent")
+    messages.success(request, "Your answers are open to change. Submit again when you’re done.")
+    return redirect("portal:form", pk)
+
+
+@login_required
 def history(request):
     person = request.user.person
     done = (

@@ -93,3 +93,25 @@ def test_osc_gets_nih_documents_with_the_biosketch_only(client, center):
     )
     b = Assignment.objects.get(person=reyes, form_definition__code="nih_documents")
     assert rs.system_answers(b, FormSchema(b.form_version))["osc_only"] == "no"
+
+
+def test_nih_documents_directions_fit_the_person(client, center):
+    from apps.accounts.models import User
+    from apps.reporting.models import Assignment, ReportingPeriod
+    from apps.reporting.services import assignments as asg
+
+    asg.generate(ReportingPeriod.objects.get(status="open"))
+    want = {
+        "Rowe": "from each Other Significant Contributor",
+        "Kim": "from people named on the Notice of Award",
+        "Varga": "collects everyone’s Current and Pending",
+    }
+    for last, text in want.items():
+        p = Person.objects.get(last_name=last)
+        a = Assignment.objects.get(person=p, form_definition__code="nih_documents")
+        u = User.objects.filter(person=p).first() or User.objects.create(username=f"u{last}", person=p)
+        client.force_login(u)
+        page = client.get(f"/tasks/{a.pk}/").content.decode()
+        assert text in page, last
+        others = [t for k, t in want.items() if k != last]
+        assert not any(t in page for t in others), last

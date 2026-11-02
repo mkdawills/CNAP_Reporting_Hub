@@ -153,6 +153,11 @@ def system_value(assignment, q):
         from apps.people.services import is_senior_key
 
         return "yes" if is_senior_key(assignment.person) else "no"
+    if q.config.get("source") == "nih_audience":  # which NIH-documents directions to show
+        from apps.people.services import is_osc_only, is_senior_key
+
+        p = assignment.person
+        return "osc" if is_osc_only(p) else "senior_key" if is_senior_key(p) else "default"
     if q.config.get("source") == "osc_only":
         from apps.people.services import is_osc_only
 
@@ -360,6 +365,16 @@ def reopen(actor, assignment, reason=""):
     assignment.reopened_at = timezone.now()
     assignment.save(update_fields=["status", "completion_pathway", "reopened_at", "updated_at"])
     record_event(actor, AuditLog.Action.REOPEN, assignment, reason=reason)
+
+
+def can_self_reopen(assignment, user):
+    """Someone may reopen their own submitted form while its period is open (MW 2026-11-02)."""
+    return (
+        assignment.person_id == user.person_id
+        and assignment.status in (AssignmentStatus.SUBMITTED, AssignmentStatus.COMPLETED_OPT_OUT)
+        and assignment.reporting_period.status == PeriodStatus.OPEN
+        and not assignment.reporting_period.in_preview
+    )
 
 
 def _contact_requests(assignment, schema, answers):

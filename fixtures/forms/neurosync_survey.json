@@ -44,7 +44,7 @@
           "type": "likert",
           "answer_set": "Agreement (no N/A)",
           "measure": "neurosync_01",
-          "required": false
+          "required": true
         },
         {
           "code": "item_02",
@@ -52,7 +52,7 @@
           "type": "likert",
           "answer_set": "Agreement (no N/A)",
           "measure": "neurosync_02",
-          "required": false
+          "required": true
         },
         {
           "code": "item_03",
@@ -60,7 +60,7 @@
           "type": "likert",
           "answer_set": "Agreement (no N/A)",
           "measure": "neurosync_03",
-          "required": false
+          "required": true
         },
         {
           "code": "item_04",
@@ -68,7 +68,7 @@
           "type": "likert",
           "answer_set": "Agreement (no N/A)",
           "measure": "neurosync_04",
-          "required": false
+          "required": true
         },
         {
           "code": "item_05",
@@ -76,7 +76,7 @@
           "type": "likert",
           "answer_set": "Agreement (no N/A)",
           "measure": "neurosync_05",
-          "required": false
+          "required": true
         },
         {
           "code": "item_06",
@@ -84,7 +84,7 @@
           "type": "likert",
           "answer_set": "Agreement (no N/A)",
           "measure": "neurosync_06",
-          "required": false
+          "required": true
         },
         {
           "code": "item_07",
@@ -92,7 +92,7 @@
           "type": "likert",
           "answer_set": "Agreement (no N/A)",
           "measure": "neurosync_07",
-          "required": false
+          "required": true
         }
       ]
     },
@@ -141,14 +141,16 @@
             "On leave or away",
             "Other"
           ],
-          "measure": "neurosync_nonattend_reason"
+          "measure": "neurosync_nonattend_reason",
+          "required": true
         },
         {
           "code": "nonattend_future",
           "prompt": "Do you anticipate attending in a future semester?",
           "type": "yes_no",
           "answer_set": "Yes / No",
-          "measure": "neurosync_nonattend_future"
+          "measure": "neurosync_nonattend_future",
+          "required": true
         },
         {
           "code": "nonattend_comments",
@@ -193,6 +195,6 @@
       "scope": "universal"
     }
   ],
-  "_source": "CNAP_Forms_Reconstructed.md section 4; non-attendance path from the appendix. Intro shortened 2026-10-28 (MW approved); original: \"Please rate on a 1 to 5 scale how much you agree with the following statements.\"",
+  "_source": "CNAP_Forms_Reconstructed.md section 4; non-attendance path from the appendix. Intro shortened 2026-10-28 (MW approved); original: \"Please rate on a 1 to 5 scale how much you agree with the following statements.\" MW 2026-11-02: the opt-out follow-up questions are required. MW 2026-11-02: rating questions are required (N/A is the way out).",
   "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
 }

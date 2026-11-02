@@ -261,25 +261,25 @@ USAGE_FORM = "core_usage_report"
 # The columns of the guidance's Table 2 "COBRE Core Users", in order, with its wording (used in the CSV).
 # SHORT: the same columns, briefly, for the screen (the full wording shows on hover).
 USAGE_SHORT = [
-    "Type of user",
+    "Type of user lab",
     "Project name",
     "Technology, instruments, services",
-    "Users (not students)",
+    "Individual users",
     "Student users",
     "Payment",
-    "Core data in grant/paper?",
+    "Data in a grant or paper?",
 ]
 USAGE_COLS = [
     (
         "user_type",
-        "Type of User (RPL, PPL, former RPL, former PPL, Students, Other Institutional, External)",
+        "Type of User Lab (RPL, PPL, former RPL, former PPL, Other Institutional, External)",
     ),
     ("project_name", "Project Name"),
     ("services", "Technology, instruments, or services used"),
-    ("n_users", "Number of individual users per project (exclude student users)"),
+    ("n_users", "Number of individual users per project"),
     ("n_students", "Number of student users (all levels)"),
     ("payment", "Payment type (in-kind, voucher, fee-for-service, etc.)"),
-    ("core_data_used", "Were CORE- generated data included in a Grant Application or Publication?"),
+    ("core_data_used", "Were data included in a grant application or publication?"),
 ]
 
 
@@ -334,6 +334,8 @@ def table2(gy, periods=None):
         r = rows_by.setdefault(
             (a.response.assignment_id, a.repeat_index), {"asg": a.response.assignment}
         )
+        if a.question.code == "n_users" and "exclude student" in a.question.prompt.lower():
+            r["_students_apart"] = True  # an older form: individual users didn't include students
         if a.option_id:
             r[a.question.code] = a.option.label
         elif a.value_number is not None:
@@ -345,6 +347,8 @@ def table2(gy, periods=None):
         mine = [a for a in asg if a.core_id == core.pk]
         rows = [r for r in rows_by.values() if r["asg"].core_id == core.pk and r.get("user_type")]
         for r in rows:
+            if r.pop("_students_apart", False):  # bring older rows to NIH's meaning: students are among the users
+                r["n_users"] = (r.get("n_users") or 0) + (r.get("n_students") or 0)
             r["period"] = r["asg"].reporting_period.name
             r["by"] = str(r["asg"].person)
             r["cells"] = [r.get(k, "") for k, _ in USAGE_COLS]
@@ -365,10 +369,10 @@ def table2(gy, periods=None):
         pay = {}
         for r in rows:
             k = r.get("payment") or "payment type not given"
-            pay[k] = pay.get(k, 0) + (r.get("n_users") or 0) + (r.get("n_students") or 0)
+            pay[k] = pay.get(k, 0) + (r.get("n_users") or 0)
         summary = ""
         if rows:
-            tot = users + students
+            tot = users
             summary = f"There {'was' if tot == 1 else 'were'} {tot} user{'' if tot == 1 else 's'} of the {core.name}."
             parts = [f"{v} {k.lower()} user{'' if v == 1 else 's'}" for k, v in pay.items() if v]
             if parts:
@@ -393,15 +397,25 @@ def table2(gy, periods=None):
             .distinct()
             .order_by("submission_date")
         )
+        # NIGMS "Total Award Costs (entire period of performance)": awards this year from proposals that credit
+        # this core, at their full award total
+        award_costs = sum(
+            (g.award_total or 0)
+            for g in grants
+            if g.status == GrantStatus.AWARDED
+            and g.award_notice_date
+            and start <= g.award_notice_date <= end
+        )
         cores.append(
             {
                 "core": core,
-                "letter": f"2{chr(65 + n)}",
+                "letter": str(2 + n),  # NIGMS: the first core is Table 2, the second Table 3, and so on
                 "rows": rows,
                 "labs": len(labs),
                 "users": users,
                 "students": students,
-                "total_users": users + students,
+                "total_users": users,  # students are counted among the individual users (NIGMS Table 2)
+                "award_costs": award_costs,
                 "said_yes": sum(1 for r in rows if r.get("core_data_used") == "Yes"),
                 "summary": summary,
                 "gaps": gaps,
