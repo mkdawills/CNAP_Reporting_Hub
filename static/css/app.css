@@ -1026,3 +1026,4 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 .tasks td.mins { min-width: 0; width: 1%; padding: 0 16px 0 30px; }
 .tasks td.mins::before { display: block; }
 .donebox .tasks td.mins::before { display: none; }
+.tasks td.mins::before { border-left-color: color-mix(in srgb, var(--purple) 35%, var(--line)); }
