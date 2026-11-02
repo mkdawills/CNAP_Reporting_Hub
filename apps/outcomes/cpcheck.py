@@ -96,6 +96,7 @@ def _send(c, kind, due):
             "kind": kind,
             "due": f"{due:%A, %B} {due.day}",
             "fall": f"{fall:%B} {fall.day}" if fall else "the fall",
+            "rppr_due": f"{rppr_due(c.assignment.reporting_period.grant_year):%B} 1",
             "url": url,
             "with_link": signin.may_use_link(p),
             "days": signin.LINK_DAYS,
@@ -140,9 +141,25 @@ def run(today=None):
     return n
 
 
+def rppr_due(gy):
+    """When the Center's progress report is due to NIH: 60 days before the June 1 budget start, so April 1
+    of the budget year's second calendar year (MW 2026-11-02)."""
+    return dt.date(2017 + gy, 4, 1)
+
+
+def with_dates(c):
+    """Attach .due (answer by) and .rppr_due (the report's due date) for pages and e-mails."""
+    if c is not None:
+        gy = c.assignment.reporting_period.grant_year
+        c.due = dates(gy)[1]
+        c.rppr_due = rppr_due(gy)
+        c.prev_file = current_file(c.assignment)  # the one they turned in, to look over before answering
+    return c
+
+
 def pending_for(person, today=None):
     """This person's unanswered February check, if one has been asked."""
-    return (
+    return with_dates(
         CurrentPendingCheck.objects.filter(
             assignment__person=person, asked_at__isnull=False, answered_at__isnull=True
         )

@@ -433,3 +433,7 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 ## 2026-11-02 · OSCs give a biosketch (MW: yes)
 - Other Significant Contributors get the yearly NIH documents task. A hidden site-set answer (osc_only: an OSC holding none of PD/PI, RPL, PPL, core director) hides the effort, Current and Pending and foreign sections and shows the biosketch section only. Someone who is also in a full-task role keeps the full task.
 - The RPPR tab marks them "OSC"; only the biosketch counts as missing for them. nih_documents v9; the intro and biosketch instructions are worded for both groups.
+
+## 2026-11-02 · February Current and Pending check: dates and the fall copy
+- The question, its page and the first e-mail now say the progress report is due April 1 (60 days before the June 1 budget start) and to answer by February 15, and link to the Current and Pending they turned in so they can look it over first.
+- My tasks line reads as a sentence: "You have 2 tasks left, about 4 minutes in all."

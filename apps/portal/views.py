@@ -127,7 +127,14 @@ def cp_check(request, pk):
     from apps.outcomes import cpcheck
     from apps.reporting.models import CurrentPendingCheck
 
-    c = get_object_or_404(CurrentPendingCheck.objects.select_related("assignment__person"), pk=pk)
+    c = cpcheck.with_dates(
+        get_object_or_404(
+            CurrentPendingCheck.objects.select_related(
+                "assignment__person", "assignment__reporting_period"
+            ),
+            pk=pk,
+        )
+    )
     if c.assignment.person_id != request.user.person_id:
         raise PermissionDenied("Only the person asked can answer.")
     error = ""

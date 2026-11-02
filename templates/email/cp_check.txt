@@ -1,8 +1,8 @@
 {% autoescape off %}Hello {{ person.first_name }},
 
-{% if kind == "ask" %}You turned in your Current and Pending (Other) Support on {{ fall }}. NIH needs it to be current when the Center's progress report goes in this spring.{% else %}A reminder about one quick question for the Center's progress report to NIH.{% endif %}
+{% if kind == "ask" %}You turned in your Current and Pending (Other) Support on {{ fall }}. NIH needs it to be current for CNAP's progress report, due {{ rppr_due }}.{% else %}A reminder about one quick question for the Center's progress report to NIH.{% endif %}
 
-Has your Current and Pending changed since then? For example, a new proposal submitted, an award, or a change in your effort.
+Has your Current and Pending changed since then? The page below has a link to the one you turned in, so you can look it over first. For example, a new proposal submitted, an award, or a change in your effort.
 
 - No changes: one click.
 - It changed: upload the new certified PDF from SciENcv.
