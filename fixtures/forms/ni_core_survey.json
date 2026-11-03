@@ -6,7 +6,7 @@
   "about_core": "NI",
   "confidentiality": "standard",
   "sort_order": 2,
-  "intro_text": "Rate each service you used, from 1 to 5. Choose N/A for anything you didn’t use. Then tell us how often you used each one.",
+  "intro_text": "Rate each service you used, from 1 (very poor) to 5 (very good), or choose not applicable (NA) for anything you didn’t use. Then tell us how often you used each one.",
   "display": {
     "task_group": "cores",
     "short_name": "NI Core",
@@ -26,7 +26,7 @@
       "questions": [
         {
           "code": "optout",
-          "prompt": "I did not use the Neuroinformatics Core since the last reporting period.",
+          "prompt": "I prefer to opt out of this survey. I did not use the Neuroinformatics Core in the last reporting period.",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "config": {
@@ -169,7 +169,7 @@
       "questions": [
         {
           "code": "nonuse_reason",
-          "prompt": "Could you share briefly why you didn’t use the core?",
+          "prompt": "Please kindly share why you did not use the core.",
           "type": "long_text",
           "required": true
         },
@@ -193,7 +193,8 @@
           },
           "required": true
         }
-      ]
+      ],
+      "instructions": "If you don’t mind, we’re still a bit curious."
     }
   ],
   "rules": [

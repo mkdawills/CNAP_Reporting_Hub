@@ -17,13 +17,13 @@
         <li><strong>A specific acknowledgment of NIH grant support:</strong>
           <div class="acktext"><span>{{ ack.support }}</span><button type="button" class="btn small ghost copy">Copy</button></div></li>
         <li><strong>An acknowledgment of the level of NIH funding.</strong> {{ "It gives the percentage and dollar amount of the total project costs financed with federal money, and the percentage and dollar amount financed by nongovernmental sources."|stack }}
-          <div class="acktext"><span>{{ ack.level }}</span><button type="button" class="btn small ghost copy">Copy</button></div></li>
+          <div class="acktext"><span>{{ ack.level }}</span><button type="button" class="btn small ghost copy">Copy</button></div>
+          <p class="muted">{{ "Fill in your CNAP project’s total award, direct plus indirect costs. CNAP projects are normally paid entirely with federal money, so 100% and 0% usually stay as they are. If you’re not sure of your total, ask the CNAP office."|stack }}</p></li>
         <li><strong>A disclaimer:</strong>
           <div class="acktext"><span>{{ ack.disclaimer }}</span><button type="button" class="btn small ghost copy">Copy</button></div></li>
       </ol>
       <p class="small">All three together:</p>
       <div class="acktext"><span>{{ ack.all }}</span><button type="button" class="btn small ghost copy">Copy</button></div>
-      {% if not ack.ready %}<p class="small muted">The funding figures aren’t set yet. Ask the CNAP office for them before you submit.</p>{% endif %}
       {% core_rrids as rr %}{% if rr %}
       <p class="small">If you used a CNAP core, also cite its RRID in your methods, right after the core’s name:</p>
       {% for c in rr %}<div class="acktext"><span>{{ c.name }} ({{ c.rrid }}), Kansas State University</span><button type="button" class="btn small ghost copy">Copy</button></div>{% endfor %}

@@ -236,26 +236,19 @@ def span(period):
 
 @register.simple_tag
 def nih_ack(kind="publication"):
-    """The three statements NIH requires on public documents (Stevens Amendment, MW 2026-11-02): grant
-    support, the federal and nongovernmental shares of total costs, and the disclaimer."""
-    from apps.outcomes.models import FundingStatement
-
-    f = FundingStatement.current()
+    """The three statements NIH requires on public documents (Stevens Amendment, MW 2026-11-03): grant
+    support, the funding level, and the disclaimer. The funding level is the author's own CNAP project: only
+    they know its award total, and CNAP projects are normally paid entirely with federal money."""
     support = (
         f"Research reported in this {kind} was supported by the National Institute of General Medical "
-        f"Sciences of the National Institutes of Health under award number {f.award_number}."
+        f"Sciences of the National Institutes of Health under award number P20GM113109."
     )
-    if f.ready:
-        pf, fed, pn, non = f.shares()
-        level = (
-            f"Federal funds paid for {pf}% (${fed:,.0f}) of the project’s total costs, and nongovernmental "
-            f"sources paid for {pn}% (${non:,.0f})."
-        )
-    else:
-        level = "[Funding level: the CNAP office will add the federal and nongovernmental shares here.]"
+    level = (
+        "100% of the total costs of this project ($[your project’s total award]) were financed with federal "
+        "money, and 0% ($0) were financed by nongovernmental sources."
+    )
     disclaimer = (
         "The content is solely the responsibility of the authors and does not necessarily represent the "
         "official views of the National Institutes of Health."
     )
-    return {"support": support, "level": level, "disclaimer": disclaimer, "ready": f.ready,
-            "all": f"{support} {level} {disclaimer}"}
+    return {"support": support, "level": level, "disclaimer": disclaimer, "all": f"{support} {level} {disclaimer}"}

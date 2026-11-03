@@ -23,7 +23,7 @@
       "questions": [
         {
           "code": "optout",
-          "prompt": "I haven’t worked with the Administrative Core since the last reporting period.",
+          "prompt": "I prefer to opt out of this survey. I did not work with the Administrative Core in the last reporting period.",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "config": {
@@ -35,7 +35,7 @@
     {
       "code": "admin_core",
       "title": "Survey questions",
-      "instructions": "Please indicate how much you agree with each statement about the Administrative Core.",
+      "instructions": "Please indicate how much you agree with each statement about the Administrative Core. Choose from 1 (strongly disagree) to 5 (strongly agree) or not applicable (NA).",
       "questions": [
         {
           "code": "item_01",

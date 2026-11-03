@@ -3,7 +3,7 @@
 {% block content %}
 {% if not period %}
   <div class="head"><div><h1>My tasks</h1><p>{{ "No reporting period is open right now. We’ll e-mail you when the next one opens."|stack }}</p></div></div>
-  {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s progress report, due {{ cp_check.rppr_due|date:"F j" }}. Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %} <a href="{% url 'portal:download' cp_check.prev_file.pk %}">Open the one you turned in (PDF)</a>{% endif %}</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
+  {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ cp_check.rppr_due|date:"F j" }}.<br>Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %}<br><a href="{% url 'portal:download' cp_check.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a>{% endif %}</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 {% else %}
 {% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong> {{ "You can read every form now with Preview. Answering opens that day; nothing you do here before then is saved."|stack }}</div>{% endif %}
 <header class="welcome">
@@ -26,7 +26,7 @@
   </a>{% endif %}
 </header>
 
-{% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s progress report, due {{ cp_check.rppr_due|date:"F j" }}. Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %} <a href="{% url 'portal:download' cp_check.prev_file.pk %}">Open the one you turned in (PDF)</a>{% endif %}</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
+{% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ cp_check.rppr_due|date:"F j" }}.<br>Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %}<br><a href="{% url 'portal:download' cp_check.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a>{% endif %}</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 
 {% if just_done %}
 <div class="panel nextup" role="status" data-confetti="{{ just_done.a.pk }}">

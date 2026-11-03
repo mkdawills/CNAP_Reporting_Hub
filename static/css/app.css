@@ -1198,3 +1198,34 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 .runner .section .q .qt { font-family: "Public Sans", system-ui, sans-serif; font-size: 1.1rem; font-weight: 600; line-height: 1.45; color: var(--ink); }
 .runner .section .q .qt::before { font-weight: 500; color: var(--muted); }
 .ackbox .stevens { margin: 8px 0 12px; padding-left: 22px; } .ackbox .stevens li { margin: 0 0 10px; } .ackbox .stevens .acktext { margin-top: 6px; }
+
+/* Excel upload for repeatable lists (MW 2026-11-03) */
+.sheetup { margin-top: 18px; padding: 14px 16px; border: 1px solid var(--line, #ddd6ea); border-radius: 10px; background: #fff; }
+.sheetup-h { font-weight: 600; margin: 0 0 4px; }
+.sheetup p.small { margin: 0 0 10px; }
+.sheetup-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* a Notes box sits under its yes/no question, lined up with the answers (MW 2026-11-03) */
+.runner .section .q.q-note { border-top: 0; margin-top: 10px; padding-top: 0; }
+.runner .section .q.q-note > label.qt-note,
+.runner .section .q.q-note > textarea { margin-left: 2.2rem !important; width: calc(100% - 2.2rem) !important; }
+.runner .q.q-note .qt-note { display: block; font-size: .95rem; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.runner .q.q-note .qt-note .muted { font-weight: 400; }
+.runner .q.q-note textarea { min-height: 3.2em; }
+@media (max-width: 640px) {
+  .runner .section .q.q-note > label.qt-note, .runner .section .q.q-note > textarea { margin-left: 0 !important; width: 100% !important; }
+}
+
+/* the details strip under the title: centered in each column (MW 2026-11-03) */
+.prefill div { text-align: center; }
+
+/* every opt-out box starts with its name (MW 2026-11-03) */
+.optout .optout-h { margin: 0 0 8px; font-family: var(--display, inherit); font-weight: 700; font-size: 1.02rem; color: var(--purple-ink, #3d1f6e); }
+
+/* "Has Not Changed": the Not is bold and underlined (MW 2026-11-03) */
+strong.ul { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+
+/* NeuroSync speakers: the add-a-talk fields (MW 2026-11-03) */
+.speakgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px 16px; margin: 0 0 14px; }
+.speakgrid label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); }
+.speakgrid input { width: 100%; }

@@ -9,7 +9,7 @@
   {% if prefill %}<dl class="prefill">{% for label, value in prefill %}<div><dt>{{ label }}</dt><dd>{{ value|default:"—" }}</dd></div>{% endfor %}</dl>{% endif %}
   <form>
     {% if intro %}<p class="instructions">{{ intro|stack }}</p>{% endif %}
-    {% if optout and opted %}<div class="optout"><label><input type="checkbox" checked disabled> {{ optout.prompt }}</label></div>{% endif %}
+    {% if optout and opted %}<div class="optout"><p class="optout-h">Opt out</p><label><input type="checkbox" checked disabled> {{ optout.prompt }}</label></div>{% endif %}
     {% for sv in sections %}{% include "portal/_section.html" %}{% endfor %}
   </form>
 </div>

@@ -21,17 +21,17 @@ def schema(code):
 
 
 def test_all_instruments_load(instruments):
-    # 16 Piestar instruments plus the yearly NIH documents task (MW 2026-10-27)
-    assert len(instruments) == 17
-    assert FormDefinition.objects.count() == 17
-    assert FormVersion.objects.filter(status=VersionStatus.ACTIVE).count() == 17
+    # 16 Piestar instruments, the yearly NIH documents task (MW 2026-10-27) and the NeuroSync Speaker Survey (MW 2026-11-03)
+    assert len(instruments) == 18
+    assert FormDefinition.objects.count() == 18
+    assert FormVersion.objects.filter(status=VersionStatus.ACTIVE).count() == 18
     assert loader.universal_rule_check()
 
 
 def test_loading_again_changes_nothing(instruments):
     again = loader.load_all()
     assert {s for *_, s in again} == {"unchanged"}
-    assert FormVersion.objects.count() == 17
+    assert FormVersion.objects.count() == 18
 
 
 def test_item_counts_match_sources(instruments):
@@ -98,11 +98,13 @@ def test_reporting_hub_has_no_optout(instruments):
 def test_progress_report_file_required(instruments):
     s = schema("progress_pilot")
     quick = ["b1a", "c3", "c4", "c5a", "c5c", "f3", "g9"]  # quick RPPR questions (MW 2026-10-27)
-    assert [q.code for q in s.missing_required({})] == ["proj_status", "file"] + quick
+    assert [q.code for q in s.missing_required({})] == ["file"] + quick
     no = {c: "no" for c in quick} | {"c5c": "yes"}
-    assert s.missing_required({"file": "12", "proj_status": "ongoing"} | no) == []
-    ended = [q.code for q in s.missing_required({"file": "12", "proj_status": "ended"} | no)]
-    assert ended == ["ended_on"]  # FY27 guidance: "ENDED AS OF MM/DD/YYYY"
+    assert s.missing_required({"file": "12"} | no) == []
+    # a Notes box under each question, required for a Yes (a No on C.5.c) (MW 2026-11-03)
+    assert [q.code for q in s.missing_required({"file": "12"} | no | {"c4": "yes"})] == ["c4_note"]
+    assert [q.code for q in s.missing_required({"file": "12"} | no | {"c5c": "no"})] == ["c5c_note"]
+    assert "proj_status" not in s.by_code and "tables_file" not in s.by_code
     assert s.time_label() == "1–2 page upload, plus 5 min"
 
 

@@ -514,3 +514,28 @@ class HelpfulDocument(TimestampedModel):
 
     def __str__(self):
         return self.title
+
+
+class SpeakerTalk(TimestampedModel):
+    """One NeuroSync talk (MW 2026-11-03). Its speaker gets the NeuroSync Speaker Survey when the talk ends:
+    automatically at `ends_at` (the every-10-minutes job), or when the evaluator sends it by hand."""
+
+    speaker = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="talks")
+    title = models.CharField(max_length=300)
+    ends_at = models.DateTimeField(help_text="When the talk ends. The survey goes out then.")
+    auto_send = models.BooleanField(default=True)
+    assignment = models.ForeignKey(
+        Assignment, null=True, blank=True, on_delete=models.SET_NULL, related_name="talks"
+    )
+    sent_at = models.DateTimeField(null=True, blank=True)
+    sent_to = models.EmailField(blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "speaker_talks"
+        ordering = ["-ends_at"]
+
+    def __str__(self):
+        return f"{self.speaker}: {self.title}"

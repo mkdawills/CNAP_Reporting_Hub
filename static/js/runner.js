@@ -33,18 +33,25 @@
   /* ---- where am I ---- */
   var bar = document.getElementById("formprog"), txt = document.getElementById("formprog-t"), fill = document.getElementById("formprog-f");
   var minutes = parseInt(form.getAttribute("data-minutes") || "0", 10);
-  function sections() { return Array.from(form.querySelectorAll("section.section")).filter(function (s) { return !s.hidden; }); }
+  /* questions answered so far, not sections: "Section 1 of 2" meant nothing to people (MW 2026-11-03) */
+  function questions() {
+    return Array.from(form.querySelectorAll("section.section:not([hidden]) .q:not(.q-note)")).filter(function (q) { return !q.closest("[hidden]"); });
+  }
+  function answered(q) {
+    if (q.querySelector("input[type=radio]:checked, input[type=checkbox]:checked, .filename")) return true;
+    return Array.from(q.querySelectorAll("textarea, input[type=text], input[type=date], input[type=number], select")).some(function (el) { return (el.value || "").trim() !== ""; });
+  }
   function update() {
-    var secs = sections();
-    if (!bar || secs.length < 2) { if (bar) bar.hidden = true; return; }
-    var mark = window.innerHeight * 0.35, cur = 0;
-    secs.forEach(function (s, i) { if (s.getBoundingClientRect().top < mark) cur = i; });
-    var left = Math.max(1, Math.round(minutes * (secs.length - cur) / secs.length));
-    txt.textContent = "Section " + (cur + 1) + " of " + secs.length + "." + (minutes ? " About " + left + " minute" + (left === 1 ? "" : "s") + " left." : "");
-    fill.style.width = Math.round(100 * (cur + 1) / secs.length) + "%";
+    var qs = questions();
+    if (!bar || qs.length < 2) { if (bar) bar.hidden = true; return; }
+    var done = qs.filter(answered).length, left = Math.max(1, Math.round(minutes * (qs.length - done) / qs.length));
+    txt.textContent = (done === qs.length ? "You’ve answered all " + qs.length + " questions." :
+      "You’ve answered " + done + " of " + qs.length + " questions." + (minutes ? " About " + left + " minute" + (left === 1 ? "" : "s") + " left." : ""));
+    fill.style.width = Math.round(100 * done / qs.length) + "%";
     bar.hidden = window.scrollY < 200;
   }
   window.addEventListener("scroll", update, { passive: true });
   form.addEventListener("change", update);
+  form.addEventListener("input", update);
   update();
 })();

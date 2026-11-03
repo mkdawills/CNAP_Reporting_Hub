@@ -5,7 +5,7 @@
   "context_kind": "none",
   "confidentiality": "standard",
   "sort_order": 4,
-  "intro_text": "How much do you agree with each statement? Choose from 1 to 5.",
+  "intro_text": "How much do you agree with each statement? Choose from 1 (strongly disagree) to 5 (strongly agree).",
   "display": {
     "task_group": "other",
     "short_name": "NeuroSync",
@@ -25,7 +25,7 @@
       "questions": [
         {
           "code": "optout",
-          "prompt": "I have not attended NeuroSync since the last reporting period.",
+          "prompt": "I prefer to opt out of this survey. I did not attend NeuroSync in the last reporting period.",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "config": {
@@ -132,7 +132,7 @@
       "questions": [
         {
           "code": "nonattend_reason",
-          "prompt": "Why have you not attended?",
+          "prompt": "Please kindly share why you have not attended.",
           "type": "single_select",
           "options": [
             "Schedule conflict",
@@ -157,7 +157,8 @@
           "prompt": "Optional comments",
           "type": "long_text"
         }
-      ]
+      ],
+      "instructions": "If you don’t mind, we’re still a bit curious."
     }
   ],
   "rules": [

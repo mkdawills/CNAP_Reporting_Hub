@@ -32,6 +32,7 @@
         {% url 'manage:results' as u_res %}{% if u_res %}<a href="{{ u_res }}" {% nav_current 'results' 'form_results' 'response' %}>Results</a>{% endif %}
         {% url 'manage:longitudinal' as u_long %}{% if u_long %}<a href="{{ u_long }}" {% nav_current 'longitudinal' 'snapshot' %}>Year over year</a>{% endif %}
         <a href="{% url 'manage:people' %}" {% nav_current 'people' 'person' 'person_new' %}>People</a>
+        <a href="{% url 'manage:speakers' %}" {% nav_current 'speakers' %}>NeuroSync speakers</a>
         <a href="{% url 'manage:projects' %}" {% nav_current 'projects' 'project' 'project_new' %}>Projects and cores</a>
         <a href="{% url 'manage:outcomes' %}" {% nav_current 'outcomes' 'publication_new' 'publication_edit' 'grant_new' 'grant_edit' %}>Publications and grants</a>
         <a href="{% url 'manage:roster_imports' %}" {% nav_current 'roster_imports' 'roster_import' %}>Roster import</a>

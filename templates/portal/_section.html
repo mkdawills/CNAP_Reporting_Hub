@@ -16,7 +16,7 @@
           {% if v.type == 'date' %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="date" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>
           {% elif v.type == 'single_select' %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<select name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}disabled{% endif %}><option value="">—</option>{% for o in v.options %}<option value="{{ o.code }}" {% if v.value == o.code %}selected{% endif %}>{{ o.label }}</option>{% endfor %}</select></label>
           {% elif v.type == 'yes_no' %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<select name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}disabled{% endif %}><option value="">—</option>{% for o in v.pts %}<option value="{{ o.code }}" {% if v.value == o.code %}selected{% endif %}>{{ o.text }}</option>{% endfor %}</select></label>
-          {% elif v.type == 'number' %}<label class="num w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="number" min="0" step="1" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>
+          {% elif v.type == 'number' %}<label class="num w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="number" min="0" step="{% if 'months' in v.code %}any{% else %}1{% endif %}" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>
           {% elif v.type == 'long_text' %}<label class="grow w-full">{{ v.q.prompt }}<textarea name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}readonly{% endif %}>{{ v.value }}</textarea></label>
           {% else %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="text" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>{% endif %}
         {% endfor %}
@@ -25,6 +25,13 @@
     {% endwith %}{% empty %}<p class="small muted">There are no entries yet.</p>{% endfor %}
     {% if not editable and sv.summary %}</details>{% endif %}
     {% if editable %}<button class="btn small ghost" type="submit" name="action" value="add:{{ sv.s.code }}" formnovalidate>{{ sv.s.repeat_label|default:"Add an entry" }}</button>{% endif %}
+    {% if editable %}<div class="sheetup">
+      <p class="sheetup-h">Keep this list in Excel?</p>
+      <p class="small">You can upload a sheet instead of typing each entry. Download the template, fill in one row per entry, and upload it here. The rows are added above, so you can check and edit them before you submit.</p>
+      <div class="sheetup-row"><a class="btn small ghost" href="{% url 'portal:sheet_template' a.pk sv.s.code %}" download>Download the Excel template</a>
+        <input type="file" name="sheet-{{ sv.s.code }}" accept=".xlsx" aria-label="Your filled-in Excel sheet for {{ sv.s.title }}">
+        <button class="btn small" type="submit" name="action" value="sheet:{{ sv.s.code }}" formnovalidate>Add the rows from my sheet</button></div>
+    </div>{% endif %}
     {% if editable %}{% if sv.summary %}<div class="rsumlist"><p class="rsum-h">{% if editable %}What you’ve listed so far ({{ sv.summary.rows|length }}){% else %}What you listed ({{ sv.summary.rows|length }}){% endif %}</p>
       <div class="scroll"><table class="rsumtab"><thead><tr><th>#</th>{% for h in sv.summary.heads %}<th>{{ h }}</th>{% endfor %}</tr></thead>
       <tbody>{% for r in sv.summary.rows %}<tr><td class="muted">{{ forloop.counter }}</td>{% for v in r %}<td>{{ v|default:"–" }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div></div>{% endif %}{% endif %}

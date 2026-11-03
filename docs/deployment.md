@@ -50,3 +50,9 @@ PubMed look-ups ("Fill in from PubMed") call `https://eutils.ncbi.nlm.nih.gov`; 
 Period e-mails ("your forms are open", reminders) go out on a schedule (above) while a period is open for answers, unless the evaluator pauses them on Reporting periods → E-mails, where she can also send one by hand. `python manage.py send_scheduled_emails --dry-run` says what today's run would send; `python manage.py send_period_emails "<period>" open|reminder|overdue --dry-run` lists who would get one.
 
 Operator tasks: `docs/runbook.md`.
+
+NeuroSync Speaker Survey (MW 2026-11-03): run every 10 minutes so each speaker gets the survey right after their talk ends.
+
+```
+*/10 * * * *  python manage.py send_speaker_surveys
+```

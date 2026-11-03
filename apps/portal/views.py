@@ -5,10 +5,12 @@ answers; the form page refuses anyone but the respondent (administrators read
 responses from their own screens, under their own rules).
 """
 
+import re
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
@@ -207,6 +209,9 @@ def form(request, pk):
         except rs.LockedError as exc:
             messages.error(request, str(exc))
             return redirect("portal:form", pk)
+        if action.startswith("sheet:") and not errors:
+            messages.success(request, "Your sheet’s rows were added. Please check them below.")
+            return redirect(f"{reverse('portal:form', args=[pk])}#sec-{action[6:]}")
         if action.startswith("add:"):
             return redirect(
                 f"{reverse('portal:form', args=[pk])}?add={action[4:]}#sec-{action[4:]}"
@@ -229,6 +234,28 @@ def form(request, pk):
         a.refresh_from_db()
     ctx = presenters.form_page(request, a, editable=editable, errors=errors, missing=missing)
     return render(request, "portal/form.html", ctx)
+
+
+@login_required
+def sheet_template(request, pk, section):
+    """The Excel template for one repeatable section of this person's form."""
+    from apps.forms_engine.runtime import FormSchema
+    from apps.reporting.services import sheets
+
+    a = _own_assignment(request, pk)
+    sec = next(
+        (s for s in FormSchema(a.form_version).sections if s.code == section and s.is_repeatable),
+        None,
+    )
+    if not sec:
+        raise Http404
+    name = re.sub(r"[^A-Za-z0-9]+", "_", sec.title or section).strip("_") or "Entries"
+    resp = HttpResponse(
+        sheets.template(sec),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    resp["Content-Disposition"] = f'attachment; filename="{name}_template.xlsx"'
+    return resp
 
 
 @login_required

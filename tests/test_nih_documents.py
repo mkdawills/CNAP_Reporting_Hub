@@ -220,22 +220,18 @@ def test_quick_rppr_items_flag_for_a_closer_look(center):
     s = FormSchema(a.form_version)
     codes = [c for c, _ in nihdocs.QUICK_ITEMS]
     all_no = {c: "no" for c in codes} | {"c5c": "yes"}
-    assert "rppr_details" not in {q.code for q in s.missing_required(all_no)}
-    assert "rppr_details" in {q.code for q in s.missing_required(all_no | {"c4": "yes"})}
-    assert "rppr_details" in {q.code for q in s.missing_required(all_no | {"c5c": "no"})}
+    assert not {q.code for q in s.missing_required(all_no)} & {f"{c}_note" for c in codes}
+    assert "c4_note" in {q.code for q in s.missing_required(all_no | {"c4": "yes"})}
+    assert "c5c_note" in {q.code for q in s.missing_required(all_no | {"c5c": "no"})}
     rs.save_draft(
         a,
         u,
         {f"q-{c}": v for c, v in (all_no | {"c4": "yes"}).items()}
-        | {
-            "q-rppr_details": "C.4: a provisional patent",
-            "q-proj_status": "ended",
-            "q-ended_on": "2026-09-30",
-        },
+        | {"q-c4_note": "a provisional patent"},
     )
     t = [x for x in nihdocs.teams(center.grant_year) if x["a"].pk == a.pk][0]
-    assert t["flags"] == ["C.4 inventions, patents, licenses"] and "provisional" in t["details"]
-    assert t["status"] == "ENDED AS OF 09/30/2026"
+    assert t["flags"] == ["C.4 inventions, patents, licenses"]
+    assert t["details"] == "C.4: a provisional patent"
 
 
 def test_mftrp_form_has_their_name_and_nih_file_name(client, center):

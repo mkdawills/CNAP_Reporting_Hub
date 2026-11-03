@@ -2,19 +2,19 @@
 {% block title %}Current and Pending check · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>Has your Current and Pending changed?</h1>
-  <p>{{ "You turned in your Current and Pending (Other) Support"|stack }}{% if c.assignment.submitted_at %} on {{ c.assignment.submitted_at|date:"F j, Y" }}{% endif %}. NIH needs it to be current for CNAP’s progress report, due {{ c.rppr_due|date:"F j" }}. Please answer by {{ c.due|date:"F j" }}.</p><p class="small muted">If you need help with SciENcv, you can work with your Central Office grant specialist.</p>{% if c.prev_file %}<p><a class="btn small ghost" href="{% url 'portal:download' c.prev_file.pk %}">Open the one you turned in (PDF)</a></p>{% endif %}</div></div>
+  <p>You turned in your Current and Pending (Other) Support{% if c.assignment.submitted_at %} on {{ c.assignment.submitted_at|date:"F j, Y" }}{% endif %}.<br>NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ c.rppr_due|date:"F j" }}.<br>Please answer by {{ c.due|date:"F j" }}.</p><p class="small muted">If you need help with SciENcv, please contact your Central Office grant specialist.<br>Unsure who your Central Office grant specialist is? Start with Morgan Wills at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>; she can point you in the right direction.</p>{% if c.prev_file %}<p><a class="btn small ghost" href="{% url 'portal:download' c.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a></p>{% endif %}</div></div>
 {% if c.answered_at %}
 <div class="panel finish"><h2>Thank you.</h2><p>{% if c.changed %}Your new Current and Pending ({{ c.file.original_filename }}) is saved.{% else %}You told us nothing changed.{% endif %}<br>If something changes again before the spring, contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p></div>
 {% else %}
 {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
 <div class="panel">
-  <h2 class="sectionhead">No changes</h2>
-  <p class="small muted">{{ "Nothing new since then: no new proposals, awards, or changes in your effort."|stack }}</p>
+  <h2 class="sectionhead">My Current and Pending Has <strong class="ul">Not</strong> Changed.</h2>
+  <p class="small muted">Nothing new since I last submitted my Current and Pending: no new pending submissions, no new awards, and no changes to effort among my current awards.<br>No new in-kind support.</p>
   <form method="post">{% csrf_token %}<input type="hidden" name="action" value="nochange"><button class="btn" type="submit">Nothing has changed</button></form>
 </div>
 <div class="panel">
-  <h2 class="sectionhead">It changed</h2>
-  <p class="small muted">{{ "Update it in SciENcv, certify it, and download the PDF. Don’t flatten it."|stack }}</p>
+  <h2 class="sectionhead">My Current and Pending Has Changed.</h2>
+  <p class="small muted">Please update your Current and Pending in SciENcv, certify it in SciENcv, and download the PDF.<br>Please don’t flatten the PDF.</p>
   <form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="changed">
     <div class="fileup mt"><input type="file" name="file-current_pending" accept=".pdf" aria-label="New Current and Pending (certified PDF)"></div>
     <div class="actions"><button class="btn" type="submit">Upload the new PDF</button></div></form>

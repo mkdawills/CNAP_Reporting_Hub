@@ -14,16 +14,6 @@
 <div class="panel"><h2 class="sectionhead">Data checks</h2>
   {% if issues %}<p>There {{ issues|pluralize:"is,are" }} {{ issues }} thing{{ issues|pluralize }} to look at.</p><ul class="guide">{% for c in checks %}<li>{{ c.title }}: {{ c.rows|length }}</li>{% endfor %}</ul><div class="actions"><a class="btn ghost" href="{% url 'manage:quality' %}">See data checks</a></div>
   {% else %}<p class="muted">Nothing needs attention.</p>{% endif %}</div>
-<div class="panel" id="funding"><h2 class="sectionhead">NIH acknowledgment figures (Stevens Amendment)</h2>
-  <p class="small muted">{{ "Under the Stevens Amendment, publications, press releases and other public-facing documents must include three statements: a specific acknowledgment of NIH grant support, the level of NIH funding, and a disclaimer. The funding level gives the percentage and dollar amount of the total project costs financed with federal money, and the percentage and dollar amount financed by nongovernmental sources. Use the total direct and indirect costs for the current competitive segment, from the Notice of Award. These figures fill statement 2 in every “How to acknowledge CNAP” box."|stack }}</p>
-  {% nih_ack "publication" as ack %}<div class="acktext"><span>{{ ack.all }}</span></div>
-  {% if can_manage %}<form method="post" action="{% url 'manage:funding_save' %}" class="mt fundform">{% csrf_token %}
-    <div class="field"><label>Competitive segment (for your reference)<input type="text" name="segment_label" maxlength="80" value="{{ funding.segment_label }}" placeholder="Phase 2, June 1, 2021 – May 31, 2026"></label></div>
-    <div class="field"><label>Federal (NIH) total costs, direct plus indirect<input type="text" name="federal_total" inputmode="decimal" value="{{ funding.federal_total|default_if_none:'' }}" placeholder="11,250,000"></label></div>
-    <div class="field"><label>Nongovernmental total costs<input type="text" name="nonfederal_total" inputmode="decimal" value="{{ funding.nonfederal_total|default_if_none:'0' }}" placeholder="0"></label></div>
-    <button class="btn small" type="submit">Save figures</button>{% if funding.updated_at %} <span class="small muted">Last saved {{ funding.updated_at|date:"M j, Y" }}{% if funding.updated_by %} by {{ funding.updated_by.get_full_name|default:funding.updated_by.username }}{% endif %}.</span>{% endif %}
-  </form>{% endif %}
-</div>
 <div class="panel"><h2 class="sectionhead">Helpful documents</h2>
   <p class="small muted">{{ "These appear at the bottom of everyone’s My tasks page, for example the Adobe signing guide."|stack }}</p>
   {% if docs %}<ul class="doclist">{% for d in docs %}<li><a href="{% if d.file %}{% url 'portal:helpful_doc' d.pk %}{% else %}{{ d.url }}{% endif %}">{{ d.title }}</a>{% if d.note %} <span class="small muted">· {{ d.note }}</span>{% endif %}{% if can_manage %} <form method="post" action="{% url 'manage:doc_remove' d.pk %}" style="display:inline">{% csrf_token %}<button class="linkbtn small" type="submit">Remove</button></form>{% endif %}</li>{% endfor %}</ul>{% else %}<p class="muted">None yet.</p>{% endif %}

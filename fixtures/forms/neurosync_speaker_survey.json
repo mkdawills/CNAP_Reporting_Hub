@@ -1,0 +1,161 @@
+{
+  "code": "neurosync_speaker_survey",
+  "name": "NeuroSync Speaker Survey",
+  "category": "survey",
+  "context_kind": "none",
+  "confidentiality": "standard",
+  "sort_order": 5,
+  "intro_text": "Thank you for speaking at NeuroSync. How much do you agree with each statement? Choose from 1 (strongly disagree) to 5 (strongly agree).",
+  "display": {
+    "task_group": "other",
+    "short_name": "NeuroSync Speaker",
+    "no_period_line": true,
+    "prefill": [
+      [
+        "Talk",
+        "talk"
+      ],
+      [
+        "Date",
+        "talk_date"
+      ]
+    ],
+    "about": [
+      "This survey asks speakers how their NeuroSync visit went.",
+      "Your answers help the Center improve the series for future speakers."
+    ]
+  },
+  "sections": [
+    {
+      "code": "before",
+      "title": "Before your talk",
+      "questions": [
+        {
+          "code": "item_01",
+          "prompt": "The invitation clearly explained what was expected of me.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_01",
+          "required": true
+        },
+        {
+          "code": "item_02",
+          "prompt": "I received the details I needed, such as the date, time, location and audience, in time to prepare.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_02",
+          "required": true
+        },
+        {
+          "code": "item_03",
+          "prompt": "Communication with the CNAP team went smoothly.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_03",
+          "required": true
+        }
+      ]
+    },
+    {
+      "code": "talk",
+      "title": "Your talk",
+      "questions": [
+        {
+          "code": "item_04",
+          "prompt": "The room or virtual setup worked well.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_04",
+          "required": true
+        },
+        {
+          "code": "item_05",
+          "prompt": "The time given for my talk was about right.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_05",
+          "required": true
+        },
+        {
+          "code": "item_06",
+          "prompt": "The audience was engaged.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_06",
+          "required": true
+        },
+        {
+          "code": "item_07",
+          "prompt": "The questions and discussion were valuable to me.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_07",
+          "required": true
+        }
+      ]
+    },
+    {
+      "code": "overall",
+      "title": "Overall",
+      "questions": [
+        {
+          "code": "item_08",
+          "prompt": "Speaking at NeuroSync was a good use of my time.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_08",
+          "required": true
+        },
+        {
+          "code": "item_09",
+          "prompt": "I made connections that could lead to future collaboration.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_09",
+          "required": true
+        },
+        {
+          "code": "item_10",
+          "prompt": "I would accept another invitation to speak at NeuroSync.",
+          "type": "likert",
+          "answer_set": "Agreement (no N/A)",
+          "measure": "speaker_10",
+          "required": true
+        }
+      ]
+    },
+    {
+      "code": "open",
+      "title": "Open-ended questions",
+      "questions": [
+        {
+          "code": "open_1",
+          "prompt": "What went well?",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_2",
+          "prompt": "What could we do better for future speakers?",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_3",
+          "prompt": "Is there anyone you would recommend we invite to speak?",
+          "type": "long_text",
+          "required": false
+        },
+        {
+          "code": "open_4",
+          "prompt": "Additional comments",
+          "type": "long_text",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "rules": [],
+  "assignment_rules": [],
+  "_source": "Written from scratch for MW, 2026-11-03. Sent to each speaker when their talk ends (Administration → NeuroSync speakers); never assigned by a rule."
+}

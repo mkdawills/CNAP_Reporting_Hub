@@ -1,0 +1,16 @@
+{% autoescape off %}Hello {{ person.first_name }},
+
+Thank you for speaking at NeuroSync{% if talk.title %} on "{{ talk.title }}"{% endif %}.
+
+We'd like to hear how the experience went for you. The survey takes about 5 minutes. Please answer by {{ due }}:
+{{ url }}
+{% if with_link %}
+This link signs you in. It works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
+{% else %}
+Sign in with your K-State eID.
+{% endif %}
+Your answers help us make NeuroSync better for future speakers.
+
+Thank you,
+The CNAP evaluation team
+{% endautoescape %}

@@ -91,7 +91,7 @@
     {
       "code": "documents",
       "title": "Current and Pending (Other) Support",
-      "instructions": "Make it in SciENcv (www.ncbi.nlm.nih.gov/sciencv), using NIH’s Common Form.\nCertify it yourself in SciENcv, then download the PDF. Don’t flatten it afterward: NIH checks the certification. Your ORCID iD must show in the Persistent Identifier (PID) section. If you need help with SciENcv, you can work with your Central Office grant specialist.",
+      "instructions": "Make it in SciENcv (www.ncbi.nlm.nih.gov/sciencv), using NIH’s Common Form.\nCertify it yourself in SciENcv, then download the PDF. Don’t flatten it afterward: NIH checks the certification. Your ORCID iD must show in the Persistent Identifier (PID) section. If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at mkwills@ksu.edu; she can point you in the right direction.",
       "questions": [
         {
           "code": "current_pending",
@@ -109,7 +109,7 @@
     {
       "code": "biosketch",
       "title": "Biosketch",
-      "instructions": "NIH needs your biosketch. Use the Common Form with the NIH Biographical Sketch Supplement, in one PDF from SciENcv. Certify it there and don’t flatten it. If you need help with SciENcv, you can work with your Central Office grant specialist.",
+      "instructions": "NIH needs your biosketch. Use the Common Form with the NIH Biographical Sketch Supplement, in one PDF from SciENcv. Certify it there and don’t flatten it. If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at mkwills@ksu.edu; she can point you in the right direction.",
       "questions": [
         {
           "code": "biosketch",

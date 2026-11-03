@@ -23,7 +23,7 @@
       "questions": [
         {
           "code": "optout",
-          "prompt": "I haven’t been involved enough with CNAP since the last reporting period to answer.",
+          "prompt": "I prefer to opt out of this survey. I’ve not been involved with CNAP enough in the last reporting period to answer.",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "config": {
@@ -35,7 +35,7 @@
     {
       "code": "synergy",
       "title": "Survey questions",
-      "instructions": "Please indicate how much you agree with each statement about the quality of collaboration and synergy across the CNAP center and its members.",
+      "instructions": "Please indicate how much you agree with each statement about the quality of collaboration and synergy across the CNAP center and its members. Choose from 1 (strongly disagree) to 5 (strongly agree) or not applicable (NA).",
       "questions": [
         {
           "code": "item_01",
@@ -166,5 +166,6 @@
   ],
   "_source": "Team_Science.pdf (Piestar export), split into four surveys (MW, 2026-10-24); open-ended prompts reworded per topic.",
   "sort_order": 5,
-  "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25)."
+  "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25).",
+  "intro_text": "Team synergy is how well CNAP’s members, projects and cores work together. When a team has synergy, its combined work accomplishes more than each person could on their own."
 }

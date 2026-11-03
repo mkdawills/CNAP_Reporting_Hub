@@ -5,7 +5,7 @@
   "context_kind": "project",
   "confidentiality": "standard",
   "sort_order": 15,
-  "intro_text": "Upload a 1–2 page Word document covering your accomplishments, your plans for the next period, and any changes. Name it with your last name and what it is, for example Cain_Accomplishments.",
+  "intro_text": "Upload a 1–2 page Word document covering your accomplishments, your plans for the next period, and any changes. Suggested file name convention example: Cain_Accomplishments.",
   "display": {
     "task_group": "grant",
     "short_name": "Progress Report (PPL)",
@@ -26,28 +26,6 @@
     ]
   },
   "sections": [
-    {
-      "code": "project_status",
-      "title": "Project status (RPPR B.2)",
-      "instructions": "NIH asks each project’s report for its start date and whether it is ongoing or has ended.",
-      "questions": [
-        {
-          "code": "proj_status",
-          "prompt": "Is this project ongoing, or has it ended?",
-          "type": "single_select",
-          "required": true,
-          "options": [
-            "Ongoing",
-            "Ended"
-          ]
-        },
-        {
-          "code": "ended_on",
-          "prompt": "If it ended: the date it ended",
-          "type": "date"
-        }
-      ]
-    },
     {
       "code": "accomplishments",
       "title": "Accomplishments",
@@ -93,11 +71,29 @@
           "required": true
         },
         {
+          "code": "b1a_note",
+          "prompt": "Notes",
+          "type": "long_text",
+          "help_text": "If you answered Yes, please explain here.",
+          "config": {
+            "note": true
+          }
+        },
+        {
           "code": "c3",
           "prompt": "C.3 Did this work produce new technologies or techniques during this reporting period?",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "required": true
+        },
+        {
+          "code": "c3_note",
+          "prompt": "Notes",
+          "type": "long_text",
+          "help_text": "If you answered Yes, please explain here.",
+          "config": {
+            "note": true
+          }
         },
         {
           "code": "c4",
@@ -107,11 +103,29 @@
           "required": true
         },
         {
+          "code": "c4_note",
+          "prompt": "Notes",
+          "type": "long_text",
+          "help_text": "If you answered Yes, please explain here.",
+          "config": {
+            "note": true
+          }
+        },
+        {
           "code": "c5a",
           "prompt": "C.5.a Did it produce other significant products, such as databases, software, models or instruments?",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "required": true
+        },
+        {
+          "code": "c5a_note",
+          "prompt": "Notes",
+          "type": "long_text",
+          "help_text": "If you answered Yes, please explain here.",
+          "config": {
+            "note": true
+          }
         },
         {
           "code": "c5c",
@@ -121,11 +135,29 @@
           "required": true
         },
         {
+          "code": "c5c_note",
+          "prompt": "Notes",
+          "type": "long_text",
+          "help_text": "If you answered No, please explain here.",
+          "config": {
+            "note": true
+          }
+        },
+        {
           "code": "f3",
           "prompt": "F.3 Were there significant changes to human subjects, vertebrate animals, biohazards or select agents?",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "required": true
+        },
+        {
+          "code": "f3_note",
+          "prompt": "Notes",
+          "type": "long_text",
+          "help_text": "If you answered Yes, please explain here.",
+          "config": {
+            "note": true
+          }
         },
         {
           "code": "g9",
@@ -135,9 +167,13 @@
           "required": true
         },
         {
-          "code": "rppr_details",
-          "prompt": "Details for each Yes above, and for a No on C.5.c. Start each note with the item, like “C.4: …”.",
-          "type": "long_text"
+          "code": "g9_note",
+          "prompt": "Notes",
+          "type": "long_text",
+          "help_text": "If you answered Yes, please explain here.",
+          "config": {
+            "note": true
+          }
         }
       ]
     },
@@ -146,7 +182,7 @@
       "title": "Research team (RPPR D.1)",
       "repeatable": true,
       "repeat_label": "Add a person",
-      "instructions": "List everyone who worked on this project or core during this budget year, including you. Use one row per person.\nGive effort in person months: calendar months for 12-month appointments, or academic and summer months for 9-month appointments.",
+      "instructions": "List everyone who worked on this project or core during this budget year, including you. Use one row per person.\nGive effort in person months.\n- Calendar months = 12-month appointments\n- Academic months = 9-month appointments\n- Summer months = 3-month appointments",
       "questions": [
         {
           "code": "first_name",
@@ -194,26 +230,6 @@
           "type": "number"
         }
       ]
-    },
-    {
-      "code": "tables",
-      "title": "Suggested RPPR tables (optional)",
-      "instructions": "If the Center sent you RPPR tables to fill in, such as B.1 goals or G.1, upload them here instead of emailing them.",
-      "questions": [
-        {
-          "code": "tables_file",
-          "prompt": "Tables (Word, Excel or PDF)",
-          "type": "file",
-          "config": {
-            "accept": [
-              ".docx",
-              ".doc",
-              ".xlsx",
-              ".pdf"
-            ]
-          }
-        }
-      ]
     }
   ],
   "rules": [
@@ -222,56 +238,49 @@
       "operator": "equals",
       "value": "yes",
       "action": "require",
-      "target_question": "rppr_details"
+      "target_question": "b1a_note"
     },
     {
       "source": "c3",
       "operator": "equals",
       "value": "yes",
       "action": "require",
-      "target_question": "rppr_details"
+      "target_question": "c3_note"
     },
     {
       "source": "c4",
       "operator": "equals",
       "value": "yes",
       "action": "require",
-      "target_question": "rppr_details"
+      "target_question": "c4_note"
     },
     {
       "source": "c5a",
       "operator": "equals",
       "value": "yes",
       "action": "require",
-      "target_question": "rppr_details"
+      "target_question": "c5a_note"
     },
     {
       "source": "c5c",
       "operator": "equals",
       "value": "no",
       "action": "require",
-      "target_question": "rppr_details"
+      "target_question": "c5c_note"
     },
     {
       "source": "f3",
       "operator": "equals",
       "value": "yes",
       "action": "require",
-      "target_question": "rppr_details"
+      "target_question": "f3_note"
     },
     {
       "source": "g9",
       "operator": "equals",
       "value": "yes",
       "action": "require",
-      "target_question": "rppr_details"
-    },
-    {
-      "source": "proj_status",
-      "operator": "equals",
-      "value": "ended",
-      "action": "require",
-      "target_question": "ended_on"
+      "target_question": "g9_note"
     }
   ],
   "assignment_rules": [
@@ -281,5 +290,5 @@
       "per_context": true
     }
   ],
-  "_source": "Pilot_Project_Semiannual_Progress_Report.pdf (Piestar export). Word only (MW, 2026-10-24). Research team list and optional tables upload added (MW 2026-10-27). Quick RPPR yes/no questions (B.1.a, C.3, C.4, C.5.a, C.5.c, F.3, G.9) added (MW 2026-10-27). Project status (start date; ONGOING or ENDED AS OF) per FY27 COBRE guidance (and FY24), added 2026-10-27. Intro shortened 2026-10-28 (MW approved); original: \"Provide a 1-2 page summary of your accomplishments toward achieving your aims, your plans for the next reporting period, and any actual or anticipated plans for changes. You can use the file upload below to upload a MS Word document. Please use the following file naming convention: Last Name + File Designation + Date (e.g., Cain_Accomplishments_3-20-20, Bailey_ProjectGrantReviews_6-1-19, etc.). Your document should contain the following:\""
+  "_source": "Pilot_Project_Semiannual_Progress_Report.pdf (Piestar export). Word only (MW, 2026-10-24). Research team list and optional tables upload added (MW 2026-10-27). Quick RPPR yes/no questions (B.1.a, C.3, C.4, C.5.a, C.5.c, F.3, G.9) added (MW 2026-10-27). Project status (start date; ONGOING or ENDED AS OF) per FY27 COBRE guidance (and FY24), added 2026-10-27. Intro shortened 2026-10-28 (MW approved); original: \"Provide a 1-2 page summary of your accomplishments toward achieving your aims, your plans for the next reporting period, and any actual or anticipated plans for changes. You can use the file upload below to upload a MS Word document. Please use the following file naming convention: Last Name + File Designation + Date (e.g., Cain_Accomplishments_3-20-20, Bailey_ProjectGrantReviews_6-1-19, etc.). Your document should contain the following:\" 2026-11-03 (MW): project status section and the optional tables upload removed; one Notes field under each quick RPPR question replaces the single details box; person months wording per MW; file-name line per MW; project and core reports no more than 2 pages."
 }

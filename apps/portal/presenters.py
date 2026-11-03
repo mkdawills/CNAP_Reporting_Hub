@@ -113,9 +113,9 @@ def task_list(person, period, mine, just_done=None):
         n_opt = sum(1 for r in g if r["can_opt_out"])
         if n_opt:  # say what Opt out is for right where the button is (MW 2026-10-27)
             sub += (
-                " Opt out of any you didn’t use since the last reporting period."
+                " Opt out of any you didn’t use in the last reporting period."
                 if n_opt > 1
-                else " Opt out if you didn’t use it since the last reporting period."
+                else " Opt out if you didn’t use it in the last reporting period."
             )
         groups.append(
             {
@@ -236,6 +236,11 @@ def _prefill(a, fd):
         "holder": holder or "",
         "period": a.reporting_period.name,
     }
+    if any(k in ("talk", "talk_date") for _, k in disp.get("prefill", [])):
+        talk = a.talks.order_by("-ends_at").first()  # NeuroSync speakers (MW 2026-11-03)
+        if talk:
+            when = timezone.localtime(talk.ends_at)
+            values |= {"talk": talk.title, "talk_date": f"{when:%B} {when.day}, {when:%Y}"}
     for label, key in disp.get("prefill", []):
         out.append((label, values.get(key, "")))
     return out

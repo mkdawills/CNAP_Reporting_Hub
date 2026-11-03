@@ -263,6 +263,17 @@ def save_draft(assignment, user, post, files=None, *, row_action=None):
             idx = int(row_action.rsplit(":", 1)[1])
             if 0 <= idx < len(rows):
                 rows.pop(idx)
+        sheet = files.get(f"sheet-{sec.code}")
+        if sheet:  # an Excel sheet instead of typing (MW 2026-11-03); its rows are added
+            from . import sheets
+
+            try:
+                new, notes = sheets.read(sec, sheet)
+            except sheets.SheetError as exc:
+                problems.append(str(exc))
+            else:
+                rows.extend(new[: max(0, sheets.MAX_ROWS - len(rows))])
+                problems.extend(notes)
         Answer.objects.filter(response=resp, question__in=qs).delete()
         for i, row in enumerate(rows):
             for q in qs:

@@ -1,0 +1,54 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}NeuroSync speakers · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>NeuroSync speakers</h1><p>{{ "List each talk with the time it ends. The speaker gets the NeuroSync Speaker Survey by e-mail as soon as the talk is over. Speakers from outside K-State get a personal sign-in link."|stack }}</p></div></div>
+{% if not open_period %}<div class="panel"><p class="small"><span class="gap">No reporting period is open for answers right now.</span><br>Surveys wait until one opens. You can still add talks.</p></div>{% endif %}
+{% if can_manage %}<div class="panel" style="max-width:760px">
+  <h2 class="sectionhead">Add a talk</h2>
+  <form method="post" action="{% url 'manage:speaker_add' %}">{% csrf_token %}
+    <div class="field"><label>{{ form.speaker.label }}{{ form.speaker }}</label></div>
+    <p class="small muted">New speaker? Leave the box above blank and fill in their details here.</p>
+    <div class="speakgrid">
+      <label>{{ form.first_name.label }}{{ form.first_name }}</label><label>{{ form.last_name.label }}{{ form.last_name }}</label>
+      <label>{{ form.email.label }}{{ form.email }}</label><label>{{ form.institution.label }}{{ form.institution }}</label>
+    </div>
+    <div class="field mt"><label>{{ form.title.label }}{{ form.title }}</label></div>
+    <div class="speakgrid">
+      <label>{{ form.day.label }}{{ form.day }}</label><label>{{ form.ends.label }}{{ form.ends }}</label>
+    </div>
+    <div class="field mt"><label style="flex-direction:row;gap:8px;align-items:center;color:var(--ink)">{{ form.auto_send }} {{ form.auto_send.label }}</label></div>
+    <div class="actions"><button class="btn" type="submit">Add the talk</button></div>
+  </form>
+</div>{% endif %}
+<div class="panel">
+  <h2 class="sectionhead">Coming up ({{ upcoming|length }})</h2>
+  {% if upcoming %}<div class="scroll"><table><thead><tr><th>Speaker</th><th>Talk</th><th>Ends</th><th>Survey</th><th></th></tr></thead><tbody>
+  {% for t in upcoming %}<tr><td>{{ t.speaker }}{% if t.speaker.institution %}<div class="small muted">{{ t.speaker.institution }}</div>{% endif %}</td><td>{{ t.title }}</td><td class="small">{{ t.ends_at|date:"M j, g:i A" }}</td>
+    <td class="small">{% if t.auto_send %}Goes out automatically when the talk ends.{% else %}You’ll send it by hand.{% endif %}</td>
+    <td>{% if can_manage %}<form method="post" action="{% url 'manage:speaker_send' t.pk %}" style="display:inline">{% csrf_token %}<button class="btn small ghost" type="submit">Send the survey now</button></form>
+      <form method="post" action="{% url 'manage:speaker_remove' t.pk %}" style="display:inline">{% csrf_token %}<button class="btn small ghost" type="submit">Remove</button></form>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<p class="small muted">No talks are coming up. Add one above.</p>{% endif %}
+</div>
+<div class="panel">
+  <h2 class="sectionhead">Past talks ({{ past|length }})</h2>
+  {% if past %}<div class="scroll"><table><thead><tr><th>Speaker</th><th>Talk</th><th>Ended</th><th>Survey</th><th></th></tr></thead><tbody>
+  {% for t in past %}<tr><td>{{ t.speaker }}</td><td>{{ t.title }}</td><td class="small">{{ t.ends_at|date:"M j, g:i A" }}</td>
+    <td class="small">{% if t.sent_at %}Sent {{ t.sent_at|date:"M j, g:i A" }} to {{ t.sent_to }}.{% if t.assignment %}<br>{% if t.assignment.status == 'submitted' %}Answered.{% else %}Not answered yet.{% endif %}{% endif %}{% else %}Not sent.{% endif %}</td>
+    <td>{% if can_manage %}<form method="post" action="{% url 'manage:speaker_send' t.pk %}">{% csrf_token %}<button class="btn small ghost" type="submit">{% if t.sent_at %}Send it again{% else %}Send the survey now{% endif %}</button></form>{% endif %}</td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<p class="small muted">No past talks yet.</p>{% endif %}
+</div>
+<details class="panel"><summary class="small"><strong>What the e-mail says</strong></summary>
+<pre class="small" style="white-space:pre-wrap;font-family:inherit">Subject: Thank you for speaking at NeuroSync: a 5-minute survey
+
+Hello [first name],
+
+Thank you for speaking at NeuroSync on "[talk title]".
+
+We'd like to hear how the experience went for you. The survey takes about 5 minutes. Please answer by [two weeks after the talk]:
+[their link]
+
+Your answers help us make NeuroSync better for future speakers.
+
+Thank you,
+The CNAP evaluation team</pre></details>
+{% endblock %}

@@ -187,7 +187,12 @@ def teams(gy):
                     "flags": flags,
                     "status": status,
                     "start": a.project.start_date if a.project_id else None,
-                    "details": answers.get("rppr_details") or "",
+                    "details": answers.get("rppr_details")
+                    or "\n".join(
+                        f"{label.split(' ')[0]}: {answers[code + '_note']}"
+                        for code, label in QUICK_ITEMS
+                        if (answers.get(code + "_note") or "").strip()
+                    ),
                 }
             )
     return out

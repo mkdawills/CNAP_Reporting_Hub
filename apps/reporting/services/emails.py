@@ -47,6 +47,7 @@ def plan(period, kind):
     qs = (
         Assignment.objects.filter(reporting_period=period)
         .exclude(status=AssignmentStatus.EXEMPT)
+        .exclude(form_definition__code="neurosync_speaker_survey")  # sent on its own when the talk ends
         .select_related("person", "form_definition", "project", "core")
         .order_by("person__last_name", "person__first_name", "form_definition__sort_order")
     )

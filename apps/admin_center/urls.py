@@ -1,13 +1,16 @@
 from django.urls import path
 
-from .views import audit, home, outcomes, people, periods, quality, results, roster
+from .views import audit, home, outcomes, people, periods, quality, results, roster, speakers
 
 app_name = "manage"
 
 urlpatterns = [
     path("", home.home, name="home"),
+    path("neurosync/", speakers.talks, name="speakers"),
+    path("neurosync/add/", speakers.talk_add, name="speaker_add"),
+    path("neurosync/<int:pk>/send/", speakers.talk_send, name="speaker_send"),
+    path("neurosync/<int:pk>/remove/", speakers.talk_remove, name="speaker_remove"),
     path("documents/add/", home.doc_add, name="doc_add"),
-    path("funding/", home.funding_save, name="funding_save"),
     path("documents/<int:pk>/remove/", home.doc_remove, name="doc_remove"),
     # people and relationships
     path("people/", people.people, name="people"),
