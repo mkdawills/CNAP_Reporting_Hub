@@ -1197,3 +1197,4 @@ a.who:hover::after { content: "Your profile"; display: block; font-size: .74rem;
 /* every numbered prompt the same size and weight, whatever the answer type (MW 2026-11-02) */
 .runner .section .q .qt { font-family: "Public Sans", system-ui, sans-serif; font-size: 1.1rem; font-weight: 600; line-height: 1.45; color: var(--ink); }
 .runner .section .q .qt::before { font-weight: 500; color: var(--muted); }
+.ackbox .stevens { margin: 8px 0 12px; padding-left: 22px; } .ackbox .stevens li { margin: 0 0 10px; } .ackbox .stevens .acktext { margin-top: 6px; }

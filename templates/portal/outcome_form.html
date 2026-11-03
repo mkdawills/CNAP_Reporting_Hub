@@ -12,7 +12,16 @@
       <div class="acktext"><span>Preliminary data for this proposal were generated with support from the National Institute of General Medical Sciences of the National Institutes of Health under Award Number P20GM113109 (CNAP COBRE).</span><button type="button" class="btn small ghost copy">Copy</button></div>
     {% else %}
       {% if kind == 'presentation' %}{% nih_ack "presentation" as ack %}{% else %}{% nih_ack "publication" as ack %}{% endif %}
-      <p class="small">{{ "NIH requires three statements on CNAP-supported publications, talks, posters and other public documents: the grant, how much of the project’s costs federal and nongovernmental sources paid, and a disclaimer. Copy all three:"|stack }}</p>
+      <p class="small">{{ "Under the Stevens Amendment, publications, press releases and other public-facing documents, including talks and posters, must include the following three statements."|stack }}</p>
+      <ol class="stevens small">
+        <li><strong>A specific acknowledgment of NIH grant support:</strong>
+          <div class="acktext"><span>{{ ack.support }}</span><button type="button" class="btn small ghost copy">Copy</button></div></li>
+        <li><strong>An acknowledgment of the level of NIH funding.</strong> {{ "It gives the percentage and dollar amount of the total project costs financed with federal money, and the percentage and dollar amount financed by nongovernmental sources."|stack }}
+          <div class="acktext"><span>{{ ack.level }}</span><button type="button" class="btn small ghost copy">Copy</button></div></li>
+        <li><strong>A disclaimer:</strong>
+          <div class="acktext"><span>{{ ack.disclaimer }}</span><button type="button" class="btn small ghost copy">Copy</button></div></li>
+      </ol>
+      <p class="small">All three together:</p>
       <div class="acktext"><span>{{ ack.all }}</span><button type="button" class="btn small ghost copy">Copy</button></div>
       {% if not ack.ready %}<p class="small muted">The funding figures aren’t set yet. Ask the CNAP office for them before you submit.</p>{% endif %}
       {% core_rrids as rr %}{% if rr %}
