@@ -23,6 +23,11 @@
         "Project start date",
         "start"
       ]
+    ],
+    "doc_outline": [
+      "accomplishments",
+      "plans",
+      "changes"
     ]
   },
   "sections": [
@@ -41,14 +46,14 @@
     {
       "code": "changes",
       "title": "Changes",
-      "instructions": "Please describe challenges or delays encountered during the reporting period and actions or plans to resolve them. Please describe only significant challenges that may impede the research (e.g., accrual of patients, hiring of personnel, need for resources or research tools) and emphasize their resolution.",
+      "instructions": "Please describe challenges or delays encountered during the reporting period and actions or plans to resolve those challenges. Please describe only significant challenges that may impede the research (e.g., accrual of patients, hiring of personnel, need for resources or research tools) and emphasize their resolution.",
       "questions": [
         {
           "code": "file",
-          "prompt": "File",
+          "prompt": "Your progress report document",
           "type": "file",
           "required": true,
-          "help_text": "Please upload your file here. Please upload a Word document (.docx or .doc).",
+          "help_text": "",
           "config": {
             "accept": [
               ".docx",
@@ -61,7 +66,7 @@
     {
       "code": "rppr_items",
       "title": "Quick Research Performance Progress Report (RPPR) questions",
-      "instructions": "NIH asks these in the RPPR for each project and core every year. Most answers are No.",
+      "instructions": "NIH asks these questions in the RPPR for each project and core every year. Most answers are No.",
       "questions": [
         {
           "code": "b1a",

@@ -7,7 +7,7 @@ Your {{ period.name }} CNAP {% if forms|length == 1 %}form was{% else %}forms we
 Open your forms:
 {{ url }}
 {% if with_link %}
-This link signs you in. It works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
+This link signs you in. The link works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
 {% else %}
 Please sign in with your K-State eID.
 {% endif %}

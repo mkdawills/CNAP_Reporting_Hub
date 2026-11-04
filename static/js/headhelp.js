@@ -391,7 +391,7 @@
     [/^Open report$/, "Opens this form’s combined results for the chosen period."],
     [/^Download /, "Downloads this as a file that opens in Excel or your PDF reader."],
     [/^Open the (publications|presentations|grants) dashboard$/, "A live recreation of the evaluator’s product dashboard, with the same graphs and tables, built from the Hub’s records just now."],
-    [/^Flip the axes( back)?$/, "Redraws this graph with its groupings swapped, so you can see the same numbers from the other direction."],
+    [/^(Flip the graph’s axes|Flip the graph back|Flip the axes( back)?)$/, "Redraws this graph with its groupings swapped, so you can see the same numbers from the other direction."],
     [/^Reopen$/, "Reopens this person’s submitted form so they can change it. Their answers are kept."],
     [/^Exempt$/, "Removes this form from the person’s list for this period without counting it against completion."],
     [/^Dismiss$/, "Hides this flag because it is correct as is. It will not come back for this record."],

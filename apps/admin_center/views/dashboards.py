@@ -34,6 +34,17 @@ def _fmt(v, dollars=False):
     return f"{v:,}" if isinstance(v, int) else f"{v:,.0f}"
 
 
+def _short(v, dollars=False):
+    """Label on top of a bar: short enough to fit over a narrow bar (the hover keeps the exact figure)."""
+    if not dollars:
+        return _fmt(v)
+    if v >= 1_000_000:
+        return f"${v / 1_000_000:.2f}".rstrip("0").rstrip(".") + "M"
+    if v >= 1_000:
+        return f"${v / 1_000:.0f}K"
+    return f"${v:,.0f}"
+
+
 def _tick(v, dollars=False):
     """Short axis-tick label."""
     if dollars:
@@ -154,7 +165,7 @@ def grouped_bars(
             )
             out.append(
                 f'<text x="{x + bar_w / 2:.1f}" y="{y - 5:.1f}" text-anchor="middle" '
-                f'font-size="11" fill="{INK}">{_fmt(v, dollars)}</text>'
+                f'font-size="11" fill="{INK}">{_short(v, dollars)}</text>'
             )
             if h >= 52:  # the series name, written vertically inside the bar
                 cx, cy = x + bar_w / 2, y + h / 2

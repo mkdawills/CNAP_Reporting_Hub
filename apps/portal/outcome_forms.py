@@ -362,7 +362,7 @@ class GrantPlanned(_Funding, _PlannedDay, _Resources):
         label="Funding mechanism",
         max_length=120,
         required=False,
-        help_text="This is the funder’s program type, for example an NIH R01 or R21, an NSF standard grant, or a foundation grant. If you’re not sure, please leave it blank.",
+        help_text="The mechanism is the funder’s program type, for example an NIH R01 or R21, an NSF standard grant, or a foundation grant. If you’re not sure, please leave it blank.",
     )
     anticipated_submission_date = MonthField(
         label="Anticipated submission month and year", required=False
@@ -409,14 +409,14 @@ class GrantSubmitted(_Funding, _Resources):
         label="Funding mechanism",
         max_length=120,
         required=False,
-        help_text="This is the funder’s program type, for example an NIH R01 or R21, an NSF standard grant, or a foundation grant. If you’re not sure, please leave it blank.",
+        help_text="The mechanism is the funder’s program type, for example an NIH R01 or R21, an NSF standard grant, or a foundation grant. If you’re not sure, please leave it blank.",
     )
     submission_date = forms.DateField(label="Submission date", widget=DATE)
     cayuse_ipf = forms.CharField(
         label="Cayuse IPF number (optional)",
         max_length=40,
         required=False,
-        help_text="This is the number Cayuse assigned to your proposal in K-State’s central repository. The Center uses it to cross-check this record.",
+        help_text="The Cayuse number is the number Cayuse assigned to your proposal in K-State’s central repository. The Center uses it to cross-check this record.",
     )
     project_title = forms.CharField(
         label="Proposal title",

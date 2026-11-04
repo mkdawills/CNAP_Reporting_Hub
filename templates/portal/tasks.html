@@ -3,7 +3,9 @@
 {% block content %}
 {% if not period %}
   <div class="head"><div><h1>My tasks</h1><p>{{ "No reporting period is open right now. We’ll email you when the next one opens."|stack }}</p></div></div>
-  {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending (Other) Support changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ cp_check.rppr_due|date:"F j" }}.<br>Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %}<br><a href="{% url 'portal:download' cp_check.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a>{% endif %}<br><a href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener">NIH’s Current and Pending (Other) Support instructions (opens in a new tab)</a></p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
+  {% if cp_check %}<details class="panel donebox todobox" open><summary title="What you still need to answer. Click to roll it up or open it again.">To do (1)</summary>
+  <div class="scroll"><table class="tasks" title="Your open question for NIH reporting."><thead class="vh"><tr><th>Form</th><th>Actions</th><th></th><th></th><th>About how long it takes</th></tr></thead><tbody>{% include "portal/_cp_rows.html" %}</tbody></table></div>
+  </details>{% endif %}
 {% else %}
 {% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong><br>{{ "You can read every form now with Preview. Answering opens that day. Nothing you do here before then is saved."|stack }}</div>{% endif %}
 <header class="welcome">
@@ -14,8 +16,8 @@
   </div>
   <div class="welcome-text">
     <h1>{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
-    <p class="taskline">{% if not todo %}You’ve finished all {{ total }} tasks for {{ period.short_label }}.{% elif done_n %}You have {{ todo }} task{{ todo|pluralize }} left.<br>{{ todo|pluralize:"It takes,They take" }} about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% else %}You have {{ total }} task{{ total|pluralize }} this period.<br>{{ total|pluralize:"It takes,They take" }} about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% endif %}</p>
-    <p class="small muted">The {{ period.name }} reporting period runs {{ period|span }}.{% if todo %}<br>{{ due }}.{% endif %}</p>
+    <p class="taskline">{% if not todo %}You’ve finished all {{ total }} tasks for {{ period.short_label }}.{% elif done_n %}You have {{ todo }} task{{ todo|pluralize }} left.<br>{{ todo|pluralize:"It’ll take,They’ll take" }} about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% else %}You have {{ total }} task{{ total|pluralize }} this period.<br>{{ total|pluralize:"It’ll take,They’ll take" }} about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% endif %}</p>
+    <p class="small muted">This {{ period.name }} reporting period runs {{ period|span }}.{% if todo %}<br>{{ due }}.{% endif %}</p>
     {% if is_core_director %}<details class="wnote"><summary title="Why your list of core surveys looks the way it does. Click to read it.">A note about your core surveys</summary>
       {% for d in is_core_director %}<p class="small muted">Since you’re the {{ d.core.name|cut:" Core" }} ({{ d.core.code }}) Core Director, you do not receive the {{ d.core.code }} Core user survey.</p>{% endfor %}
       <p class="small muted">{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Please opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p>
@@ -32,17 +34,16 @@
   {% for d in sow_excerpts %}<blockquote class="sow-quote">{{ d.excerpt|linebreaksbr }}</blockquote><p class="small muted">From “{{ d.title }}” · <a href="{% url 'portal:my_document' d.pk %}">Download it</a> · the full document is on <a href="{% url 'portal:profile' %}">your profile</a>.</p>{% endfor %}
 </details>{% endif %}
 
-{% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending (Other) Support changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ cp_check.rppr_due|date:"F j" }}.<br>Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %}<br><a href="{% url 'portal:download' cp_check.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a>{% endif %}<br><a href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener">NIH’s Current and Pending (Other) Support instructions (opens in a new tab)</a></p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 
 {% if just_done %}
 <div class="panel nextup" role="status" data-confetti="{{ just_done.a.pk }}">
   <p class="nu-thanks">Thank you, {{ request.user.person.first_name|default:request.user.username }}.<br>{% if just_done.a.status == 'completed_opt_out' %}Your opt-out is recorded{% else %}Your answers are in{% endif %}.</p>
   <p class="nu-done">You finished the {{ just_done.name }}.{% if not next_up %}<br>{% if todo %}You have {{ todo }} left on your list.{% else %}That was your last one.{% endif %}{% endif %}</p>
-  {% if next_up %}<p class="nu-next">Next up is the {{ next_up.name }}.<br>It takes {{ next_up.time|lower }}.</p>
+  {% if next_up %}<p class="nu-next">Next up is the {{ next_up.name }}.<br>The form will take {{ next_up.time|lower }}.</p>
   <div class="fieldrow"><a class="btn" href="{% url 'portal:form' next_up.a.pk %}">Start now</a><a class="btn ghost" href="{% url 'portal:tasks' %}">Back to my list</a></div>{% endif %}
 </div>{% endif %}
 
-{% if not todo %}
+{% if not todo and not cp_check %}
 <div class="panel finish">
   <svg class="finish-art" viewBox="0 0 160 120" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="58" cy="60" r="13"/>
@@ -55,10 +56,10 @@
 </div>
 {% else %}
 <p class="privacy">Other respondents never see your answers.</p>
-<div class="panel">
-  <h2 class="sectionhead todohead">To do ({{ todo }})</h2>
+<details class="panel donebox todobox"><summary title="The forms you still need to fill in this period, grouped by what they are about. Click to open the list or roll it back up.">To do ({% if cp_check %}{{ todo|add:1 }}{% else %}{{ todo }}{% endif %})</summary>
   <p class="small muted">{{ "Your forms are grouped by what they are about. Please click a group to open it, or use Show all."|stack }}</p>
   <div class="scroll"><table class="tasks" title="Your open forms for this reporting period, grouped by what they are about."><thead class="vh"><tr><th>Form</th><th>Actions</th><th></th><th></th><th>About how long it takes</th></tr></thead><tbody>
+  {% if cp_check %}{% include "portal/_cp_rows.html" %}{% endif %}
   {% for g in groups %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
     <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon g.code %}{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div><span class="ghcount">You have {{ g.count }} form{{ g.count|pluralize }} here.</span></div></td></tr>
@@ -73,11 +74,11 @@
       <td class="acts">{% if period.in_preview %}<span class="small muted">This opens when the period starts.</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins"><span>About {{ outcome.minutes }} min</span></td></tr>{% endif %}{% endfor %}
   {% endif %}
   </tbody></table></div>
-</div>
+</details>
 {% endif %}
 
 {% if done or outcome.done %}
-<details class="panel donebox" {% if not todo %}open{% endif %}><summary>Done ({{ done_count }})</summary>
+<details class="panel donebox" {% if not todo %}open{% endif %}><summary title="The forms you already finished this period. Click to see them, or to view what you sent.">Done ({{ done_count }})</summary>
   <div class="scroll"><table class="tasks" title="The forms you already finished this period."><thead class="vh"><tr><th>Form</th><th>Actions</th><th></th><th></th><th>Time</th></tr></thead><tbody>{% for r in done %}{% include "portal/_task_row.html" %}{% endfor %}
   {% if outcome.done %}<tr><td><strong>Publications, talks, and grants</strong><div class="small muted">This is up to date for this period.</div></td><td class="acts"><a class="btn small ghost" href="{% url 'portal:outcomes' %}">View</a></td><td class="acts"></td><td class="acts"></td><td class="mins"></td></tr>{% endif %}</tbody></table></div>
 </details>{% endif %}
@@ -146,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () { setTimeout(function 
   document.querySelectorAll(".taskfold, .gcaret").forEach(function (e) { e.remove(); });
   document.querySelectorAll("table.tasks").forEach(function (table) {
     var heads = Array.from(table.querySelectorAll("tr.grouphead"));
-    if (heads.length < 2 || table.closest(".donebox")) return;
+    if (heads.length < 2 || table.closest(".donebox:not(.todobox)")) return;
     function rowsOf(h) {
       var out = [], r = h.nextElementSibling;
       while (r && !r.classList.contains("grouphead") && !r.classList.contains("gap")) { out.push(r); r = r.nextElementSibling; }

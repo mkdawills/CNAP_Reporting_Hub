@@ -1,9 +1,10 @@
-{% load cnap %}{% with ld=sv.s.instructions|lead %}{% if ld %}<p class="seclead" {% if not sv.visible %}hidden{% endif %}>{{ ld }}</p>{% endif %}{% endwith %}<section class="section" id="sec-{{ sv.s.code }}" data-sec="{{ sv.s.code }}" {% if not sv.visible %}hidden{% endif %}>
+{% load cnap %}{% with part=sv.s.code|part_no:fd.display %}{% with ld=sv.s.instructions|lead %}{% if ld %}<p class="seclead{% if part %} outline-lead{% endif %}" {% if not sv.visible %}hidden{% endif %}>{% if part %}<span class="ol-eyebrow">What goes in your document</span>{% endif %}{{ ld }}</p>{% endif %}{% endwith %}<section class="section{% if part %} outline{% endif %}" id="sec-{{ sv.s.code }}" data-sec="{{ sv.s.code }}"{% if part %} data-part="{{ part }}"{% endif %} {% if not sv.visible %}hidden{% endif %}>
   <div class="sectop">
   {% if sv.s.title %}<h2>{{ sv.s.title }}</h2>{% endif %}
-  {% if sv.s.instructions %}{% if sv.caption %}<p class="instructions secintro">{{ sv.s.instructions|with_period:a.reporting_period|caption }}</p>{% else %}{{ sv.s.instructions|after_lead|with_period:a.reporting_period|guidance }}{% endif %}{% endif %}
+  {% if sv.s.instructions %}{% if sv.s.instructions|short_note %}<p class="secnote">{{ sv.s.instructions|with_period:a.reporting_period|stack }}</p>{% elif sv.caption %}<p class="instructions secintro">{{ sv.s.instructions|with_period:a.reporting_period|caption }}</p>{% else %}{{ sv.s.instructions|after_lead|with_period:a.reporting_period|guidance }}{% endif %}{% endif %}
   {% if sv.downloads %}<ul class="secdl">{% for d in sv.downloads %}<li><a href="{{ d.url }}" {% if d.external %}target="_blank" rel="noopener"{% else %}download{% endif %}>{{ d.label }}</a></li>{% endfor %}</ul>{% endif %}
   </div>
+  {% if part and sv.questions %}<div class="ol-upload"><p class="ol-upload-h">Upload your document</p><p class="ol-upload-s">Please upload one Word document that covers each part above.</p></div>{% endif %}
   {% for v in sv.questions %}{% if v.widget != 'system' %}{% if v.narrative and v.q.help_text %}<p class="qnote">{{ v.q.help_text|stack }}</p>{% endif %}{% include "portal/_question.html" %}{% endif %}{% endfor %}
   {% if sv.s.is_repeatable %}
     <input type="hidden" name="rep-{{ sv.s.code }}-count" value="{{ sv.rows|length }}">
@@ -27,7 +28,7 @@
     {% if editable %}<button class="btn small ghost" type="submit" name="action" value="add:{{ sv.s.code }}" formnovalidate>{{ sv.s.repeat_label|default:"Add an entry" }}</button>{% endif %}
     {% if editable %}<div class="sheetup">
       <p class="sheetup-h">Prefer to work in Excel?</p>
-      <p class="small">This is optional: a tool you can use if you like.<br>Please download the template, fill it in on your desktop (one row per entry), and upload it here whenever you are ready.<br>Your rows fill in the entries above automatically, so you can check and edit them before you submit.</p>
+      <p class="small">The template is optional: a tool you can use if you like.<br>Please download the template, fill it in on your desktop (one row per entry), and upload it here whenever you are ready.<br>Your rows fill in the entries above automatically, so you can check and edit them before you submit.</p>
       <div class="sheetup-row"><a class="btn small ghost" href="{% url 'portal:sheet_template' a.pk sv.s.code %}" download>Download the Excel template</a>
         <input type="file" name="sheet-{{ sv.s.code }}" accept=".xlsx" aria-label="Your filled-in Excel sheet for {{ sv.s.title }}">
         <button class="btn small" type="submit" name="action" value="sheet:{{ sv.s.code }}" formnovalidate>Add the rows from my sheet</button></div>
@@ -37,4 +38,4 @@
       <tbody>{% for r in sv.summary.rows %}<tr><td class="muted">{{ forloop.counter }}</td>{% for v in r %}<td>{{ v|default:"–" }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div></div>{% endif %}{% endif %}
 
   {% endif %}
-</section>
+</section>{% endwith %}

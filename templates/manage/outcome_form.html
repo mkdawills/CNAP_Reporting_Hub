@@ -7,10 +7,11 @@
 <form method="post" class="panel aform" style="max-width:860px">{% csrf_token %}
   {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
   {% for field in form %}{% if obj and field.name == 'family_title' %}{% else %}
+    {% with g=field.name|field_group:kind %}{% ifchanged g %}{% if g %}<h3 class="fgroup">{{ g }}</h3>{% endif %}{% endifchanged %}{% endwith %}
     {% if field.field.widget.input_type == "checkbox" %}
     <div class="field opt" data-f="{{ field.name }}"><label class="optline">{{ field }}<span>{{ field.label }}</span></label>{% if field.help_text %}<div class="help">{{ field.help_text|stack }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>
     {% else %}
-    <div class="field" data-f="{{ field.name }}"><label><span class="flab">{{ field.label }}</span>{{ field }}</label>{% if field.name == 'pubmed_url' %}<button class="btn small ghost" type="submit" name="lookup" value="1" formnovalidate style="margin-top:6px">Fill in from PubMed</button>{% endif %}{% if field.help_text %}<div class="help">{{ field.help_text|stack }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}
+    <div class="field" data-f="{{ field.name }}"><label><span class="flab">{{ field.label }}</span>{% if field.help_text %}<span class="help hint">{{ field.help_text|stack }}</span>{% endif %}{{ field }}</label>{% if field.name == 'pubmed_url' %}<button class="btn small ghost" type="submit" name="lookup" value="1" formnovalidate style="margin-top:6px">Fill in from PubMed</button>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}
     {% if field.name == 'cnap_cited_tri' %}<div class="stevens-why small">
       <p><strong>What counts as Yes.</strong> {{ "The Stevens Amendment is a federal law: any public product of NIH-funded work must cite the grant (P20GM113109), say how much of the project NIH paid for, and add the standard disclaimer. A paper that has all three acknowledges CNAP."|stack }}</p>
       <p><strong>Why it matters.</strong> {{ "Only papers that acknowledge the grant can be credited to CNAP in RPPR section C.1 and at the site visit. A No means following up with the author."|stack }}</p>
@@ -62,12 +63,24 @@
     ? { title: "While the paper is planned, your best guess is fine. You can update it later.",
         journal: "While the paper is planned, the journal you are aiming for is fine." }
     : { project_title: "While the proposal is planned, your best guess is fine. You can update it later." };
+  function tidyGroups() {
+    // A group heading shows only when a field under it is showing, and only once in a row (MW 2026-11-04).
+    var last = null;
+    document.querySelectorAll("form.aform .fgroup").forEach(function (h) {
+      var any = false, el = h.nextElementSibling;
+      while (el && !el.classList.contains("fgroup") && !el.matches("h2, .actions")) { if (el.matches(".field") && !el.hidden && getComputedStyle(el).display !== "none") any = true; el = el.nextElementSibling; }
+      var dup = any && last === h.textContent;
+      h.hidden = !any || dup;
+      if (!h.hidden) last = h.textContent;
+    });
+  }
   function apply() {
     var st = sel.value;
     Object.keys(vis).forEach(function (name) {
       var box = document.querySelector('[data-f="' + name + '"]');
       if (box) box.hidden = vis[name].indexOf(st) === -1;
     });
+    setTimeout(tidyGroups, 0);
     Object.keys(hints).forEach(function (name) {
       var box = document.querySelector('[data-f="' + name + '"]');
       if (!box) return;

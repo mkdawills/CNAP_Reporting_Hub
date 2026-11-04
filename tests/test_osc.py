@@ -39,7 +39,8 @@ def test_osc_listed_at_zero_months(center):
     assert row["months"] == 0.5 and row["osc"]
 
 
-def test_osc_gets_only_the_nih_documents_task(center):
+def test_osc_gets_no_tasks(center):
+    """MW 2026-11-04: NIH documents come only from Core Directors, RPLs, PPLs, and the PD/PI."""
     from apps.reporting.models import Assignment, ReportingPeriod
     from apps.reporting.services import assignments as asg
 
@@ -51,48 +52,16 @@ def test_osc_gets_only_the_nih_documents_task(center):
     )
     asg.generate(period)
     got = set(Assignment.objects.filter(person=p).values_list("form_definition__code", flat=True))
-    assert got == ({"nih_documents"} if period.sequence == 1 else set())
+    assert got == set()
 
 
-def test_osc_gets_nih_documents_with_the_biosketch_only(client, center):
-    from django.core.files.uploadedfile import SimpleUploadedFile
-
-    from apps.accounts.models import User
-    from apps.forms_engine.runtime import FormSchema
-    from apps.outcomes import nihdocs
+def test_osc_only_person_is_not_asked_for_nih_documents(center):
     from apps.reporting.models import Assignment, ReportingPeriod
     from apps.reporting.services import assignments as asg
-    from apps.reporting.services import responses as rs
-    from tests.test_nih_documents import _open
-    from tests.test_sciencv import BIO, _pdf
 
-    period = ReportingPeriod.objects.get(status="open")
-    asg.generate(period)
+    asg.generate(ReportingPeriod.objects.get(status="open"))
     rowe = Person.objects.get(last_name="Rowe")
-    a = _open(Assignment.objects.get(person=rowe, form_definition__code="nih_documents"))
-    schema = FormSchema(a.form_version)
-    answers = rs.system_answers(a, schema)
-    assert answers["osc_only"] == "yes"
-    shown = [s.code for s in schema.visible_sections(answers)]
-    assert shown == ["biosketch"]
-    assert [q.code for q in schema.missing_required(answers)] == ["biosketch"]
-    u = User.objects.filter(person=rowe).first() or User.objects.create(username="rowe", person=rowe)
-    rs.save_draft(
-        a, u, {}, {"file-biosketch": SimpleUploadedFile("b.pdf", _pdf(BIO), "application/pdf")}
-    )
-    rs.submit(a, u)
-    a.refresh_from_db()
-    assert a.status == "submitted"
-    row = next(r for r in nihdocs.documents(period.grant_year)["rows"] if r["person"] == rowe)
-    assert row["osc"] and row["missing"] == []
-    # a core director who is also an OSC keeps the full task
-    reyes = Person.objects.get(last_name="Reyes")
-    PersonRelationship.objects.create(
-        person=reyes, relationship_type=RelationshipType.objects.get(code="osc"),
-        effective_from=dt.date(2020, 1, 1),
-    )
-    b = Assignment.objects.get(person=reyes, form_definition__code="nih_documents")
-    assert rs.system_answers(b, FormSchema(b.form_version))["osc_only"] == "no"
+    assert not Assignment.objects.filter(person=rowe, form_definition__code="nih_documents").exists()
 
 
 def test_nih_documents_directions_fit_the_person(client, center):
@@ -102,9 +71,8 @@ def test_nih_documents_directions_fit_the_person(client, center):
 
     asg.generate(ReportingPeriod.objects.get(status="open"))
     want = {
-        "Rowe": "from each Other Significant Contributor",
         "Kim": "from people named on the Notice of Award",
-        "Varga": "collects everyone’s Current and Pending",
+        "Varga": "collects the Current and Pending (Other) Support of each Core Director",
     }
     for last, text in want.items():
         p = Person.objects.get(last_name=last)
@@ -113,5 +81,5 @@ def test_nih_documents_directions_fit_the_person(client, center):
         client.force_login(u)
         page = client.get(f"/tasks/{a.pk}/").content.decode()
         assert text in page, last
-        others = [t for k, t in want.items() if k != last]
+        others = [t for k, t in want.items() if k != last] + ["from each Other Significant Contributor"]
         assert not any(t in page for t in others), last

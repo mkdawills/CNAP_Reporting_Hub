@@ -112,7 +112,7 @@ def test_year_by_year_counts_every_year_from_the_first(db):
     assert [b["n"] for b in talks["bars"]] == [1, 0, 0] and talks["bars"][-1]["now"]
 
 
-def test_products_tab_lists_public_items_and_counts_proposals(client, db):
+def test_products_tab_shows_counts_only_to_respondents(client, db):
     import datetime as dt
 
     from django.core.management import call_command
@@ -129,9 +129,16 @@ def test_products_tab_lists_public_items_and_counts_proposals(client, db):
     GrantSubmission.objects.create(grant_family=fam, project_title="Secret pending idea", status=GrantStatus.SUBMITTED, submission_date=day)
     client.force_login(User.objects.get(username="santos"))
     html = client.get("/results/?view=products").content.decode()
-    assert "Papers published" in html and "proposals submitted" in html.replace("proposal submitted", "proposals submitted")
+    assert "papers published" in html.replace("paper published", "papers published")
+    assert "proposals submitted" in html.replace("proposal submitted", "proposals submitted")
     assert "Secret pending idea" not in html  # pending proposals are counted, never listed
+    # MW 2026-11-04: respondents see counts only, never the lists
+    assert 'id="papers"' not in html and 'id="awards"' not in html and "prodlist" not in html
     assert client.get("/results/?view=products&year=abc").status_code == 200
+    client.force_login(User.objects.get(username="mwills"))
+    html = client.get("/results/?view=products").content.decode()
+    assert "Papers published" in html and 'id="awards"' in html
+    assert "Secret pending idea" not in html
 
 
 def test_respondent_can_edit_a_submitted_form_while_open_and_sees_the_list(client, center):

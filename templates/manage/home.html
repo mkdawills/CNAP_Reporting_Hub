@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Administration · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Administration{% why "This is your control room. It shows where the live reporting period stands, what needs your attention, and shortcuts to the day-to-day pages. Everything here feeds the Center’s Research Performance Progress Report (RPPR) and site-visit reporting." %}</h1><p>{{ "Where each reporting period stands, and what needs attention."|stack }}</p></div></div>
+<div class="head"><div><h1>Administration{% why "Administration is your control room. The Administration home shows where the live reporting period stands, what needs your attention, and shortcuts to the day-to-day pages. Everything here feeds the Center’s Research Performance Progress Report (RPPR) and site-visit reporting." %}</h1><p>{{ "Where each reporting period stands, and what needs attention."|stack }}</p></div></div>
 {% if current %}
 <div class="panel">
   <h2 class="sectionhead">{{ current.name }} is open{% why "The open period is the one collecting answers right now. The seven steps run from review-before-launch to finalized results. The people buckets tell you who is finished, who is partway, and who needs a nudge." %}</h2>
@@ -18,7 +18,7 @@
 </div>{% endif %}
 {% if pending %}<div class="panel"><h2 class="sectionhead">{{ pending.name }} is closed</h2><p>{% if pending_stage == 'closed' %}{{ "Generate results when you’re ready."|stack }}{% elif pending_stage == 'generated' %}{{ "Results are generated. Review them, then mark them reviewed."|stack }}{% else %}{{ "Results are reviewed. Finalize them to make them official."|stack }}{% endif %}</p><div class="actions"><a class="btn ghost" href="{% url 'manage:periods' %}">Reporting periods</a></div></div>{% endif %}
 {% if draft %}<div class="panel"><h2 class="sectionhead">{{ draft.name }} is waiting for review</h2><p>{{ "Check who will receive which forms before anything is sent."|stack }}</p><div class="actions"><a class="btn" href="{% url 'manage:launch' draft.pk %}">Review before launch</a></div></div>{% endif %}
-<div class="panel"><h2 class="sectionhead">Data checks{% why "These are automatic checks for gaps that would hurt later reporting, such as a project with no mentor or a paper that used a core without citing its Research Resource Identifier (RRID). Fixing them early keeps the RPPR clean." %}</h2>
+<div class="panel"><h2 class="sectionhead">Data checks{% why "Data checks are automatic checks for gaps that would hurt later reporting, such as a project with no mentor or a paper that used a core without citing its Research Resource Identifier (RRID). Fixing them early keeps the RPPR clean." %}</h2>
   {% if issues %}<p>There {{ issues|pluralize:"is,are" }} {{ issues }} thing{{ issues|pluralize }} to look at.</p><ul class="guide">{% for c in checks %}<li>{{ c.title }}: {{ c.rows|length }}</li>{% endfor %}</ul><div class="actions"><a class="btn ghost" href="{% url 'manage:quality' %}">See data checks</a></div>
   {% else %}<p class="muted">Nothing needs attention.</p>{% endif %}</div>
 <div class="panel"><h2 class="sectionhead">Sign-in page photo{% why "An optional photo beside the sign-in box, such as a Center group photo, so the first screen people see feels like CNAP. The sign-in page is public, so the photo is visible to anyone with the site’s address: please use one everyone pictured has agreed to share." %}</h2>

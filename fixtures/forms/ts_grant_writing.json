@@ -35,7 +35,7 @@
     {
       "code": "grant_writing",
       "title": "Survey questions",
-      "instructions": "Please indicate how much you agree with each statement about the grant writing program. The program includes reviewer analysis, help preparing proposal materials, and grantsmanship training. Choose from 1 (strongly disagree) to 5 (strongly agree) or not applicable (NA).",
+      "instructions": "Please indicate how much you agree with each statement about the grant writing program. The program includes [[reviewer analysis|Experienced reviewers read your draft proposal and point out what a review panel is likely to question, before you submit.]], [[help preparing proposal materials|Support with the parts of a proposal around the science, such as biosketches, budgets, letters of support, and formatting.]], and [[grantsmanship training|Workshops on how NIH reviews proposals, and on writing specific aims, approach sections, and resubmission introductions.]]. Please hover over each underlined item to learn more.",
       "questions": [
         {
           "code": "item_01",

@@ -49,7 +49,7 @@ def roster_review(request, pk):
         (
             ImportMatchKind.NEW,
             "New people",
-            "Not in the Reporting Hub yet. They’ll be added and put on the roster.",
+            "Not in the Reporting Hub yet. This person will be added and put on the roster.",
         ),
         (
             ImportMatchKind.MATCHED,
@@ -59,7 +59,7 @@ def roster_review(request, pk):
         (
             ImportMatchKind.MISSING,
             "On the roster but not in this file",
-            "They stay on the roster unless you choose to end their membership.",
+            "These people stay on the roster unless you choose to end their membership.",
         ),
     ]:
         g = [r for r in rows if r.match_kind == kind]

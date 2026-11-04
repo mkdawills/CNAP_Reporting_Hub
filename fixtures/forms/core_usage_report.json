@@ -17,7 +17,7 @@
     "section_downloads": {
       "users": [
         {
-          "label": "Read NIH’s directions for Table 2 (National Institute of General Medical Sciences (NIGMS) suggested RPPR tables, PDF, opens in a new tab)",
+          "label": "NIH’s directions for Table 2 (PDF, opens in a new tab)",
           "url": "https://nigms.nih.gov/sites/nigms/files/migrated/cobre-rppr-suggested-tables.pdf"
         }
       ]
@@ -38,7 +38,7 @@
       "title": "Projects that used the core this period",
       "repeatable": true,
       "repeat_label": "Add a project",
-      "instructions": "Please count everyone who worked on the project with the core as an individual user, students included. Then please give how many of them were students.\nYour core’s RRID: please ask every user lab to cite your core’s Research Resource Identifier (RRID) in the methods of their papers, right after the core’s name. The RRID lets NIH and the Center find every paper your core made possible, even when the grant number isn’t cited. Your Center results page and the acknowledgment wording on the publications pages give users the exact text.",
+      "instructions": "> How to count users: Please count everyone who worked on the project with the core as an individual user, students included. Then please give how many of those users were students.\n> Your core’s RRID: Please ask every user lab to cite your core’s Research Resource Identifier (RRID) in the methods section of each paper, right after the core’s name. The RRID lets NIH and the Center find every paper your core made possible, even when the grant number isn’t cited. Your Center results page and the acknowledgment wording on the publications pages give users the exact text.",
       "questions": [
         {
           "code": "user_type",

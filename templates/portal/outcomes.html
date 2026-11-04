@@ -18,7 +18,7 @@
 
 {% if window.0 and st.n_review %}<div class="panel reviewfirst">
   <h2 class="sectionhead">Please review {% if st.n_review == 1 %}this product{% else %}these {{ st.n_review }} products{% endif %} first</h2>
-  <p class="small muted">{{ "These are planned or submitted, so we need to know whether anything has changed this period."|stack }}</p>
+  <p class="small muted">{{ "These records are planned or submitted, so we need to know whether anything has changed this period."|stack }}</p>
   {% for p in st.review_pubs %}{% include "portal/_outcome_row.html" with kind="pub" o=p title=p.title sub=p.journal %}{% endfor %}
   {% for g in st.review_grants %}{% include "portal/_outcome_row.html" with kind="grant" o=g title=g.project_title sub=g.funding_agency %}{% endfor %}
 </div>{% endif %}
@@ -52,7 +52,7 @@
 {% if not acting_for_other %}
 <div class="panel rollsec">
   <h2 class="sectionhead">Who can enter for you</h2>
-  <p class="small muted">{{ "You can let someone, such as a student in your lab, keep these records for you. They see and edit only your publications, talks, and grants, never your surveys."|stack }}</p>
+  <p class="small muted">{{ "You can let someone, such as a student in your lab, keep these records for you. Delegates see and edit only your publications, talks, and grants, never your surveys."|stack }}</p>
   {% for d in delegates %}<div class="fieldrow" style="align-items:center"><span>{{ d.delegate }}</span><form method="post" action="{% url 'portal:outcome_delegate_end' d.pk %}">{% csrf_token %}<button class="btn small ghost">Remove</button></form></div>{% empty %}<p class="small">No one has been added yet.</p>{% endfor %}
   <form method="post" action="{% url 'portal:outcome_delegate_add' %}" class="fieldrow" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}">
     <label class="small">Add a person <select name="person" required><option value="">Choose…</option>{% for p in roster %}{% if p != owner %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label><button class="btn small">Add</button></form>

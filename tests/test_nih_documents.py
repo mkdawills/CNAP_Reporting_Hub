@@ -46,7 +46,7 @@ def test_assigned_once_a_year_to_senior_key_roles(center):
     )
     want = set(
         PersonRelationship.objects.filter(
-            relationship_type__code__in=(*SENIOR_KEY_TYPES, "osc"),  # OSCs: biosketch only
+            relationship_type__code__in=SENIOR_KEY_TYPES,  # MW 2026-11-04: OSCs are not asked
             person__is_active=True,
             person__archived_at__isnull=True,
         )

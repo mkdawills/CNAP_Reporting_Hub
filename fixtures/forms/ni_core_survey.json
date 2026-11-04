@@ -6,7 +6,7 @@
   "about_core": "NI",
   "confidentiality": "standard",
   "sort_order": 2,
-  "intro_text": "Please rate each service you used. Choose from 1 (very poor) to 5 (very good) or not applicable (NA).\nThen please tell us how often you used each one. Choose from 1 (never) to 5 (always) or not applicable (NA).",
+  "intro_text": "",
   "display": {
     "task_group": "cores",
     "short_name": "NI Core",
@@ -95,7 +95,8 @@
           "measure": "ni_quality_07",
           "required": true
         }
-      ]
+      ],
+      "instructions": "Please rate each service you used."
     },
     {
       "code": "frequency",
@@ -125,7 +126,8 @@
           "measure": "ni_frequency_03",
           "required": true
         }
-      ]
+      ],
+      "instructions": "Please tell us how often you used each service."
     },
     {
       "code": "open",
@@ -169,7 +171,7 @@
       "questions": [
         {
           "code": "nonuse_reason",
-          "prompt": "Please kindly share why you did not use the core.",
+          "prompt": "Please share why you did not use the core.",
           "type": "long_text",
           "required": true
         },

@@ -30,6 +30,25 @@
   }
   if (url) { form.addEventListener("change", soon); form.addEventListener("input", soon); }
 
+  /* ---- follow-up questions (MW 2026-11-04): "If you answered Yes" shows only after a Yes ---- */
+  function follow() {
+    form.querySelectorAll("[data-show-q]").forEach(function (q) {
+      var src = form.querySelector('[name="q-' + q.getAttribute("data-show-q") + '"]:checked');
+      var on = !!src && src.value === q.getAttribute("data-show-v");
+      q.hidden = !on;
+    });
+  }
+  form.addEventListener("change", follow); follow();
+
+  /* ---- show the chosen file's name in the upload box ---- */
+  form.addEventListener("change", function (e) {
+    if (!e.target || e.target.type !== "file") return;
+    var t = e.target.closest(".filezone"); if (!t) return;
+    var f = e.target.files && e.target.files[0];
+    t.classList.toggle("has-file", !!f);
+    var label = t.querySelector(".filezone-t"); if (label && f) label.textContent = "Ready to upload: " + f.name;
+  });
+
   /* ---- where am I ---- */
   var bar = document.getElementById("formprog"), txt = document.getElementById("formprog-t"), fill = document.getElementById("formprog-f");
   var minutes = parseInt(form.getAttribute("data-minutes") || "0", 10);

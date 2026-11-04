@@ -590,6 +590,9 @@ def publication_edit(request, pk=None):
             "cnap_index_tri": _tri_initial(obj.cnap_in_grant_index) if obj else "",
         },
     )
+    form.order_fields(["status", "substatus", "title", "publication_type", "author_display_text", "journal",
+                       "pubmed_url", "submission_date", "publication_date", "cnap_cited_tri", "cnap_index_tri",
+                       "has_foreign_authors", "foreign_component_approved", "has_non_idea_coauthors", "comments"])
     credit = _Credit(
         request.POST or None,
         initial={
@@ -670,8 +673,10 @@ def grant_edit(request, pk=None):
     credit.fields["people"].label = "CNAP members on this proposal"
     if obj:
         form.fields.pop("resubmission_of", None)
-    else:
-        form.order_fields(["status", "resubmission_of"])
+    # One field group after another, so the small group headings read in order (MW 2026-11-04).
+    form.order_fields(["status", "resubmission_of", "project_title", "pi", "grant_number", "funding_source_type", "funding_agency",
+                       "mechanism", "submission_date", "award_notice_date", "requested_total", "award_total",
+                       "cnap_portion", "ack_tri", "decision_comments"])
     if request.method == "POST" and form.is_valid() and credit.is_valid():
         with transaction.atomic():
             g = form.save(commit=False)
@@ -1597,7 +1602,7 @@ def mark_rppr(request):
     n = rppr.mark_reported(request.user, gy)
     messages.success(
         request,
-        f"{n} item{'s' if n != 1 else ''} marked as reported in the Year {gy} RPPR. They won’t be counted again in later years.",
+        f"{n} item{'s' if n != 1 else ''} marked as reported in the Year {gy} RPPR. Those items won’t be counted again in later years.",
     )
     return redirect(f"/manage/outcomes/?tab=rppr&year={gy}")
 

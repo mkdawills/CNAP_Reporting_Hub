@@ -2,7 +2,7 @@
 {% block title %}{{ fd.name }} · Forms · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>{{ fd.name }} {% why "A read-only copy of this form’s questions, exactly as respondents see them, so you can check wording without launching anything." %}</h1>
-  <p>{{ "This is a read-only copy of the form, for reference. Respondents see the same wording."|stack }}</p></div>
+  <p>{{ "Below is a read-only copy of the form, for reference. Respondents see the same wording."|stack }}</p></div>
   <div><a class="btn ghost" href="{% url 'manage:forms' %}">All forms</a></div></div>
 {% if fd.description %}<p class="small muted">{{ fd.description|stack }}</p>{% endif %}
 {% if schema.version.intro_text %}<div class="panel"><p>{{ schema.version.intro_text|stack }}</p></div>{% endif %}

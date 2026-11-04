@@ -1,15 +1,27 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Profile · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>{{ person }}</h1><p>{{ person.institution|default:"" }}</p></div></div>
-<div class="grid2 rollup" data-start="closed">
+<header class="profhero">
+  <div class="avatar" aria-hidden="true">{{ person.first_name|slice:":1" }}{{ person.last_name|slice:":1" }}</div>
+  <div class="profhero-t">
+    <h1>{{ person }}</h1>
+    <p class="profhero-s">{% if person.position_title %}{{ person.position_title }}{% if person.department or person.institution %} · {% endif %}{% endif %}{% if person.department %}{{ person.department }}{% if person.institution %} · {% endif %}{% endif %}{{ person.institution|default:"" }}</p>
+    {% if rels %}<ul class="rolechips" aria-label="Your CNAP roles">{% for r in rels %}<li>{% if r.core %}{{ r.core.code }} {% endif %}{{ r.relationship_type.name }}</li>{% endfor %}</ul>{% endif %}
+  </div>
+  <dl class="profhero-ids">
+    <div><dt>eRA Commons ID</dt><dd>{% if person.era_commons_id %}{{ person.era_commons_id }}{% else %}<a href="#commons">Not on file yet</a>{% endif %}</dd></div>
+    {% if needs_orcid or person.orcid %}<div><dt>ORCID iD</dt><dd>{% if person.orcid %}{{ person.orcid }}{% else %}<a href="#orcid">Not on file yet</a>{% endif %}</dd></div>{% endif %}
+  </dl>
+</header>
+<p class="small muted profnote">Please open a section to check or update it.</p>
+<div class="rollup profsecs" data-start="closed">
   <div class="panel rollsec">
-    <h2 class="sectionhead">Your details</h2>
+    <h2 class="sectionhead" title="Your department, position, eRA Commons ID, ORCID iD, and effort on CNAP work. The Center uses these details in its NIH reports. Click to check or update them.">Your details</h2>
     <form method="post">{% csrf_token %}
       <div class="field"><label>Department<input type="text" name="department" value="{{ person.department }}"></label></div>
       <div class="field"><label>Position title<input type="text" name="position_title" placeholder="For example, Assistant Professor or Graduate Research Assistant" value="{{ person.position_title }}"></label></div>
       <div class="field" id="commons"><label>eRA Commons ID<input type="text" name="era_commons_id" value="{{ person.era_commons_id }}" autocomplete="off" spellcheck="false"></label>
-        <p class="small muted">This is your NIH eRA Commons user name. The Center lists your eRA Commons ID in its annual NIH <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>.<br><a href="https://era.nih.gov/register-accounts/create-and-edit-an-account.htm" target="_blank" rel="noopener">eRA’s guide to creating and managing an eRA Commons account</a> (opens in a new tab)</p>
+        <p class="small muted">Your eRA Commons ID is your NIH eRA Commons user name. The Center lists your eRA Commons ID in its annual NIH <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>.<br><a href="https://era.nih.gov/register-accounts/create-and-edit-an-account.htm" target="_blank" rel="noopener">eRA’s guide to creating and managing an eRA Commons account</a> (opens in a new tab)</p>
         {% if not person.era_commons_id %}<details class="helpbox"{% if person.era_commons_help_requested_at %} open{% endif %}><summary class="small">I need help with eRA Commons, or I’m not sure I need one</summary>
           <dl class="small qa">
             <dt>Do I need an eRA Commons ID?</dt><dd>Yes, if you have a CNAP role (PD/PI, core director, mentor, project leader, postdoc, graduate student, other student, or staff) and work on CNAP at least 1 calendar month a year (about 8% of your time).<br>NIH requires it for everyone in the Center’s yearly Research Performance Progress Report (RPPR), students included.<br>Core users and event participants usually don’t need one.</dd>
@@ -26,11 +38,11 @@
         </details>{% endif %}
       </div>
       {% if needs_orcid or person.orcid %}<div class="field" id="orcid"><label>ORCID iD<input type="text" name="orcid" value="{{ person.orcid }}" placeholder="0000-0000-0000-0000" autocomplete="off" spellcheck="false" inputmode="text"></label>
-        <p class="small muted">{{ "NIH requires an ORCID iD from everyone who submits a biosketch or Current and Pending (Other) Support. Please link it to your eRA Commons account, and please check that it shows in SciENcv’s Persistent Identifier (PID) section. No ORCID iD yet? Please reach out to your Central Office grant specialist."|stack }}<br><a href="https://grants.nih.gov/policy-and-compliance/implementation-of-new-initiatives-and-policies/common-forms-for-biosketch" target="_blank" rel="noopener">NIH’s Common Forms page, including the ORCID iD requirement</a> · <a href="https://grants.nih.gov/grants-process/write-application/forms-directory/biographical-sketch-common-form" target="_blank" rel="noopener">NIH’s biosketch instructions</a> · <a href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener">NIH’s Current and Pending (Other) Support instructions</a> (each opens in a new tab)<br>If you need help with SciENcv, please contact your Central Office grant specialist.<br>Unsure who your Central Office grant specialist is? Start with Morgan Wills at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>; she can point you in the right direction.</p></div>{% endif %}
+        <p class="small muted">{{ "NIH requires an ORCID iD from everyone who submits a biosketch or Current and Pending (Other) Support. Please link it to your eRA Commons account, and please check that it shows in SciENcv’s Persistent Identifier (PID) section. No ORCID iD yet? Please reach out to your Central Office grant specialist."|stack }}<br><a href="https://grants.nih.gov/policy-and-compliance/implementation-of-new-initiatives-and-policies/common-forms-for-biosketch" target="_blank" rel="noopener">NIH’s Common Forms page, including the ORCID iD requirement</a> · <a href="https://grants.nih.gov/grants-process/write-application/forms-directory/biographical-sketch-common-form" target="_blank" rel="noopener">NIH’s biosketch instructions</a> · <a href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener">NIH’s Current and Pending (Other) Support instructions</a> (each opens in a new tab)<br>If you need help with SciENcv, please contact your Central Office grant specialist.<br>Unsure who your Central Office grant specialist is? Start with Morgan Wills at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>. Morgan can point you in the right direction.</p></div>{% endif %}
       {% if is_trainee or person.trainee_level %}<div class="field"><label>Career level<select name="trainee_level"><option value="">—</option>{% for c, l in levels %}<option value="{{ c }}" {% if person.trainee_level == c %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></label></div>{% endif %}
       {% if in_d1 %}{% if effort.academic_months is not None or effort.summer_months is not None %}<div class="field"><p class="small">Months on CNAP work, Year {{ gy }}: <strong>{% if effort.academic_months is not None %}{{ effort.academic_months }} academic{% endif %}{% if effort.summer_months is not None %}, {{ effort.summer_months }} summer{% endif %}</strong>, entered by the Center.<br>If that’s wrong, please contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p></div>
       {% else %}<div class="field"><label>Calendar months on CNAP work, Year {{ gy }} (June 1, {{ gy_start }} – May 31, {{ gy_start|add:1 }})<input type="number" name="calendar_months" min="0" max="12" step="0.1" value="{{ effort.calendar_months|default_if_none:'' }}" style="max-width:8em"></label>
-        <p class="small muted">{{ "Please multiply your share of full-time effort by 12. For example, 10% of your time all year = 1.2 calendar months, and one full-time summer month = 1.0 summer months. Your best estimate is fine."|stack }<br><a href="https://www.grants.nih.gov/news-events/nih-extramural-nexus-news/2026/06/what-is-a-person-month-how-do-i-calculate-it" target="_blank" rel="noopener">NIH’s explanation of person months and how to calculate them</a> (opens in a new tab)</p></div>{% endif %}{% endif %}
+        <p class="small muted">{{ "Please multiply your share of full-time effort by 12. For example, 10% of your time all year = 1.2 calendar months, and one full-time summer month = 1.0 summer months. Your best estimate is fine."|stack }}<br><a href="https://www.grants.nih.gov/news-events/nih-extramural-nexus-news/2026/06/what-is-a-person-month-how-do-i-calculate-it" target="_blank" rel="noopener">NIH’s explanation of person months and how to calculate them</a> (opens in a new tab)</p></div>{% endif %}{% endif %}
       <p class="small muted">Email: {{ person.primary_email|default:"none on file" }}</p>
       <p class="small muted">To change your name, institution, or email, please contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
       <div class="actions"><button class="btn" type="submit">Save</button></div>
@@ -38,22 +50,24 @@
     <form method="post" id="commonshelp">{% csrf_token %}<input type="hidden" name="action" value="commons_help"></form>
   </div>
   <div class="panel rollsec">
-    <h2 class="sectionhead">Your CNAP roles</h2>
-    {% for r in rels %}<div style="padding:8px 0;border-bottom:1px solid var(--line)"><strong>{{ r.relationship_type.name }}</strong><div class="small muted">{% if r.project %}{{ r.project.title }}{% elif r.core %}{{ r.core.name }}{% else %}Center-level{% endif %} · since {{ r.effective_from|date:"M Y" }}</div></div>
+    <h2 class="sectionhead" title="Each role you hold in CNAP, with its project or core and start date. Your roles decide which forms you receive. Click to see them.">Your CNAP roles</h2>
+    {% for r in rels %}<div class="rolerow"><span class="rolerow-n">{{ r.relationship_type.name }}</span><span class="rolerow-w">{% if r.project %}{{ r.project.title }}{% elif r.core %}{{ r.core.name }}{% else %}Center-level{% endif %}</span><span class="rolerow-d">Since {{ r.effective_from|date:"F Y" }}</span></div>
     {% empty %}<p class="muted">You have no project or core roles.</p>{% endfor %}
     <p class="small muted mt">{% if on_roster %}You’re on the CNAP roster.<br>{% endif %}Your roles decide which forms you receive.<br>If something here is wrong, please contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
   </div>
-</div>
 {% if my_docs %}
 <div class="panel rollsec">
-  <h2 class="sectionhead">Your documents</h2>
+  <h2 class="sectionhead" title="Documents the Center keeps on file for you, such as your signed Statement of Work. Click to see them and download a copy.">Your documents</h2>
   <p class="small muted">Documents the Center keeps on file for you, such as your signed Statement of Work.</p>
   {% for d in my_docs %}
-  <div style="padding:10px 0;border-bottom:1px solid var(--line)">
-    <p style="margin:0"><strong>{{ d.title }}</strong> · <a href="{% url 'portal:my_document' d.pk %}">Download (PDF or Word)</a></p>
-    {% if d.excerpt %}<blockquote class="sow-quote">{{ d.excerpt|linebreaksbr }}</blockquote>{% endif %}
+  <div class="doctile">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+    <div class="doctile-b"><p class="doctile-t">{{ d.title }}</p>
+    {% if d.excerpt %}<p class="doctile-k">Your commitments</p><blockquote class="sow-quote">{{ d.excerpt|linebreaksbr }}</blockquote>{% endif %}</div>
+    <a class="btn small ghost" href="{% url 'portal:my_document' d.pk %}" title="Downloads your copy of {{ d.title }}, as the PDF or Word file on record.">Download</a>
   </div>
   {% endfor %}
 </div>
 {% endif %}
+</div>
 {% endblock %}

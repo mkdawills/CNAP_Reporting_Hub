@@ -137,13 +137,13 @@
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className = "fchipbtn";
-    btn.textContent = "Flip rows and columns";
-    btn.title = "Shows the same numbers turned the other way: the row labels become column headers and the column headers become rows. Click again to turn it back.";
+    btn.textContent = "Flip the table’s rows and columns";
+    btn.title = "Turns the table just below this button the other way: the row labels become column headers and the column headers become rows. Click again to turn it back.";
     btn.addEventListener("click", function () {
       var on = flipped.hidden;
       flipped.hidden = !on;
       wrap.hidden = on;
-      btn.textContent = on ? "Flip back" : "Flip rows and columns";
+      btn.textContent = on ? "Flip the table back" : "Flip the table’s rows and columns";
       btn.classList.toggle("on", on);
     });
     bar.appendChild(btn);

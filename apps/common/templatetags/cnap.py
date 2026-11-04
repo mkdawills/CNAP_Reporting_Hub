@@ -17,13 +17,84 @@ _SPLIT = re.compile(
 )
 
 
+# "[[term|what it means]]" in directions becomes a hover term (MW 2026-11-04): a dotted underline and a
+# small "i", with the meaning in a tooltip that also opens on keyboard focus or tap.
+_TERM = re.compile(r"\[\[([^|\]]+)\|([^\]]+)\]\]")
+
+
+def _hold_terms(text):
+    held = []
+
+    def keep(m):
+        held.append(
+            f'<span class="term" tabindex="0" title="{m.group(2)}" data-tip="{m.group(2)}">{m.group(1)}'
+            '<span class="term-i" aria-hidden="true">i</span></span>'
+        )
+        return f"\x01{len(held) - 1}\x01"
+
+    return _TERM.sub(keep, text), held
+
+
+def _put_terms(text, held):
+    return re.sub("\x01(\\d+)\x01", lambda m: held[int(m.group(1))], text)
+
+
+_FIELD_GROUPS = {
+    "Status": ("status", "resubmission_of", "substatus"),
+    "The funder": ("funding_source_type", "funding_source", "federal_agency", "federal_agency_other", "funding_agency", "opportunity_url", "mechanism"),
+    "Dates": ("anticipated_submission_date", "anticipated_day", "submission_date", "anticipated_submission_month",
+              "anticipated_publication_date", "publication_date", "award_notice_date", "project_start_date",
+              "project_end_date", "decision_date", "decline_date", "presented_on"),
+    "The proposal": ("project_title", "pi", "role", "cayuse_ipf", "grant_number", "prime_or_subaward"),
+    "Budget": ("anticipated_total", "planned_estimated_direct", "requested_total", "requested_direct", "requested_indirect",
+               "award_total", "award_direct", "award_indirect", "cnap_portion"),
+    "Credit to CNAP": ("resources", "resources_other_text", "projects"),
+    "Acknowledging CNAP": ("cnap_cited_tri", "cnap_index_tri", "ack_tri", "cnap_cited", "cnap_acknowledged", "cnap_credited_in_publications", "cnap_in_grant_index"),
+    "Foreign components": ("has_foreign_authors", "foreign_component_approved", "has_non_idea_coauthors", "has_foreign_component"),
+    "What happened": ("decision_comments", "discussed_with_program_officer", "program_officer_name", "discussion_date",
+                      "feedback_shared_with_cnap", "plans_to_resubmit", "comments", "resubmission_intent"),
+}
+_ITEM_FIELDS = ("title", "journal", "pubmed_url", "author_display_text", "publication_type", "presentation_type",
+                "event", "venue", "city", "state_region", "country")
+
+
+@register.filter
+def field_group(name, kind):
+    """The small heading a form field sits under, so long forms read in chunks (MW 2026-11-04)."""
+    if name in _ITEM_FIELDS:
+        return "The presentation" if kind in ("talk", "presentation", "talks") else "The paper"
+    if kind == "grant" and name in ("decision_comments",):
+        return "What happened"
+    for title, names in _FIELD_GROUPS.items():
+        if name in names:
+            return title
+    return ""
+
+
+@register.filter
+def part_no(code, display):
+    """1-based position of a section in a form's document outline (display["doc_outline"]), or 0 (MW 2026-11-04)."""
+    parts = (display or {}).get("doc_outline") if isinstance(display, dict) else None
+    try:
+        return list(parts or []).index(code) + 1
+    except ValueError:
+        return 0
+
+
+@register.filter
+def short_note(value):
+    """A one-line direction under a section header shows as a quiet note (MW 2026-11-04)."""
+    v = str(value or "")
+    return bool(v) and "\n" not in v and "[[" not in v and len(v) <= 120
+
+
 @register.filter(is_safe=True)
 def stack(value):
     """Directions with several sentences: one sentence per line (decisions.md)."""
     if value is None:
         return ""
-    text = conditional_escape(str(value))
-    return mark_safe(_SPLIT.sub(r"\1<br>", str(text)))
+    text, held = _hold_terms(str(conditional_escape(str(value))))
+    return mark_safe(_put_terms(_SPLIT.sub(r"\1<br>", text), held))
 
 
 @register.filter(is_safe=True)
@@ -31,11 +102,11 @@ def reveal(value):
     """Like stack, but each sentence is its own line that fades in once, one after another (MW 2026-10-28)."""
     if value is None:
         return ""
-    text = str(conditional_escape(str(value)))
+    text, held = _hold_terms(str(conditional_escape(str(value))))
     parts = _SPLIT.sub("\\1\x00", text).split("\x00")
     return mark_safe(
         "".join(
-            f'<span class="rl" style="--i:{i}">{p}</span>' for i, p in enumerate(parts) if p.strip()
+            f'<span class="rl" style="--i:{i}">{_put_terms(p, held)}</span>' for i, p in enumerate(parts) if p.strip()
         )
     )
 
@@ -49,16 +120,28 @@ def guidance(value):
     """
     if not value:
         return ""
-    out, bullets = [], []
+    out, bullets, cards = [], [], []
 
     def flush():
         if bullets:
             items = "".join(format_html("<li>{}</li>", b) for b in bullets)
             out.append(f'<ul class="guide">{items}</ul>')
             bullets.clear()
+        if cards:
+            out.append('<div class="gcards">' + "".join(cards) + "</div>")
+            cards.clear()
 
     for raw in str(value).splitlines():
         line = raw.strip()
+        # "> Label: body" is a key point, shown as its own small card so busy readers spot it (MW 2026-11-04).
+        if line.startswith("> ") and ":" in line:
+            label, body = line[2:].split(":", 1)
+            if bullets:
+                items = "".join(format_html("<li>{}</li>", b) for b in bullets)
+                out.append(f'<ul class="guide">{items}</ul>')
+                bullets.clear()
+            cards.append(format_html('<div class="gcard"><p class="gcard-h">{}</p><p>{}</p></div>', label.strip(), stack(body.strip())))
+            continue
         if line.startswith("- "):
             bullets.append(line[2:])
             continue

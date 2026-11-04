@@ -1,13 +1,19 @@
 {% load cnap %}{% with r=rppr %}
 <div class="rppr rollup" data-start="closed">
-  <form method="get" class="rtop"><input type="hidden" name="tab" value="rppr">
-    <label class="small muted">Budget period <select name="year" onchange="this.form.submit()">{% for y in r.years %}<option value="{{ y }}" {% if y == r.year %}selected{% endif %}>Year {{ y }} (June 1, {{ y|add:2016 }} – May 31, {{ y|add:2017 }})</option>{% endfor %}</select></label>
-  </form>
-  <p class="small muted rintro">This page gathers everything the Research Performance Progress Report (RPPR) needs for the budget period chosen above, following the FY27 COBRE reporting guidance.<br><a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">NIH’s RPPR instructions (opens in a new tab)</a></p>
-  <ol class="rsteps">
-    <li><strong>Review.</strong> Please read each list below and correct anything that looks wrong.</li>
-    <li><strong>Download.</strong> Please download each list and paste it into the matching RPPR section.</li>
-    <li><strong>Mark as reported.</strong> After the RPPR is submitted, please press the button at the bottom of this page. It stamps every item as reported this year, so next year’s lists leave them out, and nothing is ever reported to NIH twice.</li>
+  <header class="rhero">
+    <div class="rhero-t">
+      <p class="rhero-k">Research Performance Progress Report (RPPR)</p>
+      <h2 class="rhero-h">Year {{ r.year }} <span>June 1, {{ r.year|add:2016 }} to May 31, {{ r.year|add:2017 }}</span></h2>
+      <p class="rhero-s">This page gathers everything the RPPR needs for this budget period, following the FY27 COBRE reporting guidance.<br><a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">NIH’s RPPR instructions (opens in a new tab)</a></p>
+    </div>
+    <form method="get" class="rtop"><input type="hidden" name="tab" value="rppr">
+      <label class="small muted">Budget period <select name="year" onchange="this.form.submit()">{% for y in r.years %}<option value="{{ y }}" {% if y == r.year %}selected{% endif %}>Year {{ y }} (June 1, {{ y|add:2016 }} – May 31, {{ y|add:2017 }})</option>{% endfor %}</select></label>
+    </form>
+  </header>
+  <ol class="rsteps stepper" aria-label="How to use this page">
+    <li><span class="st-n" aria-hidden="true">1</span><strong>Review</strong><span>Please read each list below and correct anything that looks wrong.</span></li>
+    <li><span class="st-n" aria-hidden="true">2</span><strong>Download</strong><span>Please download each list and paste it into the matching RPPR section.</span></li>
+    <li><span class="st-n" aria-hidden="true">3</span><strong>Mark as reported</strong><span>After the RPPR is submitted, please press the button at the bottom of this page. The button stamps every item as reported this year, so next year’s lists leave those items out, and nothing is ever reported to NIH twice.</span></li>
   </ol>
 
   <nav class="rjump" aria-label="Sections">
@@ -15,13 +21,13 @@
     <a href="#rp-t1" title="NIGMS suggested Table 1: grant applications submitted and awards received by Center investigators this budget period. Click to jump to the table."><span class="rj-k">Grant applications <em>Table 1</em></span><span class="rj-v">{{ r.t1.total.sub }} · {{ r.t1.total.won }}</span><span class="rj-l">applications · awards</span></a>
     <a href="#rp-t2" title="NIGMS suggested Table 2: who used each core this budget period, from the Core Usage Reports. Click to jump to the table."><span class="rj-k">Core users <em>Table 2</em></span><span class="rj-v">{{ r.t2_users }}</span><span class="rj-l">core user{{ r.t2_users|pluralize }}</span></a>
     <a href="#rp-d1" title="RPPR section D.1: everyone who worked at least 1.0 calendar month on the award this budget period, with their eRA Commons ID. Click to jump to the list."><span class="rj-k">Participants <em>D.1</em></span><span class="rj-v">{{ r.d1.rows|length }}</span><span class="rj-l">with 1.0+ months</span></a>
-    {% if r.docs %}<a href="#rp-docs" title="RPPR section D.2: biosketches and Current and Pending (Other) Support for Key Personnel and Other Significant Contributors. Click to jump to the list."><span class="rj-k">NIH documents <em>D.2</em></span><span class="rj-v">{{ r.docs.n_done }} of {{ r.docs.n }}</span><span class="rj-l">turned in</span></a>{% endif %}
-    {% if r.teams %}<a href="#rp-teams" title="The research team lists and progress answers from the semiannual progress reports, for the narrative sections. Click to jump to them."><span class="rj-k">Progress reports</span><span class="rj-v">{{ r.teams|length }}</span><span class="rj-l">team lists, answers</span></a>{% endif %}
+    {% if r.docs %}<a href="#rp-docs" title="RPPR section D.2: biosketches and Current and Pending (Other) Support from the PD/PI, Core Directors, Research Project Leaders, and Pilot Project Leaders. Click to jump to the list."><span class="rj-k">NIH documents <em>D.2</em></span><span class="rj-v">{{ r.docs.n_done }} of {{ r.docs.n }}</span><span class="rj-l">turned in</span></a>{% endif %}
+    {% if r.teams %}<a href="#rp-teams" title="The research team lists and progress answers from the semiannual progress reports, for the narrative sections. Click to jump to them."><span class="rj-k">Progress reports <em>Narrative</em></span><span class="rj-v">{{ r.teams|length }}</span><span class="rj-l">team lists, answers</span></a>{% endif %}
   </nav>
 
-  {% if r.carried %}<div class="rnote">
-    <h3 class="rnote-h">Items from last year that still need to be reported to NIH</h3>
-    <p><strong>{{ r.carried }} item{{ r.carried|pluralize }} from Year {{ r.year|add:-1 }} {{ r.carried|pluralize:"is,are" }} included in the lists below</strong> because {{ r.carried|pluralize:"it was,they were" }} never marked as reported (dated after that RPPR went in, for example).<br>{{ r.carried|pluralize:"It’s,They’re" }} marked “from Year {{ r.year|add:-1 }}” below.<br>That is allowed: NIH approves reporting things that took place after the RPPR was submitted but before the end of the grant year, in the next RPPR.</p>
+  {% if r.carried %}<div class="rnote rcarry">
+    <h3 class="rnote-h"><span class="rcarry-n">{{ r.carried }}</span>Items from last year that still need to be reported to NIH</h3>
+    <p><strong>{{ r.carried }} item{{ r.carried|pluralize }} from Year {{ r.year|add:-1 }} {{ r.carried|pluralize:"is,are" }} included in the lists below</strong> because {{ r.carried|pluralize:"the item was,the items were" }} never marked as reported (dated after that RPPR went in, for example).<br>{{ r.carried|pluralize:"This item is,These items are" }} marked “from Year {{ r.year|add:-1 }}” below.<br>That is allowed: NIH approves reporting things that took place after the RPPR was submitted but before the end of the grant year, in the next RPPR.</p>
     {% if not r.prev_marked %}<p>Nothing has been marked as reported in the Year {{ r.year|add:-1 }} RPPR yet.<br>If that RPPR already went in, open <a href="?tab=rppr&amp;year={{ r.year|add:-1 }}">Year {{ r.year|add:-1 }}</a> and mark its lists as reported first, so those items aren’t counted twice.</p>{% endif %}
   </div>{% endif %}
 
@@ -78,7 +84,7 @@
         <p class="rsum"><span class="rchip"><b>{{ r.t2_users }}</b>&nbsp;user{{ r.t2_users|pluralize }} across {{ r.t2.cores|length }} research core{{ r.t2.cores|length|pluralize }}</span>{% if r.t2_waiting %} <span class="rchip warn">{{ r.t2_waiting }} core{{ r.t2_waiting|pluralize }} still to report</span>{% endif %}</p></div>
       <a class="small" href="{% url 'manage:outcomes_export' 'table2' %}?year={{ r.year }}{% for p in r.t2.periods %}&amp;t2p={{ p.pk }}{% endfor %}">Download Table 2 (CSV)</a>
     </header>
-    <p class="rdesc">Who used each research core this year, for which projects, and whether the core’s data went into a grant application or paper.<br>NIH uses it to see how the cores serve the Center. It comes from the core directors’ Core Usage Reports; the Admin Core isn’t included.</p>
+    <p class="rdesc">Who used each research core this year, for which projects, and whether the core’s data went into a grant application or paper.<br>NIH uses Table 2 to see how the cores serve the Center. Table 2 comes from the core directors’ Core Usage Reports; the Admin Core isn’t included.</p>
     <form method="get" action="#rp-t2" class="small rfilter"><input type="hidden" name="tab" value="rppr"><input type="hidden" name="year" value="{{ r.year }}"><span class="muted">Reports included:</span>
       {% for p in r.t2_choices %}<label><input type="checkbox" name="t2p" value="{{ p.pk }}" {% if p in r.t2.periods %}checked{% endif %}> {{ p.name }}</label>{% endfor %}
       <button class="btn small ghost" type="submit">Update</button></form>
@@ -106,7 +112,7 @@
         <p class="rsum"><span class="rchip"><b>{{ r.d1.rows|length }}</b>&nbsp;{{ r.d1.rows|length|pluralize:"person,people" }}</span>{% if r.d1.missing_commons %} <span class="rchip warn">{{ r.d1.missing_commons|length }} need an eRA Commons ID</span>{% endif %}{% if r.d1.missing_months %} <span class="rchip warn">{{ r.d1.missing_months|length }} need months</span>{% endif %}{% if r.d1.missing_level %} <span class="rchip warn">{{ r.d1.missing_level|length }} need a career level</span>{% endif %}{% if r.d1.missing_orcid %} <span class="rchip warn">{{ r.d1.missing_orcid|length }} senior/key need an ORCID iD</span>{% endif %}</p></div>
       <a class="small" href="{% url 'manage:outcomes_export' 'd1' %}?year={{ r.year }}">Download D.1 (CSV)</a>
     </header>
-    <p class="rdesc">Everyone who worked on CNAP for at least 1.0 person month this year (calendar, or academic plus summer), in NIH’s six categories, with their eRA Commons ID.<br>It’s the RPPR’s list of the people who did the work.</p>
+    <p class="rdesc">Everyone who worked on CNAP for at least 1.0 person month this year (calendar, or academic plus summer), in NIH’s six categories, with their eRA Commons ID.<br>Section D.1 is the RPPR’s list of the people who did the work.</p>
     <p class="small muted">People under 1.0 month are set aside, except senior/key people named on the Notice of Award and Other Significant Contributors, who are always listed. An OSC with no months entered is listed at 0.0; a new OSC needs a biosketch in the RPPR. People with no months entered stay on the list until they add them.<br>People add their eRA Commons ID and months on their Profile page; you can on their person page.</p>
     {% if r.d1_cats %}<table class="rtab cnttab" title="How many D.1 participants fall in each career category."><colgroup><col class="w-label"><col class="w-num"><col class="w-num"><col class="w-num"></colgroup>
       <thead><tr><th>Category</th><th class="num">People</th><th class="num">Need an ID</th><th class="num">Need months</th></tr></thead><tbody>
@@ -129,7 +135,7 @@
     </header>
     <p class="rdesc">Each year’s certified SciENcv Current and Pending (Other) Support and the D.2.a effort answer from the PD/PI, RP Leaders, PP Leaders, and core directors, plus the biosketch and signed MFTRP certification from those named on the Notice of Award (marked “NoA”). Other Significant Contributors (marked “OSC”) give a biosketch only.<br>Since 2026 these attach to each person’s D.1 row (the old D.2.b–D.2.d were merged into D.1). MFTRP certifications go in G.1, one per person; the zip names them MFTRPcert_[Name].pdf, as NIH requires.</p>
     {% if not r.docs_ok %}<p class="muted">Your role can’t see these documents.</p>
-    {% elif not r.docs %}<p class="muted">No one has been asked for NIH documents in Year {{ r.year }}. They’re requested once a year, in the Fall period.</p>
+    {% elif not r.docs %}<p class="muted">No one has been asked for NIH documents in Year {{ r.year }}. NIH documents are requested once a year, in the Fall period.</p>
     {% else %}
     <div class="scroll"><table class="rtab" title="Key Personnel and Other Significant Contributors, and whether each one’s NIH documents are in."><colgroup><col class="w-name"><col class="w-num"><col><col><col><col><col class="w-num"></colgroup>
       <thead><tr><th>Name</th><th>Status</th><th>Biosketch</th><th>Current and Pending</th><th>MFTRP</th><th>Foreign docs</th><th>D.2.a</th><th>February check</th></tr></thead><tbody>

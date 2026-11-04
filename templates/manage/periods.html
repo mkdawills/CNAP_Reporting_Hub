@@ -5,8 +5,8 @@
   {% if can_manage %}<div><a class="btn" href="{% url 'manage:period_new' %}">Add a period</a></div>{% endif %}</div>
 
 <div class="panel">
-  <h2 class="sectionhead">A typical reporting year{% why "This is the rhythm the Center runs on. The Fall and RPPR/Spring sessions collect surveys and reports, and the April site-visit session feeds the External Advisory Committee’s review." %}</h2>
-  <p class="small muted">{{ "Each budget year runs June 1 to May 31. It has two reporting sessions, and the site visit session follows in April."|stack }}</p>
+  <h2 class="sectionhead">A typical reporting year{% why "A typical reporting year is the rhythm the Center runs on. The Fall and RPPR/Spring sessions collect surveys and reports, and the April site-visit session feeds the External Advisory Committee’s review." %}</h2>
+  <p class="small muted">{{ "Each budget year runs June 1 to May 31. Each budget year has two reporting sessions, and the site visit session follows in April."|stack }}</p>
   <div class="yearband" aria-hidden="true">
     <div class="yb-seg yb-fall"><span class="yb-name">Fall session</span><span class="yb-dates">Covers June 1 – November 30.<br>Surveyed in November.</span></div>
     <div class="yb-seg yb-spring"><span class="yb-name">RPPR/Spring session</span><span class="yb-dates">Covers December 1 – May 31.<br>Surveyed in March.</span></div>
@@ -38,7 +38,7 @@
 {% if past %}
 <div class="panel">
   <h2 class="sectionhead">Past periods ({{ past|length }}){% why "Finished periods are kept read-only so the official numbers never drift. If something must change, a correction creates a new audited version instead of editing the old one." %}</h2>
-  <p class="small muted">{{ "These are finished. Their results are read-only, and a correction creates a new, audited version."|stack }}</p>
+  <p class="small muted">{{ "These reporting periods are finished. Their results are read-only, and a correction creates a new, audited version."|stack }}</p>
   <div class="scroll"><table title="Every past reporting period, with its dates, status, and completion."><thead><tr><th>Period</th><th>Covers</th><th>Status</th><th></th></tr></thead><tbody>
   {% for r in past %}<tr>
     <td><strong>{{ r.p.name }}</strong></td>

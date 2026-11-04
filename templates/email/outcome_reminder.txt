@@ -7,7 +7,7 @@ Your CNAP Reporting Hub records below haven't been updated in {{ days }} days or
 {% endfor %}
 Please open your publications, talks, and grants: {{ url }}
 
-For each one you can choose "Confirm no changes" or "Update status". It usually takes a couple of minutes.
+For each one you can choose "Confirm no changes" or "Update status". The update usually takes a couple of minutes.
 
 Thank you,
 The CNAP evaluation team

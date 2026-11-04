@@ -202,7 +202,7 @@ GROUPS = [
         "Mentors",
         "Internal and external. People outside K-State sign in with an emailed link.",
     ),
-    ("director", "Core directors", "They don’t receive the survey about their own core."),
+    ("director", "Core directors", "Core directors don’t receive the survey about their own core."),
     (
         "extcore",
         "External core users",
@@ -292,8 +292,9 @@ def launch(request, pk):
                     not fd.about_core_id or r.core_id == fd.about_core_id
                 ):
                     skips.append(
-                        f"{(fd.display or {}).get('short_name') or fd.name}, because they are "
-                        f"{r.relationship_type.name.lower()}{f' of the {r.core.code} Core' if r.core_id else ''}"
+                        f"{(fd.display or {}).get('short_name') or fd.name}, because this person is "
+                        + (f"the {r.core.code} Core’s {r.relationship_type.name.lower()}" if r.core_id
+                           else f"a {r.relationship_type.name.lower()}")
                     )
                     break
         row = {

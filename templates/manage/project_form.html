@@ -21,7 +21,7 @@
       <table class="subtab" title="Each current person’s identifiers and effort, the inputs for RPPR section D.1."><thead><tr><th>Person</th><th>Role</th><th>eRA Commons ID</th><th>ORCID iD</th><th>Effort in Year {{ gy }}</th></tr></thead><tbody>
       {% for x in people_detail %}<tr><td><a href="{% url 'manage:person' x.person.pk %}">{{ x.person }}</a></td><td class="small">{{ x.role }}</td><td class="small">{% if x.eid %}{{ x.eid }}{% else %}<span class="gap">none on file</span>{% endif %}</td><td class="small">{% if x.orcid %}{{ x.orcid }}{% else %}<span class="gap">none on file</span>{% endif %}</td><td class="small">{{ x.months }}</td></tr>{% endfor %}
       </tbody></table>
-      <p class="small muted">{{ "These are the inputs for RPPR section D.1. Fix anything missing on the person’s page."|stack }}</p>
+      <p class="small muted">{{ "The fields below are the inputs for RPPR section D.1. Fix anything missing on the person’s page."|stack }}</p>
     </div>
     <script>
     document.getElementById("pf-detail").addEventListener("click", function () {

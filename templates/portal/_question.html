@@ -1,4 +1,4 @@
-{% load cnap %}<div class="q{% if v.q.config.note %} q-note{% endif %}{% if v.error %} has-error{% endif %}" id="q-{{ v.code }}">
+{% load cnap %}<div class="q{% if v.q.config.note %} q-note{% endif %}{% if v.error %} has-error{% endif %}" id="q-{{ v.code }}"{% if v.q.config.show_when %} data-show-q="{{ v.q.config.show_when.q }}" data-show-v="{{ v.q.config.show_when.value }}"{% endif %}>
 {% if v.type == 'likert' or v.type == 'yes_no' %}
   <fieldset class="scale{% if v.type == 'yes_no' %} yn{% endif %}">
     <legend class="qt">{{ v.q.prompt }}{% if not v.required and not v.conditional and 'ptional' not in v.q.prompt %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</legend>
@@ -14,7 +14,7 @@
 {% elif v.type == 'file' %}
   <div class="qt">{{ v.q.prompt }}{% if not v.required and not v.conditional and 'ptional' not in v.q.prompt %} <span class="opt">(optional)</span>{% endif %}{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</div>
   {% if v.file %}<p class="filename">Uploaded: <a href="{% url 'portal:download' v.file.pk %}">{{ v.file.original_filename }}</a></p>{% if v.check %}<p class="error small" role="alert">{{ v.check|stack }}</p>{% endif %}{% endif %}
-  {% if editable %}<div class="fileup mt"><input type="file" name="file-{{ v.code }}" accept="{{ v.accept }}" aria-label="{{ v.q.prompt }}">{% if v.file %}<label class="small" style="display:inline-flex;gap:6px"><input type="checkbox" name="remove-{{ v.code }}" value="1"> Remove this file</label>{% endif %}</div>{% endif %}
+  {% if editable %}<div class="fileup mt"><label class="filezone"><span class="filezone-t">{% if v.file %}Choose a new file to replace the one above{% else %}Choose a file from your computer{% endif %}</span><span class="filezone-s">{% if '.pdf' in v.accept %}PDF only.{% elif '.docx' in v.accept %}Word document only (.docx or .doc).{% elif '.xlsx' in v.accept %}Excel file only (.xlsx).{% else %}{{ v.accept }}{% endif %} Your file uploads when you press Submit or Save draft.</span><input type="file" name="file-{{ v.code }}" accept="{{ v.accept }}" aria-label="{{ v.q.prompt }}"></label>{% if v.file %}<label class="small" style="display:inline-flex;gap:6px"><input type="checkbox" name="remove-{{ v.code }}" value="1"> Remove this file</label>{% endif %}</div>{% endif %}
 {% elif v.type == 'long_text' and v.q.config.note %}
   <label class="qt-note" for="f-{{ v.code }}">{{ v.q.prompt }} <span class="muted">{{ v.q.help_text }}</span>{% if v.error %} <span class="qmiss-l">Needs an answer</span>{% endif %}</label>
   <textarea id="f-{{ v.code }}" name="q-{{ v.code }}" rows="2" {% if not editable %}readonly{% endif %}>{{ v.value }}</textarea>
@@ -29,4 +29,5 @@
   <input type="text" id="f-{{ v.code }}" name="q-{{ v.code }}" value="{{ v.value }}" style="width:100%" {% if not editable %}readonly{% endif %}>
 {% endif %}
 {% if v.q.help_text and not v.narrative and not v.q.config.note %}<p class="small muted qnote">{{ v.q.help_text|stack }}</p>{% endif %}
+{% if v.q.config.verbatim %}<details class="verbatim"><summary title="The question exactly as NIH words it in the Research Performance Progress Report (RPPR). Click to read it.">{{ v.q.config.verbatim.label }}</summary><blockquote>{{ v.q.config.verbatim.text }}</blockquote></details>{% endif %}
 </div>

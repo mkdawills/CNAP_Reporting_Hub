@@ -11,12 +11,12 @@ The page below has a link to the one you turned in, so you can look it over firs
 NIH's instructions for the Current and Pending (Other) Support Common Form:
 https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form
 
-If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at {{ evaluator_email }}; she can point you in the right direction.
+If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at {{ evaluator_email }}. Morgan can point you in the right direction.
 
 Please answer by {{ due }}:
 {{ url }}
 {% if with_link %}
-This link signs you in. It works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
+This link signs you in. The link works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
 {% else %}
 Please sign in with your K-State eID.
 {% endif %}

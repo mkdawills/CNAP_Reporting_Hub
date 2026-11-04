@@ -333,7 +333,14 @@ def center_results(request):
         except ValueError:
             gy = now
         gy = gy if gy in years else now
-        ctx.update({"years": years, "prod": snapshot.products(gy), "now": now})
+        prod = dict(snapshot.products(gy))
+        prod.update(n_papers=len(prod["papers"]), n_talks=len(prod["talks"]), n_awards=len(prod["awards"]))
+        # MW 2026-11-04: respondents see counts only. Titles, people, and funders stay with the
+        # evaluator, the Center Director, and the Associate Director (the administrator screens).
+        show_detail = access.can_view_admin(request.user)
+        if not show_detail:
+            prod.update(papers=[], talks=[], awards=[])
+        ctx.update({"years": years, "prod": prod, "now": now, "show_detail": show_detail})
         return render(request, "portal/center_results.html", ctx)
     periods = ReportingPeriod.objects.filter(status=PeriodStatus.FINALIZED).order_by(
         "-display_order"

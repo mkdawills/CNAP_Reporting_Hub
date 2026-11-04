@@ -4,7 +4,7 @@ Here is your link to the CNAP Reporting Hub:
 
 {{ url }}
 
-It works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
+The sign-in link works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
 
 If you didn't ask for this, you can ignore this email.
 

@@ -14,7 +14,7 @@
     </div>
     <p class="small choose-hint">{% if obj.status == 'planned' %}If the details above are out of date, please choose “Edit the planned details.”{% else %}If nothing has changed, you can simply go back.{% endif %}</p>
   {% else %}
-    <p class="choose-lead">This is its final status, so there is nothing to move it to.<br>You can still view or edit its details.</p>
+    <p class="choose-lead">{{ obj.get_status_display }} is the final status, so there is nothing to move this {% if kind == 'pub' %}paper{% else %}proposal{% endif %} to.<br>You can still view or edit the {% if kind == 'pub' %}paper’s{% else %}proposal’s{% endif %} details.</p>
     <div class="choose-btns"><a class="btn big" href="?for={{ owner.pk }}&to={{ obj.status }}">View or edit the details</a></div>
   {% endif %}
   <p class="small" style="margin-top:18px;text-align:center"><a href="{% url 'portal:outcomes' %}?for={{ owner.pk }}">Back to my publications, talks, and grants</a></p>

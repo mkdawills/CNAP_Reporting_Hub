@@ -645,7 +645,7 @@ class GrantNudge(models.Model):
 
     class Choice(models.TextChoices):
         IDEATION = "ideation", (
-            "It has not progressed past the ideation stage. I am hopeful to get things kick-started soon."
+            "The proposal has not progressed past the ideation stage. I am hopeful to get things kick-started soon."
         )
         BLOCK = "block", "I am experiencing a little writer's block. Thanks for the nudge!"
         SPECIALIST = "specialist", (

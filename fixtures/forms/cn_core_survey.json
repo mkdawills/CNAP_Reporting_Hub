@@ -6,7 +6,7 @@
   "about_core": "CN",
   "confidentiality": "standard",
   "sort_order": 3,
-  "intro_text": "Please rate each service you used. Choose from 1 (very poor) to 5 (very good) or not applicable (NA).\nThen please tell us how often you used each one. Choose from 1 (never) to 5 (always) or not applicable (NA).",
+  "intro_text": "",
   "display": {
     "task_group": "cores",
     "short_name": "CN Core",
@@ -167,7 +167,8 @@
           "measure": "cn_quality_16",
           "required": true
         }
-      ]
+      ],
+      "instructions": "Please rate each service you used."
     },
     {
       "code": "frequency",
@@ -229,7 +230,8 @@
           "measure": "cn_frequency_07",
           "required": true
         }
-      ]
+      ],
+      "instructions": "Please tell us how often you used each service."
     },
     {
       "code": "open",
@@ -273,7 +275,7 @@
       "questions": [
         {
           "code": "nonuse_reason",
-          "prompt": "Please kindly share why you did not use the core.",
+          "prompt": "Please share why you did not use the core.",
           "type": "long_text",
           "required": true
         },
