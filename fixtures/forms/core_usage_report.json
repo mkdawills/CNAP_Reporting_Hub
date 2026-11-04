@@ -60,6 +60,19 @@
           "help_text": "RPL means Research Project Leader. PPL means Pilot Project Leader."
         },
         {
+          "code": "user_type_other",
+          "type": "short_text",
+          "prompt": "Institution, if Other institutional",
+          "required": false,
+          "help_text": "",
+          "config": {
+            "show_when": {
+              "q": "user_type",
+              "value": "other_institutional"
+            }
+          }
+        },
+        {
           "code": "lab",
           "prompt": "User lab (Principal Investigator’s first and last name)",
           "type": "short_text",
@@ -113,6 +126,19 @@
           ],
           "config": {
             "short": "Payment"
+          }
+        },
+        {
+          "code": "payment_other",
+          "type": "short_text",
+          "prompt": "Payment type, if Other",
+          "required": false,
+          "help_text": "",
+          "config": {
+            "show_when": {
+              "q": "payment",
+              "value": "other"
+            }
           }
         },
         {

@@ -105,3 +105,29 @@ document.addEventListener("click", function (e) {
   var t = document.getElementById(a.getAttribute("href").slice(1));
   if (t && t.dataset.open === "0") { var h = t.querySelector(".rollhead"); if (h) h.click(); }
 });
+
+/* "Please describe" boxes show only when their choice is Other (MW 2026-11-04). Works for
+   drop-downs and radio buttons, on entry forms and on survey forms (including repeated rows). */
+(function () {
+  function isOther(v) { return /^other\b/i.test(String(v || "").trim()); }
+  function valueOf(scope, name) {
+    var r = scope.querySelector('input[type=radio][name="' + name + '"]:checked');
+    if (r) return r.value;
+    var s = scope.querySelector('select[name="' + name + '"]');
+    return s ? s.value : "";
+  }
+  function sync() {
+    document.querySelectorAll("[data-other-of]").forEach(function (box) {
+      var form = box.closest("form") || document;
+      var on = isOther(valueOf(form, box.getAttribute("data-other-of")));
+      box.hidden = !on;
+    });
+    document.querySelectorAll("[data-other-sel]").forEach(function (lab) {
+      var row = lab.closest(".repeat"); if (!row) return;
+      var sel = row.querySelector('select[name$="-' + lab.getAttribute("data-other-sel") + '"]');
+      lab.hidden = !(sel && sel.value === lab.getAttribute("data-other-v"));
+    });
+  }
+  document.addEventListener("change", sync);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", sync); else sync();
+})();

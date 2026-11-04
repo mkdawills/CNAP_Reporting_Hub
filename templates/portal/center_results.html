@@ -1,39 +1,48 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Center results · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head reshero"><div class="reshero-main"><svg class="reshero-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><div><h1>Center results</h1><p>{% if view == "products" %}{{ "Publications, Presentations, Proposal Submissions, and Grant Awards (June 1 to May 31)."|stack }}{% else %}Combined results from finalized reporting periods.{% endif %}</p>{% if view != "products" %}<p class="privchip" title="Results show only combined numbers and themes. No one’s individual answers, and no names, ever appear here."><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Individual answers are never shown.</p>{% endif %}</div></div>
+<div class="head reshero"><div class="reshero-main"><svg class="reshero-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><div><h1>{% if view == "products" %}Center Research Outcomes{% else %}Center results{% endif %}</h1><p>{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}Combined results from finalized reporting periods.{% endif %}</p>{% if view != "products" %}<p class="privchip" title="Results show only combined numbers and themes. No one’s individual answers, and no names, ever appear here."><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Individual answers are never shown.</p>{% endif %}</div></div>
 {% if view == "products" %}{% if years|length > 1 %}<form method="get"><input type="hidden" name="view" value="products"><label class="small muted">Budget year <select name="year" onchange="this.form.submit()">{% for y in years %}<option value="{{ y }}" {% if y == prod.gy %}selected{% endif %}>Year {{ y }}{% if y == now %} (this year){% endif %}</option>{% endfor %}</select></label></form>{% endif %}
 {% elif periods|length > 1 %}<form method="get"><label class="small muted">Reporting period <select name="period" onchange="this.form.submit()">{% for p in periods %}<option value="{{ p.short_label }}" {% if p == selected %}selected{% endif %}>{{ p.short_label }}</option>{% endfor %}</select></label></form>{% endif %}</div>
-<nav class="tabs segtabs" aria-label="Center results"><a href="{% url 'portal:center_results' %}" class="{% if view != 'products' %}on{% endif %}"{% if view != 'products' %} aria-current="page"{% endif %} title="What everyone’s survey answers showed, combined, with no individual answers. Why: so members see what the Center learned and what it is acting on. Click to see the latest survey results.">Survey results</a><a href="{% url 'portal:center_results' %}?view=products" class="{% if view == 'products' %}on{% endif %}"{% if view == 'products' %} aria-current="page"{% endif %} title="The Center’s papers, talks, and grant awards, counted by year. Why: to show what CNAP members produced together. Click to see the counts.">Products</a></nav>
+<nav class="tabs segtabs" aria-label="Center results"><a href="{% url 'portal:center_results' %}" class="{% if view != 'products' %}on{% endif %}"{% if view != 'products' %} aria-current="page"{% endif %} title="What everyone’s survey answers showed, combined, with no individual answers. Why: so members see what the Center learned and what it is acting on. Click to see the latest survey results.">Survey results</a><a href="{% url 'portal:center_results' %}?view=products" class="{% if view == 'products' %}on{% endif %}"{% if view == 'products' %} aria-current="page"{% endif %} title="The Center’s publications, presentations, grant proposals, and grant awards, counted by budget year. Why: to show what CNAP members produced together. Click to see the totals.">Research Outputs</a></nav>
 {% if view == "products" %}
-  <ul class="prodsum{% if show_detail %} detail{% endif %}">
-    {% if show_detail %}<li><a href="#papers" title="Click to see the list of papers published this year."><b>{{ prod.n_papers }}</b> paper{{ prod.n_papers|pluralize }} published</a></li>
-    <li><a href="#talks" title="Click to see the list of talks and posters this year."><b>{{ prod.n_talks }}</b> {% if prod.n_talks == 1 %}talk or poster{% else %}talks and posters{% endif %}</a></li>
-    <li><span class="counted"><b>{{ prod.submitted }}</b> proposal{{ prod.submitted|pluralize }} submitted</span></li>
-    <li><a href="#awards" title="Click to see the list of proposals awarded this year."><b>{{ prod.n_awards }}</b> proposal{{ prod.n_awards|pluralize }} awarded</a></li>
-    {% else %}<li><span><b>{{ prod.n_papers }}</b> paper{{ prod.n_papers|pluralize }} published</span></li>
-    <li><span><b>{{ prod.n_talks }}</b> {% if prod.n_talks == 1 %}talk or poster{% else %}talks and posters{% endif %}</span></li>
-    <li><span><b>{{ prod.submitted }}</b> proposal{{ prod.submitted|pluralize }} submitted</span></li>
-    <li><span><b>{{ prod.n_awards }}</b> proposal{{ prod.n_awards|pluralize }} awarded</span></li>{% endif %}
-  </ul>
-  <p class="small muted prodnote"><span class="yrchip">Year {{ prod.gy }} · {{ prod.start|date:"F j, Y" }} to {{ prod.end|date:"F j, Y" }}</span><br>{% if show_detail %}Submitted proposals are counted, not listed, so pending and unfunded proposals stay private.{% else %}These are Center-wide counts.<br>The details of each paper, talk, and proposal stay private.{% endif %}</p>
-
+  <section class="o33" aria-labelledby="o33-h">
+    <header class="o33-head">
+      <p class="o33-k">Center-wide totals</p>
+      <h2 id="o33-h">Year {{ prod.gy }}<span>{{ prod.start|date:"F j, Y" }} to {{ prod.end|date:"F j, Y" }}</span></h2>
+      <p class="o33-s">These numbers count every CNAP member’s work together, not only yours.</p>
+    </header>
+    <ul class="prodsum o33-grid{% if show_detail %} detail{% endif %}">
+      {% if show_detail %}<li><a href="#papers" title="Click to see the list of publications this year."><b>{{ prod.n_papers }}</b><span class="o33-l">Publications</span></a></li>
+      <li><a href="#talks" title="Click to see the list of presentations this year."><b>{{ prod.n_talks }}</b><span class="o33-l">Presentations</span></a></li>
+      <li><span class="counted"><b>{{ prod.submitted }}</b><span class="o33-l">Grant proposals submitted</span></span></li>
+      <li><a href="#awards" title="Click to see the list of grant awards this year."><b>{{ prod.n_awards }}</b><span class="o33-l">Grant awards received</span></a></li>
+      {% else %}<li><span><b>{{ prod.n_papers }}</b><span class="o33-l">Publications</span></span></li>
+      <li><span><b>{{ prod.n_talks }}</b><span class="o33-l">Presentations</span></span></li>
+      <li><span><b>{{ prod.submitted }}</b><span class="o33-l">Grant proposals submitted</span></span></li>
+      <li><span><b>{{ prod.n_awards }}</b><span class="o33-l">Grant awards received</span></span></li>{% endif %}
+    </ul>
+    <p class="o33-note">These totals come from what CNAP members have entered in the Reporting Hub, so they grow as members add their work.<br>{% if show_detail %}Submitted proposals are counted, not listed, so pending and unfunded proposals stay private.{% else %}Titles, names, and proposal details stay private.{% endif %}</p>
+  </section>
+  <aside class="o33-cta">
+    <div><p class="o33-cta-h">Did you publish, present, or submit a grant this year?</p><p class="o33-cta-s">Your entries count toward these Center totals.</p></div>
+    <a class="btn" href="{% url 'portal:outcomes' %}" title="Opens Publications, talks, and grants, where you can add a new entry or update one you already have.">Add or update your entries</a>
+  </aside>
   {% if show_detail %}
   <div class="rollup" data-start="closed">
-  <section class="panel" id="papers"><h2 class="sectionhead">Papers published</h2>
+  <section class="panel" id="papers"><h2 class="sectionhead">Publications</h2>
   {% if prod.papers %}<ol class="prodlist">{% for p in prod.papers %}<li><span class="pl-main">{% if p.authors %}{{ p.authors }}. {% endif %}{% if p.url %}<a href="{{ p.url }}" rel="noopener">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}.{% if p.journal %} <span class="pl-src">{{ p.journal }}</span>.{% endif %}</span><span class="pl-date">{{ p.date|date:"M j, Y" }}</span></li>{% endfor %}</ol>
   {% else %}<p class="muted">There are no papers published {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
 
-  <section class="panel" id="talks"><h2 class="sectionhead">Talks and posters</h2>
+  <section class="panel" id="talks"><h2 class="sectionhead">Presentations</h2>
   {% if prod.talks %}<ol class="prodlist">{% for t in prod.talks %}<li><span class="pl-main"><strong>{{ t.title }}</strong><br><span class="small muted">{{ t.kind }}{% if t.event %} · {{ t.event }}{% endif %}{% if t.who %} · {{ t.who }}{% endif %}</span></span><span class="pl-date">{{ t.date|date:"M j, Y" }}</span></li>{% endfor %}</ol>
   {% else %}<p class="muted">There are no talks or posters {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
 
-  <section class="panel" id="awards"><h2 class="sectionhead">Proposals awarded</h2>
+  <section class="panel" id="awards"><h2 class="sectionhead">Grant awards received</h2>
   {% if prod.awards %}<ol class="prodlist">{% for g in prod.awards %}<li><span class="pl-main"><strong>{{ g.title }}</strong><br><span class="small muted">{% if g.agency %}{{ g.agency }}{% endif %}{% if g.number %} · {{ g.number }}{% endif %}{% if g.pis %} · PI: {{ g.pis }}{% endif %}{% if g.start %} · {{ g.start|date:"Y" }}–{% if g.end %}{{ g.end|date:"Y" }}{% endif %}{% endif %}</span></span></li>{% endfor %}</ol>
   {% else %}<p class="muted">There are no awards {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}</section>
   </div>
   {% endif %}
-  <p class="small muted">Missing something of yours?<br>Add it under <a href="{% url 'portal:outcomes' %}">Publications, talks, and grants</a>.</p>
 {% elif not selected %}
   <div class="panel"><p class="muted">{{ "No results yet. Results appear here once a reporting period’s results are finalized."|stack }}</p></div>
 {% else %}

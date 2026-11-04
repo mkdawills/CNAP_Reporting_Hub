@@ -36,6 +36,10 @@ class Publication(ArchivableModel):
 
     title = models.CharField(max_length=500)
     publication_type = models.CharField(max_length=20, choices=PublicationType.choices)
+    publication_type_other = models.CharField(
+        "Please describe the type", max_length=200, blank=True,
+        help_text="Shown when the type is Other (MW 2026-11-04).",
+    )
     status = models.CharField(
         max_length=12, choices=PublicationStatus.choices, default=PublicationStatus.PLANNED
     )
@@ -227,6 +231,10 @@ class Presentation(ArchivableModel):
     """Recorded once and linked to every relevant project; never duplicated per project."""
 
     presentation_type = models.CharField(max_length=20, choices=PresentationType.choices)
+    presentation_type_other = models.CharField(
+        "Please describe the type", max_length=200, blank=True,
+        help_text="Shown when the type is Other (MW 2026-11-04).",
+    )
     title = models.CharField(max_length=500)
     description = models.TextField(blank=True)
     author_display_text = models.TextField(blank=True, help_text="Full author list as entered.")
@@ -478,6 +486,10 @@ class GrantSubmissionPerson(models.Model):
     )
     person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="grant_links")
     role = models.CharField(max_length=20, choices=GrantRole.choices)
+    role_other = models.CharField(
+        "Please describe your role", max_length=200, blank=True,
+        help_text="Shown when the role is Other (MW 2026-11-04).",
+    )
     is_primary_cnap_contact = models.BooleanField(default=False)
 
     class Meta:

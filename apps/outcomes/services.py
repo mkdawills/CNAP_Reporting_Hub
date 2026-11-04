@@ -297,6 +297,7 @@ def create_publication(user, owner, data, resources=(), projects=(), other_text=
         title=data["title"],
         journal=data.get("journal", ""),
         publication_type=data.get("publication_type") or "journal_article",
+        publication_type_other=(data.get("publication_type_other") or "") if data.get("publication_type") == "other" else "",
         anticipated_submission_month=data.get("anticipated_submission_month"),
         anticipated_day_known=bool(data.get("anticipated_day_known")),
         status=PublicationStatus.PLANNED,
@@ -337,9 +338,13 @@ def update_publication(
         "resubmission_intent",
         "anticipated_submission_month",
         "anticipated_day_known",
+        "publication_type",
+        "publication_type_other",
     ):
         if f in data:
             setattr(p, f, data[f])
+    if p.publication_type != "other":
+        p.publication_type_other = ""
     p.status = new_status
     if new_status != PublicationStatus.SUBMITTED:
         p.substatus = None
@@ -420,6 +425,7 @@ def create_grant(
         grant_submission=g,
         person=owner,
         role=data.get("role") or role,
+        role_other=(data.get("role_other") or "") if data.get("role") == "other" else "",
         is_primary_cnap_contact=True,
     )
     _set_resources(GrantSubmissionResource, "grant_submission", g, resources, anticipated=True)
@@ -482,7 +488,7 @@ def update_grant(
     g.save()
     if "role" in data and owner:
         GrantSubmissionPerson.objects.filter(grant_submission=g, person=owner).update(
-            role=data["role"]
+            role=data["role"], role_other=(data.get("role_other") or "") if data["role"] == "other" else ""
         )
     if resources is not None:
         _set_resources(
@@ -579,6 +585,7 @@ def presentations_of(owner):
 def save_presentation(user, owner, data, resources=(), projects=(), other_text="", obj=None):
     fields = (
         "presentation_type",
+        "presentation_type_other",
         "title",
         "event",
         "venue",
@@ -596,6 +603,8 @@ def save_presentation(user, owner, data, resources=(), projects=(), other_text="
         if f in data:
             setattr(obj, f, data[f])
     obj.resources_other_text = other_text
+    if obj.presentation_type != "other":
+        obj.presentation_type_other = ""
     if any(f in data for f in ("venue", "city", "state_region", "country")):  # one line for lists and exports
         obj.location = ", ".join(x for x in (obj.venue, obj.city, obj.state_region, obj.country) if x)
     obj.save()

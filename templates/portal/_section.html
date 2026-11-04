@@ -19,7 +19,7 @@
           {% elif v.type == 'yes_no' %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<select name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}disabled{% endif %}><option value="">—</option>{% for o in v.pts %}<option value="{{ o.code }}" {% if v.value == o.code %}selected{% endif %}>{{ o.text }}</option>{% endfor %}</select></label>
           {% elif v.type == 'number' %}<label class="num w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="number" min="0" step="{% if 'months' in v.code %}any{% else %}1{% endif %}" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>
           {% elif v.type == 'long_text' %}<label class="grow w-full">{{ v.q.prompt }}<textarea name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" {% if not editable %}readonly{% endif %}>{{ v.value }}</textarea></label>
-          {% else %}<label class="w-{{ v.q.config.width|default:'std' }}">{{ v.q.prompt }}<input type="text" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>{% endif %}
+          {% else %}<label class="w-{{ v.q.config.width|default:'std' }}"{% if v.q.config.show_when %} data-other-sel="{{ v.q.config.show_when.q }}" data-other-v="{{ v.q.config.show_when.value }}"{% endif %}>{{ v.q.prompt }}<input type="text" name="rep-{{ sv.s.code }}-{{ i }}-{{ v.code }}" value="{{ v.value }}" {% if not editable %}readonly{% endif %}></label>{% endif %}
         {% endfor %}
         {% if editable %}<div class="rmv"><button class="btn small ghost" type="submit" name="action" value="remove:{{ sv.s.code }}:{{ i }}" formnovalidate>Remove</button></div>{% endif %}
       </div>

@@ -1,9 +1,9 @@
-{% extends "base.html" %}{% load cnap %}
+{% extends "base.html" %}{% load static %}{% load cnap %}
 {% block title %}Sign in · {{ platform_name }}{% endblock %}
 {% block anon %}
 {% if site_photo %}<div class="signin-wrap"><figure class="signin-photo"><img src="{% url 'site_photo' %}" alt="{{ site_photo.alt_text }}">{% if site_photo.caption %}<figcaption>{{ site_photo.caption }}</figcaption>{% endif %}</figure>{% endif %}
 <div class="panel">
-  <h1 class="sectionhead">CNAP Reporting Hub</h1>
+  <img class="signin-logo" src="{% static 'img/cnap-logo.png' %}" alt="CNAP Center: Cognitive and Neurobiological Approaches to Plasticity"><h1 class="sectionhead signin-h">Reporting Hub</h1>
   {% if throttled %}<p class="error">{{ "There have been too many sign-in attempts. Please wait 15 minutes, or use an emailed sign-in link."|stack }}</p>
   {% elif form.errors %}<p class="error">That username and password don’t match.<br>Please try again, or sign in with an emailed link.</p>{% endif %}
   <form method="post">

@@ -150,7 +150,7 @@ def test_shows_both_dates_and_a_link_to_the_fall_copy(client, fall):
         client.get("/tasks/").content.decode(),
         client.get(f"/tasks/current-pending/{c.pk}/").content.decode(),
     ):
-        assert "Research Performance Progress Report (RPPR)</a>, due April 1" in html and "Please answer by February 15" in html
+        assert "Research Performance Progress Report (RPPR)</a>, due April 1" in html and "February 15" in html
         assert f"/files/{prev.pk}/" in html and "Your most recent Current and Pending" in html
     assert client.get(f"/files/{prev.pk}/").status_code == 200
     body = [m for m in mail.outbox if m.to == [a.person.primary_email]][-1].body

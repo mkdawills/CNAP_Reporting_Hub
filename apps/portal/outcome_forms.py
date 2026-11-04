@@ -130,7 +130,8 @@ class PubPlanned(_PlannedDay, _Resources):
     publication_type = forms.ChoiceField(
         choices=PublicationType.choices, initial="journal_article", label="Type"
     )
-    field_order = ["title", "journal", "anticipated_submission_month", "anticipated_day", "publication_type"]
+    publication_type_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: data descriptor.")
+    field_order = ["title", "journal", "anticipated_submission_month", "anticipated_day", "publication_type", "publication_type_other"]
 
     def clean(self):
         return self._combine_day(super().clean())
@@ -379,6 +380,7 @@ class GrantPlanned(_Funding, _PlannedDay, _Resources):
         initial=GrantRole.PI,
         help_text="Please give your role on this proposal, for example Principal Investigator (PI) or Co-Investigator.",
     )
+    role_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
     anticipated_total = money("Anticipated total budget (optional)")
     planned_estimated_direct = money("Estimated direct costs (optional; preliminary)")
     field_order = [
@@ -392,6 +394,7 @@ class GrantPlanned(_Funding, _PlannedDay, _Resources):
         "anticipated_day",
         "project_title",
         "role",
+        "role_other",
         "anticipated_total",
         "planned_estimated_direct",
     ]
@@ -424,6 +427,7 @@ class GrantSubmitted(_Funding, _Resources):
         help_text="Please give the title of the proposal you submitted, not your CNAP project’s title.",
     )
     role = forms.ChoiceField(label="Your role", choices=GrantRole.choices)
+    role_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
     requested_total = money("Total requested budget", required=True)
     requested_direct = money("Estimated direct costs (optional)")
     requested_indirect = money("Estimated indirect costs (optional)")
@@ -438,6 +442,7 @@ class GrantSubmitted(_Funding, _Resources):
         "cayuse_ipf",
         "project_title",
         "role",
+        "role_other",
         "requested_total",
         "requested_direct",
         "requested_indirect",
@@ -559,8 +564,10 @@ class PresentationForm(_Resources):
     )
     cnap_cited = yn("Did your presentation acknowledge CNAP in alignment with the Stevens Amendment?")
     cnap_cited.help_text = "The “How to acknowledge CNAP” box at the top of this page explains the Stevens Amendment and gives the wording. If your presentation did not acknowledge CNAP, continue to report it. However, be very careful that you select No. We will reach out to determine if this can be remedied retrospectively."
+    presentation_type_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: panel discussion.")
     field_order = [
         "presentation_type",
+        "presentation_type_other",
         "title",
         "event",
         "venue",

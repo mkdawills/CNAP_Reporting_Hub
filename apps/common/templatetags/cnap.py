@@ -45,7 +45,7 @@ _FIELD_GROUPS = {
     "Dates": ("anticipated_submission_date", "anticipated_day", "submission_date", "anticipated_submission_month",
               "anticipated_publication_date", "publication_date", "award_notice_date", "project_start_date",
               "project_end_date", "decision_date", "decline_date", "presented_on"),
-    "The proposal": ("project_title", "pi", "role", "cayuse_ipf", "grant_number", "prime_or_subaward"),
+    "The proposal": ("project_title", "pi", "role", "role_other", "cayuse_ipf", "grant_number", "prime_or_subaward"),
     "Budget": ("anticipated_total", "planned_estimated_direct", "requested_total", "requested_direct", "requested_indirect",
                "award_total", "award_direct", "award_indirect", "cnap_portion"),
     "Credit to CNAP": ("resources", "resources_other_text", "projects"),
@@ -54,8 +54,19 @@ _FIELD_GROUPS = {
     "What happened": ("decision_comments", "discussed_with_program_officer", "program_officer_name", "discussion_date",
                       "feedback_shared_with_cnap", "plans_to_resubmit", "comments", "resubmission_intent"),
 }
-_ITEM_FIELDS = ("title", "journal", "pubmed_url", "author_display_text", "publication_type", "presentation_type",
+_ITEM_FIELDS = ("title", "journal", "pubmed_url", "author_display_text", "publication_type", "publication_type_other",
+                "presentation_type", "presentation_type_other",
                 "event", "venue", "city", "state_region", "country")
+
+
+_OTHER_OF = {"publication_type_other": "publication_type", "presentation_type_other": "presentation_type",
+             "role_other": "role"}
+
+
+@register.filter
+def other_of(name):
+    """The choice a "Please describe" box belongs to; the box shows only when that choice is Other."""
+    return _OTHER_OF.get(name, "")
 
 
 @register.filter

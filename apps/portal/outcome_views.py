@@ -267,6 +267,7 @@ def update(request, kind, pk):
     if kind == "grant" and "role" in F.base_fields:
         link = obj.people.filter(person=owner).first()
         initial["role"] = link.role if link else None
+        initial["role_other"] = link.role_other if link else ""
     if request.method == "POST" and "lookup" in request.POST and kind == "pub":
         # "Fill in from PubMed": show the values for checking; nothing is saved yet.
         from apps.outcomes import pubmed

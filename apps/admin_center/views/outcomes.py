@@ -399,6 +399,7 @@ class PublicationForm(forms.ModelForm):
             "status",
             "title",
             "publication_type",
+            "publication_type_other",
             "substatus",
             "author_display_text",
             "journal",
@@ -590,7 +591,7 @@ def publication_edit(request, pk=None):
             "cnap_index_tri": _tri_initial(obj.cnap_in_grant_index) if obj else "",
         },
     )
-    form.order_fields(["status", "substatus", "title", "publication_type", "author_display_text", "journal",
+    form.order_fields(["status", "substatus", "title", "publication_type", "publication_type_other", "author_display_text", "journal",
                        "pubmed_url", "submission_date", "publication_date", "cnap_cited_tri", "cnap_index_tri",
                        "has_foreign_authors", "foreign_component_approved", "has_non_idea_coauthors", "comments"])
     credit = _Credit(

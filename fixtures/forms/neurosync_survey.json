@@ -146,6 +146,19 @@
           "required": true
         },
         {
+          "code": "nonattend_other",
+          "type": "short_text",
+          "prompt": "Please tell us the other reason.",
+          "required": false,
+          "help_text": "",
+          "config": {
+            "show_when": {
+              "q": "nonattend_reason",
+              "value": "other"
+            }
+          }
+        },
+        {
           "code": "nonattend_future",
           "prompt": "Do you anticipate attending in a future semester?",
           "type": "yes_no",
@@ -190,6 +203,13 @@
       "value": "yes",
       "action": "show",
       "target_section": "nonattend"
+    },
+    {
+      "source": "nonattend_reason",
+      "operator": "equals",
+      "value": "other",
+      "action": "require",
+      "target_question": "nonattend_other"
     }
   ],
   "assignment_rules": [

@@ -129,15 +129,15 @@ def test_products_tab_shows_counts_only_to_respondents(client, db):
     GrantSubmission.objects.create(grant_family=fam, project_title="Secret pending idea", status=GrantStatus.SUBMITTED, submission_date=day)
     client.force_login(User.objects.get(username="santos"))
     html = client.get("/results/?view=products").content.decode()
-    assert "papers published" in html.replace("paper published", "papers published")
-    assert "proposals submitted" in html.replace("proposal submitted", "proposals submitted")
+    assert "Center Research Outcomes" in html and "Center-wide totals" in html
+    assert "Publications" in html and "Grant proposals submitted" in html and "Grant awards received" in html
     assert "Secret pending idea" not in html  # pending proposals are counted, never listed
     # MW 2026-11-04: respondents see counts only, never the lists
     assert 'id="papers"' not in html and 'id="awards"' not in html and "prodlist" not in html
     assert client.get("/results/?view=products&year=abc").status_code == 200
     client.force_login(User.objects.get(username="mwills"))
     html = client.get("/results/?view=products").content.decode()
-    assert "Papers published" in html and 'id="awards"' in html
+    assert 'id="papers"' in html and 'id="awards"' in html
     assert "Secret pending idea" not in html
 
 
