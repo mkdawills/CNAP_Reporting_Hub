@@ -1,0 +1,32 @@
+{% load cnap %}  <details class="ackbox" {% if stage == 'submitted' or stage == 'published' %}open{% endif %}><summary>How to acknowledge CNAP</summary>
+    <div class="stevens-why">
+      <p class="small"><strong>What the Stevens Amendment is.</strong> {{ "A federal law that applies to every NIH-funded project. Whenever a product of the work is shared publicly, it must say that NIH paid for it, how much of the project NIH paid for, and that the views are the authors’ own."|stack }}</p>
+      <p class="small"><strong>Why it matters for CNAP.</strong> {{ "Each paper, talk, poster, and proposal that acknowledges CNAP’s grant, P20GM113109, counts toward the Center’s record with NIH. Products that leave it out cannot be credited to CNAP in the Research Performance Progress Report (RPPR) or at the site visit."|stack }}</p>
+      <p class="small"><a href="https://grants.nih.gov/grants/acknowledging-nih-funding" target="_blank" rel="noopener">NIH’s guidance on acknowledging funding (opens in a new tab)</a> · <a href="https://grants.nih.gov/grants/policy/nihgps/html5/section_8/8.2.1_rights_in_data__publication_and_copyrighting_.htm" target="_blank" rel="noopener">NIH Grants Policy Statement, section 8.2.1 (opens in a new tab)</a></p>
+    </div>
+    {% if kind == 'grant' %}
+      <p class="small">Suggested wording for your proposal:</p>
+      <div class="acktext"><span>Preliminary data for this proposal were generated with support from the National Institute of General Medical Sciences of the National Institutes of Health under Award Number P20GM113109 (CNAP COBRE).</span><button type="button" class="btn small ghost copy">Copy</button></div>
+    {% else %}
+      {% if kind == 'presentation' %}{% nih_ack "presentation" as ack %}{% else %}{% nih_ack "publication" as ack %}{% endif %}
+      <p class="small">{{ "Under the Stevens Amendment, publications, press releases, and other public-facing documents, including talks and posters, must include the following three statements."|stack }}</p>
+      <ol class="stevens small">
+        <li><strong>A specific acknowledgment of NIH grant support:</strong>
+          <div class="acktext"><span>{{ ack.support }}</span><button type="button" class="btn small ghost copy">Copy</button></div></li>
+        <li><strong>An acknowledgment of the level of NIH funding.</strong> {{ "It gives the percentage and dollar amount of the total project costs financed with federal money, and the percentage and dollar amount financed by nongovernmental sources."|stack }}
+          <div class="acktext"><span>{{ ack.level }}</span><button type="button" class="btn small ghost copy">Copy</button></div>
+          <p class="muted">{{ "Fill in your CNAP project’s total award, direct plus indirect costs. CNAP projects are normally paid entirely with federal money, so 100% and 0% usually stay as they are. If you’re not sure of your total, ask the CNAP office."|stack }}</p></li>
+        <li><strong>A disclaimer:</strong>
+          <div class="acktext"><span>{{ ack.disclaimer }}</span><button type="button" class="btn small ghost copy">Copy</button></div></li>
+      </ol>
+      <p class="small">All three together:</p>
+      <div class="acktext"><span>{{ ack.all }}</span><button type="button" class="btn small ghost copy">Copy</button></div>
+      {% core_rrids as rr %}{% if rr %}
+      <p class="small">If you used a CNAP core, please also cite its Research Resource Identifier (RRID) in your methods, right after the core’s name:</p>
+      {% for c in rr %}<div class="acktext"><span>{{ c.name }} ({{ c.rrid }}), Kansas State University</span><button type="button" class="btn small ghost copy">Copy</button></div>{% endfor %}
+      <p class="small muted">{{ "The RRID lets anyone find every paper that used the core, even without the grant number."|stack }}</p>{% endif %}
+      <p class="small">If you paid for a core as fee-for-service, with no CNAP project funding, please don’t cite the grant number.<br>Here is the suggested wording:</p>
+      <div class="acktext"><span>We acknowledge the [core name]{% if rr %} ([its RRID]){% endif %} of the CNAP COBRE at Kansas State University, an NIH Institutional Development Award (IDeA) program resource. No IDeA funds were used to support this work.</span><button type="button" class="btn small ghost copy">Copy</button></div>
+      <p class="small muted">{{ "Papers with foreign co-authors may cite the grant only if the National Institute of General Medical Sciences (NIGMS) approved the foreign component in advance. Otherwise, please credit the core with its RRID and leave the grant number out."|stack }}</p>
+    {% endif %}
+  </details>

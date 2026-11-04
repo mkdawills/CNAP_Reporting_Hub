@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Page feedback · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>Page feedback {% why "Every note people send with the Feedback button at the bottom right of every page. Why: the people using the Hub notice what is unclear, slow, or delightful long before anyone else does. Use it to decide what to improve next." %}</h1>
+  <p>{{ "Notes from everyone who uses the Hub, newest first. Each one names the page it was sent from. Please mark a note done once it has been addressed."|stack }}</p></div></div>
+<div class="panel factsbox"><p class="factsbox-h">At a glance</p><p class="facts2"><span class="rchip"><b>{{ rows|length }}</b>&nbsp;note{{ rows|length|pluralize }}</span> <span class="rchip warn"><b>{{ open_n }}</b>&nbsp;still open</span></p></div>
+<div class="panel">
+  {% if rows %}<div class="scroll"><table title="Every note sent with the Feedback button, with the page it came from and whether it has been addressed.">
+    <thead><tr><th title="When the note was sent.">Sent</th><th title="Who sent it.">From</th><th title="The page they were on when they sent it. Click to open that page.">Page</th><th title="What the note is about, as the sender chose.">Topic</th><th title="How the sender rated the page, from 1 (poor) to 5 (excellent), if they chose to.">Rating</th><th title="What they wrote.">Note</th><th title="Whether the note has been addressed. Click the button to mark it done, or to reopen it.">Done?</th></tr></thead>
+    <tbody>{% for f in rows %}<tr{% if f.resolved_at %} class="muted"{% endif %}>
+      <td class="small nowrap">{{ f.created_at|date:"M j, Y g:i a" }}</td>
+      <td class="small">{% if f.user.person %}{{ f.user.person }}{% else %}{{ f.user|default:"Someone" }}{% endif %}</td>
+      <td class="small"><a href="{{ f.path }}">{{ f.page_title|default:f.path }}</a></td>
+      <td class="small">{{ f.get_topic_display }}</td>
+      <td class="small num">{% if f.rating %}{{ f.rating }} of 5{% else %}<span class="muted">–</span>{% endif %}</td>
+      <td class="small">{{ f.comment|linebreaksbr }}</td>
+      <td class="small">{% if can_edit %}<form method="post">{% csrf_token %}<input type="hidden" name="pk" value="{{ f.pk }}"><button class="btn small ghost" title="{% if f.resolved_at %}Reopens this note.{% else %}Marks this note as addressed.{% endif %}">{% if f.resolved_at %}Done {{ f.resolved_at|date:"M j" }} · reopen{% else %}Mark done{% endif %}</button></form>{% elif f.resolved_at %}Done{% else %}Open{% endif %}</td>
+    </tr>{% endfor %}</tbody></table></div>
+  {% else %}<p class="muted">No notes yet. The Feedback button sits at the bottom right of every page.</p>{% endif %}
+</div>
+{% endblock %}

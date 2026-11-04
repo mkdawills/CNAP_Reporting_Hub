@@ -44,7 +44,7 @@ def roster_review(request, pk):
         (
             ImportMatchKind.POSSIBLE_DUPLICATE,
             "Possible duplicates",
-            "Same name as someone already here, but a different e-mail. Choose for each one.",
+            "Same name as someone already here, but a different email. Choose for each one.",
         ),
         (
             ImportMatchKind.NEW,
@@ -54,7 +54,7 @@ def roster_review(request, pk):
         (
             ImportMatchKind.MATCHED,
             "Already here",
-            "Matched by e-mail. Anyone not already on the roster will be added to it.",
+            "Matched by email. Anyone not already on the roster will be added to it.",
         ),
         (
             ImportMatchKind.MISSING,

@@ -80,7 +80,7 @@ def test_asked_only_for_ticked_cores_that_have_an_rrid(client, center):
     cn = Resource.objects.get(code="cn_core")
     assert bn.core.rrid and not cn.core.rrid
     page = client.get(f"/outcomes/pub/{p.pk}/?to=published").content.decode()
-    assert f"Did you cite the {bn.core.name}’s RRID ({bn.core.rrid})" in page
+    assert f"Did you cite the {bn.core.name}’s Research Resource Identifier (RRID), {bn.core.rrid}," in page
     assert f"data-show-res=\"{bn.pk}\"" in page and f"{cn.core.name}’s RRID" not in page
     assert bn.core.rrid in page  # in the "how to acknowledge" box too
     # ticked but unanswered: asked to answer

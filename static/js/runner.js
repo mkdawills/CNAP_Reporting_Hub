@@ -19,9 +19,9 @@
       .then(function (r) { return r.json().then(function (j) { return [r.ok, j]; }); })
       .then(function (res) {
         if (res[0] && res[1].ok) say(res[1].problems && res[1].problems.length ? res[1].problems[0] : "Saved " + res[1].at);
-        else say("Couldn’t save just now. Your answers are still on this page; use Save draft.");
+        else say("We couldn’t save just now. Your answers are still on this page. Please use Save draft.");
       })
-      .catch(function () { say("Couldn’t save just now. Your answers are still on this page; use Save draft."); })
+      .catch(function () { say("We couldn’t save just now. Your answers are still on this page. Please use Save draft."); })
       .then(function () { inflight = false; if (again) { again = false; save(); } });
   }
   function soon(e) {
@@ -46,7 +46,7 @@
     if (!bar || qs.length < 2) { if (bar) bar.hidden = true; return; }
     var done = qs.filter(answered).length, left = Math.max(1, Math.round(minutes * (qs.length - done) / qs.length));
     txt.textContent = (done === qs.length ? "You’ve answered all " + qs.length + " questions." :
-      "You’ve answered " + done + " of " + qs.length + " questions." + (minutes ? " About " + left + " minute" + (left === 1 ? "" : "s") + " left." : ""));
+      "You’ve answered " + done + " of " + qs.length + " questions." + (minutes ? " You have about " + left + " minute" + (left === 1 ? "" : "s") + " left." : ""));
     fill.style.width = Math.round(100 * done / qs.length) + "%";
     bar.hidden = window.scrollY < 200;
   }

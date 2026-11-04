@@ -29,6 +29,8 @@ urlpatterns = [
         auth_views.PasswordChangeDoneView.as_view(),
         name="password_change_done",
     ),
+    path("site-photo/", __import__("apps.common.feedback", fromlist=["site_photo"]).site_photo, name="site_photo"),
+    path("feedback/", __import__("apps.common.feedback", fromlist=["send"]).send, name="page_feedback"),
     path("manage/", include("apps.admin_center.urls")),
     path("", include("apps.portal.urls")),
     path("", home, name="home"),

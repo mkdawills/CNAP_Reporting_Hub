@@ -1,4 +1,4 @@
-"""manage.py send_period_emails <period short label> open|reminder [--dry-run]: e-mail people their forms."""
+"""manage.py send_period_emails <period short label> open|reminder [--dry-run]: email people their forms."""
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -7,13 +7,13 @@ from apps.reporting.services import emails
 
 
 class Command(BaseCommand):
-    help = "E-mail people their forms for a reporting period (open or reminder)."
+    help = "Email people their forms for a reporting period (open or reminder)."
 
     def add_arguments(self, parser):
         parser.add_argument("period", help="Short label, e.g. 'Y10 Fall'")
         parser.add_argument("kind", choices=["open", "reminder", "overdue"])
         parser.add_argument(
-            "--dry-run", action="store_true", help="List who would get an e-mail; send nothing."
+            "--dry-run", action="store_true", help="List who would get an email; send nothing."
         )
 
     def handle(self, *args, period, kind, dry_run, **kw):

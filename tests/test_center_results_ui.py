@@ -21,7 +21,7 @@ def test_expand_all_and_prior_year_wording(client, center):
         .first()
     )
     html = client.get(f"/results/?period={p.short_label}").content.decode()
-    assert "data-expand-all" in html and "Show all tables" in html
+    assert "data-expand-all" in html and "Open every item-by-item table" in html
     assert "site-visit report" in html
     assert "0</b> people answered" not in html
 
@@ -29,7 +29,7 @@ def test_expand_all_and_prior_year_wording(client, center):
 def test_menu_highlights_the_current_page(client, center):
     client.force_login(User.objects.get(username="okafor"))
     html = client.get("/profile/").content.decode()
-    assert '<a href="/profile/" aria-current="page">' in html
+    assert 'href="/profile/" aria-current="page"' in html
     assert "&quot;page&quot;" not in html
 
 
@@ -45,7 +45,7 @@ def test_profile_help_and_evaluator_contact(client, center):
     client.force_login(santos)
     html = client.get("/profile/").content.decode()
     assert (
-        "Contact your institution’s research office" in html and "research@k-state.edu" not in html
+        "Please contact your institution’s research office" in html and "research@k-state.edu" not in html
     )
 
 

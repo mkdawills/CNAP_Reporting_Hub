@@ -420,7 +420,7 @@ def _contact_requests(assignment, schema, answers):
             send_mail(
                 subject=f"CNAP Reporting Hub: someone would like to hear about the {core.name}",
                 message=(
-                    f"{person.full_name} ({person.primary_email or 'no e-mail on file'}"
+                    f"{person.full_name} ({person.primary_email or 'no email on file'}"
                     f"{', ' + person.institution if person.institution else ''}) said in the "
                     f"{assignment.reporting_period.short_label} survey that they didn’t use the {core.name}, "
                     "and would like someone from the core to reach out about what it offers.\n\n"

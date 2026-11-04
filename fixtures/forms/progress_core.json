@@ -5,14 +5,14 @@
   "context_kind": "core",
   "confidentiality": "standard",
   "sort_order": 14,
-  "intro_text": "Upload a Word document of no more than 2 pages covering your accomplishments, your plans for the next period, and any changes. Suggested file name convention example: Cain_Accomplishments.",
+  "intro_text": "Please upload a Word document of no more than 2 pages covering your accomplishments, your plans for the next period, and any changes. Suggested file name convention example: Cain_Accomplishments.",
   "display": {
     "task_group": "mycore",
     "short_name": "Progress Report (Core)",
     "time_label": "2 page upload, plus 5 min",
     "about": [
-      "Your semi-annual progress report summarizes your accomplishments, plans and changes.",
-      "It feeds directly into the Center’s progress report to NIH."
+      "Your semiannual progress report summarizes your accomplishments, plans, and changes.",
+      "It feeds directly into the Center’s Research Performance Progress Report (RPPR) to NIH."
     ],
     "prefill": []
   },
@@ -26,13 +26,13 @@
     {
       "code": "plans",
       "title": "Plans",
-      "instructions": "Provide a summary of what you plan to do during the next reporting period to accomplish your project goals and objectives. Discuss efforts to ensure that the approach continues to be scientifically rigorous and results are robust and unbiased.\nRemember that significant changes in objectives and scope require prior approval of the agency (e.g., NIH Grants Policy Statement, 8.1.2.). Include any important modifications to the original plans. Provide a scientific justification for any changes involving research with human subjects or vertebrate animals. A detailed description of such changes must be provided under Changes.",
+      "instructions": "Please provide a summary of what you plan to do during the next reporting period to accomplish your project goals and objectives. Please discuss efforts to ensure that the approach continues to be scientifically rigorous and results are robust and unbiased.\nPlease remember that significant changes in objectives and scope require prior approval of the agency (e.g., NIH Grants Policy Statement, 8.1.2.). Please include any important modifications to the original plans. Please provide a scientific justification for any changes involving research with human subjects or vertebrate animals. A detailed description of such changes must be provided under Changes.",
       "questions": []
     },
     {
       "code": "changes",
       "title": "Changes",
-      "instructions": "Describe challenges or delays encountered during the reporting period and actions or plans to resolve them. Describe only significant challenges that may impede the research (e.g., accrual of patients, hiring of personnel, need for resources or research tools) and emphasize their resolution.",
+      "instructions": "Please describe challenges or delays encountered during the reporting period and actions or plans to resolve them. Please describe only significant challenges that may impede the research (e.g., accrual of patients, hiring of personnel, need for resources or research tools) and emphasize their resolution.",
       "questions": []
     },
     {
@@ -45,7 +45,7 @@
           "prompt": "File",
           "type": "file",
           "required": true,
-          "help_text": "Please upload your file here. Word documents only (.docx or .doc).",
+          "help_text": "Please upload your file here. Please upload a Word document (.docx or .doc).",
           "config": {
             "accept": [
               ".docx",
@@ -57,8 +57,8 @@
     },
     {
       "code": "rppr_items",
-      "title": "Quick RPPR questions",
-      "instructions": "NIH asks these for each project and core every year. Most answers are No.",
+      "title": "Quick Research Performance Progress Report (RPPR) questions",
+      "instructions": "NIH asks these in the RPPR for each project and core every year. Most answers are No.",
       "questions": [
         {
           "code": "b1a",
@@ -94,7 +94,7 @@
         },
         {
           "code": "c4",
-          "prompt": "C.4 Did it produce inventions, patent applications or licenses during this reporting period?",
+          "prompt": "C.4 Did it produce inventions, patent applications, or licenses during this reporting period?",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "required": true
@@ -110,7 +110,7 @@
         },
         {
           "code": "c5a",
-          "prompt": "C.5.a Did it produce other significant products, such as databases, software, models or instruments?",
+          "prompt": "C.5.a Did it produce other significant products, such as databases, software, models, or instruments?",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "required": true
@@ -142,7 +142,7 @@
         },
         {
           "code": "f3",
-          "prompt": "F.3 Were there significant changes to human subjects, vertebrate animals, biohazards or select agents?",
+          "prompt": "F.3 Were there significant changes to human subjects, vertebrate animals, biohazards, or select agents?",
           "type": "yes_no",
           "answer_set": "Yes / No",
           "required": true
@@ -176,10 +176,10 @@
     },
     {
       "code": "team",
-      "title": "Research team (RPPR D.1)",
+      "title": "Research team (RPPR section D.1)",
       "repeatable": true,
       "repeat_label": "Add a person",
-      "instructions": "List everyone who worked on this project or core during this budget year, including you. Use one row per person.\nGive effort in person months.\n- Calendar months = 12-month appointments\n- Academic months = 9-month appointments\n- Summer months = 3-month appointments",
+      "instructions": "Please list everyone who worked on this project or core during this budget year, including you. Please use one row per person.\nPlease give effort in person months.\n- Calendar months = 12-month appointments\n- Academic months = 9-month appointments\n- Summer months = 3-month appointments",
       "questions": [
         {
           "code": "first_name",

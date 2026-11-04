@@ -472,3 +472,204 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - 2026-11-03 (MW): every repeatable list (research team, meetings, core users and so on) offers an Excel template and an upload; the sheet's rows are added as entries the person can check and edit. Person-months boxes now accept decimals.
 - 2026-11-03 (MW): new NeuroSync Speaker Survey (written from scratch): 10 agreement items in three short sections (before the talk, the talk, overall) and four open-ended questions. It is never assigned by a rule. The evaluator lists each talk on Administration → NeuroSync speakers with the time it ends; a job every 10 minutes (`send_speaker_surveys`) e-mails the speaker when the talk ends, or she sends it by hand. External speakers get a personal sign-in link. The speaker has two weeks to answer, and period e-mails leave this survey out.
 - 2026-11-03 (MW): every opt-out box starts with "Opt out", and its sentence starts "I prefer to opt out of this survey." The note under it says "Choosing this option completes the survey." (or, for surveys with follow-ups, "Choosing this option replaces the survey with a few short questions."). The Team Synergy Survey opens with a definition of team synergy.
+- 2026-11-03 (MW), publications and grants: the update-status page explains the choice in sentences, shows what's on file, and uses big centered buttons; a final-status record offers "View or edit the details." Marking a proposal submitted fires confetti and a congratulations. Grant forms start with Funding source (Federal with an agency dropdown, or Non-federal with a name box); the Table 1A note is gone. Funding mechanism and role are explained in plain words. Submitted proposals take an optional Cayuse IPF number for cross-checking. The Not funded page asks for initial reflections only; reviewer comments go to the Center Director by email (a dropdown explains the coaching and possible thematic analysis), and the Program Officer name and discussion date fields are gone. Stevens wording per MW, past tense, "your publication" not "it". Planned papers and proposals say "Center resources you anticipate using" and take an optional day. Talks record venue, city, state, and country (a K-State button autofills), say NeuroSync talks don't qualify, and the project list appears only when a project resource is ticked, with "(your project)" marked. Presenters are listed in the order shown on the talk.
+- 2026-11-03 (MW), administration: the home panel shows the session dates and people in three buckets ("21 of 100" style: finished, partway, not started) in roomier tiles. Reporting periods opens with a typical-year timeline (Fall, Spring, and site visit sessions), live periods show a "Next step" line and an Open now chip, and past periods sit in one table.
+- 2026-11-03 (MW), schedule: Fall is surveyed in November; RPPR/Spring is surveyed in March; the site visit session is surveyed in April. The periods timeline, the new-period help, and the historical notes say so.
+- 2026-11-03 (MW), launch review: the Totals panel now says plainly that each row is one form with the number of people who receive it, and each group's chips line up in columns, the same form in the same spot all the way down.
+- 2026-11-03 (MW), period emails page: the three emails have plain names ("your forms are open", the reminder, the past-due email), each explained in its own bullet; sending by hand is "Send one of these emails by hand" with the same names; "to do" is quoted. The period dashboard's Person, Form, and Status headers sort on click.
+- 2026-11-03 (MW): the period dashboard's Completion by form counts click through to the named lists (a new Opted out filter included), and each form name opens a new read-only Forms page (Administration → Forms) showing its questions. NeuroSync speakers adds an Excel template and upload for a whole semester of talks; existing speakers match by email, new ones are created from their row.
+- 2026-11-03 (MW): every table header sorts on click (a shared script in base.html). The People page explains the roster: the Center's list of current CNAP members; on it brings the all-member surveys, off it brings only what the person's relationships call for.
+- 2026-11-03 (MW): the People table splits relationships into four sortable columns: Leadership, Mentoring, Core roles, and Other roles, so a click on Core roles brings the core directors together.
+- 2026-11-03 (MW): "Hand off" is now "Pass to someone else" on the person page, with a line explaining when to use it. "Add an address" is "Add an email address."
+- 2026-11-03 (MW): Add a relationship stacks its fields and asks each question in full ("What is their relationship to CNAP?", "Which project is it for?", "What date does this relationship start?"), and the center-level note names the roles and says to leave project and core blank.
+- 2026-11-03 (MW): the person page's Current and Pending reading now lists the SciENcv years as a bulleted list, explains that CNAP's budget year (June 1 to May 31) crosses two calendar years, gives the evened-out estimate as a cross-check, and notes that SciENcv doesn't split calendar, academic, and summer months.
+- 2026-11-03 (MW): the administrator pages teach a brand-new evaluator. Every main heading has a hoverable "?" that explains why the feature exists and where its data goes downstream (RPPR, site-visit tables, Center results), and the administration navigation links carry hover explanations.
+- 2026-11-03 (MW), Projects and cores: each project and core expands to a Details sub-table showing every person's role, eRA Commons ID, and Year-{gy} effort (the D.1 inputs), with an Expand all button. "Recorded users" is now "People listed as core users," named, with a plain explanation of why only non-roster people are added.
+- 2026-11-03 (MW): every table has a header row, including the written-answer lists, the RPPR layout tables, and the respondents' task and history lists, and every table carries a hover title saying what it is for. The Results page explains itself in plain words, and a pre-Hub period says why only the imported surveys appear (no Team Science averages were in the Year 9 workbooks; they can be imported if MW supplies them). The project page shows each current person's eRA Commons ID, ORCID iD, and current-year effort behind a Show button, and the Projects and cores details gained an ORCID column.
+- 2026-11-03 (MW), Core Usage Report: "Were core-generated data included in a grant application or publication?" now explains itself ("did this project put results from your core into a grant application or a paper?"), and a new question follows it: "Will this project cite your core's RRID in its publications?" (Yes / No / Not sure yet; not a Table 2 column). The directions coach the core director: their role includes asking users to cite the RRID and showing them the wording.
+- 2026-11-03 (MW), the administrator Publications table: one fact per column. "Credited to" split into "Projects credited" and "Cores used," the RRID answer got its own "Core RRID cited?" column, project titles are no longer cut off, the Yes/No answer and the correction buttons sit in separate columns ("Acknowledges CNAP?" and "Correct it"), and the header row has air under the filter line.
+- 2026-11-03 (MW), the administrator products pages: the heading now matches the open tab (Publications, Grant proposals, Presentations), the intro and Add buttons match it too, and the two acknowledgment rings became two independent check cards ("Papers to check", "Proposals to check"), each shown only on its own tab with a plain sentence, a progress bar, and a button to the needs-checking list. The grants table got one fact per column (Round, Funder, Mechanism, Submitted, Status, Award total with thousands separators), every row is numbered, and the header row sits in its own shaded band under the filter line.
+- 2026-11-03 (MW), the Counts tab rebuilt for cognitive clarity: one row per project or core and one column per measure ("Projects Credited" / "Cores Credited" first), bold totals with the year split beneath, bordered and lightly colored tables that fold up at their headings, dividing rules between sections, a tinted tab band with room to breathe, and matching tints where a project's or core's total equals the Center-wide total so the tables visibly play into each other. Dollar figures carry thousands separators everywhere (the new usd filter). Every table header sorts, and headers can be dragged into a new order with a "Reset the columns" button to put them back.
+
+## 2026-11-03 - Monthly check-ins replace stale reminders for planned proposals (MW)
+- A planned grant proposal no longer gets the stale-record reminder. Instead its owner gets one
+  friendly check-in email about once every GRANT_NUDGE_EVERY_DAYS days (default 28), sent by the
+  same daily `send_outcome_reminders` run. Papers and submitted proposals keep the stale reminder.
+- The email greets the person, names the proposal, its funding agency, and its anticipated
+  submission date, lists MW's five answers, links to a one-page answer form in the Hub
+  (sign-in link for external people), and ends with the administrative team's Grant Writing
+  supports: external scientific review coordination and payment, internal-timeline design
+  support, and critical review of drafts. "Cheering you on!"
+- The answer page (portal /outcomes/nudge/<id>/) records one of five choices plus optional
+  comments; pivoting requires comments ("please share your new alternative plans"). Answering
+  counts as a review touch (confirmed_at), and each choice gets its own encouragement note.
+  The pivot note lists the milestones from the signed Roles, Responsibilities, and Terms
+  (Appendix A), matched to the person's role: Research Project Leader or Pilot Project Leader.
+  MW asked for "a stat about how much more successful non-procrastinators are" under the
+  writer's-block answer; no specific figure is cited anywhere (we won't invent one), the note
+  stays qualitative, and MW can supply a citation to add.
+- Answers and due check-ins appear on the admin Reminders tab (GrantNudge model, grant_nudges table).
+
+## 2026-11-03 - Results-page and table polish (MW)
+- Headline rings on results reports: centered, value inside a thicker hoop, label underneath.
+- Results cards: clear space between the bars, the combined-answers note, and the item-by-item button.
+- Table headers may wrap everywhere (no more sideways scroll bars for tables that fit).
+- Admin outcomes: the CSV download link lives inside the tab band; the to-check card spans the
+  full card width with more padding and a light-gray outline (never purple).
+- Historical periods on Results list every form; those without imported averages say
+  "Nothing on file for this period" instead of disappearing (why the Team Science, Grant
+  Writing, and Hub surveys seemed missing from Year 9 Spring).
+- Counts CSV export rebuilt for the pivoted counts tables.
+- The optional Excel upload block on repeatable lists now says plainly that it is optional
+  ("Prefer to work in Excel?").
+
+## 2026-11-03 - Counts tab aligned; product dashboards; RPPR header redesign (MW)
+- Counts tab: all three tables share the same columns in the same order with fixed widths, so the
+  measures line up straight down the page; "All CNAP" is repeated as its own first column; the
+  RRID measure is center-wide ("Papers citing a core RRID") and counted for projects and the
+  Center, not only cores. No year groupings inside cells: a Show dropdown narrows the whole tab
+  to one grant year. New fold-up adds one small table per core (years across the top). Show all
+  and Collapse all appear automatically wherever a page has two or more fold-ups (foldall.js).
+- Product dashboards (manage/outcomes/dashboard/<pubs|talks|grants>): live recreations of MW's
+  Publication, Presentations, and Grants dashboard documents, same tables and graphs, generated
+  from the Hub's records. Structure only was taken from MW's uploaded files; none of her names
+  or numbers were copied. Observations stay the evaluator's to write. SVG bars use the dataviz
+  reference palette (validated); grant statuses use the status palette. Linked from each tab band.
+- RPPR tab header: a three-step checklist (review, download, mark as reported), jump cards named
+  in plain English with the section code as a tag, centered, each with a hover line explaining
+  the NIH section; the carried-over note opens with a header and says NIH approves reporting
+  things that took place after the RPPR went in, before the grant year ended, in the next RPPR.
+
+## 2026-11-03 - Person documents: Statements of Work (MW)
+- PersonDocument (person_documents): a PDF or Word file kept on a person's page, with an
+  optional pasted excerpt. The admin adds it on the person page ("Documents on file"); the
+  member sees the document on their profile ("Your documents") and the excerpt on My tasks
+  ("Your commitments, from your Statement of Work"). Download is owner-or-admin only.
+
+## 2026-11-03 - Admin forms and RPPR polish, round two (MW)
+- Admin Add/Edit a publication: "Fill in from PubMed" (same lookup as the respondent form;
+  nothing saved until checked). The whole form tailors itself to the status: planned shows the
+  best-guess basics (with "your best guess is fine" hints on title and journal), submitted adds
+  substatus, dates, and the acknowledgment question, published adds the PubMed link, grant
+  index, and RPPR year. The grant form does the same for planned, submitted, awarded, and not
+  funded. No PDF text-extraction: PubMed is the authoritative source, and parsing uploaded PDFs
+  guesses too often to trust.
+- Labels: "CNAP members on this publication/proposal" (was "CNAP people on it"); "CNAP portion
+  of the award", "Funding source", "Reported in the RPPR ..., Year" (CNAP and RPPR always fully
+  capitalized); Authors field explains the expected format.
+- The Core RRIDs block on the admin paper form links to SciCrunch and the RRID initiative, with
+  a hover explainer on why RRID citations matter for renewal.
+- RPPR tab: jump cards are centered circle bubbles, three per row; the carried-over box is
+  headed "Items from last year that still need to be reported to NIH" with an underline and the
+  note that NIH approves reporting post-submission items in the next RPPR; the section summary
+  facts sit in little oval chips; "1 doesn't cite the grant" pluralizes correctly; C.1 notes the
+  Stevens Amendment with NIH's acknowledging-funding link.
+- Counts tab: by-project and by-core tables end with "Total (duplicates counted)" rows (sums
+  that mix counts and dollars are deliberately not shown); numbers centered; the per-core
+  year-by-year tables are stacked full-width with aligned columns and the same match tints.
+- Roll-up sections with Show all / Collapse all on the dashboards, RPPR, Site visit, and
+  Reminders tabs (foldall.js).
+- Dashboard graphs: y-axis ticks in whole-number steps, axis titles, vertical group dividers,
+  outside border, series names written vertically inside the bars, a dashed trend line over
+  yearly totals on single-measure and stacked graphs, and a "Flip the axes" toggle that redraws
+  the same numbers with the groupings swapped.
+
+## 2026-11-03 - Results reports repaired and polished (MW)
+- A stray closing div after the headline rings was ejecting everything from the bar chart on
+  out of the table card, and eventually out of the page column entirely (why "things freaked
+  out" and the purple sidebar stopped). Removed; the layout holds at every width.
+- The three headline tiles are equal sizes and span the card's full width.
+- The response-count line sits in little oval chips (18 received, 7 responded, and so on).
+- Card headers: the Table line reads "Table 1 · Year 10 Fall Survey Responses" and the big
+  title names the survey section ("Quality of Services and Functions Survey"), per MW's
+  flip-flop; no more "Survey Questions Survey Responses" doubling.
+- Every table card rolls up to its header, with Show all and Collapse all at the top; expanding
+  all leaves the item-by-item tables collapsed.
+- Admin add/edit forms: labels on their own line over full-width equal controls, checkbox
+  beside its words, "Add a grant proposal" framing with the status choice first, in-field
+  examples (placeholders) across free-text and number fields on admin and respondent forms,
+  and a worked example on the CNAP portion field.
+- Data checks: "Forms still open for people who have left the role" (was "Open forms whose
+  relationship has ended"); "People with no email address".
+
+## 2026-11-03 - Results reports, round three (MW)
+- No sideways scroll bars: the content column now uses up to 1560px of the screen, and the wide
+  item tables tightened (smaller type and padding, wrapping headers) so they fit it; the scroll
+  box stays only as a last resort on narrow screens.
+- Roll-ups toggle on the title itself with a caret, not a floating "Roll up" button; Show all
+  and Collapse all are oval buttons off to the right; the script clears any controls baked into
+  a captured copy, so the gallery shows one working set.
+- Card headers: a generic "Survey Questions" section takes the survey's own name; the over-time
+  card's Table line reads "Table 2 · Y6 Fall to Y10 Fall averages"; the year-by-year means
+  fold-up is named plainly ("every item, Year 6 to now", MW's per-core Table 4s), and the trend
+  caption points to it.
+- "Frequency of use" sections renamed "Frequency of core use" in the three core user surveys.
+- The CNAP portion field gives a worked example ($1,200,000 award, $250,000 subaward, enter
+  250000) on both the admin and the respondent forms.
+
+## 2026-11-03 - Evening sweep while MW is away (her design themes, applied everywhere)
+- Hover coverage: every admin table now says its purpose on hover, including all RPPR, Site
+  visit, Reminders, dashboard, launch, people, projects, roster, speakers, results, and audit
+  tables, and the report item tables. New "?" explainers on the form-detail, new-period,
+  new-person, response, and roster-review pages.
+- Links: NIH's RPPR instructions on the RPPR tab, next to the section-level NIH links already
+  in place (Stevens Amendment, Common Forms, SciENcv, RRID at SciCrunch).
+- No sideways scroll bars: the content column is full-width, product-table headers sit on one
+  line, and the Correct-it buttons stack, so even the 14-column grants table fits a full screen.
+- The tab band reads as a band (deeper wash, purple rule). Oval buttons for Show all and
+  Collapse all; carets on roll-up titles; injected controls dedupe on captured copies.
+- Team Science, Administrative Core, and Grant Writing surveys have fictional Year 6 to 9
+  imported averages, so their reports show the trend line and year-by-year means table (MW's
+  per-survey site-visit Table 4s). Structure only was taken from MW's uploaded reports; her
+  real numbers wait for K-State hosting per the security rule. Mentee, Mentor, and NeuroSync
+  already had them.
+- The check-in email lists each answer as its own link, landing on the Hub page with that
+  answer preselected; the page records it either way.
+- "e-mail" became "email" in every user-facing string. The person page lists talks alongside
+  papers and proposals under "Publications, talks, and grants." Opt-out chips read naturally
+  for every pathway name.
+
+## 2026-11-04 - Every header and button explains itself (MW)
+- headhelp.js: one glossary gives every table header a hover description of what its column
+  holds and why (context-aware where a word means different things: Status, Type, Submitted,
+  Published, Title), plus patterns for grant years, scale points, and per-core tables. The same
+  file gives every button, button-like link, and fold-up a blurb: what it does, why it is
+  there, and what to expect. A crawl of all 103 screens finds no header or button without one.
+- Tabs and sidebar links carry four-part blurbs (what it is, what it tracks, why, what you see).
+- Acknowledgment filters are oval buttons with a lead sentence and per-button explanations.
+- Summary tables (count tables) have "Flip rows and columns"; the flipped view sorts too.
+  Record lists are not flippable, since a flip there would make each record a column.
+- Sorting is one page-wide listener, numeric-aware, and keeps Total rows at the bottom.
+- The Stevens Amendment box is shared by the respondent and admin forms, and opens with a
+  short primer (what the law requires, why it matters for CNAP, NIH links).
+- Long checkbox lists (CNAP members) get a search box and "Show only the ones ticked"; ticked
+  names never hide. Edit pages say the record's current status and how to move it forward.
+- "CNAP people" became "CNAP authors" (papers) and "CNAP investigators" (proposals).
+- Site visit: every core always appears in the publications section, with a zero line when it
+  has none; the controls read "Grant year to show" and "Highlight entries added since".
+- Roster uploads accept both "Email" and "E-mail" column headers again (the spelling sweep had
+  removed the alias; the site itself always says "email").
+- Headings: every page and section heading explains itself on hover (heading glossary, with
+  per-form descriptions and page-aware ones for a person's or project's page). A crawl of all
+  screens finds no header, heading, or button without a description.
+- A global rule keeps anything marked hidden hidden: layout rules had been overriding it, which
+  is why Collapse all appeared to do nothing on results reports.
+- Results reports open rolled up to their headings (tables, qualitative data, opt-outs), so the
+  reader sees the big ideas first; "Open every item-by-item table" stays separate.
+- "Who responded" chips open the names behind each count (received, responded, answered all,
+  opted out, not finished yet), only where the viewer's access to that form allows names.
+- Data checks: each check explains on hover what it looks for, why, and the fix; clean checks
+  show an "All clear" chip.
+- Resubmissions on the admin add form: "Is this a resubmission of an earlier proposal?" sits
+  under Status; choosing a round offers "Fill in from the earlier round" or "Start fresh".
+  A not-funded proposal's page has "Start the resubmission", which copies it into the next round.
+- RPPR bookkeeping is off the entry forms: RPPR years are set only by "Mark as reported", and
+  Table 1 exclusions are a "Leave out" action with a required reason on the RPPR tab
+  (table1_exclusion_reason), reversible with "Count it again".
+- CNAP portion: a sole PI leaves it blank (the full award counts), on both admin and respondent
+  forms.
+- Proposal acknowledgment is explained accurately: the Stevens Amendment covers public
+  materials; for proposals, crediting CNAP is the Center's own expectation.
+- Feedback button at the bottom right of every signed-in page: topic, optional 1 to 5 rating,
+  and a note, saved with the page it came from (page_feedback); read and marked done on the new
+  admin "Page feedback" page.

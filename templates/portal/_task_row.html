@@ -3,9 +3,9 @@
     <strong>{{ r.name }}</strong>
     {% if r.context %}<div class="small muted">{{ r.context }}</div>{% endif %}
     {% if r.used_core and r.is_open %}<div class="pinned">The core you used</div>{% endif %}
-    {% if r.a.status == 'in_progress' %}<div class="small muted">{% if r.progress and r.progress.1 > 1 and r.progress.0 > 0 %}You’ve finished {{ r.progress.0 }} of {{ r.progress.1 }} sections. Your answers are saved.{% else %}You previously started this {{ r.noun }}. Your answers are saved.{% endif %}</div>{% endif %}
+    {% if r.a.status == 'in_progress' %}<div class="small muted">{% if r.progress and r.progress.1 > 1 and r.progress.0 > 0 %}You’ve finished {{ r.progress.0 }} of {{ r.progress.1 }} sections.<br>Your answers are saved.{% else %}You previously started this {{ r.noun }}.<br>Your answers are saved.{% endif %}</div>{% endif %}
     {% if r.about %}<details class="about"><summary><span class="a-show">What’s this?</span><span class="a-hide">Hide</span></summary><div class="aboutbody">{% for p in r.about %}<p>{{ p|stack }}</p>{% endfor %}</div></details>{% endif %}
-    {% if r.a.status == 'completed_opt_out' %}<div class="small muted">Opted out: {{ r.opt_out_note|default:r.pathway }}</div>{% endif %}
+    {% if r.a.status == 'completed_opt_out' %}<div class="small muted">You opted out of this survey ({{ r.opt_out_note|default:r.pathway|lower }}).</div>{% endif %}
     {% if r.a.status == 'exempt' %}<div class="small muted">This isn’t needed this period.</div>{% endif %}
   </td>
   {% if r.is_open and r.preview_only %}

@@ -107,7 +107,7 @@ def _explain_integrity(exc, rtype, project=None, core=None, person=None):
         who = f" {holder.person} holds it now." if holder else ""
         return (
             f"{rtype.name} has one holder per {'project' if project else 'core'} "
-            f"({ctx}).{who} Use Hand off to transfer it."
+            f"({ctx}).{who} Use “Pass to someone else” to transfer it."
         )
     if "no_overlapping_duplicate" in text:
         return f"{person} already holds this relationship for overlapping dates."
@@ -374,7 +374,7 @@ def set_effort(actor, person, grant_year, months, academic=_KEEP, summer=_KEEP):
 
 
 def request_commons_help(actor, person, kind):
-    """The person asked for help with eRA Commons: note it and e-mail the evaluator(s)."""
+    """The person asked for help with eRA Commons: note it and email the evaluator(s)."""
     from django.conf import settings
     from django.core.mail import send_mail
     from django.utils import timezone
@@ -401,7 +401,7 @@ def request_commons_help(actor, person, kind):
         send_mail(
             subject=f"CNAP Reporting Hub: eRA Commons help for {person.full_name}",
             message=(
-                f"{person.full_name} ({person.primary_email or 'no e-mail on file'}) {what}.\n\n"
+                f"{person.full_name} ({person.primary_email or 'no email on file'}) {what}.\n\n"
                 f"Person page: {getattr(settings, 'SITE_URL', '').rstrip('/')}/manage/people/{person.pk}/"
             ),
             from_email=settings.DEFAULT_FROM_EMAIL,

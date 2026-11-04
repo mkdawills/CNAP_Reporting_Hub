@@ -87,3 +87,34 @@ def test_old_talks_are_not_sent_late(center):
     p = Person.objects.filter(emails__isnull=False, is_active=True).first()
     SpeakerTalk.objects.create(speaker=p, title="Old", ends_at=timezone.now() - timedelta(days=5))
     assert speakers.run_due() == (0, [])
+
+
+def test_semester_sheet_upload(client, center):
+    import io
+
+    from openpyxl import Workbook
+
+    _evaluator(client)
+    r = client.get("/manage/neurosync/template/")
+    assert r.status_code == 200 and "NeuroSync_talks_template" in r["Content-Disposition"]
+    wb = Workbook()
+    ws = wb.active
+    ws.append(["First name", "Last name", "Email", "Institution", "Talk title", "Date of the talk",
+               "Time the talk ends", "Send the survey automatically (Yes or No)"])
+    ws.append(["Dana", "Example", "dana.example@example.org", "Example U", "Grid cells", "12/04/2026", "4:30 PM", "Yes"])
+    ws.append(["", "Nobody", "", "", "Mystery talk", "12/05/2026", "", ""])
+    b = io.BytesIO()
+    wb.save(b)
+    from django.core.files.uploadedfile import SimpleUploadedFile
+
+    r = client.post(
+        "/manage/neurosync/upload/",
+        {"sheet": SimpleUploadedFile("talks.xlsx", b.getvalue())},
+        follow=True,
+    )
+    page = r.content.decode()
+    assert "Added 1 talk" in page and "needs a first name and an email" in page
+    t = SpeakerTalk.objects.get(title="Grid cells")
+    assert t.speaker.last_name == "Example" and t.auto_send
+    local = timezone.localtime(t.ends_at)
+    assert (local.month, local.day, local.hour, local.minute) == (12, 4, 16, 30)

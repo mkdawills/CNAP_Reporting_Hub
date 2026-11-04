@@ -54,7 +54,7 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .side .foot form { display: inline; }
 .side .foot button { background: none; border: 1px solid rgba(255,255,255,.35); color: #fff; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
 .side .foot a { color: #fff; }
-main { padding: 28px clamp(16px, 4vw, 44px) 64px; max-width: 1140px; width: 100%; border-left: 1px solid var(--line); }
+main { padding: 28px clamp(16px, 4vw, 44px) 64px; max-width: none; width: 100%; border-left: 1px solid var(--line); }
 .anon main { border-left: 0; margin: 0 auto; max-width: 520px; padding-top: 10vh; }
 
 /* ---------- page parts ---------- */
@@ -1229,3 +1229,478 @@ strong.ul { font-weight: 800; text-decoration: underline; text-underline-offset:
 .speakgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px 16px; margin: 0 0 14px; }
 .speakgrid label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); }
 .speakgrid input { width: 100%; }
+
+/* "I need help with eRA Commons": just the arrow and the text, so it doesn't look like a field (MW 2026-11-03) */
+.helpbox { border: 0; background: none; padding: 0; border-radius: 0; }
+.helpbox[open] { padding: 0 0 4px 18px; }
+.helpbox[open] > summary { margin-left: -18px; }
+
+/* "Other" resource: a text box right beside the checkbox (MW 2026-11-03) */
+input.other-inline { display: block; margin: 6px 0 0 26px; width: 240px; max-width: 60vw; }
+
+/* products that need a look this period, set apart at the top (MW 2026-11-03) */
+.panel.reviewfirst { border-left: 5px solid #e0a526; background: #fffaf0; }
+.panel.reviewfirst .orow.needs { background: none; margin-left: 0; padding-left: 0; }
+
+/* the update-status page: clear directions and big centered buttons (MW 2026-11-03) */
+.choosebox { max-width: 720px; text-align: center; padding: 28px 28px 22px; }
+.choose-facts { margin: 0 0 14px; padding: 10px 14px; background: var(--surface2, #f4f1fa); border-radius: 8px; font-size: .95rem; }
+.choose-lead { margin: 0 0 18px; font-size: 1.05rem; }
+.choose-btns { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.btn.big { font-size: 1.1rem; padding: 14px 26px; border-radius: 10px; }
+.choose-hint { margin-top: 14px; color: var(--muted); }
+
+/* the administration home panel: room to breathe, dates, and people buckets (MW 2026-11-03) */
+.lifedates { margin: 2px 0 16px; font-size: .95rem; line-height: 1.6; }
+ol.life { margin: 10px 0 12px; }
+ol.life li { padding: 36px 10px 6px 12px; }
+.statrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 22px 0 6px; }
+.stattile { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; border-radius: 12px; background: var(--surface2, #f4f1fa); }
+.stattile .stat { font-size: 2rem; line-height: 1.1; font-weight: 700; color: var(--purple-ink, #3d1f6e); }
+.stattile .statlab { font-size: .9rem; color: var(--muted); }
+.stattile.good { background: #eef7f0; } .stattile.good .stat { color: #1f6857; }
+.stattile.warn { background: #fdf3e4; } .stattile.warn .stat { color: #9a5b00; }
+
+/* Reporting periods: the live period stands out; past periods sit in one quiet table (MW 2026-11-03) */
+.pcard.open { border-left: 5px solid var(--purple, #512888); }
+.pchip { display: inline-block; vertical-align: middle; margin-left: 10px; padding: 3px 10px; border-radius: 999px; font-size: .72rem; font-weight: 700; letter-spacing: .02em; background: var(--surface2, #f4f1fa); color: var(--muted); }
+.pchip.on { background: #eef7f0; color: #1f6857; }
+.whatsnext { margin-top: 6px; font-weight: 600; color: var(--ink); }
+details.corr { display: inline-block; margin-left: 10px; }
+details.corr summary { cursor: pointer; color: var(--purple); }
+details.corr form { margin-top: 8px; display: grid; gap: 8px; max-width: 320px; }
+
+/* a typical reporting year, segmented into sessions (MW 2026-11-03) */
+.yearband { display: grid; grid-template-columns: 6fr 6fr 3fr; gap: 6px; margin: 14px 0 6px; }
+.yb-seg { border-radius: 10px; padding: 12px 14px; min-height: 86px; }
+.yb-seg .yb-name { display: block; font-weight: 700; margin-bottom: 4px; }
+.yb-seg .yb-dates { display: block; font-size: .82rem; line-height: 1.5; color: var(--muted); }
+.yb-fall { background: #efe9f8; } .yb-fall .yb-name { color: #512888; }
+.yb-spring { background: #e8f3ee; } .yb-spring .yb-name { color: #1f6857; }
+.yb-visit { background: #fdf3e4; } .yb-visit .yb-name { color: #9a5b00; }
+.yb-months { display: grid; grid-template-columns: repeat(12, 1fr); font-size: .75rem; color: var(--muted); text-align: center; margin-bottom: 4px; }
+@media (max-width: 720px) { .yearband { grid-template-columns: 1fr; } .yb-months { display: none; } }
+
+/* the Other box wraps to its own line under the word Other (MW 2026-11-03) */
+.checkgrid label:has(> input.other-inline) { flex-wrap: wrap; }
+.checkgrid label > input.other-inline { flex: 1 1 100%; margin: 6px 0 0 26px; width: auto; min-width: 0; }
+
+/* launch review: the same form chip sits in the same column for every person (MW 2026-11-03) */
+.chips.aligned { display: grid; grid-template-columns: repeat(var(--cols, 8), minmax(132px, 1fr)); gap: 8px; align-items: start; }
+.chips.aligned .chipcell { min-height: 1px; }
+.chips.aligned .fchip { display: block; width: 100%; box-sizing: border-box; }
+
+/* sortable table headers everywhere a table has them (MW 2026-11-03) */
+th.sorth { cursor: pointer; user-select: none; }
+th.sorth::after { content: " ↕"; color: var(--muted); font-size: .8em; }
+th.sorth.asc::after { content: " ↑"; color: var(--purple, #512888); }
+th.sorth.desc::after { content: " ↓"; color: var(--purple, #512888); }
+
+/* the read-only form pages (MW 2026-11-03) */
+ol.specq { padding-left: 20px; display: grid; gap: 12px; }
+ol.specq li::marker { color: var(--muted); }
+
+/* Add a relationship: stacked, with each question spelled out (MW 2026-11-03) */
+.relstack { display: grid; gap: 14px; max-width: 560px; }
+.relstack label { display: flex; flex-direction: column; gap: 4px; font-size: .9rem; color: var(--ink); }
+.relstack label .muted { font-size: .82rem; }
+
+/* the roster box on a person's page stands on its own (MW 2026-11-03) */
+.rosterbox { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; padding: 14px 16px; border-radius: 12px; background: var(--surface2, #f4f1fa); border: 1px solid var(--line, #ddd6ea); max-width: 260px; }
+.rosterbox.on { background: #eef7f0; border-color: #cfe5d6; }
+.rosterbox .rb-chip { font-weight: 700; color: var(--purple-ink, #3d1f6e); }
+.rosterbox.on .rb-chip { color: #1f6857; }
+
+/* the "?" explainers for a brand-new evaluator (MW 2026-11-03) */
+.whyq { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px;
+  margin-left: 8px; border-radius: 50%; background: var(--surface2, #efe9f8); color: var(--purple, #512888);
+  font-size: .72rem; font-weight: 700; cursor: help; vertical-align: middle; user-select: none; }
+.whyq .whyb { display: none; position: absolute; z-index: 40; top: 24px; left: 50%; transform: translateX(-50%);
+  width: 320px; max-width: 76vw; padding: 10px 12px; border-radius: 10px; background: #2a2140; color: #fff;
+  font-size: .82rem; font-weight: 400; line-height: 1.5; text-align: left; box-shadow: 0 8px 24px rgba(42,33,64,.35); }
+.whyq:hover .whyb, .whyq:focus .whyb { display: block; }
+h1 .whyq, h2 .whyq, h3 .whyq { font-family: var(--body, system-ui); }
+
+/* detail sub-tables under Projects and cores (MW 2026-11-03) */
+tr.pdetail > td { background: var(--surface2, #f7f5fb); padding: 12px 16px; }
+table.subtab { margin: 0; }
+table.subtab th { font-size: .75rem; }
+
+/* the Publications table: one fact per column, and air under the filter line (MW 2026-11-03) */
+.outtab { margin-top: 10px; }
+.outtab thead th { padding-top: 12px; }
+.ack-l.ack-y { color: #1f6857; font-weight: 700; } .ack-l.ack-n { color: #b2432f; font-weight: 700; } .ack-l.ack-q { color: var(--muted); }
+.ack-f { display: flex; gap: 6px; }
+
+/* the two acknowledgment rings: both boxed, the open tab's ring marked clearly (MW 2026-11-03) */
+.ack-kpis .kpi { border: 1px solid var(--line, #ddd6ea); border-radius: 12px; background: var(--surface, #fff); }
+.ack-kpis .kpi.on { border: 2px solid var(--purple, #512888); box-shadow: 0 2px 10px rgba(81,40,136,.12); }
+
+/* the outcomes tabs: clear bands — filters, then a shaded header row (MW 2026-11-03) */
+.outtab { margin-top: 16px; border-top: 2px solid var(--line, #ddd6ea); }
+.outtab thead th { background: var(--surface2, #f4f1fa); padding: 10px 12px; }
+.filterline { margin: 10px 0 2px; }
+
+/* Papers and Proposals: two independent check queues, not a duality (MW 2026-11-03) */
+.checkcards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px; max-width: 880px; }
+.checkcard { border: 1px solid var(--line, #ddd6ea); border-radius: 12px; background: var(--surface, #fff); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.checkcard.on { border: 2px solid var(--purple, #512888); }
+.checkcard h2 { font-size: 1.05rem; margin: 0; }
+.checkcard p { margin: 0; }
+.checkcard .bar { width: 100%; }
+
+/* the Counts tab: separated, bordered, lightly colored tables that fold up (MW 2026-11-03) */
+details.cntsec { margin-top: 24px; border-top: 2px solid var(--line, #ddd6ea); padding-top: 14px; }
+details.cntsec > summary { cursor: pointer; list-style: revert; }
+details.cntsec > summary h2 { display: inline; font-size: 1.15rem; }
+.cnttab { border: 1px solid var(--line, #ddd6ea); border-radius: 8px; overflow: hidden; margin-top: 10px; }
+.cnttab thead th { background: #efe9f8; color: #3d1f6e; }
+.cnttab tbody tr:nth-child(even) td { background: #faf8fd; }
+.colreset { margin: 0 0 8px; }
+table thead th[draggable="true"] { cursor: grab; }
+
+/* the tab strip reads as the panel's header band, with room to breathe (MW 2026-11-03) */
+.panel > .tabs { background: #f4f1fa; margin: -22px -24px 20px; padding: 16px 24px 0; border-radius: 16px 16px 0 0; border-bottom: 1px solid var(--line, #ddd6ea); }
+.panel > .tabs a { padding-bottom: 12px; }
+.panel > .tabs ~ p.small { margin-top: 12px; line-height: 1.7; }
+
+/* matching totals across the counts tables share a tint (MW 2026-11-03) */
+td.cmatch.ch0 { background: #e8f3ee !important; } /* papers */
+td.cmatch.ch1 { background: #fdf3f8 !important; } /* rrid */
+td.cmatch.ch2 { background: #eef0fb !important; } /* presentations */
+td.cmatch.ch3 { background: #fdf6e4 !important; } /* grants submitted */
+td.cmatch.ch4 { background: #f3ecfb !important; } /* grants awarded */
+td.cmatch.ch5 { background: #e9f6f6 !important; } /* awarded dollars */
+
+/* Headline rings: centered, with the words underneath, and a thicker hoop. */
+.kpi { flex-direction: column; align-items: center; text-align: center; gap: 10px; width: 180px; padding: 18px 14px 16px; }
+.kpi .ring-v { position: relative; }
+.kpi .ring { width: 96px; height: 96px; }
+.kpi .ring::before { inset: 15px; }
+.kpi .ring-v { font-size: 1.45rem; }
+.kpi .ring-v small { font-size: .78rem; }
+.kpi .kpi-l { font-size: .82rem; }
+
+/* Room to breathe in each results card: clear space between the bars, the note under them, and the
+   item-by-item button, so nothing sits on top of anything else. */
+.vbars { margin-bottom: 10px; }
+.tnote { margin: 26px 0 var(--rh, 40px); }
+.tmore > summary { margin-top: 0; }
+
+/* Table headers may wrap, so every table fits its card and nothing needs a sideways scroll bar
+   unless the data truly cannot fit. */
+th { white-space: normal; }
+/* The tab band fills the top of the card edge to edge, and the download link lives inside it. */
+.panel > .tabs { flex-wrap: wrap; align-items: baseline; row-gap: 4px; }
+.panel > .tabs .tabdl { margin-left: auto; font-size: .84rem; font-weight: 500; color: var(--accent, #512888); text-decoration: underline; text-underline-offset: 3px; border-bottom: 3px solid transparent; }
+/* More air inside the outcomes card. */
+.filterline { margin: 18px 0 6px; }
+.outtab { margin-top: 20px; }
+
+/* The to-check card spans the full width of the table card below it, with more padding and height. */
+.checkcards { max-width: none; }
+.checkcard { padding: 26px 28px 24px; gap: 14px; border-radius: 16px; }
+.checkcard h2 { font-size: 1.15rem; }
+.checkcard .bar { margin: 4px 0 6px; }
+
+/* Monthly check-in page for planned proposals (MW 2026-11-03). */
+.nudgebox { max-width: 760px; }
+.nudge-opts { margin: 0 0 20px; padding: 0; list-style: none; display: grid; gap: 10px; }
+.nudge-opts label { display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; line-height: 1.5; }
+.nudge-opts label:has(input:checked) { border-color: var(--accent, #512888); background: var(--surface2, #f4f1fa); }
+.nudge-opts input { margin-top: 4px; }
+.nudge-echo { font-weight: 600; }
+.nudge-miles li { margin: 6px 0; }
+.nudge-supports { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); }
+.nudge-supports h2 { font-size: 1.02rem; margin: 0 0 8px; }
+
+/* The to-check card keeps a quiet light-gray outline, not purple. */
+.checkcard.on { border: 1px solid var(--line, #ddd6ea); }
+
+/* Headers for the My tasks and My history lists exist for screen readers, but stay out of sight:
+   each row already names its form and buttons, so a visible header row would only repeat it. */
+thead.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* "Show all · Collapse all" above any group of fold-ups. */
+.foldall { margin: 6px 0 10px; color: var(--muted); }
+
+/* The three counts tables share the same columns in the same order, with fixed widths,
+   so Papers published, Presentations, and the rest line up straight down the page. */
+.cnttab { table-layout: fixed; width: 100%; }
+.cnttab th:first-child { width: 24%; }
+.cnttab td { overflow-wrap: break-word; }
+
+/* One table per core, years across the top. */
+.coretabs { display: grid; grid-template-columns: 1fr; gap: 24px; }
+.coretab { table-layout: fixed; }
+.coretab th:first-child { width: 24%; }
+
+/* Product dashboards (MW 2026-11-03). */
+.dashsec h2 { margin-top: 0; }
+.dash-svg { display: block; width: 100%; height: auto; margin: 10px 0 6px; }
+.dash-legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: .85rem; margin: 2px 0 16px; }
+.dash-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.dashtab { margin-top: 8px; }
+.panel > .tabs .tabdl2 { margin-left: 18px; }
+
+/* RPPR tab header, redesigned (MW 2026-11-03): a readable three-step checklist, jump cards named
+   in plain English with the RPPR section code as a small tag, and more air throughout. */
+.rppr .rtop { margin: 10px 0 14px; }
+.rppr .rintro { margin: 0 0 12px; max-width: 72ch; }
+.rsteps { margin: 0 0 26px; padding-left: 22px; max-width: 76ch; }
+.rsteps li { margin: 8px 0; font-size: .92rem; line-height: 1.6; }
+.rjump { gap: 14px; margin: 0 0 14px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.rjump a { padding: 16px 18px 14px; border-radius: 12px; gap: 4px; }
+.rjump .rj-k { font-size: .85rem; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink); display: flex; align-items: baseline; gap: 8px; justify-content: space-between; }
+.rjump .rj-k em { font-style: normal; font-size: .7rem; font-weight: 700; color: var(--muted); background: var(--surface2, #f4f1fa); border-radius: 6px; padding: 1px 7px; white-space: nowrap; }
+.rjump .rj-v { font-size: 1.6rem; }
+.rjump .rj-l { font-size: .8rem; }
+.rppr .rnote { margin: 26px 0 0; padding: 16px 20px; }
+
+/* Statement of Work excerpts (MW 2026-11-03). */
+.sow-quote { margin: 8px 0; padding: 10px 16px; border-left: 3px solid var(--accent, #512888); background: var(--surface2, #f4f1fa); border-radius: 0 8px 8px 0; font-size: .9rem; line-height: 1.6; }
+.sowbox { margin: 0 0 18px; }
+.sowbox > summary { cursor: pointer; font-size: .9rem; font-weight: 600; color: var(--accent, #512888); }
+
+/* The carried-over note opens with a header saying why it is there. */
+.rnote-h { margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--progress, #b08b2e); font-size: .95rem; }
+
+/* RPPR jump cards: centered, with a hover line explaining what each NIH section is. */
+.rjump a { align-items: center; text-align: center; }
+.rjump .rj-k { flex-direction: column; align-items: center; gap: 4px; justify-content: center; }
+
+/* Little ovals around the key facts in RPPR section summaries. */
+.rchip { display: inline-block; padding: 3px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: .84rem; margin: 2px 6px 2px 0; }
+.rchip.warn { border-color: var(--progress, #b08b2e); background: var(--progress-wash, #fdf4e3); }
+
+/* Counts tables: numbers centered under their headers. */
+.cnttab td.num, .cnttab th.num { text-align: center; }
+
+/* Bottom totals row on the by-project and by-core counts tables. */
+.cnttab tr.cnttot td { border-top: 2px solid var(--line); background: var(--surface2, #f4f1fa); }
+
+/* Roll-up buttons on section headers. */
+h2 .rollbtn, h3 .rollbtn { font-size: .78rem; font-weight: 600; margin-left: 14px; vertical-align: 2px; }
+
+/* RPPR jump cards as bubbles (MW 2026-11-03): circles, centered, three per row. */
+.rjump { display: grid; grid-template-columns: repeat(3, auto); justify-content: center; gap: 20px 26px; margin: 4px 0 18px; }
+.rjump a { width: 168px; height: 168px; border-radius: 50%; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2px; }
+.rjump .rj-k { font-size: .8rem; line-height: 1.25; }
+.rjump .rj-k em { font-size: .66rem; padding: 1px 6px; }
+.rjump .rj-v { font-size: 1.55rem; line-height: 1.15; }
+.rjump .rj-l { font-size: .72rem; line-height: 1.3; }
+@media (max-width: 860px) { .rjump { grid-template-columns: repeat(2, auto); } }
+
+/* Admin add/edit forms (MW 2026-11-03): clear hierarchy and room to breathe. Labels read as
+   labels, directions sit small and muted below their field, sections start with air and a rule,
+   and a checkbox sits on the left beside its words, never stretched across the page. */
+.aform .field { margin: 0 0 26px; }
+.aform .field > label { display: block; font-weight: 600; font-size: .95rem; color: var(--ink); }
+.aform .field > label > input, .aform .field > label > select, .aform .field > label > textarea { margin-top: 7px; font-weight: 400; }
+.aform .help { font-size: .84rem; color: var(--muted); margin-top: 7px; max-width: 66ch; line-height: 1.55; }
+.aform h2.sectionhead, .aform h3 { margin-top: 42px; padding-top: 20px; border-top: 1px solid var(--line); }
+.aform .field.opt .optline { display: flex; gap: 10px; align-items: flex-start; font-weight: 600; }
+.aform .field.opt .optline input { width: auto; margin: 3px 0 0; flex: none; }
+.aform .checks legend { font-weight: 600; font-size: .95rem; margin-bottom: 8px; }
+.aform .actions { margin-top: 36px; }
+
+/* Admin add/edit forms: the label sits on its own line above a full-width control, and a
+   checkbox sits beside its words. */
+.aform .flab { display: block; font-weight: 600; font-size: .95rem; color: var(--ink); margin-bottom: 7px; }
+.aform .field > label > input:not([type="checkbox"]), .aform .field > label > select, .aform .field > label > textarea { display: block; width: 100%; max-width: 560px; }
+.aform .field.opt .optline { display: flex !important; flex-direction: row; gap: 10px; align-items: flex-start; }
+.aform .field.opt .optline span { font-weight: 600; }
+
+/* Results reports (MW 2026-11-03): the three headline tiles share one row, equal sizes, spanning
+   the card's full width. */
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; }
+.kpi { width: auto; }
+
+/* The response-count facts sit in little ovals, like the RPPR summaries. */
+.facts2 .rchip b { font-weight: 700; }
+
+/* Show all and Collapse all: oval buttons, off to the right. */
+.foldall { display: flex; justify-content: flex-end; gap: 10px; margin: 2px 0 12px; }
+.foldall .linkbtn { text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 16px; font-size: .82rem; font-weight: 600; color: var(--accent, #512888); background: var(--surface, #fff); }
+.foldall .linkbtn:hover { border-color: var(--accent, #512888); }
+
+/* No sideways scroll bars (MW 2026-11-03): the content column uses the whole screen, and the
+   wide report tables tighten up so they fit it. The scroll box stays only as a last resort on
+   small screens. */
+.reptab, .lontab { font-size: .8rem; }
+.reptab td, .reptab th, .lontab td, .lontab th { padding: 5px 6px; }
+.reptab td:first-child, .reptab thead tr:first-child th:first-child, .lontab td:first-child, .lontab thead tr:first-child th:first-child { min-width: 170px; }
+.reptab th, .lontab th { white-space: normal; }
+.reptab .pn { font-size: .78rem; }
+
+/* Roll-up section headings: the caret sits on the title, and the whole title toggles. */
+.rollhead { cursor: pointer; }
+.rollcaret { display: inline-block; width: .9em; margin-right: 8px; color: var(--muted); font-size: .8em; vertical-align: 2px; }
+
+/* The who-responded facts sit in their own little bubble, a prelude to the report. */
+.factsbox { padding: 16px 22px 14px; margin-bottom: 16px; }
+.factsbox-h { margin: 0 0 8px; font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.factsbox .facts2 { margin: 0; }
+
+/* The admin home period card breathes (MW 2026-11-03): taller centered stat tiles with visible
+   borders, and dividing rules between the dates, the step line, the tiles, and the buttons. */
+.stattile { align-items: center; justify-content: center; text-align: center; padding: 34px 18px 30px; gap: 10px; border: 1px solid var(--line); }
+.stattile.good { border-color: #cfe5d6; }
+.stattile.warn { border-color: #efdcb8; }
+.statrow { gap: 16px; margin: 26px 0 10px; }
+ol.life { margin: 18px 0 20px; padding-top: 20px; padding-bottom: 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.life li { padding-top: 40px; padding-bottom: 6px; }
+.pcard .fieldrow, .pcard .actions { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+/* A through line connects the step circles on the period card. */
+ol.life li + li { border-left: 0; }
+ol.life li::before { z-index: 1; }
+ol.life li:not(:last-child)::after { content: ""; position: absolute; top: 12px; left: 44px; right: 2px; height: 2px; background: var(--line); border-radius: 2px; }
+ol.life li.done:not(:last-child)::after { background: var(--purple); opacity: .45; }
+@media (max-width: 860px) { ol.life li::after { display: none; } }
+
+/* The tab band reads clearly as a band: a deeper wash and a firmer rule under it. */
+.panel > .tabs { background: #ebe5f5; border-bottom: 2px solid var(--purple, #512888); }
+.panel > .tabs a.on { border-bottom-color: var(--purple, #512888); color: var(--purple-ink, #3d1f6e); }
+
+/* The product tables use the full width: each header on one line, cells tall and spread out. */
+.outtab th { white-space: nowrap; padding: 14px 12px; }
+.outtab td { padding: 12px; }
+
+/* The widest product table (grants) also fits without a sideways bar. */
+.outtab { font-size: .88rem; }
+.outtab th { padding: 14px 9px; font-size: .8rem; }
+.outtab td { padding: 12px 9px; }
+
+/* Narrow reading pages keep a comfortable measure even though the app column is full width. */
+.outtab .btn.small { display: block; margin: 3px 0; width: max-content; }
+
+/* Acknowledgment filters (MW 2026-11-04): a line saying why they exist, then oval buttons, each
+   explaining itself on hover. */
+.filterbox { margin: 20px 0 8px; }
+.filterlead { margin: 0 0 10px; color: var(--ink); }
+.filtchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.fchipbtn { display: inline-block; padding: 6px 16px; border: 1px solid var(--line); border-radius: 999px; font-size: .84rem; font-weight: 600; color: var(--accent, #512888); background: var(--surface, #fff); text-decoration: none; }
+.fchipbtn:hover { border-color: var(--accent, #512888); }
+.fchipbtn.on { background: var(--accent, #512888); border-color: var(--accent, #512888); color: #fff; }
+th.hashelp { cursor: help; }
+th.hashelp::after { content: ""; }
+
+/* Flip rows and columns: a small oval button above each summary table. */
+.flipbar { display: flex; justify-content: flex-end; margin: 6px 0 6px; }
+.flipbar .fchipbtn { font-size: .78rem; padding: 4px 14px; cursor: pointer; }
+table.flipped { margin-bottom: 6px; }
+
+/* Stevens Amendment primer at the top of the acknowledgment box. */
+.stevens-why { border-left: 3px solid var(--accent, #512888); padding: 4px 0 4px 14px; margin: 12px 0 16px; }
+.stevens-why p { margin: 0 0 8px; }
+
+/* Stevens Amendment primer at the top of the acknowledgment box. */
+.stevens-why { border-left: 3px solid var(--accent, #512888); padding: 4px 0 4px 14px; margin: 12px 0 16px; }
+.stevens-why p { margin: 0 0 8px; }
+
+/* Search and filter above long checkbox lists. */
+.pickbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 4px 0 12px; }
+.pickbar input[type="search"] { flex: 1 1 280px; max-width: 360px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; }
+.pickbar .fchipbtn { cursor: pointer; }
+
+/* Product tables on laptop-width screens: headers wrap to two short lines (one line on wide
+   monitors), cells wrap, and the Correct-it buttons stack, so nothing scrolls sideways. */
+.outtab .ack-f .btn.small { display: block; margin: 3px 0; white-space: nowrap; }
+.outtab td.nowrap:has(.ack-f) { white-space: normal; }
+@media (max-width: 1800px) {
+  .outtab th { white-space: normal; line-height: 1.25; vertical-align: bottom; }
+  .outtab td { white-space: normal; }
+  .outtab th, .outtab td { padding-left: 7px; padding-right: 7px; }
+}
+@media (max-width: 1500px) {
+  .outtab { font-size: .8rem; }
+  .outtab th { font-size: .74rem; }
+  .outtab th, .outtab td { padding-left: 5px; padding-right: 5px; }
+  .outtab .ostatus { white-space: normal; }
+  .outtab .ack-f .btn.small { padding: 3px 8px; font-size: .74rem; }
+}
+.outtab .ack-f { flex-direction: column; align-items: flex-start; gap: 4px; }
+@media (max-width: 1400px) {
+  main { padding-left: 18px; padding-right: 18px; }
+  .panel { padding-left: 16px; padding-right: 16px; }
+  .panel > .tabs { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
+}
+.t1x { display: flex; gap: 6px; align-items: center; }
+.t1x input { flex: 1; min-width: 160px; padding: 4px 8px; font-size: .8rem; }
+.resubprompt { margin-top: 12px; padding: 16px 18px; border: 1px solid var(--accent, #512888); border-radius: 12px; background: var(--surface2, #f4f1fa); }
+.resubprompt p { margin: 0 0 12px; }
+
+/* The feedback button (MW 2026-11-04): a small oval at the bottom right of every page. */
+.fbk-open { position: fixed; right: 22px; bottom: 22px; z-index: 50; padding: 10px 20px; border-radius: 999px; border: 0; background: var(--accent, #512888); color: #fff; font: 600 .88rem/1 inherit; box-shadow: 0 6px 18px rgba(31, 27, 41, .22); cursor: pointer; }
+.fbk-open:hover { filter: brightness(1.1); }
+dialog.fbk { border: 0; border-radius: 16px; padding: 26px 28px; width: min(520px, calc(100vw - 32px)); box-shadow: 0 18px 50px rgba(31, 27, 41, .3); }
+dialog.fbk::backdrop { background: rgba(31, 27, 41, .35); }
+.fbk h2 { margin: 0 0 6px; font-size: 1.2rem; }
+.fbk fieldset { border: 0; padding: 0; margin: 14px 0; }
+.fbk-topics { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+.fbk-topics legend, .fbk-rate legend { font-weight: 600; margin-bottom: 6px; }
+.fbk-topics label { display: flex; gap: 8px; align-items: center; font-size: .88rem; }
+.fbk-rate { display: flex; gap: 8px; }
+.fbk-rate label { cursor: pointer; }
+.fbk-rate input { position: absolute; opacity: 0; }
+.fbk-rate span { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); font-weight: 600; }
+.fbk-rate input:checked + span { background: var(--accent, #512888); color: #fff; border-color: var(--accent, #512888); }
+.fbk-rate input:focus-visible + span { outline: 2px solid var(--accent, #512888); outline-offset: 2px; }
+.fbk textarea { width: 100%; margin-top: 6px; }
+.fbk-msg { min-height: 1.2em; color: var(--accent, #512888); }
+@media (max-width: 560px) { .fbk-topics { grid-template-columns: 1fr; } }
+.rchip.okchip { border-color: #cfe5d6; background: #eef7f0; color: #1f6857; }
+details.lgroup > summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+/* Anything marked hidden stays hidden, whatever display rule its class sets (fixes roll-ups,
+   flips, and toggles everywhere). */
+[hidden] { display: none !important; }
+
+/* Who-responded chips open a list of names. */
+.whochips { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+.whochip > summary { list-style: none; cursor: pointer; }
+.whochip > summary::-webkit-details-marker { display: none; }
+.whochip[open] > summary { border-color: var(--accent, #512888); }
+.whochip ul { margin: 8px 0 4px; padding: 10px 14px 10px 30px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface, #fff); font-size: .86rem; max-height: 260px; overflow: auto; min-width: 200px; }
+
+/* Stat tiles are links; steps link to their pages. */
+a.stattile { text-decoration: none; color: inherit; transition: transform .12s ease, box-shadow .12s ease; }
+a.stattile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(31, 27, 41, .1); }
+ol.life li a { color: inherit; text-decoration: none; }
+ol.life li a:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { a.stattile { transition: none; } a.stattile:hover { transform: none; } }
+
+/* Crisper corners across the site (MW 2026-11-04): cards and panels 8px, tiles 6px. Ovals
+   (chips and pill buttons) stay round on purpose. */
+.panel, .made, .runner .head, .welcome, .welcome-next, .checkcard, dialog.fbk, .tcard, .resubprompt, .factsbox { border-radius: 8px; }
+.panel > .tabs { border-radius: 8px 8px 0 0; }
+.stattile, .kpi, .rjump a:not(:where(.rjump a)) { border-radius: 6px; }
+.stattile, .kpi { border-radius: 6px; }
+.nudge-opts label, .acktext, .whochip ul, .sow-quote { border-radius: 6px; }
+.sow-quote { border-radius: 0 6px 6px 0; }
+/* The time column on My tasks: a clean divider instead of the old rounded tab. */
+.tasks td.mins::before { border-radius: 0; background: none; }
+.tasks td.mins { border-left: 1px solid var(--line); }
+.tasks td.mins::before { display: none; }
+
+/* Sign-in page with a Center photo (optional). */
+.anon main:has(.signin-wrap) { max-width: 1040px; }
+.signin-wrap { display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; align-items: center; }
+.signin-photo { margin: 0; }
+.signin-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; box-shadow: var(--lift); }
+.signin-photo figcaption { margin-top: 8px; font-size: .82rem; color: var(--muted); }
+@media (max-width: 820px) { .signin-wrap { grid-template-columns: 1fr; } .signin-photo img { aspect-ratio: 16 / 9; } }
+.photoprev { display: flex; gap: 16px; align-items: flex-start; }
+.photoprev img { width: 220px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+tr.grouphead { cursor: pointer; }
+tr.grouphead:hover h3 { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Time on My tasks (MW 2026-11-04): a snug oval hugging "About 8 min", not a wide tab. */
+.tasks td.mins { border-left: 0; padding-left: 12px; padding-right: 16px; min-width: 0; }
+.tasks td.mins::before { display: none; }
+.tasks td.mins > span { display: inline-block; padding: 7px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface, #fff); white-space: nowrap; }
+.rchip.hcount { font-size: .74rem; font-weight: 600; padding: 2px 10px; margin-left: 8px; vertical-align: 3px; }
+.wnote { margin-top: 10px; }
+.wnote > summary { cursor: pointer; font-size: .88rem; font-weight: 600; color: var(--accent, #512888); }
+.wnote[open] > summary { margin-bottom: 6px; }

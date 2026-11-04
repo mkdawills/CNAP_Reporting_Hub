@@ -2,12 +2,12 @@
 {% block title %}People · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>People</h1><p>{{ "Everyone the Center works with. CNAP relationships decide which forms a person receives. They never grant access to administrator screens."|stack }}</p></div>
+  <div><h1>People{% why "Everyone the Center works with lives here. A person’s relationships (project leader, mentor, core director, and so on) decide exactly which forms they receive each period, and how they appear in RPPR tables such as D.1." %}</h1><p>{{ "Everyone the Center works with. CNAP relationships decide which forms a person receives. They never grant access to administrator screens. The roster is the Center’s list of current CNAP members. People on the roster receive the all-member surveys. People off the roster, such as an external mentor, receive only the forms their relationships call for."|stack }}</p></div>
   {% if can_manage %}<div><a class="btn" href="{% url 'manage:person_new' %}">Add a person</a></div>{% endif %}
 </div>
 <div class="panel">
   <form method="get" class="fieldrow">
-    <label>Search<input type="search" name="q" value="{{ q }}" placeholder="Name, e-mail or institution"></label>
+    <label>Search<input type="search" name="q" value="{{ q }}" placeholder="Name, email, or institution"></label>
     <label>Show<select name="show">
       <option value="all" {% if show == 'all' %}selected{% endif %}>Everyone</option>
       <option value="roster" {% if show == 'roster' %}selected{% endif %}>On the CNAP roster</option>
@@ -19,14 +19,14 @@
 </div>
 <div class="panel scroll">
   <h2 class="sectionhead">{{ rows|length }} {% if rows|length == 1 %}person{% else %}people{% endif %}</h2>
-  <table>
-    <thead><tr><th>Name</th><th>CNAP relationships</th><th>Roster</th><th>E-mail</th></tr></thead>
+  <table title="Everyone the Hub knows, with each kind of role in its own column, so you can sort by any of them.">
+    <thead><tr><th>Name</th><th>Leadership</th><th>Mentoring</th><th>Core roles</th><th>Other roles</th><th title="The roster is the Center’s list of current CNAP members. Being on it brings the all-member surveys.">On the CNAP member roster?</th><th>Email</th></tr></thead>
     <tbody>
     {% for r in rows %}
       <tr>
         <td><a href="{% url 'manage:person' r.person.pk %}"><strong>{{ r.person }}</strong></a>{% if r.external %}<div class="small muted">{{ r.person.institution }}</div>{% endif %}{% if not r.person.is_active %}<div class="small muted">Inactive</div>{% endif %}</td>
-        <td>{% for rel in r.roles %}<div>{{ rel.relationship_type.name }}{% if rel.project %} · {{ rel.project.title }}{% elif rel.core %} · {{ rel.core.code }} Core{% endif %}</div>{% empty %}<span class="muted">None</span>{% endfor %}</td>
-        <td>{% if r.on_roster %}On the roster{% else %}<span class="muted">Not on the roster</span>{% endif %}</td>
+        <td class="small">{% for rel in r.cols.lead %}<div>{{ rel.relationship_type.name }}{% if rel.project %}<span class="muted"> · {{ rel.project.title|truncatechars:34 }}</span>{% elif rel.core %}<span class="muted"> · {{ rel.core.code }} Core</span>{% endif %}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td><td class="small">{% for rel in r.cols.mentor %}<div>{{ rel.relationship_type.name }}{% if rel.project %}<span class="muted"> · {{ rel.project.title|truncatechars:34 }}</span>{% elif rel.core %}<span class="muted"> · {{ rel.core.code }} Core</span>{% endif %}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td><td class="small">{% for rel in r.cols.core %}<div>{{ rel.relationship_type.name }}{% if rel.project %}<span class="muted"> · {{ rel.project.title|truncatechars:34 }}</span>{% elif rel.core %}<span class="muted"> · {{ rel.core.code }} Core</span>{% endif %}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td><td class="small">{% for rel in r.cols.other %}<div>{{ rel.relationship_type.name }}{% if rel.project %}<span class="muted"> · {{ rel.project.title|truncatechars:34 }}</span>{% elif rel.core %}<span class="muted"> · {{ rel.core.code }} Core</span>{% endif %}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
+        <td>{% if r.on_roster %}Yes. They receive the all-member surveys.{% else %}<span class="muted">No. They receive only what their relationships call for.</span>{% endif %}</td>
         <td class="small">{{ r.email|default:"—" }}</td>
       </tr>
     {% empty %}

@@ -1,6 +1,6 @@
 {% autoescape off %}Hello {{ person.first_name }},
 
-The {{ period.name }} CNAP reporting session is open. Please complete {% if forms|length == 1 %}this form{% else %}these {{ forms|length }} forms{% endif %} by {{ due }}:
+The {{ period.name }} CNAP reporting period is open. Please complete {% if forms|length == 1 %}this form{% else %}these {{ forms|length }} forms{% endif %} by {{ due }}:
 {% for f in forms %}
 - {{ f }}{% endfor %}
 
@@ -9,7 +9,7 @@ Open your forms:
 {% if with_link %}
 This link signs you in. It works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
 {% else %}
-Sign in with your K-State eID.
+Please sign in with your K-State eID.
 {% endif %}
 Your answers are saved as you go, so you can finish across several sittings. Surveys you don't use have a one-click opt-out.
 

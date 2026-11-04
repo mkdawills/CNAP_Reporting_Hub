@@ -14,7 +14,7 @@ from apps.reporting.models import Assignment
 CHECKS = [
     (
         "no_email",
-        "People with no e-mail",
+        "People with no email address",
         "They can’t receive their forms, reminders or sign-in links.",
     ),
     (
@@ -23,7 +23,12 @@ CHECKS = [
         "No progress report or Mentee Survey goes out for them.",
     ),
     ("project_no_mentor", "Projects with no mentor", "No mentor report goes out for them."),
-    ("ended_but_open", "Open forms whose relationship has ended", "Consider exempting them."),
+    (
+        "ended_but_open",
+        "Forms still open for people who have left the role",
+        "The CNAP role that earned the person this form has ended, but the form is still open and "
+        "counts against completion. Please consider exempting them.",
+    ),
     ("duplicate_names", "Possible duplicate people", "Same first and last name on two records."),
     (
         "director_and_leader",
@@ -154,9 +159,24 @@ def run():
     result = []
     for code, title, note in CHECKS:
         rows = [r for r in out[code] if (code, r[0], r[1]) not in dismissed]
-        result.append({"code": code, "title": title, "note": note, "rows": rows})
+        result.append({"code": code, "title": title, "note": note, "rows": rows, "why": WHY.get(code, note)})
     return result
 
 
 def count():
     return sum(len(c["rows"]) for c in run())
+
+
+# What each check looks for, why it matters, and what happens downstream (MW 2026-11-04: every
+# heading explains itself on hover).
+WHY = {
+    "no_email": "Looks for people with no email address on file. Without one they never receive their forms, reminders, or sign-in links, so their answers are missing from the results and the RPPR. Click to see them, then add an address on each person’s page.",
+    "project_no_leader": "Looks for projects with no current leader. Without a leader, no progress report or Mentee Survey goes out for the project, and RPPR D.1 has a gap. Click to see them, then add the leader on the project page.",
+    "project_no_mentor": "Looks for projects with no current mentor. Without one, no mentor report goes out, so the mentoring evaluation has a gap. Click to see them, then add the mentor on the project page.",
+    "ended_but_open": "Looks for forms still open for someone whose role has ended. Those forms count against completion even though the person is no longer expected to answer. Click to see them, then exempt each form on the period dashboard.",
+    "duplicate_names": "Looks for two people with the same first and last name. Duplicates split one person’s forms and credits across two records. Click to see them, then merge or correct them.",
+    "director_and_leader": "Looks for core directors who are also a Research or Pilot Project Leader. That is normally not allowed, so it is usually a data-entry slip. Click to see them, then correct the roles, or dismiss if it is right.",
+    "rrid_not_cited": "Looks for published papers that used a core but did not cite its Research Resource Identifier (RRID). Without the RRID, the core’s use is traceable only through the grant citation. Click to see them, then note it for the author next time.",
+    "foreign_cites_grant": "Looks for papers with foreign co-authors that cite CNAP’s grant without NIGMS approval of the foreign component. NIH may treat that as an unapproved foreign component. Click to see them, then credit the core with its RRID instead, or seek approval.",
+    "overdue": "Looks for forms in an open period that are past due and not started. These are the people to nudge personally. Click to see them, then send a reminder from the period’s emails page.",
+}

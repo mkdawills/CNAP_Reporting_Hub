@@ -7,7 +7,7 @@ from apps.people.models import Core, Person, Project, RelationshipType
 
 
 class PersonForm(forms.ModelForm):
-    email = forms.EmailField(required=False, help_text="Their main e-mail. Sign-in links go here.")
+    email = forms.EmailField(required=False, help_text="Their main email. Sign-in links go here.")
 
     class Meta:
         model = Person
@@ -106,5 +106,5 @@ class ProjectForm(forms.ModelForm):
 
 class RosterUploadForm(forms.Form):
     file = forms.FileField(
-        help_text="A .csv or .xlsx with columns for first name, last name and e-mail."
+        help_text="A .csv or .xlsx with columns for first name, last name and email."
     )

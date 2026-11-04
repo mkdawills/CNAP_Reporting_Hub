@@ -5,12 +5,12 @@
   "context_kind": "project",
   "confidentiality": "mentoring",
   "sort_order": 9,
-  "intro_text": "Think about your mentoring through CNAP, and how much you agree with each statement. Choose from 1 (strongly disagree) to 5 (strongly agree) or not applicable (NA). If you have more than one mentor, keep them all in mind.",
+  "intro_text": "Please think about your mentoring through CNAP, and how much you agree with each statement. Choose from 1 (strongly disagree) to 5 (strongly agree) or not applicable (NA). If you have more than one mentor, please keep them all in mind.",
   "display": {
     "task_group": "grant",
     "short_name": "Mentee Survey",
     "about": [
-      "This survey asks about your mentoring relationship on your CNAP project: how available, helpful and supportive your mentor or mentors have been.",
+      "This survey asks about your mentoring relationship on your CNAP project: how available, helpful, and supportive your mentor or mentors have been.",
       "It is used to strengthen the Center’s mentoring program."
     ]
   },

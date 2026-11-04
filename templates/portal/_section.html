@@ -26,8 +26,8 @@
     {% if not editable and sv.summary %}</details>{% endif %}
     {% if editable %}<button class="btn small ghost" type="submit" name="action" value="add:{{ sv.s.code }}" formnovalidate>{{ sv.s.repeat_label|default:"Add an entry" }}</button>{% endif %}
     {% if editable %}<div class="sheetup">
-      <p class="sheetup-h">Keep this list in Excel?</p>
-      <p class="small">You can upload a sheet instead of typing each entry. Download the template, fill in one row per entry, and upload it here. The rows are added above, so you can check and edit them before you submit.</p>
+      <p class="sheetup-h">Prefer to work in Excel?</p>
+      <p class="small">This is optional: a tool you can use if you like.<br>Please download the template, fill it in on your desktop (one row per entry), and upload it here whenever you are ready.<br>Your rows fill in the entries above automatically, so you can check and edit them before you submit.</p>
       <div class="sheetup-row"><a class="btn small ghost" href="{% url 'portal:sheet_template' a.pk sv.s.code %}" download>Download the Excel template</a>
         <input type="file" name="sheet-{{ sv.s.code }}" accept=".xlsx" aria-label="Your filled-in Excel sheet for {{ sv.s.title }}">
         <button class="btn small" type="submit" name="action" value="sheet:{{ sv.s.code }}" formnovalidate>Add the rows from my sheet</button></div>

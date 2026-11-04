@@ -210,6 +210,8 @@ def state(owner, period):
         "review_pubs": review_pubs,
         "review_grants": review_grants,
         "todo": todo,
+        "n_review": len(review_pubs) + len(review_grants),
+        "n_ask": int(ask_pubs) + int(ask_grants),
         "done": todo == 0,
     }
 
@@ -296,6 +298,7 @@ def create_publication(user, owner, data, resources=(), projects=(), other_text=
         journal=data.get("journal", ""),
         publication_type=data.get("publication_type") or "journal_article",
         anticipated_submission_month=data.get("anticipated_submission_month"),
+        anticipated_day_known=bool(data.get("anticipated_day_known")),
         status=PublicationStatus.PLANNED,
         resources_other_text=other_text,
         confirmed_at=timezone.now(),
@@ -333,6 +336,7 @@ def update_publication(
         "comments",
         "resubmission_intent",
         "anticipated_submission_month",
+        "anticipated_day_known",
     ):
         if f in data:
             setattr(p, f, data[f])
@@ -404,6 +408,7 @@ def create_grant(
         opportunity_url=data.get("opportunity_url", ""),
         mechanism=data.get("mechanism", ""),
         anticipated_submission_date=data.get("anticipated_submission_date"),
+        anticipated_day_known=bool(data.get("anticipated_day_known")),
         anticipated_total=data.get("anticipated_total"),
         planned_estimated_direct=data.get("planned_estimated_direct"),
         status=GrantStatus.PLANNED,
@@ -441,8 +446,10 @@ def update_grant(
         "opportunity_url",
         "mechanism",
         "anticipated_submission_date",
+        "anticipated_day_known",
         "anticipated_total",
         "planned_estimated_direct",
+        "cayuse_ipf",
         "submission_date",
         "requested_total",
         "requested_direct",
@@ -506,26 +513,37 @@ def update_grant(
             resubmission_of=g
         ).exists()  # re-saving never makes a second one
     ):
-        lead = g.people.filter(is_primary_cnap_contact=True).first() or g.people.first()
-        new = create_grant(
-            user,
-            lead.person if lead else user.person,
-            {
-                "project_title": g.project_title,
-                "funding_agency": g.funding_agency,
-                "mechanism": g.mechanism,
-                "opportunity_url": g.opportunity_url,
-                "anticipated_total": g.requested_total or g.anticipated_total,
-                "planned_estimated_direct": g.requested_direct or g.planned_estimated_direct,
-                "role": lead.role if lead else GrantRole.PI,
-            },
-            resources=[x.resource for x in g.resource_links.all()],
-            projects=[x.project for x in g.project_links.all()],
-            other_text=g.resources_other_text,
-            family=g.grant_family,
-        )
-        new.resubmission_of = g
-        new.save(update_fields=["resubmission_of"])
+        new = start_resubmission(user, g)
+    return new
+
+
+def start_resubmission(user, g):
+    """Create the next round (A1, A2, ...) of a proposal, copied from the original so the person
+    builds on it: same title, agency, mechanism, opportunity, budget, and credits (MW 2026-11-04).
+    Returns the existing next round if there already is one."""
+    existing = GrantSubmission.objects.filter(resubmission_of=g).first()
+    if existing:
+        return existing
+    lead = g.people.filter(is_primary_cnap_contact=True).first() or g.people.first()
+    new = create_grant(
+        user,
+        lead.person if lead else user.person,
+        {
+            "project_title": g.project_title,
+            "funding_agency": g.funding_agency,
+            "mechanism": g.mechanism,
+            "opportunity_url": g.opportunity_url,
+            "anticipated_total": g.requested_total or g.anticipated_total,
+            "planned_estimated_direct": g.requested_direct or g.planned_estimated_direct,
+            "role": lead.role if lead else GrantRole.PI,
+        },
+        resources=[x.resource for x in g.resource_links.all()],
+        projects=[x.project for x in g.project_links.all()],
+        other_text=g.resources_other_text,
+        family=g.grant_family,
+    )
+    new.resubmission_of = g
+    new.save(update_fields=["resubmission_of"])
     return new
 
 
@@ -563,7 +581,10 @@ def save_presentation(user, owner, data, resources=(), projects=(), other_text="
         "presentation_type",
         "title",
         "event",
-        "location",
+        "venue",
+        "city",
+        "state_region",
+        "country",
         "presented_on",
         "author_display_text",
         "description",
@@ -575,6 +596,8 @@ def save_presentation(user, owner, data, resources=(), projects=(), other_text="
         if f in data:
             setattr(obj, f, data[f])
     obj.resources_other_text = other_text
+    if any(f in data for f in ("venue", "city", "state_region", "country")):  # one line for lists and exports
+        obj.location = ", ".join(x for x in (obj.venue, obj.city, obj.state_region, obj.country) if x)
     obj.save()
     if created:
         PresentationPerson.objects.create(presentation=obj, person=owner, is_presenter=True)

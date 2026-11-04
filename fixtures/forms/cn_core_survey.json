@@ -6,13 +6,13 @@
   "about_core": "CN",
   "confidentiality": "standard",
   "sort_order": 3,
-  "intro_text": "Rate each service you used, from 1 (very poor) to 5 (very good), or choose not applicable (NA) for anything you didn’t use. Then tell us how often you used each one.",
+  "intro_text": "Please rate each service you used. Choose from 1 (very poor) to 5 (very good) or not applicable (NA).\nThen please tell us how often you used each one. Choose from 1 (never) to 5 (always) or not applicable (NA).",
   "display": {
     "task_group": "cores",
     "short_name": "CN Core",
     "about": [
-      "The Cognitive Neuroscience Core provides EEG labs (Magstim/EGI and BioSemi), analysis computers and software, participant recruitment support, and a graduate research assistant.",
-      "This survey asks how well the core’s spaces, equipment and support worked for you, and how often you used them."
+      "The Cognitive Neuroscience Core provides electroencephalography (EEG) labs (Magstim/EGI and BioSemi), analysis computers and software, participant recruitment support, and a graduate research assistant.",
+      "This survey asks how well the core’s spaces, equipment, and support worked for you, and how often you used them."
     ],
     "opt_out": {
       "question": "optout",
@@ -171,7 +171,7 @@
     },
     {
       "code": "frequency",
-      "title": "Frequency of use",
+      "title": "Frequency of core use",
       "questions": [
         {
           "code": "freq_01",

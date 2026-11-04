@@ -1,119 +1,205 @@
 {% extends "base.html" %}{% load cnap %}
-{% block title %}Publications and grants · {{ platform_name }}{% endblock %}
+{% block title %}Publications, talks, and grants · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>Publications and grants</h1><p>{{ "Check whether each published paper and each submitted proposal acknowledges CNAP. One paper or grant can be credited to several projects and cores."|stack }}</p></div>
-  {% if can_edit %}<div class="fieldrow"><a class="btn" href="{% url 'manage:publication_new' %}">Add a publication</a><a class="btn ghost" href="{% url 'manage:grant_new' %}">Add a grant</a></div>{% endif %}
+  <div><h1>{% if tab == 'talks' %}Presentations{% elif tab == 'grants' %}Grant proposals{% elif tab == 'pubs' %}Publications{% else %}Publications, talks, and grants{% endif %}{% why "The Center’s products: papers, talks, and grant proposals. Respondents keep their own records, and you can add or fix records here. These counts flow into the RPPR, the site-visit tables, and Center results." %}</h1>
+  <p>{% if tab == 'pubs' %}{{ "Each row is one paper. Please check whether each published paper acknowledges CNAP."|stack }}{% elif tab == 'grants' %}{{ "Each row is one submission of a proposal. A first submission is round A0, and a resubmission of the same proposal is round A1, so a proposal submitted twice has two rows. Please check whether each submitted proposal acknowledges CNAP."|stack }}{% elif tab == 'talks' %}{{ "Each row is one talk or poster, entered after it was given."|stack }}{% else %}{{ "The Center’s products, with the tables and counts built from them."|stack }}{% endif %}</p></div>
+  {% if can_edit %}<div class="fieldrow">{% if tab == 'talks' %}<span class="small muted">Talks are added by their presenters under Publications, talks, and grants.</span>{% elif tab == 'grants' %}<a class="btn" href="{% url 'manage:grant_new' %}">Add a proposal</a>{% else %}<a class="btn" href="{% url 'manage:publication_new' %}">Add a publication</a><a class="btn ghost" href="{% url 'manage:grant_new' %}">Add a proposal</a>{% endif %}</div>{% endif %}
 </div>
-
-<div class="kpis ack-kpis">
-  <a class="kpi{% if tab == 'pubs' %} on{% endif %}" href="?tab=pubs"><span class="ring" style="--p:{{ summary.pubs.pct|default:0 }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v">{% if summary.pubs.pct is not None %}{{ summary.pubs.pct }}%{% else %}—{% endif %}</span><span class="kpi-l">of checked published papers acknowledge CNAP</span><span class="kpi-l">You still need to check {{ summary.pubs.unchecked }} of {{ summary.pubs.total }}.</span></span></a>
-  <a class="kpi{% if tab == 'grants' %} on{% endif %}" href="?tab=grants"><span class="ring" style="--p:{{ summary.grants.pct|default:0 }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v">{% if summary.grants.pct is not None %}{{ summary.grants.pct }}%{% else %}—{% endif %}</span><span class="kpi-l">of checked submitted proposals acknowledge CNAP</span><span class="kpi-l">You still need to check {{ summary.grants.unchecked }} of {{ summary.grants.total }}.</span></span></a>
-</div>
+{% if tab == 'pubs' %}<div class="checkcards">
+  <div class="checkcard on">
+    <h2>Papers to check</h2>
+    <p class="small">{% if summary.pubs.unchecked %}{{ summary.pubs.unchecked }} of {{ summary.pubs.total }} published paper{{ summary.pubs.total|pluralize }} still need{{ summary.pubs.unchecked|pluralize:"s," }} a yes-or-no on the CNAP acknowledgment.{% else %}Every published paper has been checked.{% endif %}{% if summary.pubs.pct is not None %}<br>{{ summary.pubs.pct }}% of the checked papers acknowledge CNAP.{% endif %}</p>
+    <div class="bar"><span style="width:{{ summary.pubs.pct|default:0 }}%"></span></div>
+    {% if summary.pubs.unchecked %}<a class="btn small" href="?tab=pubs&ack=check">Check the papers</a>{% else %}<a class="btn small ghost" href="?tab=pubs">Open the papers</a>{% endif %}
+  </div>
+  </div>{% elif tab == 'grants' %}<div class="checkcards">
+  <div class="checkcard on">
+    <h2>Proposals to check</h2>
+    <p class="small">{% if summary.grants.unchecked %}{{ summary.grants.unchecked }} of {{ summary.grants.total }} submitted proposal{{ summary.grants.total|pluralize }} still need{{ summary.grants.unchecked|pluralize:"s," }} a yes-or-no on the CNAP acknowledgment.{% else %}Every submitted proposal has been checked.{% endif %}{% if summary.grants.pct is not None %}<br>{{ summary.grants.pct }}% of the checked proposals acknowledge CNAP.{% endif %}</p>
+    <div class="bar"><span style="width:{{ summary.grants.pct|default:0 }}%"></span></div>
+    {% if summary.grants.unchecked %}<a class="btn small" href="?tab=grants&ack=check">Check the proposals</a>{% else %}<a class="btn small ghost" href="?tab=grants">Open the proposals</a>{% endif %}
+  </div>
+</div>{% endif %}
 
 <div class="panel">
-  {% if tab != 'reminders' and tab != 'rppr' and tab != 'sitevisit' %}<p class="small" style="float:right;margin:8px 0 0"><a href="{% url 'manage:outcomes_export' tab|default:'pubs' %}">{% if tab == 'grants' %}Download grant list (CSV){% elif tab == 'talks' %}Download presentation list (CSV){% elif tab == 'counts' %}Download counts (CSV){% else %}Download citation list (CSV){% endif %}</a></p>{% endif %}
-  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}">Grants</a><a href="?tab=talks" class="{% if tab == 'talks' %}on{% endif %}">Presentations</a><a href="?tab=counts" class="{% if tab == 'counts' %}on{% endif %}">Counts</a><a href="?tab=rppr" class="{% if tab == 'rppr' %}on{% endif %}">RPPR</a><a href="?tab=sitevisit" class="{% if tab == 'sitevisit' %}on{% endif %}">Site visit</a><a href="?tab=reminders" class="{% if tab == 'reminders' %}on{% endif %}">Reminders</a></div>
+  <div class="tabs" role="tablist"><a href="?tab=pubs" class="{% if tab == 'pubs' %}on{% endif %}" title="Every paper CNAP members report, from planned to published. It tracks each paper’s status, who and what it is credited to, and whether it acknowledges CNAP’s grant. Why: published papers go into RPPR section C.1 and the site-visit tables, and NIH requires the grant citation. Click to see the paper list, with buttons to check acknowledgments.">Publications</a><a href="?tab=grants" class="{% if tab == 'grants' %}on{% endif %}" title="Every grant proposal CNAP members report, one row per submission. It tracks status (planned, pending, awarded, not funded), dollars, credits, and acknowledgment. Why: proposals and awards fill RPPR Table 1 and the site-visit grant tables, and they show the Center producing independent funding. Click to see the proposal list.">Grants</a><a href="?tab=talks" class="{% if tab == 'talks' %}on{% endif %}" title="Every talk and poster CNAP members have given. It tracks the event, the date, who presented, credits, and acknowledgment. Why: presentations are counted for the site visit and the dashboards, and they must acknowledge CNAP under the Stevens Amendment. Click to see the presentation list.">Presentations</a><a href="?tab=counts" class="{% if tab == 'counts' %}on{% endif %}" title="The Center’s products counted by grant year, overall, by project, and by core. It tracks papers, RRID citations, presentations, proposals submitted, awards, and award dollars. Why: these are the headline numbers for the RPPR, the External Advisory Committee, and the site visit. Click to see the aligned count tables, with a year selector.">Counts</a><a href="?tab=rppr" class="{% if tab == 'rppr' %}on{% endif %}" title="Everything the annual Research Performance Progress Report (RPPR) to NIH needs: C.1 publications, Tables 1 and 2, D.1 participants, and D.2 documents. Why: it gathers the report’s lists in one place and marks items as reported, so nothing goes to NIH twice. Click to review, download, and mark each list.">RPPR</a><a href="?tab=sitevisit" class="{% if tab == 'sitevisit' %}on{% endif %}" title="The site-visit tables, laid out like the Year 9 site-visit workbooks: papers, talks, and proposals by core and status for one budget year. Why: the External Advisory Committee and NIH reviewers read these at the site visit. Click to pick a year and download the tables.">Site visit</a><a href="?tab=reminders" class="{% if tab == 'reminders' %}on{% endif %}" title="The automatic emails that keep records current: stale-record reminders for papers and submitted proposals, and the monthly check-ins on planned proposals. Why: up-to-date records mean accurate RPPR and site-visit numbers without a scramble. Click to see who is due a reminder, what was sent, and how people answered.">Reminders</a>{% if tab != 'reminders' and tab != 'rppr' and tab != 'sitevisit' %}{% if tab == 'pubs' or tab == 'talks' or tab == 'grants' or not tab %}<a class="tabdl" title="A live recreation of the evaluator’s product dashboard: the same graphs and tables, built from the Hub’s records just now. Use it for the External Advisory Committee write-up." href="{% url 'manage:outcomes_dashboard' tab|default:'pubs' %}">Open the {% if tab == 'grants' %}grants{% elif tab == 'talks' %}presentations{% else %}publications{% endif %} dashboard</a>{% endif %}<a class="tabdl tabdl2" title="Downloads this list as a CSV file that opens in Excel, with every column shown here." href="{% url 'manage:outcomes_export' tab|default:'pubs' %}">{% if tab == 'grants' %}Download grant list (CSV){% elif tab == 'talks' %}Download presentation list (CSV){% elif tab == 'counts' %}Download counts (CSV){% else %}Download citation list (CSV){% endif %}</a>{% endif %}</div>
   {% if tab == 'rppr' %}{% include "manage/_rppr.html" %}
   {% elif tab == 'reminders' %}
-    <p class="small muted">A planned or submitted record that nobody has reviewed for {{ stale_days }} days is stale.<br>Its owner gets one e-mail listing all their stale records, copied to anyone who enters for them, at most once every {{ remind_every }} days.<br>Reminders go out automatically each morning; you can also send them now.</p>
-    <h2 class="sectionhead" style="margin-top:18px">Due now ({{ reminders_due|length }})</h2>
-    {% if reminders_due %}<table><tbody>{% for person, recs, cc in reminders_due %}<tr><td><strong>{{ person }}</strong>{% if not person.primary_email %} <span class="error" style="padding:1px 6px">no e-mail on file</span>{% endif %}{% if cc %}<div class="small muted">Copy to {{ cc|join:", " }}</div>{% endif %}</td><td class="small">{% for k, o, t in recs %}<div>{{ k }}: {{ t }} <span class="muted">· {{ o.get_status_display }}, last reviewed {{ o.confirmed_at|default:o.updated_at|date:"M j, Y" }}</span></div>{% endfor %}</td></tr>{% endfor %}</tbody></table>
+    <p class="small muted">A paper, or a submitted proposal, that nobody has reviewed for {{ stale_days }} days is stale.<br>Planned proposals are not in this list; they get the friendly monthly check-in below instead.<br>Its owner gets one email listing all their stale records, copied to anyone who enters for them, at most once every {{ remind_every }} days.<br>Reminders go out automatically each morning; you can also send them now.</p>
+    <div class="rollup" data-start="closed">
+    <section><h2 class="sectionhead" style="margin-top:18px">Stale-record reminders: due now ({{ reminders_due|length }})</h2>
+    {% if reminders_due %}<table title="Everyone whose stale-record reminder is due to go out, and what it will list."><thead><tr><th>Person</th><th>What the reminder covers</th></tr></thead><tbody>{% for person, recs, cc in reminders_due %}<tr><td><strong>{{ person }}</strong>{% if not person.primary_email %} <span class="error" style="padding:1px 6px">no email on file</span>{% endif %}{% if cc %}<div class="small muted">Copy to {{ cc|join:", " }}</div>{% endif %}</td><td class="small">{% for k, o, t in recs %}<div>{{ k }}: {{ t }} <span class="muted">· {{ o.get_status_display }}, last reviewed {{ o.confirmed_at|default:o.updated_at|date:"M j, Y" }}</span></div>{% endfor %}</td></tr>{% endfor %}</tbody></table>
       {% if can_edit %}<form method="post" action="{% url 'manage:outcomes_send_reminders' %}" style="margin-top:12px">{% csrf_token %}<button class="btn">Send reminders now</button></form>{% endif %}
     {% else %}<p class="muted">Nobody is due a reminder right now.</p>{% endif %}
-    <h2 class="sectionhead" style="margin-top:24px">Recently sent</h2>
-    {% if reminders_sent %}<table><tbody>{% for r in reminders_sent %}<tr><td class="nowrap small">{{ r.sent_at|date:"M j, Y g:i a" }}</td><td>{{ r.person }}</td><td class="small muted">{{ r.records|length }} record{{ r.records|length|pluralize }} · to {{ r.sent_to }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="muted">None yet.</p>{% endif %}
+    </section>
+    <section><h2 class="sectionhead" style="margin-top:24px">Reminders recently sent</h2>
+    {% if reminders_sent %}<table title="The latest stale-record reminders that went out."><thead><tr><th>Sent</th><th>Person</th><th>What it covered</th></tr></thead><tbody>{% for r in reminders_sent %}<tr><td class="nowrap small">{{ r.sent_at|date:"M j, Y g:i a" }}</td><td>{{ r.person }}</td><td class="small muted">{{ r.records|length }} record{{ r.records|length|pluralize }} · to {{ r.sent_to }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="muted">None yet.</p>{% endif %}
+
+    </section>
+    <section><h2 class="sectionhead" style="margin-top:34px">Monthly check-ins on planned proposals {% why "A planned proposal no longer waits for the stale reminder. Its owner gets one friendly check-in email about once a month, asking how the submission is coming along, with five one-click answers and a comments box. The answers below tell you who is on track, who is stuck, and who is pivoting, long before the RPPR." %}</h2>
+    <p class="small muted">Each planned proposal’s owner gets one friendly check-in email about once every {{ nudge_every }} days.<br>The email asks how the submission is coming along and offers five one-click answers plus a comments box.<br>Check-ins go out automatically each morning with the reminders above.</p>
+    <h3 style="margin:16px 0 6px">Due now ({{ nudges_due|length }})</h3>
+    {% if nudges_due %}<table title="Planned proposals whose monthly check-in email is due to go out."><thead><tr><th>Person</th><th>Planned proposal</th><th>Anticipated submission</th></tr></thead><tbody>{% for g, person, cc in nudges_due %}<tr><td><strong>{{ person }}</strong>{% if cc %}<div class="small muted">Copy to {{ cc|join:", " }}</div>{% endif %}</td><td class="small">{{ g.project_title }}{% if g.funding_agency %} <span class="muted">· to {{ g.funding_agency }}</span>{% endif %}</td><td class="small">{% if g.anticipated_submission_date %}{% if g.anticipated_day_known %}{{ g.anticipated_submission_date|date:"M j, Y" }}{% else %}{{ g.anticipated_submission_date|date:"F Y" }}{% endif %}{% else %}—{% endif %}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="muted">No check-ins are due right now.</p>{% endif %}
+    <h3 style="margin:20px 0 6px">Recent check-ins and answers</h3>
+    {% if nudge_rows %}<table title="The latest monthly check-in emails, and the answer each one brought back."><thead><tr><th>Sent</th><th>Person</th><th>Planned proposal</th><th>Their answer</th><th>Their comments</th></tr></thead><tbody>{% for n in nudge_rows %}<tr><td class="small">{{ n.sent_at|date:"M j, Y" }}</td><td>{{ n.person }}</td><td class="small">{{ n.grant.project_title }}</td><td class="small">{% if n.choice %}{{ n.get_choice_display }}<div class="small muted">answered {{ n.answered_at|date:"M j, Y" }}</div>{% else %}<span class="muted">No answer yet</span>{% endif %}</td><td class="small">{{ n.comments|default:"—" }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="muted">None yet.</p>{% endif %}</section>
+    </div>
   {% elif tab == 'sitevisit' %}{% with v=sv %}
     <form method="get" class="fieldrow" style="align-items:flex-end;margin-bottom:8px"><input type="hidden" name="tab" value="sitevisit">
-      <label class="small muted">Budget period <select name="year">{% for y in v.years %}<option value="{{ y }}" {% if y == v.year %}selected{% endif %}>Year {{ y }} (June 1, {{ y|add:2016 }} – May 31, {{ y|add:2017 }})</option>{% endfor %}</select></label>
-      <label class="small muted">Mark entries added after<input type="date" name="since" value="{{ v.since|date:'Y-m-d' }}"></label>
-      <button class="btn small ghost" type="submit">Update</button></form>
-    <p class="small muted">{{ "Laid out like the Year 9 site-visit workbooks. A paper, talk or grant credited to two cores counts under each (duplicates counted), so the core rows can add up to more than the number of items. Each section says how many items that is. Papers and proposals submitted in an earlier year and still waiting are listed separately, so nothing is counted in two years."|stack }}</p>
+      <label class="small muted" title="The grant year these tables count, June 1 to May 31. The site visit reports one grant year at a time.">Grant year to show <select name="year">{% for y in v.years %}<option value="{{ y }}" {% if y == v.year %}selected{% endif %}>Year {{ y }} (June 1, {{ y|add:2016 }} – May 31, {{ y|add:2017 }})</option>{% endfor %}</select></label>
+      <label class="small muted" title="Optional. Pick the date of your last site-visit report, and everything entered in the Hub after that date is highlighted, so you can see what is new since then.">Highlight entries added since (optional)<input type="date" name="since" value="{{ v.since|date:'Y-m-d' }}"></label>
+      <button class="btn small ghost" type="submit" title="Redraws these tables for the grant year and date you chose.">Show these tables</button></form>
+    <p class="small muted">{{ "Please choose the grant year to show. If you like, also choose the date of your last site-visit report; anything entered after it is highlighted as new."|stack }}</p>
+    <p class="small muted">{{ "Laid out like the Year 9 site-visit workbooks. A paper, talk, or grant credited to two cores counts under each (duplicates counted), so the core rows can add up to more than the number of items. Each section says how many items that is. Papers and proposals submitted in an earlier year and still waiting are listed separately, so nothing is counted in two years."|stack }}</p>
 
-    <h2 class="sectionhead" style="margin-top:18px">Publications</h2>
+    <div class="rollup" data-start="closed">
+    <section><h2 class="sectionhead" style="margin-top:18px">Publications</h2>
     <p class="small">{{ v.pubs.n_items }} publication{{ v.pubs.n_items|pluralize }} · {{ v.pubs.n_counted }} counted across cores{% if v.pubs.multi_core %} ({{ v.pubs.multi_core|length }} credit two or more cores){% endif %}{% if v.since %} · <span class="gap">{{ v.pubs.new|length }} added after {{ v.since|date:"M j, Y" }}</span>{% endif %}</p>
-    {% for t in v.pubs.rows %}{% if t.rows %}
-      <h3 style="margin:14px 0 4px">{{ t.core }} <span class="small muted" style="font-weight:400">{{ t.total }}</span></h3>
-      <div class="scroll"><table class="cnttab"><thead><tr><th>Type</th>{% for s in v.pub_statuses %}<th class="num">{{ s }}</th>{% endfor %}<th class="num">Total</th></tr></thead><tbody>
+    {% for t in v.pubs.rows %}
+      <h3 style="margin:18px 0 6px">{% if t.core == "No core" %}No core involved{% else %}{{ t.core }}{% endif %} <span class="rchip" style="font-weight:500;font-size:.8rem;margin-left:8px">{{ t.total }} publication{{ t.total|pluralize }}</span></h3>
+      {% if t.rows %}<div class="scroll"><table class="cnttab" title="This core’s publications by type and status, laid out like the Year 9 site-visit workbooks."><thead><tr><th>Type</th>{% for s in v.pub_statuses %}<th class="num">{{ s }}</th>{% endfor %}<th class="num">Total</th></tr></thead><tbody>
         {% for r in t.rows %}<tr><td>{{ r.type }}</td>{% for x in r.vals %}<td class="num">{{ x|default:"–" }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}
         <tr><td><strong>Total</strong></td>{% for x in t.col_totals %}<td class="num"><strong>{{ x }}</strong></td>{% endfor %}<td class="num"><strong>{{ t.total }}</strong></td></tr>
-      </tbody></table></div>{% endif %}{% empty %}{% endfor %}
+      </tbody></table></div>
+      {% else %}<p class="small muted" style="margin:0 0 6px">{% if t.core == "No core" %}No publications without a core credit in this grant year.{% else %}No publications credited to the {{ t.core }} in this grant year.{% endif %}</p>{% endif %}
+    {% endfor %}
     {% if not v.pubs.n_items %}<p class="muted">No publications in this year.</p>{% endif %}
     {% if v.pubs.carried %}<details class="mt"><summary class="small">Still under review from earlier years: {{ v.pubs.carried|length }} (not in the numbers above)</summary><ul class="small">{% for it in v.pubs.carried %}<li><strong>{{ it.obj.title }}</strong> · {{ it.status }}<div class="muted">Submitted {{ it.obj.submission_date|date:"M j, Y" }} (Year {{ it.submitted_year }}) · first entered on the site {{ it.entered|date:"M j, Y" }}</div></li>{% endfor %}</ul></details>{% endif %}
 
-    <h2 class="sectionhead" style="margin-top:22px">Presentations</h2>
+    </section>
+    <section><h2 class="sectionhead" style="margin-top:22px">Presentations</h2>
     <p class="small">{{ v.talks.n_items }} presentation{{ v.talks.n_items|pluralize }} · {{ v.talks.n_counted }} counted across cores{% if v.talks.multi_core %} ({{ v.talks.multi_core|length }} used two or more cores){% endif %}{% if v.since %} · <span class="gap">{{ v.talks.new|length }} added after {{ v.since|date:"M j, Y" }}</span>{% endif %}</p>
-    {% if v.talks.n_items %}<div class="scroll"><table class="cnttab"><thead><tr><th>Core</th>{% for c in v.talks.cols %}<th class="num">{{ c }}</th>{% endfor %}<th class="num">Total</th></tr></thead><tbody>
+    {% if v.talks.n_items %}<div class="scroll"><table class="cnttab" title="Presentations by core and type for this year. A talk that used two cores counts under each."><thead><tr><th>Core</th>{% for c in v.talks.cols %}<th class="num">{{ c }}</th>{% endfor %}<th class="num">Total</th></tr></thead><tbody>
       {% for r in v.talks.rows %}<tr><td>{{ r.core }}</td>{% for x in r.vals %}<td class="num">{{ x|default:"–" }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}
       <tr><td><strong>Total (duplicates counted)</strong></td>{% for x in v.talks.col_totals %}<td class="num"><strong>{{ x }}</strong></td>{% endfor %}<td class="num"><strong>{{ v.talks.n_counted }}</strong></td></tr>
     </tbody></table></div>{% else %}<p class="muted">No presentations in this year.</p>{% endif %}
 
-    <h2 class="sectionhead" style="margin-top:22px">Grants and awards</h2>
+    </section>
+    <section><h2 class="sectionhead" style="margin-top:22px">Grants and awards</h2>
     <p class="small">{{ v.grants.n_items }} proposal{{ v.grants.n_items|pluralize }}: {% for s, n in v.grants.status_counts.items %}{{ n }} {{ s|lower }}{% if not forloop.last %} · {% endif %}{% endfor %}{% if v.grants.multi_core %} · {{ v.grants.multi_core|length }} credit two or more cores{% endif %}{% if v.since %} · <span class="gap">{{ v.grants.new|length }} added after {{ v.since|date:"M j, Y" }}</span>{% endif %}</p>
     {% if v.grants.n_items %}
-    <div class="scroll"><table class="cnttab"><thead><tr><th>Core</th>{% for s in v.grant_statuses %}<th class="num">{{ s }} count</th><th class="num">{{ s }} total $</th>{% endfor %}<th class="num">Total $</th></tr></thead><tbody>
+    <div class="scroll"><table class="cnttab" title="Proposals and dollars by core and status for this year."><thead><tr><th>Core</th>{% for s in v.grant_statuses %}<th class="num">{{ s }} count</th><th class="num">{{ s }} total $</th>{% endfor %}<th class="num">Total $</th></tr></thead><tbody>
       {% for r in v.grants.rows %}<tr><td>{{ r.label }}</td>{% for x in r.cells %}<td class="num">{{ x.n|default:"–" }}</td><td class="num">{% if x.dollars %}${{ x.dollars|floatformat:"0g" }}{% else %}–{% endif %}</td>{% endfor %}<td class="num"><strong>${{ r.dollars|floatformat:"0g" }}</strong></td></tr>{% endfor %}
       <tr><td><strong>Total (duplicates counted)</strong></td>{% for x in v.grants.core_totals %}<td class="num"><strong>{{ x.n }}</strong></td><td class="num"><strong>${{ x.dollars|floatformat:"0g" }}</strong></td>{% endfor %}<td></td></tr>
     </tbody></table></div>
     <h3 style="margin:16px 0 4px">By funder</h3>
-    <div class="scroll"><table class="cnttab"><thead><tr><th>Funder</th>{% for s in v.grant_statuses %}<th class="num">{{ s }} count</th><th class="num">{{ s }} total $</th>{% endfor %}<th class="num">Total count</th></tr></thead><tbody>
+    <div class="scroll"><table class="cnttab" title="Proposals and dollars by funder and status for this year."><thead><tr><th>Funder</th>{% for s in v.grant_statuses %}<th class="num">{{ s }} count</th><th class="num">{{ s }} total $</th>{% endfor %}<th class="num">Total count</th></tr></thead><tbody>
       {% for r in v.grants.by_funder %}<tr><td>{{ r.label }}</td>{% for x in r.cells %}<td class="num">{{ x.n|default:"–" }}</td><td class="num">{% if x.dollars %}${{ x.dollars|floatformat:"0g" }}{% else %}–{% endif %}</td>{% endfor %}<td class="num"><strong>{{ r.n }}</strong></td></tr>{% endfor %}
       <tr><td><strong>Total</strong></td>{% for x in v.grants.funder_totals %}<td class="num"><strong>{{ x.n }}</strong></td><td class="num"><strong>${{ x.dollars|floatformat:"0g" }}</strong></td>{% endfor %}<td class="num"><strong>{{ v.grants.n_items }}</strong></td></tr>
     </tbody></table></div>
     <p class="small muted">{{ "Dollars are total costs: the award total for awards, the amount requested for pending and declined proposals. Funder is read from the agency name (NIH and its institutes, NSF, everything else Other)."|stack }}</p>
     {% endif %}
     {% if v.grants.pending.2.n %}<h3 style="margin:18px 0 4px">Pending proposals</h3>
-    <div class="scroll"><table class="cnttab" style="max-width:520px"><thead><tr><th>Pending</th><th class="num">Count</th><th class="num">Requested $</th></tr></thead><tbody>
+    <div class="scroll"><table class="cnttab" style="max-width:520px" title="Pending proposals split by the year they were submitted. Only this year’s are in the tables above."><thead><tr><th>Pending</th><th class="num">Count</th><th class="num">Requested $</th></tr></thead><tbody>
       {% for r in v.grants.pending %}<tr><td>{% if forloop.last %}<strong>{{ r.label }}</strong>{% else %}{{ r.label }}{% endif %}</td><td class="num">{% if forloop.last %}<strong>{{ r.n }}</strong>{% else %}{{ r.n|default:"–" }}{% endif %}</td><td class="num">{% if r.dollars %}{% if forloop.last %}<strong>${{ r.dollars|floatformat:"0g" }}</strong>{% else %}${{ r.dollars|floatformat:"0g" }}{% endif %}{% else %}–{% endif %}</td></tr>{% endfor %}
     </tbody></table></div>
     <p class="small muted">{{ "Only “Submitted this year” is in the tables above. The earlier ones are listed below."|stack }}</p>{% endif %}
     {% if v.grants.carried %}<details class="mt"><summary class="small">Still pending from earlier years: {{ v.grants.carried|length }}, ${{ v.grants.carried_dollars|floatformat:"0g" }} requested (not in the numbers above)</summary><ul class="small">{% for it in v.grants.carried %}<li><strong>{{ it.obj.project_title }}</strong> · {{ it.funder }}{% if it.dollars %} · ${{ it.dollars|floatformat:"0g" }} requested{% endif %}<div class="muted">Submitted {{ it.obj.submission_date|date:"M j, Y" }} (Year {{ it.submitted_year }}) · first entered on the site {{ it.entered|date:"M j, Y" }}</div></li>{% endfor %}</ul></details>{% endif %}
     {% if not v.grants.n_items %}<p class="muted">No proposals in this year.</p>{% endif %}
+    </section>
+    </div>
     <p class="small mt"><a href="{% url 'manage:outcomes_export' 'sitevisit' %}?year={{ v.year }}{% if v.since %}&amp;since={{ v.since|date:'Y-m-d' }}{% endif %}">Download these tables and the item lists (CSV)</a></p>
   {% endwith %}
   {% elif tab == 'counts' %}
-    <p class="small muted">{{ "Counted by grant year (June to May). A paper or grant credited to several projects or cores counts once in each, so project and core rows can add up to more than All CNAP. Grants are counted in the year submitted; awards in the year of the award notice."|stack }}</p>
-    {% for title, rows in counts_tables %}
-    <h2 class="sectionhead" style="margin-top:22px">{{ title }}</h2>
-    {% if rows %}<div class="scroll"><table class="cnttab"><thead><tr>{% if not forloop.first %}<th>Credited to</th>{% endif %}<th>Measure</th>{% for y in counts.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
-      <tbody>{% for r in rows %}<tr>{% if not forloop.parentloop.first %}<td>{% ifchanged r.group %}<strong>{{ r.group }}</strong>{% endifchanged %}</td>{% endif %}<td>{{ r.metric }}</td>{% for v in r.vals %}<td class="num">{% if r.dollars %}{% if v %}${{ v|floatformat:"0g" }}{% else %}–{% endif %}{% else %}{{ v|default:"–" }}{% endif %}</td>{% endfor %}<td class="num"><strong>{% if r.dollars %}${{ r.total|floatformat:"0g" }}{% else %}{{ r.total }}{% endif %}</strong></td></tr>{% endfor %}</tbody></table></div>
+    <p class="small muted">{{ "Everything is counted by grant year (June to May). A paper or grant credited to several projects or cores counts once in each, so the project and core tables can add up to more than All CNAP. Grants count in the year they were submitted; awards count in the year of the award notice. A tinted cell holds the whole Center’s total for that measure, and its tint matches the same measure’s total in All CNAP, so you can see how the tables play into each other."|stack }}</p>
+    <form method="get" class="fieldrow" style="margin:14px 0 4px;align-items:center"><input type="hidden" name="tab" value="counts">
+      <label class="small muted" for="cnt-year">Show</label>
+      <select id="cnt-year" name="year" onchange="this.form.submit()">
+        <option value="">All years (totals)</option>
+        {% for y in counts.years %}<option value="{{ y }}" {% if counts_year == y %}selected{% endif %}>Year {{ y }} (June 1, {{ y|add:2016 }} to May 31, {{ y|add:2017 }})</option>{% endfor %}
+      </select>
+    </form>
+    {% for title, t in counts_tables %}
+    <details class="cntsec"><summary><h2>{{ title }}</h2></summary>
+    {% if t.rows %}<div class="scroll"><table class="cnttab" title="{{ title }}: one row per {% if forloop.counter == 2 %}project{% elif forloop.counter == 3 %}core{% else %}center{% endif %}, one column per measure. The small line under a number splits it by year.">
+      <thead><tr><th>{% if forloop.counter == 2 %}Projects Credited{% elif forloop.counter == 3 %}Cores Credited{% else %}All CNAP{% endif %}</th>{% for c in t.cols %}<th class="num">{{ c }}</th>{% endfor %}</tr></thead>
+      <tbody>{% for r in t.rows %}<tr><td><strong>{{ r.group }}</strong></td>
+        {% for c in r.cells %}<td class="num{% if c.match %} cmatch ch{{ c.hue }}{% endif %}">{% if c.total %}<strong>{% if c.dollars %}{{ c.total|usd }}{% else %}{{ c.total }}{% endif %}</strong>{% else %}<span class="muted">0</span>{% endif %}</td>{% endfor %}
+      </tr>{% endfor %}{% if not forloop.first %}<tr class="cnttot"><td><strong>Total (duplicates counted)</strong></td>{% for c in t.col_totals %}<td class="num"><strong>{% if c.total %}{% if c.dollars %}{{ c.total|usd }}{% else %}{{ c.total }}{% endif %}{% else %}<span class="muted">0</span>{% endif %}</strong></td>{% endfor %}</tr>{% endif %}</tbody></table></div>
+    {% if not forloop.first %}<p class="small muted">A product credited to several {% if forloop.counter == 2 %}projects{% else %}cores{% endif %} counts once in each, so this total can be higher than All CNAP. All CNAP is the true unduplicated count.</p>{% endif %}
     {% else %}<p class="muted">Nothing recorded yet.</p>{% endif %}
+    </details>
     {% endfor %}
+    {% if counts.per_core %}
+    <details class="cntsec"><summary><h2>Each core, year by year</h2></summary>
+    <div class="coretabs">
+      {% for c in counts.per_core %}
+      <div class="scroll"><table class="cnttab coretab" title="{{ c.name }}: every year of the Center's products credited to this core, one row per measure.">
+        <thead><tr><th>{{ c.name }}</th>{% for y in counts.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+        <tbody>{% for r in c.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{% if v %}{% if r.dollars %}{{ v|usd }}{% else %}{{ v }}{% endif %}{% else %}<span class="muted">0</span>{% endif %}</td>{% endfor %}<td class="num{% if r.match %} cmatch ch{{ r.hue }}{% endif %}"><strong>{% if r.total %}{% if r.dollars %}{{ r.total|usd }}{% else %}{{ r.total }}{% endif %}{% else %}<span class="muted">0</span>{% endif %}</strong></td></tr>{% endfor %}</tbody>
+      </table></div>
+      {% endfor %}
+    </div>
+    </details>
+    {% endif %}
   {% else %}
-  <p class="small muted filt">Show: {% for k, label in filters %}<a href="?tab={{ tab }}&ack={{ k }}" class="{% if ack == k %}on{% endif %}">{{ label }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}{% if tab == 'pubs' and rrid_summary %} · <a href="?tab=pubs&ack=rrid" class="{% if ack == 'rrid' %}on{% endif %}">Core RRID not cited</a>{% endif %}{% if ack != 'all' and tab != 'talks' %} <span>({% if tab == 'pubs' %}published papers{% else %}submitted proposals{% endif %} only)</span>{% endif %}</p>
+  <div class="filterbox">
+    <p class="small filterlead">{% if tab == 'pubs' %}Every published paper must acknowledge CNAP’s grant under the Stevens Amendment. Please use these buttons to narrow the list while you check.{% elif tab == 'grants' %}Every submitted proposal should acknowledge CNAP’s support. Please use these buttons to narrow the list while you check.{% else %}Every talk or poster must acknowledge CNAP’s grant under the Stevens Amendment. Please use these buttons to narrow the list while you check.{% endif %}</p>
+    <div class="filtchips" role="group" aria-label="Narrow the list">
+      <a href="?tab={{ tab }}&ack=all" class="fchipbtn{% if ack == 'all' %} on{% endif %}" title="Every {% if tab == 'pubs' %}paper{% elif tab == 'grants' %}proposal{% else %}talk and poster{% endif %} on record, whatever its status.">All</a>
+      <a href="?tab={{ tab }}&ack=check" class="fchipbtn{% if ack == 'check' %} on{% endif %}" title="The ones nobody has checked yet. Open each, see whether it acknowledges CNAP, and record Yes or No with the Correct it buttons. This is your to-do list.">Needs checking</a>
+      <a href="?tab={{ tab }}&ack=no" class="fchipbtn{% if ack == 'no' %} on{% endif %}" title="Checked, and they do not acknowledge CNAP. These are the ones to follow up on with the author, and to flag before they go into the RPPR.">Not acknowledged</a>
+      <a href="?tab={{ tab }}&ack=yes" class="fchipbtn{% if ack == 'yes' %} on{% endif %}" title="Checked, and they acknowledge CNAP correctly. Nothing more to do.">Acknowledged</a>
+      {% if tab == 'pubs' and rrid_summary %}<a href="?tab=pubs&ack=rrid" class="fchipbtn{% if ack == 'rrid' %} on{% endif %}" title="Published papers that used a core but did not cite its Research Resource Identifier (RRID). The core’s use is then traceable only through the grant citation, so these are worth a note to the author for next time.">Core RRID not cited</a>{% endif %}
+    </div>
+    {% if ack != 'all' and tab != 'talks' %}<p class="small muted" style="margin:8px 0 0">These buttons look at {% if tab == 'pubs' %}published papers{% else %}submitted proposals{% endif %} only, since planned ones have nothing to check yet.</p>{% endif %}
+  </div>
   {% if tab == 'pubs' and rrid_summary %}<p class="small">{{ rrid_summary.cited }} of {{ rrid_summary.used }} published paper{{ rrid_summary.used|pluralize }} that used a core with an RRID cited it in the methods.{% if rrid_summary.missing %} {{ rrid_summary.missing }} didn’t, or aren’t sure.{% endif %}</p>{% endif %}
-  <div class="scroll"><table class="outtab">
-    <thead><tr><th>{% if tab == 'pubs' %}Publication{% elif tab == 'talks' %}Presentation{% else %}Proposal{% endif %}</th><th>CNAP people</th><th>Credited to</th><th>Status</th><th>Acknowledges CNAP?</th></tr></thead>
+  <div class="scroll"><table class="outtab" title="{% if tab == 'pubs' %}Every paper the Center tracks, one row per paper, with who it is credited to and whether it acknowledges CNAP.{% elif tab == 'talks' %}Every talk and poster, one row each, with who it is credited to and whether it acknowledged CNAP.{% else %}Every grant proposal, one row per round, with its status and whether it acknowledges CNAP.{% endif %}">
+    {% if tab == 'pubs' %}
+    <thead><tr><th class="num">#</th><th>Publication title</th><th>Journal</th><th>Published</th><th title="The CNAP members among this paper’s authors. Only CNAP members are listed here; the full author list lives on the paper’s record.">CNAP authors</th><th>RPLs Credited</th><th>PPLs Credited</th><th>Cores Credited</th><th>Core RRID cited?</th><th>Status</th><th>Acknowledges CNAP?</th>{% if can_edit %}<th>Correct it</th>{% endif %}</tr></thead>
+    {% elif tab == 'talks' %}
+    <thead><tr><th class="num">#</th><th>Presentation title</th><th>Type</th><th>Event</th><th>Date presented</th><th>Presenters</th><th>RPLs Credited</th><th>PPLs Credited</th><th>Cores Credited</th><th>Acknowledges CNAP?</th>{% if can_edit %}<th>Correct it</th>{% endif %}</tr></thead>
+    {% else %}
+    <thead><tr><th class="num">#</th><th>Proposal title</th><th>Round</th><th>Funder</th><th>Mechanism</th><th>Submitted</th><th title="The CNAP members on this proposal, with their role, such as PI. Only CNAP members are listed; others on the proposal are not tracked here.">CNAP investigators</th><th>RPLs Credited</th><th>PPLs Credited</th><th>Cores Credited</th><th>Status</th><th>Award total</th><th>Acknowledges CNAP?</th>{% if can_edit %}<th>Correct it</th>{% endif %}</tr></thead>
+    {% endif %}
     <tbody>
     {% for o in rows %}
       {% if tab == 'talks' %}{% with ack=o.cnap_cited %}
       <tr>
-        <td><strong>{{ o.title }}</strong><div class="small muted">{{ o.get_presentation_type_display }}{% if o.event %} · {{ o.event }}{% endif %}{% if o.presented_on %} · {{ o.presented_on|date:"M j, Y" }}{% endif %}</div></td>
+        <td class="num muted">{{ forloop.counter }}</td>
+        <td><strong>{{ o.title }}</strong></td>
+        <td class="small">{{ o.get_presentation_type_display }}</td>
+        <td class="small">{{ o.event|default:"—" }}</td>
+        <td class="small nowrap">{% if o.presented_on %}{{ o.presented_on|date:"M j, Y" }}{% else %}—{% endif %}</td>
         <td class="small">{% for x in o.people.all %}<div>{{ x.person }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
-        <td class="small">{% for x in o.project_links.all %}<div>{{ x.project.title|truncatechars:40 }}</div>{% endfor %}{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% endfor %}</td>
-        <td class="small nowrap">Presented</td>
-        <td>{% include "manage/_ack_cell.html" with kind="presentation" %}</td>
+        <td class="small">{% for x in o.project_links.all %}{% if x.project.kind != 'pilot' %}<div>{{ x.project.title }}</div>{% endif %}{% endfor %}</td>
+        <td class="small">{% for x in o.project_links.all %}{% if x.project.kind == 'pilot' %}<div>{{ x.project.title }}</div>{% endif %}{% endfor %}</td>
+        <td class="small">{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
+        {% include "manage/_ack_cell.html" with kind="presentation" %}
       </tr>{% endwith %}
       {% elif tab == 'pubs' %}{% with ack=o.cnap_cited %}
       <tr>
-        <td>{% if can_edit %}<a href="{% url 'manage:publication_edit' o.pk %}"><strong>{{ o.title }}</strong></a>{% else %}<strong>{{ o.title }}</strong>{% endif %}
-          <div class="small muted">{{ o.journal|default:"" }}{% if o.publication_date %} · {{ o.publication_date|date:"M Y" }}{% endif %}{% if o.pubmed_url %} · <a href="{{ o.pubmed_url }}" target="_blank" rel="noopener">Open</a>{% endif %}</div></td>
+        <td class="num muted">{{ forloop.counter }}</td>
+        <td>{% if can_edit %}<a href="{% url 'manage:publication_edit' o.pk %}"><strong>{{ o.title }}</strong></a>{% else %}<strong>{{ o.title }}</strong>{% endif %}{% if o.pubmed_url %}<div class="small"><a href="{{ o.pubmed_url }}" target="_blank" rel="noopener">Open in PubMed</a></div>{% endif %}</td>
+        <td class="small">{{ o.journal|default:"—" }}</td>
+        <td class="small nowrap">{% if o.publication_date %}{{ o.publication_date|date:"M Y" }}{% else %}—{% endif %}</td>
         <td class="small">{% for x in o.people.all %}<div>{{ x.person }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
-        <td class="small">{% for x in o.project_links.all %}<div>{{ x.project.title|truncatechars:40 }}</div>{% endfor %}{% for x in o.resource_links.all %}<div>{{ x.resource.name }}{% if x.resource.core.rrid and o.status == 'published' %} <span class="rridtag {{ x.rrid_cited|default:'none' }}">{% if x.rrid_cited == 'yes' %}RRID cited{% elif x.rrid_cited == 'no' %}RRID not cited{% elif x.rrid_cited == 'unsure' %}RRID not sure{% else %}RRID not asked{% endif %}</span>{% endif %}</div>{% endfor %}{% if not o.project_links.all and not o.resource_links.all %}<span class="muted">—</span>{% endif %}</td>
+        <td class="small">{% for x in o.project_links.all %}{% if x.project.kind != 'pilot' %}<div>{{ x.project.title }}</div>{% endif %}{% endfor %}</td>
+        <td class="small">{% for x in o.project_links.all %}{% if x.project.kind == 'pilot' %}<div>{{ x.project.title }}</div>{% endif %}{% endfor %}</td>
+        <td class="small">{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
+        <td class="small">{% for x in o.resource_links.all %}{% if x.resource.core.rrid and o.status == 'published' %}<div><span class="rridtag {{ x.rrid_cited|default:'none' }}">{% if x.rrid_cited == 'yes' %}Yes{% elif x.rrid_cited == 'no' %}No{% elif x.rrid_cited == 'unsure' %}Not sure{% else %}Not answered{% endif %}</span> <span class="muted">{{ x.resource.core.code }}</span></div>{% endif %}{% endfor %}</td>
         <td class="small nowrap">{{ o.get_status_display }}{% if o.substatus %}<div class="muted">{{ o.get_substatus_display }}</div>{% endif %}</td>
-        <td>{% include "manage/_ack_cell.html" with kind="publication" %}</td>
+        {% include "manage/_ack_cell.html" with kind="publication" %}
       </tr>{% endwith %}
       {% else %}{% with ack=o.cnap_acknowledged %}
       <tr>
-        <td>{% if can_edit %}<a href="{% url 'manage:grant_edit' o.pk %}"><strong>{{ o.project_title }}</strong></a>{% else %}<strong>{{ o.project_title }}</strong>{% endif %}
-          <div class="small muted">{{ o.funding_agency }}{% if o.mechanism %} {{ o.mechanism }}{% endif %} · {{ o.version_label }}{% if o.submission_date %} · submitted {{ o.submission_date|date:"M Y" }}{% endif %}</div></td>
+        <td class="num muted">{{ forloop.counter }}</td>
+        <td>{% if can_edit %}<a href="{% url 'manage:grant_edit' o.pk %}"><strong>{{ o.project_title }}</strong></a>{% else %}<strong>{{ o.project_title }}</strong>{% endif %}</td>
+        <td class="small nowrap">{{ o.version_label }}</td>
+        <td class="small">{{ o.funding_agency|default:"—" }}</td>
+        <td class="small">{{ o.mechanism|default:"—" }}</td>
+        <td class="small nowrap">{% if o.submission_date %}{{ o.submission_date|date:"M Y" }}{% else %}—{% endif %}</td>
         <td class="small">{% for x in o.people.all %}<div>{{ x.person }}{% if x.role == 'pi' %} <span class="muted">(PI)</span>{% endif %}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
-        <td class="small">{% for x in o.project_links.all %}<div>{{ x.project.title|truncatechars:40 }}</div>{% endfor %}{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% endfor %}{% if not o.project_links.all and not o.resource_links.all %}<span class="muted">—</span>{% endif %}</td>
-        <td class="small nowrap">{{ o.get_status_display }}{% if o.award_total %}<div class="muted">${{ o.award_total|floatformat:0 }}</div>{% endif %}</td>
-        <td>{% include "manage/_ack_cell.html" with kind="grant" %}</td>
+        <td class="small">{% for x in o.project_links.all %}{% if x.project.kind != 'pilot' %}<div>{{ x.project.title }}</div>{% endif %}{% endfor %}</td>
+        <td class="small">{% for x in o.project_links.all %}{% if x.project.kind == 'pilot' %}<div>{{ x.project.title }}</div>{% endif %}{% endfor %}</td>
+        <td class="small">{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
+        <td class="small nowrap">{{ o.get_status_display }}</td>
+        <td class="small nowrap">{% if o.award_total %}{{ o.award_total|usd }}{% else %}—{% endif %}</td>
+        {% include "manage/_ack_cell.html" with kind="grant" %}
       </tr>{% endwith %}
       {% endif %}
-    {% empty %}<tr><td colspan="5" class="muted">Nothing here.</td></tr>{% endfor %}
+    {% empty %}<tr><td colspan="14" class="muted">Nothing here.</td></tr>{% endfor %}
     </tbody>
   </table></div>
   {% endif %}

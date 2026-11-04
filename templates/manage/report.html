@@ -7,29 +7,40 @@
   <div class="small"><a href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.short_label }}</a>{% if tables %} · <a href="{% url 'manage:export_report' period.short_label fd.code %}">Download tables (CSV)</a>{% endif %}</div>
 </div>
 
-{% if tables %}<div class="restools"><span></span><button type="button" class="btn small ghost" data-expand-all aria-expanded="false">Show all tables</button></div>{% endif %}
+{% if tables %}<div class="restools"><span></span><button type="button" class="btn small ghost" data-expand-all aria-expanded="false">Open every item-by-item table</button></div>{% endif %}
+<div class="rollup" data-start="closed">
 {% if period.assignments.exists %}
+<div class="panel factsbox"><p class="factsbox-h">Who responded</p>
+  {% if not tables %}<p class="facts2"><span class="rchip"><b>{{ completion.assigned }}</b>&nbsp;received it</span> <span class="rchip"><b>{{ completion.complete }}</b>&nbsp;complete</span></p>{% endif %}
+  {% if tables %}{% if who %}<div class="whochips">
+    <details class="whochip"><summary class="rchip" title="Everyone this form was sent to this period. Click to see their names."><b>{{ completion.assigned }}</b>&nbsp;received the survey ▾</summary><ul>{% for n in who.received %}<li>{{ n }}</li>{% endfor %}</ul></details>
+    <details class="whochip"><summary class="rchip" title="Everyone who finished the form, with full answers or the opt-out answer. Click to see their names.">  <b>{{ opened }}</b>&nbsp;responded ▾</summary><ul>{% for n in who.responded %}<li>{{ n }}</li>{% empty %}<li class="muted">No one yet.</li>{% endfor %}</ul></details>
+    {% if opted_out %}<details class="whochip"><summary class="rchip" title="Everyone who answered every survey item. Click to see their names."><b>{{ full }}</b>&nbsp;answered all the survey items ▾</summary><ul>{% for n in who.full %}<li>{{ n }}</li>{% endfor %}</ul></details>
+    <details class="whochip"><summary class="rchip" title="Everyone who chose the opt-out answer, which completes the survey without its items. Click to see their names."><b>{{ opted_out }}</b>&nbsp;skipped them: {{ optout_name|default:"opted out" }} ▾</summary><ul>{% for n in who.opted %}<li>{{ n }}</li>{% endfor %}</ul></details>{% endif %}
+    {% if who.waiting %}<details class="whochip"><summary class="rchip warn" title="Everyone who has not finished yet: the people to nudge. Click to see their names."><b>{{ who.waiting|length }}</b>&nbsp;not finished yet ▾</summary><ul>{% for n in who.waiting %}<li>{{ n }}</li>{% endfor %}</ul></details>{% endif %}
+  </div>
+  {% else %}<p class="facts2"><span class="rchip"><b>{{ completion.assigned }}</b>&nbsp;received the survey</span> <span class="rchip"><b>{{ opened }}</b>&nbsp;responded</span>{% if opted_out %} <span class="rchip"><b>{{ full }}</b>&nbsp;answered all the survey items</span> <span class="rchip"><b>{{ opted_out }}</b>&nbsp;skipped them: {{ optout_name|default:"opted out" }}</span>{% endif %}</p>
+  <p class="small muted">{{ "Names are not shown for this form, to protect respondents’ confidentiality."|stack }}</p>{% endif %}{% endif %}
+</div>
 <div class="panel">
-  {% if tables %}<p class="facts2"><b>{{ completion.assigned }}</b> {{ completion.assigned|pluralize:"person,people" }} received the survey and <b>{{ opened }}</b> responded{% if opted_out %}: <b>{{ full }}</b> answered all the survey items and <b>{{ opted_out }}</b> skipped them because they {{ optout_name|default:"opted out" }}{% endif %}.</p>
-  {% else %}<p>{{ completion.complete }} of {{ completion.assigned }} complete.</p>{% endif %}
   {% include "manage/_report_tables.html" with show_codes=True %}
   {% if is_report and not tables %}<p class="small muted">{{ "Narrative report. Read each submission from the list below."|stack }}</p>{% endif %}
 </div>
 {% else %}
 <div class="panel">
-  <p>{{ "Prior-year averages imported from the site-visit reports. There are no individual responses for this period."|stack }}</p>
+  <p>{{ "Prior-year averages imported from the site-visit reports. There are no individual responses for this period. The answer-by-answer bar graphs and headline rings need individual answers, so they appear only for periods run in the Hub; imported years carry each item's average, shown in the trend line and the year-by-year means table below."|stack }}</p>
   {% include "manage/_report_tables.html" with show_codes=True %}
 </div>
 {% endif %}
 
 {% if followups and followups.counts %}
-<div class="panel"><h2 class="sectionhead">People who opted out</h2>
+<div class="panel rollsec"><h2 class="sectionhead">People who opted out</h2>
   {% for prompt, counts in followups.counts.items %}<p><strong>{{ prompt }}</strong> {% for label, n in counts.items %}<span class="fchip">{{ label }}: {{ n }}</span> {% endfor %}</p>{% endfor %}
-  {% if show_verbatims and followups.texts %}<p class="subttl">Reasons given</p><table class="verb">{% for t in followups.texts %}<tr><td>{{ t }}</td></tr>{% endfor %}</table>{% endif %}
+  {% if show_verbatims and followups.texts %}<table class="verb" title="What people wrote when they opted out, one row per answer."><thead><tr><th>Reasons given</th></tr></thead>{% for t in followups.texts %}<tr><td>{{ t }}</td></tr>{% endfor %}</table>{% endif %}
 </div>{% endif %}
 
 {% if period.assignments.exists and not is_report %}
-<div class="panel">
+<div class="panel rollsec">
   <h2 class="sectionhead">Qualitative data</h2>
   <p class="subttl">Themes</p>
   {% if can_edit_themes %}
@@ -41,14 +52,15 @@
   <p class="subttl" style="margin-top:22px">Verbatim responses</p>
   {% if show_verbatims %}
     {% for v in verbatims %}<p class="subttl" style="color:var(--ink)">{{ v.prompt }}</p>
-      <table class="verb">{% for t in v.answers %}<tr><td>{{ t }}</td></tr>{% empty %}<tr><td class="muted">No responses.</td></tr>{% endfor %}</table>{% endfor %}
+      <table class="verb" title="Every written answer to this question, one row per person."><thead><tr><th>What people wrote</th></tr></thead>{% for t in v.answers %}<tr><td>{{ t }}</td></tr>{% empty %}<tr><td class="muted">No responses.</td></tr>{% endfor %}</table>{% endfor %}
   {% elif deid_blocked %}<p class="small muted">{{ "Written answers aren’t shown because fewer than 5 people completed this survey. The combined results above still apply."|stack }}</p>
   {% else %}<p class="small muted">{{ "Written answers are visible only to the evaluator and the Center Director and Associate Director."|stack }}</p>{% endif %}
 </div>{% endif %}
+</div>{# end rollup #}
 
 {% if rows %}
 <details class="panel"><summary><strong>Individual responses ({{ rows|length }}){% if mode == 'deidentified' %}, de-identified{% endif %}</strong></summary>
-  <div class="scroll mt"><table><tbody>{% for r in rows %}<tr><td>{{ r.label }}</td><td class="small muted">{{ r.ctx }}</td><td class="small">{% if r.a.status == 'completed_opt_out' %}Opted out{% endif %}</td><td class="acts"><a class="btn small ghost" href="{% url 'manage:response' r.a.pk %}">Read</a></td></tr>{% endfor %}</tbody></table></div>
+  <div class="scroll mt"><table title="One row per response, so you can open any individual answer."><thead><tr><th>Person</th><th>Project or core</th><th>How it was completed</th><th></th></tr></thead><tbody>{% for r in rows %}<tr><td>{{ r.label }}</td><td class="small muted">{{ r.ctx }}</td><td class="small">{% if r.a.status == 'completed_opt_out' %}Opted out{% endif %}</td><td class="acts"><a class="btn small ghost" href="{% url 'manage:response' r.a.pk %}">Read</a></td></tr>{% endfor %}</tbody></table></div>
 </details>
 {% elif deid_blocked %}<p class="small muted">{{ "Individual responses aren’t shown because fewer than 5 people completed this survey."|stack }}</p>{% endif %}
 {% endblock %}

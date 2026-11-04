@@ -62,7 +62,7 @@ class ReportingPeriod(TimestampedModel):
     notes = models.TextField(blank=True)
     auto_emails = models.BooleanField(
         default=True,
-        help_text="Send e-mails on schedule: opening day, every 4 days until the due date, then daily until the period closes.",
+        help_text="Send emails on schedule: opening day, every 4 days until the due date, then daily until the period closes.",
     )
 
     class Meta:
@@ -435,7 +435,7 @@ class AnswerFile(models.Model):
 
 
 class PeriodEmail(models.Model):
-    """One "your forms are open" or reminder e-mail sent to one person for one period."""
+    """One "your forms are open" or reminder email sent to one person for one period."""
 
     class Kind(models.TextChoices):
         OPEN = "open", "Forms are open"

@@ -252,3 +252,25 @@ def nih_ack(kind="publication"):
         "official views of the National Institutes of Health."
     )
     return {"support": support, "level": level, "disclaimer": disclaimer, "all": f"{support} {level} {disclaimer}"}
+
+
+@register.simple_tag
+def why(text):
+    """A small "?" next to a heading. Hovering or focusing it explains why the feature exists and
+    where its data goes downstream (MW 2026-11-03: the site should teach a brand-new evaluator)."""
+    from django.utils.html import format_html
+
+    return format_html(
+        '<span class="whyq" tabindex="0" role="note" aria-label="{}">?<span class="whyb">{}</span></span>',
+        text,
+        text,
+    )
+
+
+@register.filter
+def usd(value):
+    """Dollar amounts with thousands separators: 1250000 -> $1,250,000 (MW 2026-11-03)."""
+    try:
+        return f"${float(value):,.0f}"
+    except (TypeError, ValueError):
+        return value

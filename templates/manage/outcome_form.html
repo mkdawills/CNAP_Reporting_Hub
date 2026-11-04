@@ -1,18 +1,128 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}{% if obj %}Edit{% else %}Add{% endif %} {{ kind }} · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>{% if obj %}Edit{% else %}Add a{% endif %} {{ kind }}</h1><p>{% if kind == 'grant' %}{{ "One record per submission. A resubmission keeps the original title so it shows as A1, A2, …"|stack }}{% else %}{{ "One record per paper, followed from planned to published."|stack }}{% endif %}</p></div></div>
-<form method="post" class="panel" style="max-width:860px">{% csrf_token %}
+<div class="head"><div><h1>{% if kind == 'grant' %}{% if obj %}Edit this grant proposal{% else %}Add a grant proposal{% endif %}{% else %}{% if obj %}Edit this publication{% else %}Add a publication{% endif %}{% endif %}</h1><p>{% if obj %}{% if kind == 'grant' %}This proposal ({{ obj.version_label }}{% if obj.resubmission_of %}, a resubmission of {{ obj.resubmission_of.version_label }}{% endif %}) is recorded as <strong>{{ obj.get_status_display|lower }}</strong>.{% if obj.rppr_submitted_year or obj.rppr_awarded_year %} <span class="rchip">{% if obj.rppr_submitted_year %}Reported as submitted in the Year {{ obj.rppr_submitted_year }} RPPR{% endif %}{% if obj.rppr_submitted_year and obj.rppr_awarded_year %}; {% endif %}{% if obj.rppr_awarded_year %}as awarded in the Year {{ obj.rppr_awarded_year }} RPPR{% endif %}</span>{% endif %}{% else %}This paper is recorded as <strong>{{ obj.get_status_display|lower }}</strong>.{% if obj.rppr_year %} <span class="rchip">Reported in the Year {{ obj.rppr_year }} RPPR</span>{% endif %}{% endif %}<br>{{ "Please check its details below and correct anything out of date. If it has moved to a new stage, please change the status first; the form then shows that stage’s fields."|stack }}{% elif kind == 'grant' %}{{ "First, please choose where the proposal stands: planned, submitted and pending, awarded, or not funded. The form then shows only the fields that stage needs. Each submission is its own record. To record a resubmission, please open the original proposal and choose “Start the resubmission”; the new round starts as a copy of the original, ready to update."|stack }}{% else %}{{ "First, please choose where the paper stands: planned, submitted, published, or declined. The form then shows only the fields that stage needs. One record per paper, followed from planned to published."|stack }}{% endif %}</p></div></div>
+{% with stage="" %}<div class="panel aform" style="max-width:860px;margin-bottom:16px">{% include "portal/_stevens_box.html" %}</div>{% endwith %}
+{% if kind == 'grant' and obj and obj.status == 'not_funded' and can_edit %}<div class="panel aform resubbox" style="max-width:860px;margin-bottom:16px"><p style="margin:0 0 10px"><strong>Resubmitting this proposal?</strong><br>{{ "The next round starts as a copy of this one, with its title, agency, mechanism, budget, and credits, so you only update what changed."|stack }}</p><form method="post" action="{% url 'manage:grant_resubmit' obj.pk %}">{% csrf_token %}<button class="btn" title="Creates the next round of this proposal, copied from this one, and opens it for editing. If the next round already exists, it opens that one.">Start the resubmission</button></form></div>{% endif %}
+<form method="post" class="panel aform" style="max-width:860px">{% csrf_token %}
   {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
   {% for field in form %}{% if obj and field.name == 'family_title' %}{% else %}
-    <div class="field"><label>{{ field.label }}{{ field }}</label>{% if field.help_text %}<div class="help">{{ field.help_text|stack }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>
+    {% if field.field.widget.input_type == "checkbox" %}
+    <div class="field opt" data-f="{{ field.name }}"><label class="optline">{{ field }}<span>{{ field.label }}</span></label>{% if field.help_text %}<div class="help">{{ field.help_text|stack }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>
+    {% else %}
+    <div class="field" data-f="{{ field.name }}"><label><span class="flab">{{ field.label }}</span>{{ field }}</label>{% if field.name == 'pubmed_url' %}<button class="btn small ghost" type="submit" name="lookup" value="1" formnovalidate style="margin-top:6px">Fill in from PubMed</button>{% endif %}{% if field.help_text %}<div class="help">{{ field.help_text|stack }}</div>{% endif %}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}
+    {% if field.name == 'cnap_cited_tri' %}<div class="stevens-why small">
+      <p><strong>What counts as Yes.</strong> {{ "The Stevens Amendment is a federal law: any public product of NIH-funded work must cite the grant (P20GM113109), say how much of the project NIH paid for, and add the standard disclaimer. A paper that has all three acknowledges CNAP."|stack }}</p>
+      <p><strong>Why it matters.</strong> {{ "Only papers that acknowledge the grant can be credited to CNAP in RPPR section C.1 and at the site visit. A No means following up with the author."|stack }}</p>
+      <p><a href="https://grants.nih.gov/grants/acknowledging-nih-funding" target="_blank" rel="noopener">NIH’s guidance on acknowledging funding (opens in a new tab)</a> · The full wording is under “How to acknowledge CNAP” at the top of this page.</p>
+    </div>{% elif field.name == 'ack_tri' %}<div class="stevens-why small">
+      <p><strong>What counts as Yes.</strong> {{ "The proposal credits CNAP for the preliminary data or support behind it, for example: “Preliminary data for this proposal were generated with support from NIGMS under Award Number P20GM113109 (CNAP COBRE).”"|stack }}</p>
+      <p><strong>How this relates to the Stevens Amendment.</strong> {{ "The Stevens Amendment covers public materials, such as papers, talks, posters, and press releases. A proposal is not public, so the law itself does not apply here; crediting CNAP in proposals is the Center’s expectation, and it shows NIH the COBRE leading to independent funding."|stack }}</p>
+      <p><a href="https://grants.nih.gov/grants/acknowledging-nih-funding" target="_blank" rel="noopener">NIH’s guidance on acknowledging funding (opens in a new tab)</a> · The suggested wording is under “How to acknowledge CNAP” at the top of this page.</p>
+    </div>{% endif %}</div>
+    {% endif %}
   {% endif %}{% endfor %}
   <h2 class="sectionhead" style="margin-top:28px">Credit</h2>
   {% for field in credit %}
     <fieldset class="field checks"><legend>{{ field.label }}</legend>{% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}<div class="checkgrid{% if field.name == 'projects' %} onecol{% endif %}">{% for c in field %}<label>{{ c.tag }} {{ c.choice_label }}</label>{% endfor %}</div></fieldset>
   {% endfor %}
-  {% if rrid and rrid.fields %}<h3 class="small" style="margin:18px 0 6px">Core RRIDs</h3>
+  {% if rrid and rrid.fields %}<h3 class="small" style="margin:18px 0 6px">Core RRIDs {% why "A Research Resource Identifier (RRID) is a permanent public ID for a core facility. When a paper cites the core's RRID in its methods, NIH and the scientific community can trace the core's impact, which strengthens the Center's renewal case. These questions record whether this paper cited the RRID of each core it is credited to." %}</h3>
+  <p class="small muted">{{ "An RRID is a permanent public identifier for a core facility."|stack }}<br><a href="https://scicrunch.org/resources" target="_blank" rel="noopener">Look up RRIDs at SciCrunch (opens in a new tab)</a> · <a href="https://www.rrids.org/" target="_blank" rel="noopener">About the RRID initiative (opens in a new tab)</a></p>
   {% for field in rrid %}<div class="field"><label>{{ field.label }}{{ field }}</label><div class="help">{{ field.help_text }}</div></div>{% endfor %}{% endif %}
   <div class="actions"><button class="btn" type="submit">Save</button><a href="{% url 'manage:outcomes' %}{% if kind == 'grant' %}?tab=grants{% endif %}">Cancel</a></div>
 </form>
+<script>
+(function () {
+  // The form tailors itself to the record's status (MW 2026-11-03): planned shows the best-guess
+  // basics, and the later fields appear as the record moves to submitted, published, or decided.
+  var kind = "{{ kind }}";
+  var sel = document.querySelector('select[name="status"]');
+  if (!sel) return;
+  var vis = kind === "publication" ? {
+    substatus: ["submitted"],
+    submission_date: ["submitted", "published", "declined"],
+    publication_date: ["published"],
+    pubmed_url: ["published", "declined"],
+    cnap_cited_tri: ["submitted", "published", "declined"],
+    cnap_index_tri: ["published"],
+    rppr_year: ["published"]
+  } : {
+    submission_date: ["submitted", "awarded", "not_funded"],
+    requested_total: ["submitted", "awarded", "not_funded"],
+    award_notice_date: ["awarded"],
+    award_total: ["awarded"],
+    grant_number: ["awarded"],
+    decision_comments: ["not_funded", "awarded"],
+    cnap_portion: ["awarded"],
+    rppr_submitted_year: ["submitted", "awarded", "not_funded"],
+    rppr_awarded_year: ["awarded"],
+    ack_tri: ["submitted", "awarded", "not_funded"]
+  };
+  var hints = kind === "publication"
+    ? { title: "While the paper is planned, your best guess is fine. You can update it later.",
+        journal: "While the paper is planned, the journal you are aiming for is fine." }
+    : { project_title: "While the proposal is planned, your best guess is fine. You can update it later." };
+  function apply() {
+    var st = sel.value;
+    Object.keys(vis).forEach(function (name) {
+      var box = document.querySelector('[data-f="' + name + '"]');
+      if (box) box.hidden = vis[name].indexOf(st) === -1;
+    });
+    Object.keys(hints).forEach(function (name) {
+      var box = document.querySelector('[data-f="' + name + '"]');
+      if (!box) return;
+      var h = box.querySelector(".plan-hint");
+      if (st === "planned") {
+        if (!h) {
+          h = document.createElement("div");
+          h.className = "help plan-hint";
+          h.textContent = hints[name];
+          box.appendChild(h);
+        }
+      } else if (h) h.remove();
+    });
+  }
+  sel.addEventListener("change", apply);
+  apply();
+})();
+</script>
+{% if kind == 'grant' and not obj %}
+<div class="resubprompt" hidden role="dialog" aria-live="polite">
+  <p><strong>Fill this form in from <span class="rp-label"></span>?</strong><br>{{ "The title, agency, mechanism, funding source, requested budget, and credits copy over, ready for you to update. Or start fresh and type everything yourself."|stack }}</p>
+  <div class="fieldrow"><button type="button" class="btn rp-fill" title="Copies the earlier round’s details into this form. Nothing is saved until you press Save.">Fill in from the earlier round</button><button type="button" class="btn ghost rp-fresh" title="Keeps this form blank. The new record is still grouped with the earlier one as its next round.">Start fresh</button></div>
+</div>
+<script>
+(function () {
+  var sel = document.querySelector('select[name="resubmission_of"]');
+  var box = document.querySelector(".resubprompt");
+  if (!sel || !box) return;
+  var holder = sel.closest(".field");
+  holder.appendChild(box);
+  var data = null;
+  sel.addEventListener("change", function () {
+    data = null;
+    if (!sel.value) { box.hidden = true; return; }
+    fetch("{% url 'manage:outcomes' %}grants/" + sel.value + "/json/", { credentials: "same-origin" })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { data = d; box.querySelector(".rp-label").textContent = d.label; box.hidden = false; });
+  });
+  box.querySelector(".rp-fresh").addEventListener("click", function () { box.hidden = true; });
+  box.querySelector(".rp-fill").addEventListener("click", function () {
+    if (!data) return;
+    Object.keys(data.fields).forEach(function (k) {
+      var el = document.querySelector('[name="' + k + '"]');
+      if (el && data.fields[k] !== null) { el.value = data.fields[k]; el.dispatchEvent(new Event("change")); }
+    });
+    if (data.pi) { var pi = document.querySelector('select[name="pi"]'); if (pi) pi.value = String(data.pi); }
+    [["people", data.people], ["projects", data.projects], ["resources", data.resources]].forEach(function (pair) {
+      document.querySelectorAll('input[name="' + pair[0] + '"]').forEach(function (c) {
+        c.checked = pair[1].indexOf(parseInt(c.value, 10)) !== -1;
+        c.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+    });
+    box.hidden = true;
+  });
+})();
+</script>
+{% endif %}
 {% endblock %}

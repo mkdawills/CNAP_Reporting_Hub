@@ -8,7 +8,7 @@
     <form method="post">{% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
       <div class="actions"><button class="btn" type="submit" autofocus>Sign in</button></div>
     </form>
-    <p class="small muted">{{ "Not you? Close this page. The link stays unused."|stack }}</p>
+    <p class="small muted">{{ "Not you? Please close this page. The link stays unused."|stack }}</p>
   {% else %}
     <p class="error">This sign-in link has already been used or has expired.</p>
     <p class="small muted">{{ "Links work once and last 7 days. Your saved answers are kept, so just get a new link."|stack }}</p>

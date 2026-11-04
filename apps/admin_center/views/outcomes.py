@@ -21,9 +21,11 @@ from apps.accounts import access
 from apps.audit.models import AuditLog, record_event
 from apps.common.enums import GrantRole, GrantStatus, PublicationStatus
 from apps.outcomes import nihdocs
+from apps.outcomes import nudges as _ndg
 from apps.outcomes import reminders as _rem
 from apps.outcomes.models import (
     GrantFamily,
+    GrantNudge,
     GrantStatusHistory,
     GrantSubmission,
     GrantSubmissionPerson,
@@ -129,12 +131,22 @@ def outcomes(request):
             "rppr": _rppr_ctx(request) if tab == "rppr" else None,
             "sv": _sv_ctx(request) if tab == "sitevisit" else None,
             "reminders_due": _rem.due() if tab == "reminders" else None,
+            "nudges_due": _ndg.due() if tab == "reminders" else None,
+            "nudge_rows": GrantNudge.objects.select_related("grant", "person").order_by(
+                "-sent_at"
+            )[:30]
+            if tab == "reminders"
+            else None,
+            "nudge_every": settings.GRANT_NUDGE_EVERY_DAYS,
             "reminders_sent": OutcomeReminder.objects.select_related("person")[:20]
             if tab == "reminders"
             else None,
             "stale_days": settings.OUTCOME_STALE_DAYS,
             "remind_every": settings.OUTCOME_REMINDER_EVERY_DAYS,
-            "counts": (c := counts() if tab == "counts" else None),
+            "counts": (
+                c := counts(year=_int(request.GET.get("year"))) if tab == "counts" else None
+            ),
+            "counts_year": _int(request.GET.get("year")),
             "counts_tables": [
                 ("All CNAP", c["all"]),
                 ("By project", c["projects"]),
@@ -160,7 +172,14 @@ def grant_year(d):
     return d.year - 2016 if d.month >= 6 else d.year - 2017
 
 
-def counts():
+def _int(v):
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def counts(year=None):
     """Outcome counts by grant year, overall and by project and by core/resource (for the NIH progress report)."""
     from apps.outcomes.models import Presentation
 
@@ -177,7 +196,7 @@ def counts():
     )
     metrics = [
         ("pubs", "Papers published"),
-        ("rrid", "Papers citing its RRID"),
+        ("rrid", "Papers citing a core RRID"),
         ("talks", "Presentations"),
         ("sub", "Grants submitted"),
         ("won", "Grants awarded"),
@@ -201,10 +220,16 @@ def counts():
         return out
 
     for p in pubs:
-        add(groups_of(p), "pubs", grant_year(p.publication_date))
-        for x in p.resource_links.all():
-            if x.rrid_cited == "yes":  # MW 2026-10-28: core use the grant citation can't show
-                add([("core", x.resource.name)], "rrid", grant_year(p.publication_date))
+        y = grant_year(p.publication_date)
+        add(groups_of(p), "pubs", y)
+        cited = [x for x in p.resource_links.all() if x.rrid_cited == "yes"]
+        if cited:  # MW 2026-10-28: core use the grant citation can't show
+            # Count the paper once for the Center and its projects, and under each core it cited,
+            # so all three tables share the same columns and line up (MW 2026-11-03).
+            add([("all", "All CNAP")], "rrid", y)
+            add([("project", x.project.title) for x in p.project_links.all()], "rrid", y)
+            for x in cited:
+                add([("core", x.resource.name)], "rrid", y)
     for t in talks:
         add(groups_of(t), "talks", grant_year(t.presented_on))
     for g in grants:
@@ -215,30 +240,80 @@ def counts():
             add(groups_of(g), "dollars", y, float(g.award_total or 0))
     years = sorted(years)
 
-    def table(kind):
+    hue = {m: i for i, (m, _) in enumerate(metrics)}
+
+    shown = [year] if year in years else years  # one year from the dropdown, or every year
+
+    def pivot(kind, skip=()):
+        """One row per project or core, one column per measure (MW 2026-11-03: cognitive clarity).
+        No year groupings inside a cell: the dropdown narrows the whole page to one year instead."""
         names = sorted({k[1] for k in tally if k[0] == kind})
+        cols = [(m, label) for m, label in metrics if m not in skip]
         rows = []
         for n in names:
-            for m, label in metrics:
-                vals = [tally.get((kind, n, m, y), 0) for y in years]
-                if any(vals):
-                    rows.append(
-                        {
-                            "group": n,
-                            "metric": label,
-                            "dollars": m == "dollars",
-                            "vals": vals,
-                            "total": sum(vals),
-                        }
-                    )
-        return rows
+            cells = []
+            for m, label in cols:
+                per = [(y, tally.get((kind, n, m, y), 0)) for y in shown]
+                cells.append(
+                    {
+                        "m": m,
+                        "hue": hue[m],
+                        "total": sum(v for _, v in per),
+                        "dollars": m == "dollars",
+                        "per": [(y, v) for y, v in per if v],
+                    }
+                )
+            rows.append({"group": n, "cells": cells})
+        col_totals = [
+            {
+                "total": sum(r["cells"][i]["total"] for r in rows),
+                "dollars": m == "dollars",
+            }
+            for i, (m, label) in enumerate(cols)
+        ]
+        return {"cols": [label for _, label in cols], "rows": rows, "col_totals": col_totals}
 
-    return {
+    out = {
         "years": years,
-        "all": table("all"),
-        "projects": table("project"),
-        "cores": table("core"),
+        "all": pivot("all"),
+        "projects": pivot("project"),
+        "cores": pivot("core"),
     }
+    # One small table per core: years across the top, one row per measure (MW 2026-11-03).
+    out["per_core"] = []
+    for name in sorted({k[1] for k in tally if k[0] == "core"}):
+        rows = []
+        for m, label in metrics:
+            vals = [tally.get(("core", name, m, y), 0) for y in years]
+            rows.append(
+                {
+                    "label": label,
+                    "m": m,
+                    "hue": hue[m],
+                    "dollars": m == "dollars",
+                    "vals": vals,
+                    "total": sum(vals),
+                }
+            )
+        out["per_core"].append({"name": name, "rows": rows})
+    # a cell holding the whole Center total gets the same tint as that total in All CNAP (MW 2026-11-03)
+    all_total = {c["m"]: c["total"] for r in out["all"]["rows"] for c in r["cells"]}
+    for key in ("projects", "cores"):
+        for r in out[key]["rows"]:
+            for c in r["cells"]:
+                c["match"] = bool(c["total"]) and c["total"] == all_total.get(c["m"])
+                if c["match"]:
+                    all_total[c["m"] + "_hit"] = True
+    # the per-core year-by-year tables keep the same tints where their totals match All CNAP
+    for t in out["per_core"]:
+        for r in t["rows"]:
+            r["match"] = bool(r["total"]) and r["total"] == all_total.get(r["m"])
+            if r["match"]:
+                all_total[r["m"] + "_hit"] = True
+    for r in out["all"]["rows"]:
+        for c in r["cells"]:
+            c["match"] = bool(all_total.get(c["m"] + "_hit")) and bool(c["total"])
+    return out
 
 
 @manage_action
@@ -278,7 +353,7 @@ class _Credit(forms.Form):
         ),
         required=False,
         widget=forms.CheckboxSelectMultiple,
-        label="CNAP people on it",
+        label="CNAP members on this publication",
     )
     projects = ProjectChoiceField(
         queryset=Project.objects.filter(archived_at__isnull=True)
@@ -321,9 +396,9 @@ class PublicationForm(forms.ModelForm):
     class Meta:
         model = Publication
         fields = [
+            "status",
             "title",
             "publication_type",
-            "status",
             "substatus",
             "author_display_text",
             "journal",
@@ -334,7 +409,6 @@ class PublicationForm(forms.ModelForm):
             "has_foreign_authors",
             "foreign_component_approved",
             "has_non_idea_coauthors",
-            "rppr_year",
         ]
         widgets = {
             "submission_date": forms.DateInput(attrs={"type": "date"}),
@@ -342,14 +416,44 @@ class PublicationForm(forms.ModelForm):
             "author_display_text": forms.Textarea(attrs={"rows": 2}),
             "comments": forms.Textarea(attrs={"rows": 2}),
         }
-        labels = {"author_display_text": "Authors (as cited)", "pubmed_url": "PubMed or DOI link"}
+        labels = {
+            "author_display_text": "Authors",
+            "pubmed_url": "PubMed or DOI link",
+            "rppr_year": "Reported in the RPPR (C.1), Year",
+            "has_foreign_authors": "Foreign authors?",
+            "foreign_component_approved": "Foreign component approved by NIGMS?",
+            "has_non_idea_coauthors": "Co-authors from non-IDeA states?",
+        }
+        help_texts = {
+            "author_display_text": (
+                "Please list every author, in order, exactly as they appear on the paper. "
+                "For example: Okafor A, Kim H, Moreau C."
+            )
+        }
+
+
+class _RoundChoice(forms.ModelChoiceField):
+    def label_from_instance(self, g):
+        bits = [f"{g.project_title} ({g.version_label})"]
+        if g.funding_agency or g.mechanism:
+            bits.append(" ".join(x for x in (g.funding_agency, g.mechanism) if x))
+        bits.append(g.get_status_display())
+        return " \u00b7 ".join(bits)
 
 
 class GrantForm(forms.ModelForm):
-    family_title = forms.CharField(
+    resubmission_of = _RoundChoice(
+        queryset=GrantSubmission.objects.filter(archived_at__isnull=True)
+        .exclude(status=GrantStatus.PLANNED)
+        .order_by("project_title", "version_no"),
         required=False,
-        label="Resubmission of (title of the earlier proposal)",
-        help_text="Leave blank for a new proposal. Matching titles are grouped as A0, A1, …",
+        empty_label="No, this is a new proposal",
+        label="Is this a resubmission of an earlier proposal?",
+        help_text=(
+            "If it is, please choose the earlier round. "
+            "You can then fill this form in from it, or start fresh. "
+            "Either way, the new record is grouped with the earlier one as its next round (A1, A2, and so on)."
+        ),
     )
     pi = forms.ModelChoiceField(
         queryset=Person.objects.filter(archived_at__isnull=True).order_by("last_name"),
@@ -363,10 +467,10 @@ class GrantForm(forms.ModelForm):
     class Meta:
         model = GrantSubmission
         fields = [
+            "status",
             "project_title",
             "funding_agency",
             "mechanism",
-            "status",
             "submission_date",
             "requested_total",
             "award_notice_date",
@@ -375,16 +479,46 @@ class GrantForm(forms.ModelForm):
             "decision_comments",
             "funding_source_type",
             "cnap_portion",
-            "exclude_from_table1",
-            "rppr_submitted_year",
-            "rppr_awarded_year",
         ]
         widgets = {
             "submission_date": forms.DateInput(attrs={"type": "date"}),
             "award_notice_date": forms.DateInput(attrs={"type": "date"}),
             "decision_comments": forms.Textarea(attrs={"rows": 2}),
         }
-        labels = {"project_title": "Proposal title", "decision_comments": "Notes"}
+        labels = {
+            "project_title": "Proposal title",
+            "decision_comments": "Notes",
+            "cnap_portion": "CNAP portion of the award",
+            "funding_source_type": "Funding source",
+            "rppr_submitted_year": "Reported as submitted in the RPPR (Table 1), Year",
+            "rppr_awarded_year": "Reported as awarded in the RPPR (Table 1), Year",
+            "exclude_from_table1": "Leave out of RPPR Table 1",
+        }
+        help_texts = {
+            "exclude_from_table1": (
+                "Please tick this in two cases only. "
+                "First, the parent COBRE award itself (P20GM113109) or a supplement to it. "
+                "Second, a grant held by core staff that is not related to the core\u2019s IDeA-supported work. "
+                "For example, a core technician\u2019s own research grant on an unrelated topic is left out, "
+                "while an equipment grant for the core counts. "
+                "This follows the FY27 COBRE guidance for Table 1: \u201cWhen reporting funding for Core staff, report only if related to IDeA support. For example, equipment grants.\u201d "
+                "When unsure, please leave it unticked; the Table 1 list can be checked on the RPPR tab before it goes in."
+            ),
+            "cnap_portion": (
+                "If the CNAP investigator is the sole PI, please leave this blank: "
+                "the full award counts in RPPR Table 1. "
+                "If the CNAP investigator is an MPI, Co-PI, collaborator, or subawardee, "
+                "please enter only their portion of the award. "
+                "For example: on a $1,200,000 award where the CNAP investigator's subaward "
+                "is $250,000, please enter 250000."
+            )
+        }
+
+
+from apps.portal.outcome_forms import apply_placeholders as _apply_placeholders
+
+_apply_placeholders(PublicationForm)
+_apply_placeholders(GrantForm)
 
 
 def _sync(model, owner_field, owner, field, values, **extra):
@@ -424,8 +558,32 @@ class _Rrid(forms.Form):
 def publication_edit(request, pk=None):
     obj = get_object_or_404(Publication, pk=pk) if pk else None
     old_status = obj.status if obj else None
+    post = request.POST or None
+    if request.method == "POST" and "lookup" in request.POST:
+        # "Fill in from PubMed": show the values for checking; nothing is saved yet (MW 2026-11-03).
+        from apps.outcomes import pubmed
+
+        post = request.POST.copy()
+        try:
+            found = pubmed.lookup(post.get("pubmed_url", ""))
+        except pubmed.LookupError_ as exc:
+            messages.warning(request, str(exc))
+        else:
+            for f in ("title", "journal"):
+                if found.get(f):
+                    post[f] = found[f]
+            if found.get("authors"):
+                post["author_display_text"] = found["authors"]
+            if found.get("publication_date"):
+                post["publication_date"] = found["publication_date"].isoformat()
+            if found.get("url"):
+                post["pubmed_url"] = found["url"]
+            messages.info(
+                request,
+                "Filled in from PubMed. Please check the title, journal, date, and authors before saving.",
+            )
     form = PublicationForm(
-        request.POST or None,
+        post,
         instance=obj,
         initial={
             "cnap_cited_tri": _tri_initial(obj.cnap_cited) if obj else "",
@@ -441,7 +599,13 @@ def publication_edit(request, pk=None):
         },
     )
     rrid = _Rrid(request.POST or None, links=obj.resource_links.all() if obj else ())
-    if request.method == "POST" and form.is_valid() and credit.is_valid() and rrid.is_valid():
+    if (
+        request.method == "POST"
+        and "lookup" not in request.POST
+        and form.is_valid()
+        and credit.is_valid()
+        and rrid.is_valid()
+    ):
         with transaction.atomic():
             p = form.save(commit=False)
             p.cnap_cited = _tri(form.cleaned_data["cnap_cited_tri"])
@@ -503,20 +667,24 @@ def grant_edit(request, pk=None):
             "resources": [x.resource for x in obj.resource_links.all()] if obj else [],
         },
     )
+    credit.fields["people"].label = "CNAP members on this proposal"
+    if obj:
+        form.fields.pop("resubmission_of", None)
+    else:
+        form.order_fields(["status", "resubmission_of"])
     if request.method == "POST" and form.is_valid() and credit.is_valid():
         with transaction.atomic():
             g = form.save(commit=False)
             g.cnap_acknowledged = _tri(form.cleaned_data["ack_tri"])
             if not obj:
-                fam_title = form.cleaned_data["family_title"].strip()
-                fam = (
-                    GrantFamily.objects.filter(title__iexact=fam_title).first()
-                    if fam_title
-                    else None
-                )
-                g.grant_family = fam or GrantFamily.objects.create(
-                    title=g.project_title, created_by=request.user
-                )
+                earlier = form.cleaned_data.get("resubmission_of")
+                if earlier:
+                    g.grant_family = earlier.grant_family
+                    g.resubmission_of = earlier
+                else:
+                    g.grant_family = GrantFamily.objects.create(
+                        title=g.project_title, created_by=request.user
+                    )
                 g.created_by = request.user
             g.save()
             people = list(credit.cleaned_data["people"])
@@ -559,7 +727,7 @@ def grant_edit(request, pk=None):
     return render(
         request,
         "manage/outcome_form.html",
-        {"form": form, "credit": credit, "obj": obj, "kind": "grant"},
+        {"form": form, "credit": credit, "obj": obj, "kind": "grant", "can_edit": access.can_manage(request.user)},
     )
 
 
@@ -624,7 +792,7 @@ def _nihdocs_zip(request, gy):
 
 @admin_view
 def export(request, kind):
-    """Citation list, grant list or counts as a spreadsheet-ready CSV."""
+    """Citation list, grant list, or counts as a spreadsheet-ready CSV."""
     import csv
     import io
 
@@ -746,7 +914,7 @@ def export(request, kind):
                     "PubMed link",
                     "Cites P20GM113109",
                     "Non-IDeA-state co-authors",
-                    "CNAP people",
+                    "CNAP authors",
                     "Note",
                 ]
             )
@@ -1273,13 +1441,19 @@ def export(request, kind):
     else:
         c = counts()
         w.writerow(["Group", "Credited to", "Measure"] + [f"Y{y}" for y in c["years"]] + ["Total"])
-        for title, rows in [
+        for title, t in [
             ("All CNAP", c["all"]),
             ("Project", c["projects"]),
             ("Core or resource", c["cores"]),
         ]:
-            for r in rows:
-                w.writerow([title, r["group"], r["metric"]] + r["vals"] + [r["total"]])
+            for r in t["rows"]:
+                for label, cell in zip(t["cols"], r["cells"]):
+                    per = dict(cell["per"])
+                    w.writerow(
+                        [title, r["group"], label]
+                        + [per.get(y, 0) for y in c["years"]]
+                        + [cell["total"]]
+                    )
     record_event(request.user, AuditLog.Action.EXPORT, f"outcomes:{kind}")
     resp = HttpResponse("﻿" + buf.getvalue(), content_type="text/csv; charset=utf-8")
     resp["Content-Disposition"] = f'attachment; filename="cnap_{kind}.csv"'
@@ -1298,7 +1472,14 @@ def person_outcomes(person):
         .distinct()
         .order_by("-submission_date")
     )
-    return {"pubs": pubs, "grants": grants}
+    from apps.outcomes.models import Presentation
+
+    talks = (
+        Presentation.objects.filter(archived_at__isnull=True, people__person=person)
+        .distinct()
+        .order_by("-presented_on")
+    )
+    return {"pubs": pubs, "grants": grants, "talks": talks}
 
 
 def _t2_choices():
@@ -1431,3 +1612,68 @@ def send_reminders(request):
         else "No reminders were due.",
     )
     return redirect("/manage/outcomes/?tab=reminders")
+
+
+@manage_action
+def grant_resubmit(request, pk):
+    """Start the next round of a not-funded proposal, copied from it (MW 2026-11-04)."""
+    from apps.outcomes.services import start_resubmission
+
+    g = get_object_or_404(GrantSubmission, pk=pk)
+    new = start_resubmission(request.user, g)
+    record_event(request.user, AuditLog.Action.CREATE, new, new={"resubmission_of": g.pk})
+    messages.success(
+        request,
+        f"Round {new.version_label} is ready, copied from {g.version_label}. Please update anything that changed.",
+    )
+    return redirect("manage:grant_edit", pk=new.pk)
+
+
+@manage_action
+def table1_exclude(request, pk):
+    """Leave a proposal out of RPPR Table 1, or put it back, with the evaluator's reason (MW 2026-11-04)."""
+    g = get_object_or_404(GrantSubmission, pk=pk)
+    back = request.POST.get("next") or "/manage/outcomes/?tab=rppr#rp-t1"
+    if request.POST.get("action") == "restore":
+        old = {"exclude": g.exclude_from_table1, "reason": g.table1_exclusion_reason}
+        g.exclude_from_table1 = False
+        g.table1_exclusion_reason = ""
+        g.save(update_fields=["exclude_from_table1", "table1_exclusion_reason", "updated_at"])
+        record_event(request.user, AuditLog.Action.UPDATE, g, old=old, new={"exclude": False})
+        messages.success(request, f"{g.project_title} ({g.version_label}) is counted in Table 1 again.")
+        return redirect(back)
+    reason = request.POST.get("reason", "").strip()
+    if not reason:
+        messages.error(request, "Please give a short reason for leaving it out of Table 1.")
+        return redirect(back)
+    g.exclude_from_table1 = True
+    g.table1_exclusion_reason = reason[:1000]
+    g.save(update_fields=["exclude_from_table1", "table1_exclusion_reason", "updated_at"])
+    record_event(request.user, AuditLog.Action.UPDATE, g, new={"exclude": True, "reason": reason})
+    messages.success(request, f"{g.project_title} ({g.version_label}) is left out of Table 1.")
+    return redirect(back)
+
+
+@admin_view
+def grant_round_json(request, pk):
+    """What the add form needs to fill itself in from an earlier round (MW 2026-11-04)."""
+    from django.http import JsonResponse
+
+    g = get_object_or_404(GrantSubmission, pk=pk)
+    lead = g.people.filter(role=GrantRole.PI).first() or g.people.first()
+    return JsonResponse(
+        {
+            "fields": {
+                "project_title": g.project_title,
+                "funding_agency": g.funding_agency,
+                "mechanism": g.mechanism,
+                "funding_source_type": g.funding_source_type,
+                "requested_total": str(g.requested_total or ""),
+            },
+            "people": [x.person_id for x in g.people.all()],
+            "projects": [x.project_id for x in g.project_links.all()],
+            "resources": [x.resource_id for x in g.resource_links.all()],
+            "pi": lead.person_id if lead else None,
+            "label": f"{g.project_title} ({g.version_label})",
+        }
+    )

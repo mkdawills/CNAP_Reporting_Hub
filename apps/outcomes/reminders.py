@@ -1,9 +1,9 @@
 """
-Reminder e-mails for stale publications and grants (Publication flow 11 / Grant flow: "reminder notifications
+Reminder emails for stale publications and grants (Publication flow 11 / Grant flow: "reminder notifications
 for stale records").
 
 A record is stale when it is Planned or Submitted and nobody has reviewed it ("Confirm no changes" or an update)
-for OUTCOME_STALE_DAYS days. Each person with stale records gets one e-mail listing them, copied to anyone who
+for OUTCOME_STALE_DAYS days. Each person with stale records gets one email listing them, copied to anyone who
 enters for them, at most once every OUTCOME_REMINDER_EVERY_DAYS days. Run daily: manage.py send_outcome_reminders.
 """
 
@@ -39,10 +39,10 @@ def due(now=None):
         .filter(_stale_q(cutoff))
         .prefetch_related("people__person")
     )
+    # Planned proposals get the friendly monthly check-in instead (nudges.py, MW 2026-11-03),
+    # so only submitted proposals can go stale here.
     grants = (
-        GrantSubmission.objects.filter(
-            archived_at__isnull=True, status__in=[GrantStatus.PLANNED, GrantStatus.SUBMITTED]
-        )
+        GrantSubmission.objects.filter(archived_at__isnull=True, status=GrantStatus.SUBMITTED)
         .filter(_stale_q(cutoff))
         .prefetch_related("people__person")
     )

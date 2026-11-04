@@ -194,7 +194,7 @@ def test_real_pdf_round_trip_and_suggestions(client, center):
     p.degrees = ""
     p.save()
     html = client.get(f"/manage/people/{p.pk}/").content.decode()
-    assert "PhD, MA, BS" in html and "1.8 person months in 2025 (Jan 2025 – Dec 2025)" in html
+    assert "PhD, MA, BS" in html and "2025: 1.8 person months (Jan 2025 – Dec 2025)" in html
     client.post(f"/manage/people/{p.pk}/apply-docs/", {"degrees": "PhD, MA, BS"})
     client.post(f"/manage/people/{p.pk}/apply-docs/", {"orcid": "0000-0002-1694-233X"})
     p.refresh_from_db()

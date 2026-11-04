@@ -36,17 +36,43 @@ def _period_from(request):
     )
 
 
+STAGE_HELP = {
+    "draft": "Step 1, review before launch: you check who will receive which forms. Nothing is sent until you approve. Click to open the launch checklist.",
+    "preview": "Step 2, open for preview: everyone can read their forms ahead of time, but answers are not saved yet. Click to see the period’s dashboard.",
+    "open": "Step 3, open: forms are collecting answers, and the automatic emails and reminders are running. Click to see who has finished.",
+    "closed": "Step 4, closed: no more answers come in, so the numbers stop moving. Click to see the period.",
+    "generated": "Step 5, results generated: the Hub builds every report and freezes a snapshot of the numbers. Click to open the results.",
+    "reviewed": "Step 6, reviewed: you read the results and write the themes from what people wrote. Click to open the results.",
+    "finalized": "Step 7, finalized: the results are official and ready for the RPPR and the External Advisory Committee. Click to open the results.",
+}
+
+
 def lifecycle(period):
+    from django.urls import reverse
+
     current = ps.stage(period)
     keys = [k for k, _ in ps.STAGES]
     idx = keys.index(current)
+    dash = reverse("manage:dashboard") + f"?period={period.short_label}"
+    results = reverse("manage:results") + f"?period={period.short_label}"
+    links = {
+        "draft": reverse("manage:launch", args=[period.pk]),
+        "preview": dash,
+        "open": dash,
+        "closed": dash,
+        "generated": results,
+        "reviewed": results,
+        "finalized": results,
+    }
     return [
         {
             "n": i + 1,
             "label": label,
             "state": "done" if i < idx or current == "finalized" else ("now" if i == idx else ""),
+            "help": STAGE_HELP.get(key, ""),
+            "url": links.get(key, ""),
         }
-        for i, (_, label) in enumerate(ps.STAGES)
+        for i, (key, label) in enumerate(ps.STAGES)
     ]
 
 
@@ -77,7 +103,7 @@ class PeriodForm(forms.ModelForm):
         labels = {
             "opens_at": "Opens",
             "due_at": "Due",
-            "sequence": "Sequence (1 = Fall, surveyed in January; 2 = Spring, surveyed in May)",
+            "sequence": "Sequence (1 = Fall, surveyed in November; 2 = RPPR/Spring, surveyed in March)",
         }
 
 
@@ -98,7 +124,9 @@ def periods(request):
                 "snapshots": list(p.snapshots.order_by("version_no")),
             }
         )
-    return render(request, "manage/periods.html", {"rows": rows})
+    active = [r for r in rows if not r["historical"] and r["stage"] != "finalized"]
+    past = [r for r in rows if r["historical"] or r["stage"] == "finalized"]
+    return render(request, "manage/periods.html", {"rows": rows, "active": active, "past": past})
 
 
 @manage_page
@@ -166,7 +194,7 @@ def period_action(request, pk):
 # --------------------------------------------------------------------------- review before launch
 
 GROUPS = [
-    ("member", "General members", "On the roster, with no project, mentoring or core role."),
+    ("member", "General members", "On the roster, with no project, mentoring, or core role."),
     ("rpl", "Research Project Leaders (RPL)", "Also mentees: they receive the Mentee Survey."),
     ("ppl", "Pilot Project Leaders (PPL)", "Also mentees: they receive the Mentee Survey."),
     (
@@ -278,6 +306,21 @@ def launch(request, pk):
         }
         for g in groups:
             rows_by_group[g].append(row)
+    # the same form lines up in the same column all the way down a group (MW 2026-11-03)
+    aligned = {}
+    for key, rows in rows_by_group.items():
+        order = []
+        for r in rows:
+            for c in r["chips"]:
+                if c["label"] not in order:
+                    order.append(c["label"])
+        out = []
+        for r in rows:
+            bylab = {}
+            for c in r["chips"]:
+                bylab.setdefault(c["label"], []).append(c)
+            out.append({**r, "cells": [bylab.get(label, []) for label in order]})
+        aligned[key] = {"rows": out, "order": order}
     warnings = []
     for pr in Project.objects.active().filter(is_active=True):
         lead = "pilot_awardee" if pr.kind == "pilot" else "project_leader"
@@ -303,7 +346,7 @@ def launch(request, pk):
         if not person.primary_email:
             warnings.append(
                 {
-                    "text": f"{person} has no e-mail on file, so they can’t receive their forms or sign-in link.",
+                    "text": f"{person} has no email on file, so they can’t receive their forms or sign-in link.",
                     "url": f"/manage/people/{pid}/",
                 }
             )
@@ -328,9 +371,9 @@ def launch(request, pk):
         ((forms_by_id[k], v) for k, v in totals.items()), key=lambda t: t[0].sort_order
     )
     groups = [
-        {"key": k, "title": t, "note": n, "rows": rows_by_group[k]}
+        {"key": k, "title": t, "note": n, "rows": aligned[k]["rows"], "order": aligned[k]["order"]}
         for k, t, n in GROUPS
-        if rows_by_group[k]
+        if aligned[k]["rows"]
     ]
     return render(
         request,
@@ -420,6 +463,20 @@ def dashboard(request):
         rows = rows.filter(status__in=COMPLETE_STATUSES)
     elif f_status:
         rows = rows.filter(status=f_status)
+    # People buckets from the Home tiles (MW 2026-11-04): finished, partway, or not started.
+    f_who = request.GET.get("who", "")
+    if f_who in ("finished", "partway", "not_started"):
+        per = {}
+        for pid, st in qs.exclude(status=AssignmentStatus.EXEMPT).values_list("person_id", "status"):
+            per.setdefault(pid, []).append(st)
+        def bucket(sts):
+            if all(x in COMPLETE_STATUSES for x in sts):
+                return "finished"
+            if all(x == AssignmentStatus.NOT_STARTED for x in sts):
+                return "not_started"
+            return "partway"
+        keep = [pid for pid, sts in per.items() if bucket(sts) == f_who]
+        rows = rows.filter(person_id__in=keep)
     rows = rows.order_by("person__last_name", "form_definition__sort_order")
     total = qs.exclude(status=AssignmentStatus.EXEMPT).count()
     done = qs.filter(status__in=COMPLETE_STATUSES).count()
@@ -446,6 +503,7 @@ def dashboard(request):
             "hidden_names": len(named) < len(form_rows) or not named,
             "f_form": f_form,
             "f_status": f_status,
+            "f_who": request.GET.get("who", ""),
             "is_open": p.status == PeriodStatus.OPEN,
         },
     )
@@ -498,12 +556,12 @@ def _unused():
     return dt, timezone, access, is_on_roster
 
 
-# --------------------------------------------------------------------------- e-mails
+# --------------------------------------------------------------------------- emails
 
 
 @admin_view
 def period_emails(request, pk):
-    """Who gets the "forms are open" or reminder e-mail, before anything is sent."""
+    """Who gets the "forms are open" or reminder email, before anything is sent."""
     from apps.reporting.models import PeriodEmail
     from apps.reporting.services import emails
 
@@ -534,7 +592,7 @@ def period_emails(request, pk):
 
 @manage_action
 def period_emails_auto(request, pk):
-    """Turn a period's automatic e-mails on or off."""
+    """Turn a period's automatic emails on or off."""
     p = get_object_or_404(ReportingPeriod, pk=pk)
     on = request.POST.get("on") == "1"
     if p.auto_emails != on:
@@ -542,7 +600,7 @@ def period_emails_auto(request, pk):
         p.save(update_fields=["auto_emails", "updated_at"])
         record_event(request.user, AuditLog.Action.UPDATE, p, new={"auto_emails": on})
     messages.success(
-        request, "Automatic e-mails are on." if on else "Automatic e-mails are paused."
+        request, "Automatic emails are on." if on else "Automatic emails are paused."
     )
     return redirect(f"/manage/periods/{p.pk}/emails/")
 
@@ -560,7 +618,7 @@ def period_emails_send(request, pk):
     else:
         messages.success(
             request,
-            f"Sent {n} e-mail{'s' if n != 1 else ''}."
+            f"Sent {n} email{'s' if n != 1 else ''}."
             + (f" {skipped} people were skipped (see the list)." if skipped else ""),
         )
     return redirect(f"/manage/periods/{p.pk}/emails/?kind={kind}")

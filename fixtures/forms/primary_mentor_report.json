@@ -33,7 +33,7 @@
     "holder_type": "project_leader",
     "about": [
       "This report records your meetings with your Research Project Leader and your view of their progress toward the project milestones.",
-      "It is used to support the mentee and in the Center’s reporting to NIH."
+      "It is used to support the mentee and in the Center’s Research Performance Progress Report (RPPR) to NIH."
     ]
   },
   "sections": [
@@ -42,7 +42,7 @@
       "title": "Meetings",
       "repeatable": true,
       "repeat_label": "Add a meeting",
-      "instructions": "Add one entry for each meeting during the reporting period.",
+      "instructions": "Please add one entry for each meeting during the reporting period.",
       "questions": [
         {
           "code": "meeting_date",
@@ -64,7 +64,7 @@
           "code": "evaluation",
           "prompt": "Evaluation of Project Progress",
           "type": "long_text",
-          "help_text": "Milestones: functional laboratory; recruiting students/staff; progress on specific aims; national/international presentations; peer-reviewed publications; preliminary RPG data; RPG submission; national reputation; RPG funding.",
+          "help_text": "The milestones are a functional laboratory, recruiting students and staff, progress on specific aims, national or international presentations, peer-reviewed publications, preliminary Research Project Grant (RPG) data, RPG submission, a national reputation, and RPG funding.",
           "config": {
             "narrative": true
           }

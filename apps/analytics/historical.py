@@ -43,8 +43,8 @@ SCALES = {
 def _period(label, grant_year, sequence):
     """
     Grant Year N runs June (2015+N) to May (2016+N): Year 6 is June 2022 - May 2023.
-    The first semiannual period (Fall) covers June-November and is surveyed in January;
-    the second (Spring) covers December-May and is surveyed in May or June.
+    The first semiannual period (Fall) covers June-November and is surveyed in November;
+    the second (RPPR/Spring) covers December-May and is surveyed in March. The site visit session is surveyed in April. (MW 2026-11-03.)
     The Year 9 site-visit reports called these "Jan" and "May"/"June"; the Center calls them Fall and Spring.
     """
     p = ReportingPeriod.objects.filter(grant_year=grant_year, sequence=sequence).first()

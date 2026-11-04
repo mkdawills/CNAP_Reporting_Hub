@@ -1,23 +1,53 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Reporting periods · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Reporting periods</h1><p>{{ "Each period moves through seven steps, starting with a review before anything is sent. Finalized results change only through a new, audited version."|stack }}</p></div>
+<div class="head"><div><h1>Reporting periods{% why "A reporting period is one collection window, such as Year 10 Fall. You open it, people answer, you close it, and its results become one official snapshot. Two periods a year add up to the Center’s annual RPPR to NIH." %}</h1><p>{{ "Each period moves through seven steps, starting with a review before anything is sent. Finalized results change only through a new, audited version."|stack }}</p></div>
   {% if can_manage %}<div><a class="btn" href="{% url 'manage:period_new' %}">Add a period</a></div>{% endif %}</div>
-{% for r in rows %}
+
 <div class="panel">
-  <div class="head" style="margin-bottom:10px"><div><h2>{{ r.p.name }}</h2><p class="small">{{ r.p.short_label }} · covers {{ r.p.start_date|date:"M j, Y" }} to {{ r.p.end_date|date:"M j, Y" }}{% if not r.historical %} · opens {{ r.p.opens_at|date:"M j, Y" }}, due {{ r.p.due_at|date:"M j, Y" }}{% endif %}</p></div>
-    <div>{% if r.historical %}<span class="small muted">Prior-year averages only</span>
-      {% elif r.stage == 'draft' %}<a class="btn" href="{% url 'manage:launch' r.p.pk %}">Review before launch</a>
+  <h2 class="sectionhead">A typical reporting year{% why "This is the rhythm the Center runs on. The Fall and RPPR/Spring sessions collect surveys and reports, and the April site-visit session feeds the External Advisory Committee’s review." %}</h2>
+  <p class="small muted">{{ "Each budget year runs June 1 to May 31. It has two reporting sessions, and the site visit session follows in April."|stack }}</p>
+  <div class="yearband" aria-hidden="true">
+    <div class="yb-seg yb-fall"><span class="yb-name">Fall session</span><span class="yb-dates">Covers June 1 – November 30.<br>Surveyed in November.</span></div>
+    <div class="yb-seg yb-spring"><span class="yb-name">RPPR/Spring session</span><span class="yb-dates">Covers December 1 – May 31.<br>Surveyed in March.</span></div>
+    <div class="yb-seg yb-visit"><span class="yb-name">Site visit session</span><span class="yb-dates">The External Advisory Committee visit.<br>Surveyed in April.</span></div>
+  </div>
+  <div class="yb-months"><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span></div>
+</div>
+
+{% for r in active %}
+<div class="panel pcard {{ r.stage }}">
+  <div class="head" style="margin-bottom:10px"><div>
+    <h2>{{ r.p.name }}{% if r.stage == 'open' %} <span class="pchip on">Open now</span>{% elif r.stage == 'draft' %} <span class="pchip">Coming up</span>{% else %} <span class="pchip">Wrapping up</span>{% endif %}</h2>
+    <p class="small">This period covers {{ r.p|span }}.<br>Forms open {{ r.p.opens_at|date:"F j" }} and are due {{ r.p.due_at|date:"F j, Y" }}.</p>
+    <p class="small whatsnext">{% if r.stage == 'draft' %}Next step: review who gets which forms, then launch.{% elif r.stage == 'open' %}Forms are open. After the due date, close the period.{% elif r.stage == 'closed' %}Next step: generate results.{% elif r.stage == 'generated' %}Next step: review the results, then mark them reviewed.{% elif r.stage == 'reviewed' %}Next step: finalize to make the results official.{% endif %}</p>
+  </div>
+    <div>{% if r.stage == 'draft' %}<a class="btn" href="{% url 'manage:launch' r.p.pk %}">Review before launch</a>
       {% elif can_manage %}<form method="post" action="{% url 'manage:period_action' r.p.pk %}" class="inline">{% csrf_token %}
         {% if r.stage == 'open' %}<button class="btn" name="action" value="close" onclick="return confirm('Close {{ r.p.short_label }}? Respondents can no longer change their forms.')">Close period</button>
         {% elif r.stage == 'closed' %}<button class="btn" name="action" value="generate">Generate results</button> <button class="btn ghost" name="action" value="reopen">Reopen</button>
         {% elif r.stage == 'generated' %}<button class="btn" name="action" value="reviewed">Mark reviewed</button>
-        {% elif r.stage == 'reviewed' %}<button class="btn" name="action" value="finalize" onclick="return confirm('Finalize? These become the official results and respondents will see the combined results.')">Finalize</button>
-        {% elif r.stage == 'finalized' %}<details style="display:inline-block"><summary class="btn ghost">Create a correction</summary><div class="mt"><label class="small muted">What does this correction fix? (required)<input type="text" name="reason" required></label><button class="btn small" name="action" value="generate">Generate corrected results</button></div></details>{% endif %}
+        {% elif r.stage == 'reviewed' %}<button class="btn" name="action" value="finalize" onclick="return confirm('Finalize? These become the official results and respondents will see the combined results.')">Finalize</button>{% endif %}
       </form>{% endif %}</div></div>
-  {% if not r.historical %}{% include "manage/_lifecycle.html" with steps=r.steps %}{% endif %}
+  {% include "manage/_lifecycle.html" with steps=r.steps %}
   {% if r.snapshots %}<p class="small muted mt">Results versions: {% for s in r.snapshots %}v{{ s.version_no }} {{ s.get_status_display|lower }}{% if s.regeneration_reason %} (“{{ s.regeneration_reason }}”){% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</p>{% endif %}
-  {% if r.stage != 'draft' %}<p class="small"><a href="{% url 'manage:results' %}?period={{ r.p.short_label }}">Results</a>{% if not r.historical %} · <a href="{% url 'manage:dashboard' %}?period={{ r.p.short_label }}">Dashboard</a> · <a href="{% url 'manage:period_emails' r.p.pk %}">E-mails</a>{% endif %}</p>{% endif %}
+  {% if r.stage != 'draft' %}<p class="small"><a href="{% url 'manage:results' %}?period={{ r.p.short_label }}">Results</a> · <a href="{% url 'manage:dashboard' %}?period={{ r.p.short_label }}">Dashboard</a> · <a href="{% url 'manage:period_emails' r.p.pk %}">Emails</a></p>{% endif %}
 </div>
 {% endfor %}
+
+{% if past %}
+<div class="panel">
+  <h2 class="sectionhead">Past periods ({{ past|length }}){% why "Finished periods are kept read-only so the official numbers never drift. If something must change, a correction creates a new audited version instead of editing the old one." %}</h2>
+  <p class="small muted">{{ "These are finished. Their results are read-only, and a correction creates a new, audited version."|stack }}</p>
+  <div class="scroll"><table title="Every past reporting period, with its dates, status, and completion."><thead><tr><th>Period</th><th>Covers</th><th>Status</th><th></th></tr></thead><tbody>
+  {% for r in past %}<tr>
+    <td><strong>{{ r.p.name }}</strong></td>
+    <td class="small">{{ r.p|span }}</td>
+    <td class="small">{% if r.historical %}Imported year averages only.{% elif r.snapshots %}{% with s=r.snapshots|last %}Finalized (v{{ s.version_no }}).{% endwith %}{% else %}Finalized.{% endif %}</td>
+    <td class="small"><a href="{% url 'manage:results' %}?period={{ r.p.short_label }}">Results</a>
+      {% if not r.historical and can_manage %}<details class="corr"><summary>Create a correction</summary><form method="post" action="{% url 'manage:period_action' r.p.pk %}">{% csrf_token %}<label class="small muted">What does this correction fix? (required)<input type="text" name="reason" required></label><button class="btn small" name="action" value="generate">Generate corrected results</button></form></details>{% endif %}</td>
+  </tr>{% endfor %}
+  </tbody></table></div>
+</div>
+{% endif %}
 {% endblock %}

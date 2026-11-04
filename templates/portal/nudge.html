@@ -1,0 +1,67 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Monthly check-in · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>A quick monthly check-in</h1>
+  <p>We are here to support you in your grant funding pursuits.</p>
+</div></div>
+
+<div class="panel nudgebox">
+  <p class="choose-facts"><span class="muted">Your planned proposal:</span> {{ grant.project_title }}{% if grant.funding_agency %} · to {{ grant.funding_agency }}{% endif %}{% if grant.anticipated_submission_date %} · anticipated {% if grant.anticipated_day_known %}{{ grant.anticipated_submission_date|date:"F j, Y" }}{% else %}{{ grant.anticipated_submission_date|date:"F Y" }}{% endif %}{% endif %}</p>
+
+  {% if done %}
+    <h2>Thank you!</h2>
+    <p>Your answer has been shared with the CNAP evaluation team.</p>
+    {% if nudge.choice %}<p class="nudge-echo">You said: “{{ nudge.get_choice_display }}”</p>{% endif %}
+    {% if nudge.choice == 'ideation' %}
+      <p>Every funded proposal starts as an idea.<br>When you are ready to take the first step, the supports below are yours to use.</p>
+    {% elif nudge.choice == 'block' %}
+      <p>Thanks for your honesty, and happy to nudge!<br>Writers who start early and draft a little at a time consistently fare better than writers who rush near the deadline.<br>A small start today pays off.<br>Cheering you on!</p>
+    {% elif nudge.choice == 'specialist' %}
+      <p>Wonderful!<br>For common due dates, your grant specialist may be working with many other faculty submitting that same day.<br>Notifying your grant specialist weeks to months ahead gives you the best chance of garnering as much of their support as possible.<br>A strong working relationship with your grant specialists is one of the best levers for a smooth submission and a strong proposal.<br>Cheering you on!</p>
+    {% elif nudge.choice == 'timeline' %}
+      <p>Excellent!<br>A timeline with clear internal due dates is one of the best predictors of an on-time submission.<br>If you would like a second set of eyes on your timeline, the CNAP administrative team is happy to help.</p>
+    {% elif nudge.choice == 'pivot' %}
+      <p>Thank you for telling us.<br>Plans evolve, and we would love to hear your new direction.</p>
+      {% if milestones %}
+      <p>A friendly reminder: as a CNAP awardee{% if role_word %} and {{ role_word }}{% endif %}, these are the milestones you have committed to:</p>
+      <ul class="nudge-miles">{% for m in milestones %}<li>{{ m }}</li>{% endfor %}</ul>
+      {% endif %}
+      <p>Please also <a href="{% url 'portal:outcome_update' 'grant' grant.pk %}?for={{ nudge.person.pk }}">update this proposal’s record</a> so your plans on file stay current.</p>
+    {% endif %}
+  {% elif not still_planned %}
+    <p>Good news: this proposal is no longer marked as planned, so there is nothing to answer here.</p>
+    <p><a href="{% url 'portal:outcomes' %}?for={{ nudge.person.pk }}">Open your publications, talks, and grants</a></p>
+  {% else %}
+    <p class="choose-lead">We are checking in to see how this planned proposal submission is coming along.<br>Please answer by selecting one of the choices below, and add a few comments if you like.</p>
+    <form method="post">{% csrf_token %}
+      <ol class="nudge-opts">
+        {% for code, label in choices %}
+        <li><label><input type="radio" name="choice" value="{{ code }}" {% if preselect == code %}checked{% endif %} {% if code == 'pivot' %}data-pivot{% endif %}> <span>{{ label }}</span></label></li>
+        {% endfor %}
+      </ol>
+      <div class="field"><label for="nudge-c">A few comments (optional)</label>
+        <textarea id="nudge-c" name="comments" rows="3" placeholder="Anything you would like us to know."></textarea>
+        <p class="small muted pivot-note" hidden>Since you are pivoting, please share your new alternative plans here.</p>
+      </div>
+      <div class="fieldrow"><button class="btn" type="submit">Send my answer</button></div>
+    </form>
+    <script>
+    (function () {
+      var note = document.querySelector(".pivot-note");
+      document.querySelectorAll('input[name="choice"]').forEach(function (r) {
+        r.addEventListener("change", function () { note.hidden = !r.hasAttribute("data-pivot"); });
+      });
+      var on = document.querySelector('input[name="choice"]:checked');
+      if (on && on.hasAttribute("data-pivot")) note.hidden = false;
+    })();
+    </script>
+  {% endif %}
+
+  <div class="nudge-supports">
+    <h2>Grant Writing support from the CNAP administrative team</h2>
+    <ul>{% for s in supports %}<li>{{ s }}</li>{% endfor %}</ul>
+    <p class="small muted">Please reach out any time; we are glad to help.</p>
+  </div>
+  <p class="small" style="margin-top:18px"><a href="{% url 'portal:outcomes' %}?for={{ nudge.person.pk }}">Back to my publications, talks, and grants</a></p>
+</div>
+{% endblock %}

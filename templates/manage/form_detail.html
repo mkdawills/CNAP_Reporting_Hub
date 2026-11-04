@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}{{ fd.name }} · Forms · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{{ fd.name }} {% why "A read-only copy of this form’s questions, exactly as respondents see them, so you can check wording without launching anything." %}</h1>
+  <p>{{ "This is a read-only copy of the form, for reference. Respondents see the same wording."|stack }}</p></div>
+  <div><a class="btn ghost" href="{% url 'manage:forms' %}">All forms</a></div></div>
+{% if fd.description %}<p class="small muted">{{ fd.description|stack }}</p>{% endif %}
+{% if schema.version.intro_text %}<div class="panel"><p>{{ schema.version.intro_text|stack }}</p></div>{% endif %}
+{% for row in sections %}
+<div class="panel">
+  {% if row.s.title %}<h2 class="sectionhead">{{ row.s.title }}</h2>{% endif %}
+  {% if row.s.instructions %}<p class="small muted">{{ row.s.instructions|stack }}</p>{% endif %}
+  {% if row.s.is_repeatable %}<p class="small muted">Respondents add one entry per row ({{ row.s.repeat_label|default:"Add an entry" }}), or upload the matching Excel template.</p>{% endif %}
+  <ol class="specq">{% for x in row.qs %}
+    <li><strong>{{ x.q.prompt }}</strong>{% if not x.q.is_required %} <span class="small muted">(optional)</span>{% endif %}
+      <div class="small muted">{{ x.type }}{% if x.opts %} · {{ x.opts|join:" / " }}{% endif %}</div>
+      {% if x.q.help_text %}<div class="small muted">{{ x.q.help_text|stack }}</div>{% endif %}</li>
+  {% endfor %}</ol>
+</div>
+{% endfor %}
+{% endblock %}

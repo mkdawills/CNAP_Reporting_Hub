@@ -19,11 +19,13 @@ urlpatterns = [
     path("history/", views.history, name="history"),
     path("results/", views.center_results, name="center_results"),
     path("profile/", views.profile, name="profile"),
+    path("profile/documents/<int:pk>/", views.my_document, name="my_document"),
     path("files/<int:file_pk>/", views.download, name="download"),
     # publications and grants (self-entry)
     path("outcomes/", ov.home, name="outcomes"),
     path("outcomes/presentations/new/", ov.presentation, name="presentation_new"),
     path("outcomes/presentations/<int:pk>/", ov.presentation, name="presentation_edit"),
+    path("outcomes/nudge/<int:pk>/", ov.nudge, name="outcome_nudge"),
     path("outcomes/new/<slug:kind>/", ov.new, name="outcome_new"),
     path("outcomes/<slug:kind>/<int:pk>/", ov.update, name="outcome_update"),
     path("outcomes/<slug:kind>/<int:pk>/confirm/", ov.confirm, name="outcome_confirm"),

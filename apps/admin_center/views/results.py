@@ -47,15 +47,16 @@ def results(request):
     cards = []
     if p:
         historical = not p.assignments.exists()
+        imported = set()
         if historical:
-            codes = (
+            # List every form, so nobody wonders where a survey went: forms without imported
+            # averages get a "nothing on file" row instead of disappearing (MW 2026-11-03).
+            imported = set(
                 p.snapshots.filter(provenance="aggregate_import")
                 .values_list("results__group_key", flat=True)
                 .distinct()
-            )
-            forms = FormDefinition.objects.filter(code__in=[c for c in codes if c]).order_by(
-                "sort_order"
-            )
+            ) - {None, ""}
+            forms = FormDefinition.objects.order_by("sort_order")
         else:
             forms = (
                 FormDefinition.objects.filter(assignments__reporting_period=p)
@@ -70,7 +71,14 @@ def results(request):
             )
             comp = None if historical else rpt.completion(fd, p)
             cards.append(
-                {"fd": fd, "mode": mode, "locked": locked, "comp": comp, "historical": historical}
+                {
+                    "fd": fd,
+                    "mode": mode,
+                    "locked": locked,
+                    "comp": comp,
+                    "historical": historical,
+                    "no_data": historical and fd.code not in imported,
+                }
             )
     return render(
         request,
@@ -120,6 +128,24 @@ def form_report(request, label, code):
     show_verbatims = mode == IDENTIFIED or (
         mode == DEIDENTIFIED and deidentified_rows_allowed(fd, p)
     )
+    # Who is behind each count on the "Who responded" line (MW 2026-11-04). Names only where
+    # this person's access to the form allows names.
+    who = None
+    if mode == IDENTIFIED and p.assignments.exists():
+        every = list(
+            Assignment.objects.filter(form_definition=fd, reporting_period=p)
+            .exclude(status="exempt")
+            .select_related("person")
+            .order_by("person__last_name", "person__first_name")
+        )
+        names = lambda xs: sorted({a.person.full_name for a in xs}, key=lambda n: n.split()[-1])
+        who = {
+            "received": names(every),
+            "responded": names([a for a in every if a.status in COMPLETE_STATUSES]),
+            "full": names([a for a in every if a.status == "submitted"]),
+            "opted": names([a for a in every if a.status == "completed_opt_out"]),
+            "waiting": names([a for a in every if a.status not in COMPLETE_STATUSES]),
+        }
     return render(
         request,
         "manage/report.html",
@@ -128,6 +154,7 @@ def form_report(request, label, code):
             "mode": mode,
             "rows": rows,
             "show_verbatims": show_verbatims,
+            "who": who,
             "deid_blocked": mode == DEIDENTIFIED and not deidentified_rows_allowed(fd, p),
             "can_edit_themes": access.can_manage(request.user)
             and data["snapshot"] is not None

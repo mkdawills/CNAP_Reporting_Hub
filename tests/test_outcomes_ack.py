@@ -65,7 +65,7 @@ def test_grant_credited_to_several_projects_and_cores(client, center):
         "/manage/outcomes/grants/new/",
         {
             "project_title": "Test proposal (revised)",
-            "family_title": "Test proposal",
+            "resubmission_of": g.pk,
             "status": "planned",
         },
     )

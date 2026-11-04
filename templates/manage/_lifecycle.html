@@ -1,1 +1,1 @@
-<ol class="life">{% for s in steps %}<li class="{{ s.state }}" data-n="{{ s.n }}">{{ s.label }}</li>{% endfor %}</ol>
+<ol class="life">{% for s in steps %}<li class="{{ s.state }}" data-n="{{ s.n }}" title="{{ s.help }}">{% if s.url %}<a href="{{ s.url }}">{{ s.label }}</a>{% else %}{{ s.label }}{% endif %}</li>{% endfor %}</ol>

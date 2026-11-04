@@ -1,18 +1,24 @@
 {% autoescape off %}Hello {{ person.first_name }},
 
-{% if kind == "ask" %}You turned in your Current and Pending (Other) Support on {{ fall }}. NIH needs it to be current for CNAP's Research Performance Progress Report (RPPR), due {{ rppr_due }}.{% else %}A reminder about one quick question for CNAP's Research Performance Progress Report (RPPR) to NIH.{% endif %}
+{% if kind == "ask" %}You turned in your Current and Pending (Other) Support on {{ fall }}. NIH needs it to be current for CNAP's Research Performance Progress Report (RPPR), due {{ rppr_due }}.{% else %}This is a reminder about one quick question for CNAP's Research Performance Progress Report (RPPR) to NIH.{% endif %}
 
-Has your Current and Pending changed since then? The page below has a link to the one you turned in, so you can look it over first. For example, a new proposal submitted, an award, or a change in your effort.
+Has your Current and Pending (Other) Support changed since then? For example, you may have submitted a proposal, received an award, or changed your effort.
+The page below has a link to the one you turned in, so you can look it over first.
 
-- My Current and Pending has not changed: one click.
-- My Current and Pending has changed: upload the new certified PDF from SciENcv.
+- If your Current and Pending has not changed, you only need one click.
+- If your Current and Pending has changed, please upload the new certified PDF from SciENcv.
+
+NIH's instructions for the Current and Pending (Other) Support Common Form:
+https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form
+
+If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at {{ evaluator_email }}; she can point you in the right direction.
 
 Please answer by {{ due }}:
 {{ url }}
 {% if with_link %}
 This link signs you in. It works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
 {% else %}
-Sign in with your K-State eID.
+Please sign in with your K-State eID.
 {% endif %}
 Thank you,
 The CNAP evaluation team

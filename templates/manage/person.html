@@ -6,28 +6,29 @@
     <p>{{ p.institution|default:"No institution recorded" }}{% if p.department %} · {{ p.department }}{% endif %}{% if p.position_title %} · {{ p.position_title }}{% endif %}</p>
     <p class="small">{% if external %}Outside K-State: signs in with an emailed link.{% else %}K-State: signs in with K-State single sign-on.{% endif %}</p>
   </div>
-  <div class="small">
-    {% if on_roster %}On the CNAP roster{% else %}Not on the CNAP roster{% endif %}
-    {% if can_manage %}<form method="post" action="{% url 'manage:person_roster' p.pk %}" class="mt">{% csrf_token %}
+  <div class="rosterbox {% if on_roster %}on{% endif %}">
+    <span class="rb-chip">{% if on_roster %}On the CNAP roster{% else %}Not on the CNAP roster{% endif %}</span>
+    <span class="small muted">{% if on_roster %}They receive the all-member surveys.{% else %}They receive only what their relationships call for.{% endif %}</span>
+    {% if can_manage %}<form method="post" action="{% url 'manage:person_roster' p.pk %}">{% csrf_token %}
       {% if on_roster %}<input type="hidden" name="action" value="remove"><button class="btn small ghost" type="submit">Remove from roster</button>
       {% else %}<button class="btn small" type="submit">Add to roster</button>{% endif %}</form>{% endif %}
   </div>
 </div>
 
-<div class="grid2">
+<div class="grid2 rollup" data-start="closed">
   <div>
-    <div class="panel">
-      <h2 class="sectionhead">E-mail</h2>
+    <div class="panel rollsec">
+      <h2 class="sectionhead">Email</h2>
       {% for e in emails %}
         <div class="fieldrow" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)">
           <span>{{ e.email }}{% if e.is_primary %} <span class="chip st-submitted">Main</span>{% endif %}</span>
           {% if can_manage %}<span>{% if not e.is_primary %}<form class="inline" method="post" action="{% url 'manage:person_email_primary' p.pk e.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit">Make main</button></form>{% endif %}
           <form class="inline" method="post" action="{% url 'manage:person_email_remove' p.pk e.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit">Remove</button></form></span>{% endif %}
         </div>
-      {% empty %}<p class="error">{{ "No e-mail on file. This person can’t receive sign-in links or reminders."|stack }}</p>{% endfor %}
+      {% empty %}<p class="error">{{ "No email on file. This person can’t receive sign-in links or reminders."|stack }}</p>{% endfor %}
       {% if can_manage %}
       <form method="post" action="{% url 'manage:person_email_add' p.pk %}" class="fieldrow mt">{% csrf_token %}
-        <label>Add an address<input type="email" name="email" required></label>
+        <label>Add an email address<input type="email" name="email" required></label>
         <label style="flex-direction:row;gap:6px;align-items:center"><input type="checkbox" name="make_primary"> Main</label>
         <button class="btn small ghost" type="submit">Add</button>
       </form>{% endif %}
@@ -40,7 +41,7 @@
         <div class="actions"><button class="btn" type="submit">Save</button></div>
       </form>
     </details>{% endif %}
-    <div class="panel small">
+    <div class="panel rollsec small">
       <h2 class="sectionhead">NIH reporting (RPPR D.1)</h2>
       <p>eRA Commons ID: {% if p.era_commons_id %}<strong>{{ p.era_commons_id }}</strong>{% else %}<span class="error" style="padding:1px 6px">none on file</span>{% endif %}{% if p.trainee_level %} · {{ p.get_trainee_level_display }}{% endif %}</p>
       <p>ORCID iD: {% if p.orcid %}<strong>{{ p.orcid }}</strong>{% else %}<span class="muted">none on file</span>{% endif %}</p>
@@ -48,8 +49,9 @@
         {% if docs.bio_msg %}<p class="gap">Biosketch: {{ docs.bio_msg }}</p>{% endif %}{% if docs.cp_msg %}<p class="gap">Current and Pending: {{ docs.cp_msg }}</p>{% endif %}
         {% if docs.degrees %}<p>Degrees in the biosketch: <strong>{{ docs.degrees }}</strong>{% if docs.degrees_new and can_manage %} <form method="post" action="{% url 'manage:person_apply_docs' p.pk %}" style="display:inline">{% csrf_token %}<input type="hidden" name="degrees" value="{{ docs.degrees }}"><button class="btn small ghost">Use these</button></form>{% endif %}</p>{% endif %}
         {% if docs.orcid_new and can_manage %}<p>ORCID iD in their documents: <strong>{{ docs.orcid }}</strong> <form method="post" action="{% url 'manage:person_apply_docs' p.pk %}" style="display:inline">{% csrf_token %}<input type="hidden" name="orcid" value="{{ docs.orcid }}"><button class="btn small ghost">Use it</button></form></p>{% elif docs.orcid_differs %}<p class="gap">The ORCID iD in their documents ({{ docs.orcid }}) differs from the one on file.</p>{% endif %}
-        {% if docs.cp %}{% if docs.spans %}<p>Their Current and Pending lists CNAP (P20GM113109) at: {% for x in docs.spans %}{{ x.months }} person months in {{ x.year }} ({{ x.label }}){% if not forloop.last %}; {% endif %}{% endfor %}.</p>
-        {% if docs.estimate is not None %}<p>That’s about <strong>{{ docs.estimate }} person months in Year {{ docs.gy }}</strong> (June {{ docs.gy|add:2016 }} – May {{ docs.gy|add:2017 }}){% if docs.estimate_prev is not None %} and {{ docs.estimate_prev }} in Year {{ docs.gy|add:-1 }}{% endif %}, spreading each listed year evenly over its months.<br>The form doesn’t split calendar, academic and summer months; use it to check the months below.</p>{% endif %}
+        {% if docs.cp %}{% if docs.spans %}<p>Their Current and Pending (Other) Support lists their CNAP (P20GM113109) effort year by year:</p>
+        <ul class="small" style="margin:4px 0 8px;padding-left:18px">{% for x in docs.spans %}<li>{{ x.year }}: {{ x.months }} person month{{ x.months|pluralize }} ({{ x.label }})</li>{% endfor %}</ul>
+        {% if docs.estimate is not None %}<p>CNAP’s budget year runs June 1 to May 31, so it crosses two of those calendar years.<br>Spreading each calendar year’s months evenly, their SciENcv numbers work out to about <strong>{{ docs.estimate }} person months in Year {{ docs.gy }}</strong> (June {{ docs.gy|add:2016 }} – May {{ docs.gy|add:2017 }}){% if docs.estimate_prev is not None %}, and {{ docs.estimate_prev }} in Year {{ docs.gy|add:-1 }}{% endif %}.<br>Please use that as a cross-check on the months entered below.<br>The SciENcv form doesn’t split calendar, academic, and summer months, so only the total can be checked.</p>{% endif %}
         {% elif docs.cp.info.cnap_months %}<p>Their Current and Pending lists CNAP (P20GM113109) at {% for y, m in docs.cp.info.cnap_months %}{{ m }} person months in {{ y }}{% if not forloop.last %}, {% endif %}{% endfor %}.<br>The project’s start and end months didn’t match those years, so they aren’t matched to budget years; check them by hand.</p>{% elif docs.cp.info.form_ok %}<p class="gap">Their Current and Pending doesn’t list the CNAP award (P20GM113109).</p>{% endif %}{% endif %}
       </div>{% endif %}
       <p>Degree(s): {% if p.degrees %}<strong>{{ p.degrees }}</strong>{% else %}<span class="muted">none on file</span>{% endif %}{% if p.foreign_org %} · Foreign organization: <strong>{{ p.foreign_org }}</strong>{% if p.foreign_country %}, {{ p.foreign_country }}{% endif %}{% endif %}</p>
@@ -61,9 +63,9 @@
         <label>Academic<input type="number" name="academic_months" min="0" max="9" step="0.1" style="max-width:6em"></label>
         <label>Summer<input type="number" name="summer_months" min="0" max="3" step="0.1" style="max-width:6em"></label>
         <button class="btn small ghost" type="submit">Save</button></form>
-      <p class="muted">Use calendar months for 12-month appointments, or academic and summer months for 9-month ones. Saving with all three blank removes that year.<br>The Commons ID, ORCID iD, degrees, foreign organization and career level are under Edit details.</p>{% endif %}
+      <p class="muted">Use calendar months for 12-month appointments, or academic and summer months for 9-month ones. Saving with all three blank removes that year.<br>The Commons ID, ORCID iD, degrees, foreign organization, and career level are under Edit details.</p>{% endif %}
     </div>
-    <div class="panel small">
+    <div class="panel rollsec small">
       <h2 class="sectionhead">Sign-in</h2>
       {% if user_account %}<p>Account: {{ user_account.username }}{% if not user_account.is_enabled %} <span class="gap">(disabled: can’t sign in)</span>{% endif %}</p>
       {% if can_manage and user_account != request.user %}<form method="post" action="{% url 'manage:person_account' p.pk %}" {% if user_account.is_enabled %}onsubmit="return confirm('Stop {{ p }} from signing in? Their records stay. You can turn sign-in back on any time.')"{% endif %}>{% csrf_token %}
@@ -73,39 +75,39 @@
   </div>
 
   <div>
-    <div class="panel">
+    <div class="panel rollsec">
       <h2 class="sectionhead">Current CNAP relationships</h2>
       {% for r in current %}
         <div class="fieldrow" style="justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)">
           <div><strong>{{ r.relationship_type.name }}</strong>
             <div class="small muted">{% if r.project %}{{ r.project.title }}{% elif r.core %}{{ r.core.name }}{% else %}Center-level{% endif %} · since {{ r.effective_from|date:"M j, Y" }}{% if r.effective_to %} · ends {{ r.effective_to|date:"M j, Y" }}{% endif %}</div></div>
           {% if can_manage and not r.effective_to %}<div style="border-left:1px solid var(--line);padding-left:12px">
-            <a class="btn small ghost" href="?handoff={{ r.pk }}#handoff">Hand off</a>
+            <a class="btn small ghost" href="?handoff={{ r.pk }}#handoff" title="Pass this role to a different person">Pass to someone else</a>
             <form class="inline" method="post" action="{% url 'manage:relationship_end' p.pk r.pk %}" onsubmit="return confirm('End this relationship now? The record is kept with its dates.')">{% csrf_token %}<button class="btn small ghost" type="submit">End</button></form>
           </div>{% endif %}
         </div>
       {% empty %}<p class="muted">{{ "No current relationships. Add one below so this person receives the right forms."|stack }}</p>{% endfor %}
       {% if handoff_rel %}
       <div id="handoff" class="panel" style="background:var(--purple-wash);margin-top:14px">
-        <h3>Hand off {{ handoff_rel.relationship_type.name }}{% if handoff_rel.project %} · {{ handoff_rel.project.title }}{% elif handoff_rel.core %} · {{ handoff_rel.core.name }}{% endif %}</h3>
-        <p class="small mt">{{ "The current holder’s relationship ends the day before the new holder starts. Forms already sent stay with the person who received them."|stack }}</p>
+        <h3>Pass {{ handoff_rel.relationship_type.name }} to someone else{% if handoff_rel.project %} · {{ handoff_rel.project.title }}{% elif handoff_rel.core %} · {{ handoff_rel.core.name }}{% endif %}</h3>
+        <p class="small mt">{{ "Use this when a role changes hands, for example when a new person takes over as a core director. The current holder’s relationship ends the day before the new holder starts. Forms already sent stay with the person who received them."|stack }}</p>
         <form method="post" action="{% url 'manage:relationship_handoff' p.pk handoff_rel.pk %}" class="fieldrow">{% csrf_token %}
           <label>New holder{{ handoff_form.new_person }}</label><label>Starts{{ handoff_form.start }}</label>
-          <button class="btn" type="submit">Hand off</button><a href="{% url 'manage:person' p.pk %}">Cancel</a>
+          <button class="btn" type="submit">Pass the role</button><a href="{% url 'manage:person' p.pk %}">Cancel</a>
         </form>
       </div>{% endif %}
     </div>
     {% if can_manage %}
-    <div class="panel">
+    <div class="panel rollsec">
       <h2 class="sectionhead">Add a relationship</h2>
       <form method="post" action="{% url 'manage:relationship_add' p.pk %}">{% csrf_token %}
-        <div class="fieldrow">
-          <label>Relationship{{ rel_form.relationship_type }}</label>
-          <label>Project{{ rel_form.project }}</label>
-          <label>Core{{ rel_form.core }}</label>
-          <label>Starts{{ rel_form.start }}</label>
+        <div class="relstack">
+          <label>What is their relationship to CNAP?{{ rel_form.relationship_type }}</label>
+          <label>Which project is it for? <span class="muted">(only for project relationships, such as Research Project Leader or Primary Mentor)</span>{{ rel_form.project }}</label>
+          <label>Which core is it for? <span class="muted">(only for core relationships, such as Core Director or Core User)</span>{{ rel_form.core }}</label>
+          <label>What date does this relationship start?{{ rel_form.start }}</label>
         </div>
-        <p class="small muted mt">{{ "Project relationships need a project. Core relationships need a core. Center-level ones (roster member, student, event participant) need neither."|stack }}</p>
+        <p class="small muted mt">{{ "Some relationships belong to the whole Center rather than one project or core, for example General CNAP Member, Student/Trainee (center-level), and Event Participant. For those, please leave the project and core boxes blank."|stack }}</p>
         <div class="actions"><button class="btn" type="submit">Add relationship</button></div>
       </form>
     </div>{% endif %}
@@ -113,15 +115,29 @@
     <details class="panel"><summary><strong>Past relationships ({{ past|length }})</strong></summary>
       {% for r in past %}<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)">{{ r.relationship_type.name }}{% if r.project %} · {{ r.project.title }}{% elif r.core %} · {{ r.core.name }}{% endif %} · {{ r.effective_from|date:"M j, Y" }} to {{ r.effective_to|date:"M j, Y" }}</div>{% endfor %}
     </details>{% endif %}
-    <div class="panel scroll"><h2 class="sectionhead">Publications and grants</h2>
-      {% if outcomes.pubs or outcomes.grants %}<table><tbody>
+    <div class="panel rollsec scroll"><h2 class="sectionhead">Publications, talks, and grants</h2>
+      {% if outcomes.pubs or outcomes.grants or outcomes.talks %}<table title="Every paper, talk, and proposal credited to this person, with its CNAP acknowledgment status."><thead><tr><th>Kind</th><th>Title</th><th>Status</th></tr></thead><tbody>
         {% for o in outcomes.pubs %}<tr><td class="small muted nowrap">Paper</td><td><a href="{% url 'manage:publication_edit' o.pk %}">{{ o.title }}</a><div class="small muted">{{ o.journal }}{% if o.publication_date %} · {{ o.publication_date|date:"M Y" }}{% endif %} · {{ o.get_status_display }}</div></td><td class="small nowrap">{% if o.cnap_cited is None %}<span class="muted">Not checked</span>{% elif o.cnap_cited %}Acknowledges CNAP{% else %}<span class="error" style="padding:1px 6px">No CNAP acknowledgment</span>{% endif %}</td></tr>{% endfor %}
         {% for o in outcomes.grants %}<tr><td class="small muted nowrap">Grant</td><td><a href="{% url 'manage:grant_edit' o.pk %}">{{ o.project_title }}</a><div class="small muted">{{ o.funding_agency }} {{ o.mechanism }} · {{ o.version_label }} · {{ o.get_status_display }}{% if o.award_total %} · ${{ o.award_total|floatformat:"0g" }}{% endif %}</div></td><td class="small nowrap">{% if o.cnap_acknowledged is None %}<span class="muted">Not checked</span>{% elif o.cnap_acknowledged %}Acknowledges CNAP{% else %}<span class="error" style="padding:1px 6px">No CNAP acknowledgment</span>{% endif %}</td></tr>{% endfor %}
+        {% for o in outcomes.talks %}<tr><td class="small muted nowrap">Talk</td><td>{{ o.title }}<div class="small muted">{{ o.get_presentation_type_display }}{% if o.event %} · {{ o.event }}{% endif %}{% if o.presented_on %} · {{ o.presented_on|date:"M Y" }}{% endif %}</div></td><td class="small nowrap">{% if o.cnap_cited is None %}<span class="muted">Not checked</span>{% elif o.cnap_cited %}Acknowledges CNAP{% else %}<span class="error" style="padding:1px 6px">No CNAP acknowledgment</span>{% endif %}</td></tr>{% endfor %}
       </tbody></table>{% else %}<p class="small muted">Nothing recorded yet.</p>{% endif %}
     </div>
     {% if assignments %}
-    <div class="panel scroll"><h2 class="sectionhead">Recent forms</h2>
-      <table><tbody>{% for a in assignments %}<tr><td>{{ a.reporting_period.short_label }}</td><td>{{ a.form_definition.name }}{% if a.project %} · {{ a.project.title }}{% elif a.core and a.context_kind == 'core' %} · {{ a.core.code }} Core{% endif %}</td><td>{% status_chip a.status %}</td></tr>{% endfor %}</tbody></table>
+    <div class="panel rollsec"><h2 class="sectionhead">Documents on file {% why "The person's signed documents, such as their Statement of Work with its Roles, Responsibilities, and Terms. Each one is visible to the person on their profile, and the pasted excerpt reminds them on My tasks of what they committed to." %}</h2>
+      {% if person_docs %}<div class="scroll"><table title="Documents kept on this person's page and visible to them on their profile."><thead><tr><th>Document</th><th>Added</th><th>Excerpt shown to them</th>{% if can_edit %}<th></th>{% endif %}</tr></thead><tbody>
+        {% for d in person_docs %}<tr><td><strong>{{ d.title }}</strong><div class="small muted">{{ d.file.original_filename }}</div></td><td class="small">{{ d.created_at|date:"M j, Y" }}</td><td class="small">{% if d.excerpt %}{{ d.excerpt|truncatechars:120 }}{% else %}<span class="muted">None</span>{% endif %}</td>{% if can_edit %}<td class="acts"><form method="post" action="{% url 'manage:person_doc_remove' p.pk d.pk %}" class="inline" onsubmit="return confirm('Remove this document from {{ p.first_name }}\u2019s page?')">{% csrf_token %}<button class="btn small ghost">Remove</button></form></td>{% endif %}</tr>{% endfor %}
+      </tbody></table></div>{% else %}<p class="small muted">Nothing on file yet.</p>{% endif %}
+      {% if can_edit %}<details class="mt"><summary class="small">Add a document, such as a signed Statement of Work</summary>
+        <form method="post" action="{% url 'manage:person_doc_add' p.pk %}" enctype="multipart/form-data" class="relstack" style="margin-top:10px">{% csrf_token %}
+          <div class="field"><label for="pd-title">Title</label><input id="pd-title" name="title" maxlength="200" placeholder="Statement of Work, Year 10" required></div>
+          <div class="field"><label for="pd-file">File (PDF or Word, under 20 MB)</label><input id="pd-file" name="file" type="file" accept=".pdf,.doc,.docx" required></div>
+          <div class="field"><label for="pd-ex">Excerpt to show the person (optional)</label><textarea id="pd-ex" name="excerpt" rows="3" placeholder="Paste a few lines from the document, such as the milestones they committed to."></textarea>
+            <p class="small muted">The excerpt appears on their My tasks page, so they are reminded of what they committed to and why they are asked.</p></div>
+          <div class="fieldrow"><button class="btn">Add the document</button></div>
+        </form></details>{% endif %}
+    </div>
+    <div class="panel rollsec scroll"><h2 class="sectionhead">Recent forms</h2>
+      <table title="The forms this person has been asked to fill in recently, and where each stands."><thead><tr><th>Period</th><th>Form</th><th>Status</th></tr></thead><tbody>{% for a in assignments %}<tr><td>{{ a.reporting_period.short_label }}</td><td>{{ a.form_definition.name }}{% if a.project %} · {{ a.project.title }}{% elif a.core and a.context_kind == 'core' %} · {{ a.core.code }} Core{% endif %}</td><td>{% status_chip a.status %}</td></tr>{% endfor %}</tbody></table>
     </div>{% endif %}
   </div>
 </div>

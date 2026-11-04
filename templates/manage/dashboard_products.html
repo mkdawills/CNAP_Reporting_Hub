@@ -1,0 +1,128 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}{{ title }} · {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="head"><div><h1>{{ title }} {% why "A live recreation of the evaluator's product dashboards. The same tables and graphs, generated from the Hub's records, so they are always current, and ready to paste into the Word write-up for the External Advisory Committee or the RPPR." %}</h1>
+  <p>Generated from the Hub’s records just now, in the layout of the Center’s dashboard documents.<br>Observations are written by the evaluator; the Hub supplies the numbers.</p>
+</div><div class="headactions"><a class="btn ghost" href="{% url 'manage:outcomes' %}?tab={{ kind }}">Back to {% if kind == 'pubs' %}publications{% elif kind == 'talks' %}presentations{% else %}grants{% endif %}</a></div></div>
+
+{% if kind == 'pubs' %}
+<details class="panel dashsec cntsec">
+  <summary><h2>Publications produced by Center members {% why "MW's Graph 1 and Table 1: published papers against everything still in the pipeline, by grant year." %}</h2></summary>
+  <p class="small muted">Includes journal articles and conference papers or proceedings.</p>
+  {% include 'manage/_graph.html' with g=d.g1 %}
+  <p class="dash-legend">{% for label, color in d.g1_legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
+  <div class="scroll"><table class="cnttab dashtab" title="Published and non-published publication counts by grant year.">
+    <thead><tr><th>Status</th>{% for y in d.t1.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t1.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}
+    <tr><td><strong>Total</strong></td>{% for v in d.t1.col_totals %}<td class="num"><strong>{{ v }}</strong></td>{% endfor %}<td class="num"><strong>{{ d.t1.grand }}</strong></td></tr></tbody>
+  </table></div>
+</details>
+
+<details class="panel dashsec cntsec">
+  <summary><h2>Approximate publication pipeline comparison {% why "MW's Table 2: how many of last year's in-pipeline papers published the following year. The ratios are presumed estimates; papers are not tracked individually through the pipeline." %}</h2></summary>
+  <div class="scroll"><table class="cnttab dashtab" title="Prior-year non-published count against next-year published count, with the approximate conversion ratio.">
+    <thead><tr><th>Step</th><th class="num">Prior year non-published</th><th class="num">Next year published</th><th class="num">Conversion ratio</th></tr></thead>
+    <tbody>{% for r in d.pipeline %}<tr><td>{{ r.step }}</td><td class="num">{{ r.prior }}</td><td class="num">{{ r.published }}</td><td class="num">{{ r.ratio }}</td></tr>{% empty %}<tr><td colspan="4" class="muted">Two years of records are needed before this table fills in.</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small muted">Ratios are presumed estimates.<br>Publications are not tracked individually through the publication pipeline.</p>
+</details>
+
+<details class="panel dashsec cntsec">
+  <summary><h2>Publications utilizing core services {% why "MW's Graph 2: how many publications credited each core, stacked by year. A paper that used several cores counts under each." %}</h2></summary>
+  {% include 'manage/_graph.html' with g=d.g_core %}
+  <p class="dash-legend">{% for label, color in d.core_legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
+  <div class="scroll"><table class="cnttab dashtab" title="Publications credited to each core, by grant year. A paper that used several cores counts under each.">
+    <thead><tr><th>Cores Credited</th>{% for y in d.t_core.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t_core.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small muted">A paper that used several cores counts once under each, so the rows can add up to more than the number of papers.</p>
+</details>
+
+{% for c in d.cores %}
+<details class="panel dashsec cntsec">
+  <summary><h2>Publications utilizing {{ c.name }} services</h2></summary>
+  {% include 'manage/_graph.html' with g=c.graph %}
+  <p class="dash-legend">{% for label, color in c.legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
+  <div class="scroll"><table class="cnttab dashtab" title="{{ c.name }}: published papers against every other status, by grant year.">
+    <thead><tr><th>{{ c.name }}</th>{% for y in c.table.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in c.table.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}</tbody>
+  </table></div>
+</details>
+{% endfor %}
+
+{% elif kind == 'talks' %}
+<details class="panel dashsec cntsec">
+  <summary><h2>Presentations by year {% why "MW's Graph 1 and Table 1: all presentations combined, by grant year." %}</h2></summary>
+  <p class="small muted">Combines conference presentations, invited talks, and posters or flyers.</p>
+  {% include 'manage/_graph.html' with g=d.g1 %}
+  <div class="scroll"><table class="cnttab dashtab" title="All presentations combined, by grant year.">
+    <thead><tr><th>Presentations</th>{% for y in d.t1.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t1.rows %}<tr><td>Total</td>{% for v in r.vals %}<td class="num">{{ v }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}</tbody>
+  </table></div>
+</details>
+
+<details class="panel dashsec cntsec">
+  <summary><h2>Presentations broken out by type {% why "MW's Graph 2 and Table 2: conference presentations, invited talks, and posters or flyers, each by year." %}</h2></summary>
+  {% include 'manage/_graph.html' with g=d.g2 %}
+  <p class="dash-legend">{% for label, color in d.t2_legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
+  <div class="scroll"><table class="cnttab dashtab" title="Presentations by type and grant year.">
+    <thead><tr><th>Type</th>{% for y in d.t2.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t2.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}
+    <tr><td><strong>Total</strong></td>{% for v in d.t2.col_totals %}<td class="num"><strong>{{ v }}</strong></td>{% endfor %}<td class="num"><strong>{{ d.t2.grand }}</strong></td></tr></tbody>
+  </table></div>
+</details>
+
+<details class="panel dashsec cntsec">
+  <summary><h2>Presentations by core usage {% why "MW's Graph 3 and Table 3: how many presentations credited each core, stacked by year. A talk that used several cores counts under each." %}</h2></summary>
+  {% include 'manage/_graph.html' with g=d.g3 %}
+  <p class="dash-legend">{% for label, color in d.core_legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
+  <div class="scroll"><table class="cnttab dashtab" title="Presentations credited to each core, by grant year.">
+    <thead><tr><th>Cores Credited</th>{% for y in d.t3.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t3.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small muted">A presentation that used several cores counts once under each, so the rows can add up to more than the presentation total.</p>
+</details>
+
+{% else %}
+<details class="panel dashsec cntsec">
+  <summary><h2>Center overall proposal counts {% why "MW's Grants Overall sheet: awarded, pending, and declined proposals by grant year. Pending is a proposal submitted and waiting; declined is a not-funded decision." %}</h2></summary>
+  {% include 'manage/_graph.html' with g=d.g_counts %}
+  <p class="dash-legend">{% for label, color in d.legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
+  <div class="scroll"><table class="cnttab dashtab" title="Awarded, pending, and declined proposal counts by grant year.">
+    <thead><tr><th>Status</th>{% for y in d.t_counts.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t_counts.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}
+    <tr><td><strong>Total</strong></td>{% for v in d.t_counts.col_totals %}<td class="num"><strong>{{ v }}</strong></td>{% endfor %}<td class="num"><strong>{{ d.t_counts.grand }}</strong></td></tr></tbody>
+  </table></div>
+</details>
+
+<details class="panel dashsec cntsec">
+  <summary><h2>Center overall proposal dollars {% why "MW's dollars tables: award totals for awarded proposals, and requested totals for pending and declined ones, by grant year." %}</h2></summary>
+  {% include 'manage/_graph.html' with g=d.g_dollars %}
+  <p class="dash-legend">{% for label, color in d.legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
+  <div class="scroll"><table class="cnttab dashtab" title="Awarded, pending, and declined proposal dollars by grant year.">
+    <thead><tr><th>Status</th>{% for y in d.t_dollars.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t_dollars.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v|usd }}</td>{% endfor %}<td class="num"><strong>{{ r.total|usd }}</strong></td></tr>{% endfor %}
+    <tr><td><strong>Total</strong></td>{% for v in d.t_dollars.col_totals %}<td class="num"><strong>{{ v|usd }}</strong></td>{% endfor %}<td class="num"><strong>{{ d.t_dollars.grand|usd }}</strong></td></tr></tbody>
+  </table></div>
+  <p class="small muted">Awarded dollars are award totals.<br>Pending and declined dollars are the requested totals.</p>
+</details>
+
+{% for c in d.cores %}
+<details class="panel dashsec cntsec">
+  <summary><h2>{{ c.name }} proposals</h2></summary>
+  {% include 'manage/_graph.html' with g=c.graph %}
+  <p class="dash-legend">{% for label, color in d.legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
+  <div class="scroll"><table class="cnttab dashtab" title="{{ c.name }}: awarded, pending, and declined proposal counts by grant year.">
+    <thead><tr><th>{{ c.name }} counts</th>{% for y in c.t_counts.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in c.t_counts.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}</tbody>
+  </table></div>
+  <div class="scroll"><table class="cnttab dashtab" title="{{ c.name }}: awarded, pending, and declined proposal dollars by grant year.">
+    <thead><tr><th>{{ c.name }} dollars</th>{% for y in c.t_dollars.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in c.t_dollars.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v|usd }}</td>{% endfor %}<td class="num"><strong>{{ r.total|usd }}</strong></td></tr>{% endfor %}</tbody>
+  </table></div>
+</details>
+{% endfor %}
+{% endif %}
+
+<p class="small muted">These dashboards fill in from the records in the Hub.<br>Years before the Hub launched show numbers only if their product records are imported.</p>
+{% endblock %}

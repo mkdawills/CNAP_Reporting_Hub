@@ -5,19 +5,19 @@
   "context_kind": "core",
   "confidentiality": "standard",
   "sort_order": 15,
-  "intro_text": "List each project that used your core this period. Use one row per project. In the case where a lab has multiple projects that use your core, that lab can appear more than once. We’ll put your rows into NIH’s suggested Table 2 (Core Users) for the Center’s yearly report, so you don’t need to fill in the table yourself.",
+  "intro_text": "Please list each project that used your core this period. Please use one row per project. In the case where a lab has multiple projects that use your core, that lab can appear more than once. We’ll put your rows into NIH’s suggested Table 2 (Core Users) for the Center’s Research Performance Progress Report (RPPR) to NIH, so you don’t need to fill in the table yourself.",
   "display": {
     "task_group": "mycore",
     "short_name": "Core usage report",
     "about": [
       "Your list shows NIH who uses your core and what came of it.",
-      "Use one row per project, and give the number of students in its own column."
+      "Please use one row per project, and give the number of students in its own column."
     ],
     "minutes": 10,
     "section_downloads": {
       "users": [
         {
-          "label": "Read NIH’s directions for Table 2 (NIGMS suggested RPPR tables, PDF, opens in a new tab)",
+          "label": "Read NIH’s directions for Table 2 (National Institute of General Medical Sciences (NIGMS) suggested RPPR tables, PDF, opens in a new tab)",
           "url": "https://nigms.nih.gov/sites/nigms/files/migrated/cobre-rppr-suggested-tables.pdf"
         }
       ]
@@ -31,14 +31,14 @@
       "per_context": true
     }
   ],
-  "_source": "RPPR Table 2 'COBRE Core Users', FY27 COBRE Reporting Guidance p.10 (MW, 2026-10-26, item 7a). One table per core except the Admin Core. Intro shortened 2026-10-28 (MW approved); original: \"List each project that used your core during this reporting period. Use one row per project. A lab may be listed more than once if different projects were supported. The Center combines these lists into its yearly NIH progress report.\" MW 2026-11-02: matched NIGMS's suggested Table 2: no 'Students' user type; individual users include students.",
+  "_source": "RPPR Table 2 'COBRE Core Users', FY27 COBRE Reporting Guidance p.10 (MW, 2026-10-26, item 7a). One table per core except the Admin Core. Intro shortened 2026-10-28 (MW approved); original: \"List each project that used your core during this reporting period. Use one row per project. A lab may be listed more than once if different projects were supported. The Center combines these lists into its yearly NIH progress report.\" MW 2026-11-02: matched NIGMS's suggested Table 2: no 'Students' user type; individual users include students. 2026-11-03 (MW): core_data_used explained in plain words; added will_cite_rrid with core-director coaching note.",
   "sections": [
     {
       "code": "users",
       "title": "Projects that used the core this period",
       "repeatable": true,
       "repeat_label": "Add a project",
-      "instructions": "Count everyone who worked on the project with the core as an individual user, students included. Then give how many of them were students.",
+      "instructions": "Please count everyone who worked on the project with the core as an individual user, students included. Then please give how many of them were students.\nYour core’s RRID: please ask every user lab to cite your core’s Research Resource Identifier (RRID) in the methods of their papers, right after the core’s name. The RRID lets NIH and the Center find every paper your core made possible, even when the grant number isn’t cited. Your Center results page and the acknowledgment wording on the publications pages give users the exact text.",
       "questions": [
         {
           "code": "user_type",
@@ -55,13 +55,14 @@
           ],
           "config": {
             "short": "Type"
-          }
+          },
+          "help_text": "RPL means Research Project Leader. PPL means Pilot Project Leader."
         },
         {
           "code": "lab",
-          "prompt": "User lab (PI’s first and last name)",
+          "prompt": "User lab (Principal Investigator’s first and last name)",
           "type": "short_text",
-          "help_text": "Used to count Total User Labs; not a Table 2 column.",
+          "help_text": "We use this to count Total User Labs. It is not a column in Table 2.",
           "config": {
             "short": "Lab"
           }
@@ -121,6 +122,21 @@
           "config": {
             "width": "wide",
             "short": "Data in a grant or paper?"
+          },
+          "help_text": "In other words, did this project put results from your core into a grant application or a paper? NIH asks this in Table 2 to show the core’s scientific payoff."
+        },
+        {
+          "code": "will_cite_rrid",
+          "prompt": "Will this project cite your core’s Research Resource Identifier (RRID) in its publications?",
+          "type": "single_select",
+          "options": [
+            "Yes",
+            "No",
+            "Not sure yet"
+          ],
+          "help_text": "As core director, part of your role is asking users to cite the core’s RRID in their methods and showing them how. The directions above explain the RRID and give the wording to share.",
+          "config": {
+            "short": "Will cite the RRID?"
           }
         }
       ]

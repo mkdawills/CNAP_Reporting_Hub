@@ -56,10 +56,30 @@ def people(request):
             continue
         if show == "none" and codes:
             continue
+        # one column per kind of relationship, so each can be sorted (MW 2026-11-03)
+        kinds = {
+            "lead": ("project_leader", "pilot_awardee", "pd_pi", "associate_director"),
+            "mentor": ("primary_mentor", "pilot_mentor"),
+            "core": ("core_director", "core_staff", "core_user"),
+            "other": (
+                "project_staff",
+                "project_student",
+                "collaborator",
+                "student_trainee",
+                "event_participant",
+                "osc",
+            ),
+        }
+        cols = {k: [] for k in kinds}
+        for r in p.current_rels:
+            for k, codes_ in kinds.items():
+                if r.relationship_type.code in codes_:
+                    cols[k].append(r)
         rows.append(
             {
                 "person": p,
                 "roles": [r for r in p.current_rels if r.relationship_type.code != "cnap_member"],
+                "cols": cols,
                 "on_roster": "cnap_member" in codes,
                 "external": external,
                 "email": next((e.email for e in p.emails.all() if e.is_primary), ""),
@@ -135,6 +155,7 @@ def person(request, pk):
     ctx["efforts"] = p.efforts.order_by("-grant_year")
     ctx["cur_gy"] = rppr.current_year()
     ctx["docs"] = _doc_suggestions(request.user, p)
+    ctx["person_docs"] = p.documents.select_related("file")
     return render(request, "manage/person.html", ctx)
 
 
@@ -242,11 +263,11 @@ def person_email_add(request, pk):
                 form.cleaned_data["email"],
                 make_primary=form.cleaned_data["make_primary"],
             )
-            messages.success(request, "E-mail added.")
+            messages.success(request, "Email added.")
         except services.RelationshipError as exc:
             messages.error(request, str(exc))
     else:
-        messages.error(request, "Enter a valid e-mail address.")
+        messages.error(request, "Enter a valid email address.")
     return redirect("manage:person", pk)
 
 
@@ -353,9 +374,54 @@ def person_roster(request, pk):
 # ---------------------------------------------------------------- projects and cores
 
 
+def _current_gy(today):
+    """The current grant year: Year 10 runs June 1, 2026 - May 31, 2027."""
+    return today.year - 2016 if today.month >= 6 else today.year - 2017
+
+
+def _people_detail(rels, gy):
+    """Per person: role, eRA Commons ID, ORCID iD, and Year-`gy` effort — the D.1 inputs (MW 2026-11-03)."""
+    from apps.people.models import PersonEffort
+
+    effort_by = {
+        e.person_id: e
+        for e in PersonEffort.objects.filter(
+            grant_year=gy, person_id__in={r.person_id for r in rels}
+        )
+    }
+    out = []
+    for r in rels:
+        e = effort_by.get(r.person_id)
+        if e is None:
+            months = "no effort entered"
+        elif e.calendar_months is not None:
+            months = f"{e.calendar_months} calendar months"
+        else:
+            parts = []
+            if e.academic_months is not None:
+                parts.append(f"{e.academic_months} academic")
+            if e.summer_months is not None:
+                parts.append(f"{e.summer_months} summer")
+            months = (" and ".join(parts) + " months") if parts else "no effort entered"
+        out.append(
+            {
+                "person": r.person,
+                "role": r.relationship_type.name,
+                "eid": r.person.era_commons_id or "",
+                "orcid": r.person.orcid or "",
+                "months": months,
+            }
+        )
+    return out
+
+
 @admin_view
 def projects(request):
     today = timezone.localdate()
+    gy = _current_gy(today)
+
+    def _people(rels):
+        return _people_detail(list(rels), gy)
     current = Q(relationships__effective_to__isnull=True) | Q(
         relationships__effective_to__gte=today
     )
@@ -390,6 +456,7 @@ def projects(request):
                     if r.relationship_type.code
                     not in ("project_leader", "pilot_awardee", "primary_mentor", "pilot_mentor")
                 ],
+                "people": _people(rels),
             }
         )
     cores = []
@@ -405,9 +472,10 @@ def projects(request):
                 "directors": [r for r in rels if r.relationship_type.code == "core_director"],
                 "staff": [r for r in rels if r.relationship_type.code == "core_staff"],
                 "users": [r for r in rels if r.relationship_type.code == "core_user"],
+                "people": _people(rels),
             }
         )
-    return render(request, "manage/projects.html", {"rows": rows, "cores": cores})
+    return render(request, "manage/projects.html", {"rows": rows, "cores": cores, "gy": gy})
 
 
 @manage_action
@@ -484,7 +552,18 @@ def project(request, pk):
     rels = pr.relationships.select_related("person", "relationship_type").order_by(
         "effective_to", "relationship_type__sort_order"
     )
-    return render(request, "manage/project_form.html", {"form": form, "project": pr, "rels": rels})
+    gy = _current_gy(timezone.localdate())
+    return render(
+        request,
+        "manage/project_form.html",
+        {
+            "form": form,
+            "project": pr,
+            "rels": rels,
+            "gy": gy,
+            "people_detail": _people_detail([r for r in rels if not r.effective_to], gy),
+        },
+    )
 
 
 @manage_action
@@ -507,3 +586,55 @@ def person_account(request, pk):
         record_event(request.user, AuditLog.Action.UPDATE, user, new={"is_enabled": enable})
         messages.success(request, f"Sign-in turned {'back on' if enable else 'off'} for {p}.")
     return redirect("manage:person", pk)
+
+
+PERSON_DOC_TYPES = (".pdf", ".docx", ".doc")
+
+
+@manage_action
+def person_doc_add(request, pk):
+    """Attach a document to a person's page, such as their signed Statement of Work (MW 2026-11-03)."""
+    import hashlib
+    from pathlib import Path
+
+    from apps.people.models import PersonDocument
+    from apps.reporting.models import File
+
+    p = get_object_or_404(Person, pk=pk)
+    title = request.POST.get("title", "").strip()[:200]
+    excerpt = request.POST.get("excerpt", "").strip()
+    up = request.FILES.get("file")
+    if not title or not up:
+        messages.error(request, "Please give the document a title and choose a file.")
+        return redirect("manage:person", pk=pk)
+    if Path(up.name).suffix.lower() not in PERSON_DOC_TYPES or up.size > 20 * 1024 * 1024:
+        messages.error(request, "Please upload a PDF or Word file under 20 MB.")
+        return redirect("manage:person", pk=pk)
+    digest = hashlib.sha256(up.read()).hexdigest()
+    up.seek(0)
+    f = File(
+        original_filename=Path(up.name).name[:255],
+        content_type=getattr(up, "content_type", "") or "application/octet-stream",
+        byte_size=up.size,
+        sha256=digest,
+        uploaded_by=request.user,
+    )
+    f.storage_key.save(Path(up.name).name, up, save=False)
+    f.save()
+    d = PersonDocument.objects.create(
+        person=p, title=title, file=f, excerpt=excerpt, uploaded_by=request.user
+    )
+    record_event(request.user, AuditLog.Action.CREATE, d, new={"title": title})
+    messages.success(request, f"“{title}” is now on this page, and visible to {p.first_name} on their profile.")
+    return redirect("manage:person", pk=pk)
+
+
+@manage_action
+def person_doc_remove(request, pk, doc_pk):
+    from apps.people.models import PersonDocument
+
+    d = get_object_or_404(PersonDocument, pk=doc_pk, person_id=pk)
+    record_event(request.user, AuditLog.Action.DELETE, d, old={"title": d.title})
+    d.delete()
+    messages.success(request, "The document was removed.")
+    return redirect("manage:person", pk=pk)

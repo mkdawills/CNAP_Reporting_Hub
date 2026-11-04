@@ -1,0 +1,6 @@
+{% if g.svg %}<div class="graphwrap">
+  <div class="gmain">{{ g.svg }}</div>
+  {% if g.note %}<p class="small muted">{{ g.note }}</p>{% endif %}
+  {% if g.alt %}<div class="galt" hidden>{{ g.alt }}</div>
+  <p class="small gflip"><button type="button" class="linkbtn flipbtn" title="Swap the x and y groupings for a different look at the same numbers.">Flip the axes</button></p>{% endif %}
+</div>{% endif %}

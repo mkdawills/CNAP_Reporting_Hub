@@ -49,7 +49,7 @@ def entry_open(view):
         if not ok:
             messages.info(
                 request,
-                f"Publications, presentations and grants open again on {reopens:%A, %B %-d}, "
+                f"Publications, talks, and grants open again on {reopens:%A, %B %-d}, "
                 "once the Center has finished this period’s report.",
             )
             return redirect("portal:outcomes")
@@ -75,7 +75,7 @@ def _owner(request):
         return owner, owners
     if not owners:
         raise PermissionDenied(
-            "Publications and grants are kept by project leaders and the people they choose."
+            "Publications, talks, and grants are kept by project leaders and the people they choose."
         )
     return owners[0], owners
 
@@ -117,6 +117,22 @@ def home(request):
     )
 
 
+def _start_resources(owner):
+    """A new record starts with the person's own CNAP project ticked, and the matching resource with it."""
+    from apps.people.models import Resource
+
+    prj = list(os.awardee_projects(owner))
+    codes = {"research_project" if p.kind == "primary" else "pilot_project" for p in prj}
+    return {"projects": prj, "resources": list(Resource.objects.filter(code__in=codes))}
+
+
+def _own(F, owner):
+    """The person's own CNAP projects, marked "(your project)" on forms that list projects."""
+    from .outcome_forms import _Resources
+
+    return {"own_projects": list(os.awardee_projects(owner))} if issubclass(F, _Resources) else {}
+
+
 def _initial_resources(obj, actual):
     res = os.resources_of(obj, anticipated=False) if actual else []
     return res or os.resources_of(obj, anticipated=True) or os.resources_of(obj, anticipated=False)
@@ -127,7 +143,7 @@ def _initial_resources(obj, actual):
 def new(request, kind):
     owner, _ = _owner(request)
     F = PUB_FORMS["planned"] if kind == "pub" else GRANT_FORMS["planned"]
-    form = F(request.POST or None, initial={"projects": os.awardee_projects(owner)})
+    form = F(request.POST or None, initial=_start_resources(owner), **_own(F, owner))
     if request.method == "POST" and form.is_valid():
         d = form.cleaned_data
         res, prj, other = d.pop("resources"), d.pop("projects"), d.pop("resources_other_text")
@@ -172,6 +188,32 @@ def _obj(kind, pk, request):
     return obj, people[0] if people else request.user.person
 
 
+def _facts(kind, obj):
+    """One line of what's on file, so the person can see whether the details need editing (MW 2026-11-03)."""
+    f = []
+    if kind == "grant":
+        if obj.funding_agency:
+            f.append(obj.funding_agency)
+        if obj.mechanism:
+            f.append(obj.mechanism)
+        when = obj.submission_date or obj.anticipated_submission_date
+        if when:
+            word = "submitted" if obj.submission_date else "planned for"
+            f.append(f"{word} {when:%B} {when.day if obj.submission_date or obj.anticipated_day_known else ''} {when:%Y}".replace("  ", " "))
+        amt = obj.requested_total or obj.anticipated_total
+        if amt:
+            f.append(f"${amt:,.0f} requested")
+    else:
+        if obj.journal:
+            f.append(obj.journal)
+        if obj.submission_date:
+            f.append(f"submitted {obj.submission_date:%B} {obj.submission_date.day}, {obj.submission_date:%Y}")
+        elif obj.anticipated_submission_month:
+            m = obj.anticipated_submission_month
+            f.append(f"planned for {m:%B} {m.day if obj.anticipated_day_known else ''} {m:%Y}".replace("  ", " "))
+    return " · ".join(f)
+
+
 @login_required
 @entry_open
 def update(request, kind, pk):
@@ -188,11 +230,14 @@ def update(request, kind, pk):
                 "owner": owner,
                 "choices": [(s, STATUS_WORDS[kind][s]) for s in allowed],
                 "words": STATUS_WORDS,
+                "facts": _facts(kind, obj),
             },
         )
     forms_ = PUB_FORMS if kind == "pub" else GRANT_FORMS
     F = forms_[to]
     initial = {f: getattr(obj, f, None) for f in F.base_fields if hasattr(obj, f)}
+    if kind == "grant" and "funding_source" in F.base_fields:
+        initial["funding_source_type"] = obj.funding_source_type  # _Funding maps it to the radio
     for f in (
         "cnap_cited",
         "cnap_in_grant_index",
@@ -208,6 +253,10 @@ def update(request, kind, pk):
         if f in initial:
             v = initial[f]
             initial[f] = "" if v is None else ("yes" if v else "no")
+    if "anticipated_day" in F.base_fields and getattr(obj, "anticipated_day_known", False):
+        when = getattr(obj, F.date_field, None)
+        if when:
+            initial["anticipated_day"] = when.day
     if "resources" in F.base_fields:
         initial["resources"] = _initial_resources(obj, actual=to != "planned")
         initial["projects"] = [x.project for x in obj.project_links.all()]
@@ -239,7 +288,7 @@ def update(request, kind, pk):
                 data["pubmed_url"] = found["url"]
             if found.get("cnap_in_grant_index") is not None and not data.get("cnap_in_grant_index"):
                 data["cnap_in_grant_index"] = "yes" if found["cnap_in_grant_index"] else "no"
-            note = "Filled in from PubMed. Please check the title, journal, date and authors before saving."
+            note = "Filled in from PubMed. Please check the title, journal, date, and authors before saving."
             if found.get("cnap_in_grant_index") is not None:
                 note += (
                     " CNAP’s grant "
@@ -251,7 +300,7 @@ def update(request, kind, pk):
             k: (data.getlist(k) if k in ("resources", "projects") else data.get(k))
             for k in [*F.base_fields, *(k for k in data if k.startswith("rrid_"))]
         }
-        form = F(initial={**initial, **{k: v for k, v in typed.items() if v not in (None, "", [])}})
+        form = F(initial={**initial, **{k: v for k, v in typed.items() if v not in (None, "", [])}}, **_own(F, owner))
         affs = found.get("affiliations", []) if "found" in locals() else []
         return render(
             request,
@@ -266,7 +315,7 @@ def update(request, kind, pk):
                 "title": f"Mark as {STATUS_WORDS[kind][to].lower()}",
             },
         )
-    form = F(request.POST or None, initial=initial)
+    form = F(request.POST or None, initial=initial, **_own(F, owner))
     if kind == "grant" and to == "awarded":
         from apps.common.enums import GrantRole
 
@@ -296,19 +345,27 @@ def update(request, kind, pk):
         ):
             messages.warning(
                 request,
-                "Because NIGMS hasn’t approved the foreign component, NIH rules say this paper can’t be listed in "
-                "CNAP’s progress report and shouldn’t cite P20GM113109. The CNAP evaluator will be in touch about it.",
+                "Because the National Institute of General Medical Sciences (NIGMS) hasn’t approved the foreign component, NIH rules say this paper can’t be listed in "
+                "CNAP’s Research Performance Progress Report (RPPR) and shouldn’t cite P20GM113109. The CNAP evaluator will be in touch about it.",
             )
         if kind == "grant" and to == "not_funded":
             messages.add_message(request, messages.INFO, NOT_FUNDED_NOTE, extra_tags="encourage")
+        if kind == "grant" and to == "submitted" and obj.status != "submitted":
+            messages.add_message(
+                request,
+                messages.INFO,
+                "Congratulations on submitting your proposal! Submitting is a real accomplishment, "
+                "and the Center is cheering for you.",
+                extra_tags="encourage",
+            )
         if created:
             label = "publication" if kind == "pub" else f"proposal ({created.version_label})"
             messages.success(
                 request,
-                f"Saved. A new planned {label} was created from it; check its details below.",
+                f"Your changes are saved. A new planned {label} was created from it. Please check its details below.",
             )
             return redirect(_url("portal:outcome_update", owner, kind, created.pk, to="planned"))
-        messages.success(request, "Saved.")
+        messages.success(request, "Your changes are saved.")
         return redirect(_url("portal:outcomes", owner))
     return render(
         request,
@@ -320,7 +377,7 @@ def update(request, kind, pk):
             "stage": to,
             "obj": obj,
             "title": (
-                "Edit planned details"
+                "Edit the planned details"
                 if to == obj.status == "planned"
                 else f"Your details ({STATUS_WORDS[kind][to].lower()})"
                 if to == obj.status
@@ -388,15 +445,17 @@ def presentation(request, pk=None):
         obj, owner = _obj("presentation", pk, request)
     else:
         obj, (owner, _) = None, _owner(request)
-    initial = {"projects": os.awardee_projects(owner)}
+    initial = _start_resources(owner)
     if obj:
         initial = {f: getattr(obj, f) for f in PresentationForm.base_fields if hasattr(obj, f)}
+        if obj.location and not any((obj.venue, obj.city, obj.state_region, obj.country)):
+            initial["venue"] = obj.location  # an older record kept the place on one line
         initial["cnap_cited"] = (
             "" if obj.cnap_cited is None else ("yes" if obj.cnap_cited else "no")
         )
         initial["resources"] = [x.resource for x in obj.resource_links.all()]
         initial["projects"] = [x.project for x in obj.project_links.all()]
-    form = PresentationForm(request.POST or None, initial=initial)
+    form = PresentationForm(request.POST or None, initial=initial, **_own(PresentationForm, owner))
     if request.method == "POST" and form.is_valid():
         d = dict(form.cleaned_data)
         res, prj, other = d.pop("resources"), d.pop("projects"), d.pop("resources_other_text")
@@ -415,7 +474,7 @@ def presentation(request, pk=None):
             "owner": owner,
             "stage": "",
             "obj": obj,
-            "title": "Edit presentation" if obj else "Add a presentation",
+            "title": "Edit a presentation" if obj else "Add a presentation",
         },
     )
 
@@ -436,12 +495,64 @@ def task_item(person, period):
             continue
         st = os.state(o, period)
         items.append(
-            {"owner": o, "todo": st["todo"], "done": st["done"], "self": o.pk == person.pk}
+            {"owner": o, "todo": st["todo"], "n_review": st["n_review"], "n_ask": st["n_ask"], "done": st["done"], "self": o.pk == person.pk}
         )
     if not items:
         return None
     todo = sum(i["todo"] for i in items)
     return {"items": items, "todo": todo, "done": todo == 0, "minutes": max(2, min(10, 2 * todo))}
+
+
+@login_required
+def nudge(request, pk):
+    """Answer a monthly check-in about a planned grant proposal (MW 2026-11-03)."""
+    from apps.outcomes import nudges as nsvc
+    from apps.outcomes.models import GrantNudge
+
+    n = get_object_or_404(
+        GrantNudge.objects.select_related("grant", "person"), pk=pk
+    )
+    if not os.can_act_for(request.user, n.person):
+        raise PermissionDenied("This check-in belongs to someone else.")
+    grant = n.grant
+    role = nsvc.role_of(n.person)
+    if request.method == "POST" and grant.status == GrantStatus.PLANNED:
+        choice = request.POST.get("choice", "")
+        comments = request.POST.get("comments", "").strip()
+        valid = {c for c, _ in GrantNudge.Choice.choices}
+        if choice not in valid:
+            messages.error(request, "Please choose one of the five answers.")
+        elif choice == GrantNudge.Choice.PIVOT and not comments:
+            messages.error(
+                request, "Please share your new alternative plans in the comments box."
+            )
+        else:
+            from django.utils import timezone
+
+            n.choice = choice
+            n.comments = comments
+            n.answered_at = timezone.now()
+            n.answered_by = request.user
+            n.save(update_fields=["choice", "comments", "answered_at", "answered_by"])
+            grant.confirmed_at = timezone.now()
+            grant.save(update_fields=["confirmed_at", "updated_at"])
+            messages.success(request, "Thank you! Your answer has been shared with the CNAP evaluation team.")
+            return redirect(f"{reverse('portal:outcome_nudge', args=[n.pk])}?done=1")
+    return render(
+        request,
+        "portal/nudge.html",
+        {
+            "nudge": n,
+            "grant": grant,
+            "choices": GrantNudge.Choice.choices,
+            "preselect": request.GET.get("choice", n.choice),
+            "done": request.GET.get("done") or n.answered_at,
+            "still_planned": grant.status == GrantStatus.PLANNED,
+            "milestones": nsvc.MILESTONES.get(role, []),
+            "role_word": {"research": "Research Project Leader", "pilot": "Pilot Project Leader"}.get(role, ""),
+            "supports": nsvc.SUPPORTS,
+        },
+    )
 
 
 __all__ = [
@@ -453,6 +564,7 @@ __all__ = [
     "delegate_add",
     "delegate_end",
     "task_item",
+    "nudge",
     "GrantStatus",
     "PublicationStatus",
 ]

@@ -5,7 +5,7 @@ Your CNAP Reporting Hub records below haven't been updated in {{ days }} days or
 {% for r in records %}  • {{ r.kind }}: {{ r.title }}
     Now: {{ r.status }} · last reviewed {{ r.last|date:"F j, Y" }}
 {% endfor %}
-Open your publications and grants: {{ url }}
+Please open your publications, talks, and grants: {{ url }}
 
 For each one you can choose "Confirm no changes" or "Update status". It usually takes a couple of minutes.
 

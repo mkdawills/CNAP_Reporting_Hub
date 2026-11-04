@@ -174,7 +174,7 @@ class SignInLink(models.Model):
 
 
 class SignInCode(models.Model):
-    """A 6-digit code e-mailed before a link-signed-in person opens a confidential mentoring form."""
+    """A 6-digit code emailed before a link-signed-in person opens a confidential mentoring form."""
 
     person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="signin_codes")
     code_hash = models.CharField(max_length=64)

@@ -1,13 +1,12 @@
 {% load cnap %}{% for t in tables %}
-{% if not t.skip_main %}<div class="tcard">
-<div class="teyebrow">Table {{ t.no }}</div>
-<h3 class="ttitle2">{{ t.title }}</h3>
+{% if not t.skip_main %}<div class="tcard rollsec">
+<div class="teyebrow">Table {{ t.no }} · {{ t.title }}</div>
+<h3 class="ttitle2">{{ t.sec_name }}</h3>
 {% with g=t.glance %}{% if g %}
 <div class="kpis">
-  <div class="kpi"><span class="ring" style="--p:{{ g.mean_fill }};--c:#3a3a48"></span><span class="kpi-t"><span class="ring-v">{{ t.grand_mean|floatformat:1 }}<small>/{{ t.scale|length }}</small></span><span class="kpi-l">Average rating: {{ g.word }}</span></span></div>
-  <div class="kpi"><span class="ring" style="--p:{{ g.top_pct }};--c:#1f6857"></span><span class="kpi-t"><span class="ring-v pos">{{ g.top_pct }}%</span><span class="kpi-l">{{ g.top_label }}</span></span></div>
-  <div class="kpi"><span class="ring" style="--p:{{ g.bot_pct }};--c:#b2432f"></span><span class="kpi-t"><span class="ring-v neg">{{ g.bot_pct }}%</span><span class="kpi-l">{{ g.bot_label }}</span></span></div>
-</div>
+  <div class="kpi"><span class="ring" style="--p:{{ g.bot_pct }};--c:#b2432f"><span class="ring-v neg">{{ g.bot_pct }}%</span></span><span class="kpi-l">{{ g.bot_label }}</span></div>
+  <div class="kpi"><span class="ring" style="--p:{{ g.mean_fill }};--c:#3a3a48"><span class="ring-v">{{ t.grand_mean|floatformat:1 }}<small>/{{ t.scale|length }}</small></span></span><span class="kpi-l">Average rating: {{ g.word }}</span></div>
+  <div class="kpi"><span class="ring" style="--p:{{ g.top_pct }};--c:#1f6857"><span class="ring-v pos">{{ g.top_pct }}%</span></span><span class="kpi-l">{{ g.top_label }}</span></div>
 </div>
 <div class="vbars" role="img" aria-label="{% for sg in g.segments %}{{ sg.text }} {{ sg.pct }}%{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in g.segments %}
   <div class="vb"><span class="vb-v">{{ sg.pct }}%</span><span class="vb-b" style="height:calc((100% - 46px) * {{ sg.h }} / 100);background:{{ sg.color }}"></span><span class="vb-l">{{ sg.text }}</span></div>{% endfor %}
@@ -15,8 +14,8 @@
 <p class="tnote">{% if fd.about_core %}To see the {{ fd.about_core.code }} Core’s overall {{ t.section.title|cut:":"|lower }}, these bars combine every answer to its {% else %}To see the overall picture, these bars combine every answer to the {% endif %}{{ t.rows|length }} survey item{{ t.rows|length|pluralize }}{% if not fd.about_core %} in this section{% endif %}{% if t.rows %}, such as “{{ t.rows.0.q.prompt|cut_end_period }}”{% endif %}. <button type="button" class="linkbtn" onclick="this.closest('.tcard').querySelector('.tmore').open=true">See each item</button></p>
 {% endif %}{% endwith %}
 <details class="tmore"><summary><span class="tmore-open">Show item-by-item table</span><span class="tmore-close">Hide item-by-item table</span></summary>
-<div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on">n and %</button><button type="button" data-nview="n">n only</button><button type="button" data-nview="p">% only</button></div>
-<div class="scroll"><table class="reptab">
+<div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on" title="Show both the number of people (n) and the share (%) for each answer. The table stays the same; only the columns shown change.">n and %</button><button type="button" data-nview="n" title="Show only how many people chose each answer, the way the site-visit counts tables read.">n only</button><button type="button" data-nview="p" title="Show only the share of answers for each option, easiest for comparing items with different numbers of answers.">% only</button></div>
+<div class="scroll"><table class="reptab" title="Every item in this section for this period: the mean, the standard deviation, and how many people chose each answer.">
   <thead>
     <tr>
       <th rowspan="2" class="itemh">Item</th>
@@ -57,13 +56,13 @@
 </div>
 {% endif %}
 {% if t.lon and t.lon.periods|length > 1 %}
-<div class="tcard">
-<div class="teyebrow">Table {{ t.lon.no }}</div>
+<div class="tcard rollsec">
+<div class="teyebrow">Table {{ t.lon.no }} · {% with first=t.lon.periods|first last=t.lon.periods|last %}{{ first.short_label }} to {{ last.short_label }} averages{% endwith %}</div>
 <h3 class="ttitle2">{{ t.lon_title }}</h3>
 {% with tr=t.lon.trend %}{% if tr %}
 <div class="trend">
   <figure class="trend-fig">
-    <figcaption class="small muted">Average rating, all items, each reporting period</figcaption>
+    <figcaption class="small muted">Average rating, all items, each reporting period. The year-by-year means table below has every item, like the site-visit reports.</figcaption>
     <svg viewBox="0 0 {{ tr.w }} {{ tr.h }}" role="img" aria-label="Overall mean rating by reporting period">
       {% for g in tr.grid %}<line x1="{{ tr.pad_l }}" x2="{{ tr.right }}" y1="{{ g.y }}" y2="{{ g.y }}" class="tg"/><text x="{{ tr.pad_l|add:-6 }}" y="{{ g.y }}" class="tgl">{{ g.v }}</text>{% endfor %}
       <polyline points="{{ tr.path }}" class="tl"/>
@@ -78,9 +77,9 @@
   </ul>
 </div>
 {% endif %}{% endwith %}
-<details class="tmore"><summary><span class="tmore-open">Show item-by-item trends</span><span class="tmore-close">Hide item-by-item trends</span></summary>
-{% if t.lon.has_sd %}<div class="nview sdview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-sdview="mean">Means</button><button type="button" data-sdview="sd" class="on">Means and SD</button></div>{% endif %}
-<div class="scroll"><table class="lontab">
+<details class="tmore"><summary><span class="tmore-open">Show the year-by-year means table (every item, Year 6 to now)</span><span class="tmore-close">Hide the year-by-year means table</span></summary>
+{% if t.lon.has_sd %}<div class="nview sdview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-sdview="mean" title="Show only each item’s average, for a clean year-to-year read.">Means</button><button type="button" data-sdview="sd" class="on" title="Show each average with its standard deviation (SD), where the source reports gave one. A larger SD means people disagreed more.">Means and SD</button></div>{% endif %}
+<div class="scroll"><table class="lontab" title="Every item’s average rating in every reporting period since Year 6, laid out like the site-visit reports.">
   <thead>
     <tr><th rowspan="3" style="text-align:left">Item</th>{% for y in t.lon.years %}<th colspan="{{ y.span }}" data-span="{{ y.span }}" class="num ygstart sdgrp">{{ y.school }}</th>{% endfor %}</tr>
     <tr>{% for y in t.lon.years %}<th colspan="{{ y.span }}" data-span="{{ y.span }}" class="num ygstart sdgrp">Year {{ y.year }}</th>{% endfor %}</tr>

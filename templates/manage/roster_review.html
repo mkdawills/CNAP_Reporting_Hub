@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Review roster import · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Review roster import</h1>
+<div class="head"><div><h1>Review roster import {% why "The uploaded roster against what the Hub already has: accept a row to add or update that member. Nothing changes until you accept." %}</h1>
   <p>{{ imp.original_filename }} · uploaded {{ imp.created_at|date:"M j, Y g:i a" }} · {{ imp.get_status_display }}</p></div></div>
 {% if parsed and undecided %}<div class="banner">{{ undecided }} row{{ undecided|pluralize }} need{{ undecided|pluralize:"s," }} a choice before you can commit.</div>{% endif %}
 {% if imp.summary.result %}<div class="okmsg">Committed: {{ imp.summary.result.created }} created, {{ imp.summary.result.added_to_roster }} added to the roster, {{ imp.summary.result.merged }} merged, {{ imp.summary.result.ended }} memberships ended.</div>{% endif %}
@@ -10,8 +10,8 @@
   <details class="panel lgroup" open>
     <summary><span>{{ g.title }}</span><span>{{ g.rows|length }}</span></summary>
     <p class="small muted mt">{{ g.note|stack }}</p>
-    <div class="scroll"><table>
-      <thead><tr><th>Row</th><th>Name</th><th>E-mail</th><th>Notes</th><th>Decision</th></tr></thead>
+    <div class="scroll"><table title="Each row from the uploaded roster file, and what accepting it will do.">
+      <thead><tr><th>Row</th><th>Name</th><th>Email</th><th>Notes</th><th>Decision</th></tr></thead>
       <tbody>{% for r in g.rows %}
         <tr><td class="num">{{ r.row_number }}</td>
           <td>{{ r.first_name }} {{ r.last_name }}{% if r.matched_person %}<div class="small"><a href="{% url 'manage:person' r.matched_person.pk %}">Existing: {{ r.matched_person }}</a></div>{% endif %}</td>

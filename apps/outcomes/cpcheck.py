@@ -95,6 +95,7 @@ def _send(c, kind, due):
             "person": p,
             "kind": kind,
             "due": f"{due:%A, %B} {due.day}",
+            "evaluator_email": settings.EVALUATOR_EMAIL,
             "fall": f"{fall:%B} {fall.day}" if fall else "the fall",
             "rppr_due": f"{rppr_due(c.assignment.reporting_period.grant_year):%B} 1",
             "url": url,
@@ -118,7 +119,7 @@ def _send(c, kind, due):
 
 
 def run(today=None):
-    """Send today's February-check e-mails. Returns the number sent. Safe to run more than once a day."""
+    """Send today's February-check emails. Returns the number sent. Safe to run more than once a day."""
     if not getattr(settings, "CP_CHECK_ENABLED", True):
         return 0
     today = today or timezone.localdate()
@@ -148,7 +149,7 @@ def rppr_due(gy):
 
 
 def with_dates(c):
-    """Attach .due (answer by) and .rppr_due (the report's due date) for pages and e-mails."""
+    """Attach .due (answer by) and .rppr_due (the report's due date) for pages and emails."""
     if c is not None:
         gy = c.assignment.reporting_period.grant_year
         c.due = dates(gy)[1]

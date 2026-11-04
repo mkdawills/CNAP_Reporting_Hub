@@ -317,8 +317,27 @@ def build(form_definition, period, *, audience="admin"):
         table = {
             "no": tno,
             "skip_main": skip_main,
-            "title": f"{period_title(period)} {title_case(sec.title)} Survey Responses",
-            "lon_title": f"{title_case(sec.title)} Over Time",
+            # The survey-section name lives on the Table line, and the title below it reads
+            # "Year 10 Fall Survey Responses" (MW 2026-11-03).
+            # A generic section title ("Survey Questions") names nothing, so the card takes
+            # the survey's own name instead (MW 2026-11-03).
+            "sec_name": (
+                form_definition.name
+                if sec.title.lower().strip().rstrip("s")
+                in ("survey question", "survey item", "question", "item", "questions")
+                else (
+                    title_case(sec.title)
+                    if "survey" in sec.title.lower()
+                    else f"{title_case(sec.title)} Survey"
+                )
+            ),
+            "title": f"{period_title(period)} Survey Responses",
+            "lon_title": (
+                f"{form_definition.name} Over Time"
+                if sec.title.lower().strip().rstrip("s")
+                in ("survey question", "survey item", "question", "item", "questions")
+                else f"{title_case(sec.title)} Over Time"
+            ),
             "section": sec,
             "scale": scale,
             "rows": rows,

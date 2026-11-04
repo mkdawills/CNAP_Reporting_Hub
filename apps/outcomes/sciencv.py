@@ -142,7 +142,7 @@ def message(code, info):
     if not info["form_ok"]:
         return f"This doesn’t look like the NIH Common Form {kind} from SciENcv. Please check the file."
     if not info["certified"]:
-        return "This copy isn’t certified in SciENcv yet. Certify it there, download it again, and upload the new PDF; NIH rejects uncertified forms."
+        return "This copy isn’t certified in SciENcv yet. Please certify it there, download it again, and upload the new PDF. NIH rejects uncertified forms."
     return ""
 
 

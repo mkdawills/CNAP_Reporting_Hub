@@ -52,7 +52,12 @@ def tasks(request):
         return render(
             request,
             "portal/tasks.html",
-            {"period": None, "cp_check": cpcheck.pending_for(person), **_extras()},
+            {
+                "period": None,
+                "cp_check": cpcheck.pending_for(person),
+                "sow_excerpts": [d for d in person.documents.all() if d.excerpt],
+                **_extras(),
+            },
         )
     mine = list(
         Assignment.objects.filter(person=person, reporting_period=period).select_related(
@@ -68,6 +73,7 @@ def tasks(request):
     from apps.outcomes import cpcheck
 
     ctx["cp_check"] = cpcheck.pending_for(person)
+    ctx["sow_excerpts"] = [d for d in person.documents.all() if d.excerpt]
     from django.utils import timezone as _tz
 
     hour = _tz.localtime().hour
@@ -291,10 +297,10 @@ def edit_again(request, pk):
     """The respondent reopens their own submitted form while the period is open; the submitted copy is kept."""
     a = _own_assignment(request, pk)
     if not rs.can_self_reopen(a, request.user):
-        messages.error(request, "This form can’t be changed now. Ask the evaluator if you need to.")
+        messages.error(request, "This form can’t be changed now. Please ask the evaluator if you need to.")
         return redirect("portal:form", pk)
     rs.reopen(request.user, a, reason="Reopened by the respondent")
-    messages.success(request, "Your answers are open to change. Submit again when you’re done.")
+    messages.success(request, "Your answers are open to change. Please submit again when you’re done.")
     return redirect("portal:form", pk)
 
 
@@ -359,7 +365,7 @@ def profile(request):
             request_commons_help(request.user, person, request.POST.get("kind", ""))
             messages.success(
                 request,
-                "Thanks. The Center evaluator has your request and will get in touch by e-mail.",
+                "Thanks. The Center evaluator has your request and will get in touch by email.",
             )
             return redirect(reverse("portal:profile") + "#commons")
         orcid = person.orcid
@@ -396,6 +402,7 @@ def profile(request):
         "portal/profile.html",
         {
             "person": person,
+            "my_docs": person.documents.select_related("file"),
             "rels": [r for r in rels if r.relationship_type.code != "cnap_member"],
             "on_roster": any(r.relationship_type.code == "cnap_member" for r in rels),
             "levels": LEVELS,
@@ -409,6 +416,21 @@ def profile(request):
             "gy_start": 2016 + gy,
             "effort": effort,
         },
+    )
+
+
+@login_required
+def my_document(request, pk):
+    """A document on the person's own page, such as their Statement of Work (MW 2026-11-03)."""
+    from apps.accounts import access
+    from apps.people.models import PersonDocument
+
+    d = get_object_or_404(PersonDocument.objects.select_related("file", "person"), pk=pk)
+    if d.person_id != request.user.person_id and not access.can_view_admin(request.user):
+        raise PermissionDenied
+    f = d.file
+    return FileResponse(
+        f.storage_key.open("rb"), as_attachment=True, filename=f.original_filename
     )
 
 

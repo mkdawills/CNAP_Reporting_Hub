@@ -1,4 +1,4 @@
-"""manage.py send_speaker_surveys: run every 10 minutes. E-mails the NeuroSync Speaker Survey to each speaker whose
+"""manage.py send_speaker_surveys: run every 10 minutes. Emails the NeuroSync Speaker Survey to each speaker whose
 talk has just ended (MW 2026-11-03)."""
 
 from django.core.management.base import BaseCommand

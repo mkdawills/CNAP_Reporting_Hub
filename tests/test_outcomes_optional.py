@@ -146,7 +146,7 @@ def test_not_funded_shows_encouraging_note(client, center):
 
     client.force_login(User.objects.get(username="okafor"))
     client.post(
-        "/outcomes/new/grant/", {"funding_agency": "NIH", "project_title": "Grant E", "role": "pi"}
+        "/outcomes/new/grant/", {"funding_source": "federal", "federal_agency": "NIH", "project_title": "Grant E", "role": "pi"}
     )
     g = GrantSubmission.objects.get(project_title="Grant E")
     GrantSubmission.objects.filter(pk=g.pk).update(status="submitted")

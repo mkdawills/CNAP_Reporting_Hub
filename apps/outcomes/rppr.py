@@ -159,6 +159,11 @@ def table1(gy):
         .prefetch_related("people__person")
     )
     for g in qs.order_by("submission_date"):
+        if g.exclude_from_table1:
+            skipped.append(
+                (g, "Left out by the evaluator: " + (g.table1_exclusion_reason or "no reason given"))
+            )
+            continue
         if is_parent_or_supplement(g):
             skipped.append((g, "Parent COBRE award or a supplement to it"))
             continue
@@ -210,7 +215,7 @@ def table1(gy):
                 # IDeA support. For example, equipment grants."
                 "check": (
                     "Core staff: count only if related to IDeA support (for example, an equipment grant). "
-                    "If not, set “Leave out of Table 1” on the grant."
+                    "If not, please use \u201cLeave out\u201d on this row and give the reason."
                     if role == "Core Staff"
                     else ""
                 ),

@@ -48,7 +48,7 @@ def test_first_prompt_no_plans_completes(client, center):
     client.post("/outcomes/plans/grants/", {"answer": "no"})
     c = OutcomeCheckin.objects.get(person=u.person)
     assert c.plans_publications is False and c.plans_grants is False
-    assert "All caught up" in client.get("/outcomes/").content.decode()
+    assert "all caught up" in client.get("/outcomes/").content.decode()
 
 
 def test_publication_lifecycle(client, center):
@@ -75,7 +75,7 @@ def test_publication_lifecycle(client, center):
             "submission_date": "2026-11-01",
         },
     )
-    assert r.status_code == 200 and "Choose at least one Center resource" in r.content.decode()
+    assert r.status_code == 200 and "Please choose at least one Center resource" in r.content.decode()
     client.post(
         f"/outcomes/pub/{p.pk}/",
         {
@@ -138,7 +138,8 @@ def test_grant_not_funded_resubmission_is_a1(client, center):
     client.post(
         "/outcomes/new/grant/",
         {
-            "funding_agency": "NIH",
+            "funding_source": "federal",
+            "federal_agency": "NIH",
             "project_title": "Grant G",
             "role": "pi",
             "anticipated_total": "100000",
@@ -151,11 +152,11 @@ def test_grant_not_funded_resubmission_is_a1(client, center):
         f"/outcomes/grant/{g.pk}/",
         {
             "to": "submitted",
-            "funding_agency": "NIH",
+            "funding_source": "federal",
+            "federal_agency": "NIH",
             "project_title": "Grant G",
             "role": "pi",
             "submission_date": "2026-10-05",
-            "funding_source_type": "nih",
             "requested_total": "120000",
             "resources": [cn.pk],
         },
@@ -203,7 +204,7 @@ def test_delegate_can_enter_for_owner(client, center):
 def test_task_counts_on_my_tasks(client, center):
     login(client, "okafor")
     html = client.get("/tasks/").content.decode()
-    assert "publications and grants" in html.lower()
+    assert "publications, talks, and grants" in html.lower()
 
 
 def test_exports_have_spec_columns(client, center):
@@ -232,7 +233,8 @@ def test_final_records_can_be_viewed_and_edited_without_duplicates(client, cente
     client.post(
         "/outcomes/new/grant/",
         {
-            "funding_agency": "NIH",
+            "funding_source": "federal",
+            "federal_agency": "NIH",
             "project_title": "Grant V",
             "role": "pi",
             "anticipated_total": "1",

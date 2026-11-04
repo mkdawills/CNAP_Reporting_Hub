@@ -1,19 +1,19 @@
 {
   "code": "nih_documents",
-  "name": "NIH Documents: Biosketch, Current and Pending, MFTRP",
+  "name": "NIH Documents: Biosketch, Current and Pending (Other) Support, and Malign Foreign Talent Recruitment Program (MFTRP) Certification",
   "category": "report",
   "context_kind": "none",
   "confidentiality": "standard",
   "sort_order": 16,
-  "intro_text": "Each year, the Center collects everyone’s Current and Pending for its NIH progress report. If you’re named on the Notice of Award, NIH also needs your biosketch and an MFTRP certification. Make each document in SciENcv with NIH’s Common Forms, and upload the certified PDFs here. If you’re an Other Significant Contributor, you’ll see only the biosketch upload.",
+  "intro_text": "Each year, the Center collects everyone’s Current and Pending (Other) Support for its Research Performance Progress Report (RPPR) to NIH. If you’re named on the Notice of Award, NIH also needs your biosketch and a Malign Foreign Talent Recruitment Program (MFTRP) certification. Please make each document in SciENcv with NIH’s Common Forms, and upload the certified PDFs here. If you’re an Other Significant Contributor, you’ll see only the biosketch upload.",
   "display": {
     "task_group": "nih",
     "short_name": "NIH documents",
     "time_label": "1–3 PDF uploads",
     "yearly_sequence": 1,
     "about": [
-      "Each year the Center reviews the Current and Pending (Other) Support of its project leaders, core directors and PD/PI.",
-      "People named on the Notice of Award also give a biosketch and MFTRP certification for the RPPR.",
+      "Each year the Center reviews the Current and Pending (Other) Support of its project leaders, core directors, and Program Director/Principal Investigator (PD/PI).",
+      "People named on the Notice of Award also give a biosketch and a Malign Foreign Talent Recruitment Program (MFTRP) certification for the Research Performance Progress Report (RPPR).",
       "Other Significant Contributors give a biosketch only."
     ],
     "section_downloads": {
@@ -29,14 +29,42 @@
         {
           "label": "Or the blank form (Word)",
           "static": "forms/NIH_Annual_MFTRP_Certification.docx"
+        },
+        {
+          "label": "NIH’s notice on the MFTRP certification, NOT-OD-26-018 (opens in a new tab)",
+          "url": "https://grants.nih.gov/grants/guide/notice-files/NOT-OD-26-018.html"
+        }
+      ],
+      "documents": [
+        {
+          "label": "NIH’s instructions for the Current and Pending (Other) Support Common Form (opens in a new tab)",
+          "url": "https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form"
+        },
+        {
+          "label": "Open SciENcv (opens in a new tab)",
+          "url": "https://www.ncbi.nlm.nih.gov/sciencv/"
+        }
+      ],
+      "biosketch": [
+        {
+          "label": "NIH’s instructions for the Biographical Sketch Common Form (opens in a new tab)",
+          "url": "https://grants.nih.gov/grants-process/write-application/forms-directory/biographical-sketch-common-form"
+        },
+        {
+          "label": "NIH’s instructions for the NIH Biographical Sketch Supplement (opens in a new tab)",
+          "url": "https://grants.nih.gov/grants-process/write-application/forms-directory/nih-biographical-sketch-supplement"
+        },
+        {
+          "label": "Open SciENcv (opens in a new tab)",
+          "url": "https://www.ncbi.nlm.nih.gov/sciencv/"
         }
       ]
     },
     "intro_by": {
       "source": "audience",
-      "osc": "Each year, the Center collects a biosketch from each Other Significant Contributor for its NIH progress report. Make yours in SciENcv with NIH’s Common Form, and upload the certified PDF here.",
-      "senior_key": "Each year, the Center collects three documents from people named on the Notice of Award for its NIH progress report. They are your Current and Pending, your biosketch, and an MFTRP certification. Make the first two in SciENcv with NIH’s Common Forms, and upload the certified PDFs here.",
-      "default": "Each year, the Center collects everyone’s Current and Pending for its NIH progress report. Make yours in SciENcv with NIH’s Common Form, and upload the certified PDF here."
+      "osc": "Each year, the Center collects a biosketch from each Other Significant Contributor for its Research Performance Progress Report (RPPR) to NIH. Please make yours in SciENcv with NIH’s Common Form, and upload the certified PDF here.",
+      "senior_key": "Each year, the Center collects three documents from people named on the Notice of Award for its Research Performance Progress Report (RPPR) to NIH. They are your Current and Pending (Other) Support, your biosketch, and a Malign Foreign Talent Recruitment Program (MFTRP) certification. Please make the first two in SciENcv with NIH’s Common Forms, and upload the certified PDFs here.",
+      "default": "Each year, the Center collects everyone’s Current and Pending (Other) Support for its Research Performance Progress Report (RPPR) to NIH. Please make yours in SciENcv with NIH’s Common Form, and upload the certified PDF here."
     }
   },
   "sections": [
@@ -50,11 +78,11 @@
           "type": "yes_no",
           "answer_set": "Yes / No",
           "required": true,
-          "help_text": "This is RPPR question D.2.a, word for word. In short: will your CNAP effort drop by 25% or more next budget year (starting June 1)? NIH treats a Yes as a request for prior approval. If the drop has already happened, tell the evaluator, because a separate request is needed."
+          "help_text": "This is RPPR question D.2.a, word for word. In short: will your CNAP effort drop by 25% or more next budget year (starting June 1)? NIH treats a Yes as a request for prior approval. If the drop has already happened, please tell the evaluator, because a separate request is needed."
         },
         {
           "code": "d2a_explain",
-          "prompt": "If Yes: describe the change, with your current and planned calendar months and when the change starts.",
+          "prompt": "If you answered Yes, please describe the change. Please include your current and planned calendar months and when the change starts.",
           "type": "long_text"
         },
         {
@@ -91,7 +119,7 @@
     {
       "code": "documents",
       "title": "Current and Pending (Other) Support",
-      "instructions": "Make it in SciENcv (www.ncbi.nlm.nih.gov/sciencv), using NIH’s Common Form.\nCertify it yourself in SciENcv, then download the PDF. Don’t flatten it afterward: NIH checks the certification. Your ORCID iD must show in the Persistent Identifier (PID) section. If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at mkwills@ksu.edu; she can point you in the right direction.",
+      "instructions": "NIH requires that your Current and Pending (Other) Support be built in SciENcv, using NIH’s Common Form. Please be sure to certify your Current and Pending (Other) Support in SciENcv before downloading it as a PDF. Please don’t flatten the PDF, because NIH checks the certification. Your ORCID iD must show in the Persistent Identifier (PID) section. The links below have NIH’s instructions. If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at mkwills@ksu.edu; she can point you in the right direction.",
       "questions": [
         {
           "code": "current_pending",
@@ -109,7 +137,7 @@
     {
       "code": "biosketch",
       "title": "Biosketch",
-      "instructions": "NIH needs your biosketch. Use the Common Form with the NIH Biographical Sketch Supplement, in one PDF from SciENcv. Certify it there and don’t flatten it. If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at mkwills@ksu.edu; she can point you in the right direction.",
+      "instructions": "Because you are listed on CNAP’s Notice of Award (NoA) as Key Personnel or as an Other Significant Contributor, NIH requires your updated biosketch. NIH requires that your biosketch be built in SciENcv. Please use NIH’s Biographical Sketch Common Form with the NIH Biographical Sketch Supplement, combined in one PDF. Please be sure to certify your biosketch in SciENcv before downloading it as a PDF. Please don’t flatten the PDF. The links below have NIH’s instructions. If you need help with SciENcv, please contact your Central Office grant specialist. Unsure who your Central Office grant specialist is? Start with Morgan Wills at mkwills@ksu.edu; she can point you in the right direction.",
       "questions": [
         {
           "code": "biosketch",
@@ -126,8 +154,8 @@
     },
     {
       "code": "mftrp",
-      "title": "MFTRP certification",
-      "instructions": "Every year, NIH requires each senior/key person to certify in the RPPR whether they are a party to a Malign Foreign Talent Recruitment Program (MFTRP).\n\nFour steps:\n- Download your form below.\n- Sign it with an Adobe digital signature; the guide below walks you through it.\n- Flatten it, as NIH asks: print it to PDF (Microsoft Print to PDF on Windows, or Save as PDF on a Mac).\n- Upload the flattened PDF here.",
+      "title": "Malign Foreign Talent Recruitment Program (MFTRP) certification",
+      "instructions": "Every year, NIH requires each senior/key person to certify in the Research Performance Progress Report (RPPR) whether they are a party to a Malign Foreign Talent Recruitment Program (MFTRP).\n\nPlease follow these four steps:\n- Please download your form below.\n- Please sign it with an Adobe digital signature. The guide below walks you through it.\n- Please flatten it, as NIH asks. Print it to PDF (Microsoft Print to PDF on Windows, or Save as PDF on a Mac).\n- Please upload the flattened PDF here.",
       "questions": [
         {
           "code": "mftrp_cert",
@@ -150,7 +178,7 @@
           "code": "foreign_docs",
           "prompt": "Supporting documentation: copies of contracts for foreign appointments, or for employment with a foreign institution (optional, one flattened PDF)",
           "type": "file",
-          "help_text": "NIH takes these as a separate attachment, not inside your Current and Pending. Leave this blank if you have none.",
+          "help_text": "NIH takes these as a separate attachment, not inside your Current and Pending (Other) Support. Please leave this blank if you have none.",
           "config": {
             "accept": [
               ".pdf"

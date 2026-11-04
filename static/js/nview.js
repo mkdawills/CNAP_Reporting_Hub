@@ -45,7 +45,7 @@
   function label(btn) {
     var all = document.querySelectorAll("details.tmore");
     var anyClosed = Array.prototype.some.call(all, function (d) { return !d.open; });
-    btn.textContent = anyClosed ? "Show all tables" : "Collapse all tables";
+    btn.textContent = anyClosed ? "Open every item-by-item table" : "Close every item-by-item table";
     btn.setAttribute("aria-expanded", anyClosed ? "false" : "true");
   }
   document.addEventListener("click", function (e) {

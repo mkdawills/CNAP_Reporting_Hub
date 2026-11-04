@@ -45,7 +45,7 @@ def test_page_wording(client, okafor):
     assert "in the last reporting period." in html  # said in the section, next to the button
     assert "You have 1 forms here" not in html
     assert "What’s this?" in html and "▸" not in html
-    assert "left, about" in html or "this period, about" in html or "You’ve finished all" in html
+    assert "take about" in html or "takes about" in html or "You’ve finished all" in html
 
 
 def test_section_progress_counts_only_finished_sections(okafor):
@@ -108,4 +108,4 @@ def test_started_form_shows_sections_done(client, okafor):
         },
     )
     html = client.get("/tasks/").content.decode()
-    assert "sections. Your answers are saved." in _row(html, a)
+    assert "sections.<br>Your answers are saved." in _row(html, a)

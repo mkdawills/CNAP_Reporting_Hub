@@ -22,7 +22,13 @@ def role_summary(rels):
 def cnap(request):
     user = getattr(request, "user", None)
     if not user or not user.is_authenticated:
-        return {"platform_name": "CNAP Reporting Hub", "evaluator_email": settings.EVALUATOR_EMAIL}
+        from .models import SitePhoto
+
+        return {
+            "platform_name": "CNAP Reporting Hub",
+            "evaluator_email": settings.EVALUATOR_EMAIL,
+            "site_photo": SitePhoto.current(),
+        }
     person = getattr(user, "person", None)
     rels = (
         list(person.current_relationships().select_related("relationship_type", "core"))

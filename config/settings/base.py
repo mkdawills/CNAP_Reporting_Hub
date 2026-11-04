@@ -23,6 +23,7 @@ env = environ.Env(
     DEFAULT_FROM_EMAIL=(str, "CNAP Reporting Hub <no-reply@localhost>"),
     OUTCOME_STALE_DAYS=(int, 120),
     OUTCOME_REMINDER_EVERY_DAYS=(int, 30),
+    GRANT_NUDGE_EVERY_DAYS=(int, 28),
     OUTCOME_REOPEN_DAYS=(int, 7),
     CNAP_GRANT_NUMBERS=(list, ["P20GM113109"]),
     PUBMED_CONTACT_EMAIL=(str, ""),
@@ -169,6 +170,9 @@ SIGNIN_LINKS_FOR_KSTATE = env.bool("SIGNIN_LINKS_FOR_KSTATE", default=not SSO_EN
 # at most once every OUTCOME_REMINDER_EVERY_DAYS days.
 OUTCOME_STALE_DAYS = env("OUTCOME_STALE_DAYS")
 OUTCOME_REMINDER_EVERY_DAYS = env("OUTCOME_REMINDER_EVERY_DAYS")
+# A planned grant proposal gets a friendly monthly check-in email instead of the stale reminder
+# (MW 2026-11-03): at most one every GRANT_NUDGE_EVERY_DAYS days.
+GRANT_NUDGE_EVERY_DAYS = env("GRANT_NUDGE_EVERY_DAYS")
 # After a reporting period closes, people can add or update outcomes again this many days later (entry is open
 # all year otherwise), so the Center can finish that period's numbers first.
 OUTCOME_REOPEN_DAYS = env("OUTCOME_REOPEN_DAYS")

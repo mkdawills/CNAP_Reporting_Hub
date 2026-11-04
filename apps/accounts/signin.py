@@ -2,7 +2,7 @@
 Emailed sign-in links and 6-digit codes (decisions.md 2026-10-24, sign-in plan).
 
 - A link is single-use and expires after SIGNIN_LINK_DAYS (7). Only the SHA-256 of its token is stored.
-- Opening a link shows a "Sign in" button; the token is used only when that button is pressed, so e-mail
+- Opening a link shows a "Sign in" button; the token is used only when that button is pressed, so email
   security scanners that pre-open links can't use it up.
 - A link session lasts SESSION_COOKIE_AGE (8 hours).
 - Opening a confidential mentoring form from a link session also needs a 6-digit code sent to the same address
@@ -218,7 +218,7 @@ def last_link_email(user):
 
 
 def send_code(person, email=None):
-    """E-mail a fresh 6-digit code (to the address the link went to). Returns False when too many were sent
+    """Email a fresh 6-digit code (to the address the link went to). Returns False when too many were sent
     recently."""
     now = timezone.now()
     if (

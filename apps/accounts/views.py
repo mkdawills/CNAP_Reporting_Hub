@@ -47,7 +47,7 @@ def admin_login(request):
 
 
 def link_request(request):
-    """Enter an e-mail address; get a sign-in link if it's on file. The reply is the same either way."""
+    """Enter an email address; get a sign-in link if it's on file. The reply is the same either way."""
     sent = False
     if request.method == "POST":
         signin.request_link(request.POST.get("email", ""), ip=signin.client_ip(request))
@@ -100,7 +100,7 @@ def link_code(request):
         if signin.check_code(person, request.POST.get("code", "")):
             request.session["code_verified"] = True
             return redirect(nxt)
-        error = "That code didn’t match, or it has expired. Check the newest e-mail, or send a new code."
+        error = "That code didn’t match, or it has expired. Check the newest email, or send a new code."
     elif not request.session.get("code_sent"):
         signin.send_code(person, request.session.get("link_email"))
         request.session["code_sent"] = True

@@ -2,23 +2,23 @@
 {% block title %}Profile · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>{{ person }}</h1><p>{{ person.institution|default:"" }}</p></div></div>
-<div class="grid2">
-  <div class="panel">
+<div class="grid2 rollup" data-start="closed">
+  <div class="panel rollsec">
     <h2 class="sectionhead">Your details</h2>
     <form method="post">{% csrf_token %}
       <div class="field"><label>Department<input type="text" name="department" value="{{ person.department }}"></label></div>
-      <div class="field"><label>Position<input type="text" name="position_title" value="{{ person.position_title }}"></label></div>
+      <div class="field"><label>Position title<input type="text" name="position_title" placeholder="For example, Assistant Professor or Graduate Research Assistant" value="{{ person.position_title }}"></label></div>
       <div class="field" id="commons"><label>eRA Commons ID<input type="text" name="era_commons_id" value="{{ person.era_commons_id }}" autocomplete="off" spellcheck="false"></label>
-        <p class="small muted">{{ "Your NIH eRA Commons user name. The Center lists it in its yearly NIH progress report."|stack }}</p>
+        <p class="small muted">This is your NIH eRA Commons user name. The Center lists your eRA Commons ID in its annual NIH <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>.<br><a href="https://era.nih.gov/register-accounts/create-and-edit-an-account.htm" target="_blank" rel="noopener">eRA’s guide to creating and managing an eRA Commons account</a> (opens in a new tab)</p>
         {% if not person.era_commons_id %}<details class="helpbox"{% if person.era_commons_help_requested_at %} open{% endif %}><summary class="small">I need help with eRA Commons, or I’m not sure I need one</summary>
           <dl class="small qa">
-            <dt>Do I need an eRA Commons ID?</dt><dd>Yes, if you have a CNAP role (PD/PI, core director, mentor, project leader, postdoc, graduate student, other student, or staff) and work on CNAP at least 1 calendar month a year (about 8% of your time).<br>NIH requires it for everyone in the Center’s yearly progress report, students included.<br>Core users and event participants usually don’t need one.</dd>
-            {% if not is_external %}<dt>Already have an eRA Commons ID?</dt><dd>Great. You’ll keep it.<br>If you acquired it while at a different institution, reach out to K-State’s central research office to have your affiliation in eRA Commons switched to K-State.</dd>
-            <dt>Need an eRA Commons ID?</dt><dd>K-State’s central research office creates your eRA Commons ID on your behalf; you’re restricted from making it yourself.<br>Email <a href="mailto:research@k-state.edu">research@k-state.edu</a> to create your eRA Commons ID or have your ID switched to your current institution.</dd>
-            {% else %}<dt>Already have an eRA Commons ID?</dt><dd>Great. You’ll keep it. Type it above.</dd>
-            <dt>Need an eRA Commons ID?</dt><dd>Your institution’s research office creates your eRA Commons ID on your behalf; you’re restricted from making it yourself.<br>Contact your institution’s research office to create one.</dd>{% endif %}
+            <dt>Do I need an eRA Commons ID?</dt><dd>Yes, if you have a CNAP role (PD/PI, core director, mentor, project leader, postdoc, graduate student, other student, or staff) and work on CNAP at least 1 calendar month a year (about 8% of your time).<br>NIH requires it for everyone in the Center’s yearly Research Performance Progress Report (RPPR), students included.<br>Core users and event participants usually don’t need one.</dd>
+            {% if not is_external %}<dt>Already have an eRA Commons ID?</dt><dd>Great. You’ll keep it.<br>If you acquired it while at a different institution, please reach out to K-State’s central research office to have your affiliation in eRA Commons switched to K-State.</dd>
+            <dt>Need an eRA Commons ID?</dt><dd>K-State’s central research office creates your eRA Commons ID on your behalf; you’re restricted from making it yourself.<br>Please email <a href="mailto:research@k-state.edu">research@k-state.edu</a> to create your eRA Commons ID or have your ID switched to your current institution.</dd>
+            {% else %}<dt>Already have an eRA Commons ID?</dt><dd>Great. You’ll keep it.<br>Please type it above.</dd>
+            <dt>Need an eRA Commons ID?</dt><dd>Your institution’s research office creates your eRA Commons ID on your behalf; you’re restricted from making it yourself.<br>Please contact your institution’s research office to create one.</dd>{% endif %}
           </dl>
-          {% if person.era_commons_help_requested_at %}<p class="small ok-note">You asked for help on {{ person.era_commons_help_requested_at|date:"M j, Y" }}. The Center evaluator will be in touch by e-mail.</p>
+          {% if person.era_commons_help_requested_at %}<p class="small ok-note">You asked for help on {{ person.era_commons_help_requested_at|date:"M j, Y" }}.<br>The Center evaluator will be in touch by email.</p>
           {% else %}<div class="fieldrow" style="gap:8px">
             <button class="btn small" type="submit" form="commonshelp" name="kind" value="setup">I need help setting up eRA Commons</button>
             <button class="btn small ghost" type="submit" form="commonshelp" name="kind" value="unsure">I’m not sure I need eRA Commons</button>
@@ -26,22 +26,34 @@
         </details>{% endif %}
       </div>
       {% if needs_orcid or person.orcid %}<div class="field" id="orcid"><label>ORCID iD<input type="text" name="orcid" value="{{ person.orcid }}" placeholder="0000-0000-0000-0000" autocomplete="off" spellcheck="false" inputmode="text"></label>
-        <p class="small muted">{{ "NIH requires an ORCID iD from everyone who submits a biosketch or Current and Pending. Link it to your eRA Commons account, and check that it shows in SciENcv’s Persistent Identifier (PID) section. No ORCID iD yet? You can get one free at orcid.org."|stack }}</p></div>{% endif %}
+        <p class="small muted">{{ "NIH requires an ORCID iD from everyone who submits a biosketch or Current and Pending (Other) Support. Please link it to your eRA Commons account, and please check that it shows in SciENcv’s Persistent Identifier (PID) section. No ORCID iD yet? Please reach out to your Central Office grant specialist."|stack }}<br><a href="https://grants.nih.gov/policy-and-compliance/implementation-of-new-initiatives-and-policies/common-forms-for-biosketch" target="_blank" rel="noopener">NIH’s Common Forms page, including the ORCID iD requirement</a> · <a href="https://grants.nih.gov/grants-process/write-application/forms-directory/biographical-sketch-common-form" target="_blank" rel="noopener">NIH’s biosketch instructions</a> · <a href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener">NIH’s Current and Pending (Other) Support instructions</a> (each opens in a new tab)<br>If you need help with SciENcv, please contact your Central Office grant specialist.<br>Unsure who your Central Office grant specialist is? Start with Morgan Wills at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>; she can point you in the right direction.</p></div>{% endif %}
       {% if is_trainee or person.trainee_level %}<div class="field"><label>Career level<select name="trainee_level"><option value="">—</option>{% for c, l in levels %}<option value="{{ c }}" {% if person.trainee_level == c %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></label></div>{% endif %}
-      {% if in_d1 %}{% if effort.academic_months is not None or effort.summer_months is not None %}<div class="field"><p class="small">Months on CNAP work, Year {{ gy }}: <strong>{% if effort.academic_months is not None %}{{ effort.academic_months }} academic{% endif %}{% if effort.summer_months is not None %}, {{ effort.summer_months }} summer{% endif %}</strong>, entered by the Center.<br>If that’s wrong, contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p></div>
+      {% if in_d1 %}{% if effort.academic_months is not None or effort.summer_months is not None %}<div class="field"><p class="small">Months on CNAP work, Year {{ gy }}: <strong>{% if effort.academic_months is not None %}{{ effort.academic_months }} academic{% endif %}{% if effort.summer_months is not None %}, {{ effort.summer_months }} summer{% endif %}</strong>, entered by the Center.<br>If that’s wrong, please contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p></div>
       {% else %}<div class="field"><label>Calendar months on CNAP work, Year {{ gy }} (June 1, {{ gy_start }} – May 31, {{ gy_start|add:1 }})<input type="number" name="calendar_months" min="0" max="12" step="0.1" value="{{ effort.calendar_months|default_if_none:'' }}" style="max-width:8em"></label>
-        <p class="small muted">{{ "Your share of full-time effort × 12. For example, 10% of your time all year = 1.2; one full-time summer month = 1.0. Your best estimate is fine."|stack }}</p></div>{% endif %}{% endif %}
-      <p class="small muted">E-mail: {{ person.primary_email|default:"none on file" }}</p>
-      <p class="small muted">To change your name, institution or e-mail, contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
+        <p class="small muted">{{ "Please multiply your share of full-time effort by 12. For example, 10% of your time all year = 1.2 calendar months, and one full-time summer month = 1.0 summer months. Your best estimate is fine."|stack }<br><a href="https://www.grants.nih.gov/news-events/nih-extramural-nexus-news/2026/06/what-is-a-person-month-how-do-i-calculate-it" target="_blank" rel="noopener">NIH’s explanation of person months and how to calculate them</a> (opens in a new tab)</p></div>{% endif %}{% endif %}
+      <p class="small muted">Email: {{ person.primary_email|default:"none on file" }}</p>
+      <p class="small muted">To change your name, institution, or email, please contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
       <div class="actions"><button class="btn" type="submit">Save</button></div>
     </form>
     <form method="post" id="commonshelp">{% csrf_token %}<input type="hidden" name="action" value="commons_help"></form>
   </div>
-  <div class="panel">
+  <div class="panel rollsec">
     <h2 class="sectionhead">Your CNAP roles</h2>
     {% for r in rels %}<div style="padding:8px 0;border-bottom:1px solid var(--line)"><strong>{{ r.relationship_type.name }}</strong><div class="small muted">{% if r.project %}{{ r.project.title }}{% elif r.core %}{{ r.core.name }}{% else %}Center-level{% endif %} · since {{ r.effective_from|date:"M Y" }}</div></div>
     {% empty %}<p class="muted">You have no project or core roles.</p>{% endfor %}
-    <p class="small muted mt">{% if on_roster %}You’re on the CNAP roster.{% endif %} Your roles decide which forms you receive.<br>If something here is wrong, contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
+    <p class="small muted mt">{% if on_roster %}You’re on the CNAP roster.<br>{% endif %}Your roles decide which forms you receive.<br>If something here is wrong, please contact the evaluator at <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.</p>
   </div>
 </div>
+{% if my_docs %}
+<div class="panel rollsec">
+  <h2 class="sectionhead">Your documents</h2>
+  <p class="small muted">Documents the Center keeps on file for you, such as your signed Statement of Work.</p>
+  {% for d in my_docs %}
+  <div style="padding:10px 0;border-bottom:1px solid var(--line)">
+    <p style="margin:0"><strong>{{ d.title }}</strong> · <a href="{% url 'portal:my_document' d.pk %}">Download (PDF or Word)</a></p>
+    {% if d.excerpt %}<blockquote class="sow-quote">{{ d.excerpt|linebreaksbr }}</blockquote>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

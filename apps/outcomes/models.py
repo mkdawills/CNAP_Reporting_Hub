@@ -57,6 +57,7 @@ class Publication(ArchivableModel):
     anticipated_submission_month = models.DateField(
         null=True, blank=True, help_text="First day of the month."
     )
+    anticipated_day_known = models.BooleanField(default=False)  # day is optional (MW 2026-11-03)
     submission_date = models.DateField(null=True, blank=True)
     anticipated_publication_date = models.DateField(null=True, blank=True)
     publication_date = models.DateField(null=True, blank=True)
@@ -230,7 +231,11 @@ class Presentation(ArchivableModel):
     description = models.TextField(blank=True)
     author_display_text = models.TextField(blank=True, help_text="Full author list as entered.")
     event = models.CharField(max_length=300, blank=True)
-    location = models.CharField(max_length=300, blank=True)
+    location = models.CharField(max_length=300, blank=True)  # older records; new ones fill the parts below
+    venue = models.CharField(max_length=300, blank=True, help_text="Host university or venue.")
+    city = models.CharField(max_length=120, blank=True)
+    state_region = models.CharField(max_length=120, blank=True)
+    country = models.CharField(max_length=120, blank=True)
     presented_on = models.DateField(null=True, blank=True)
     cnap_cited = models.BooleanField(
         null=True, blank=True, help_text="Did the presentation acknowledge CNAP?"
@@ -354,6 +359,7 @@ class GrantSubmission(ArchivableModel):
     mechanism = models.CharField(max_length=120, blank=True)
     project_title = models.CharField(max_length=500)
     anticipated_submission_date = models.DateField(null=True, blank=True)
+    anticipated_day_known = models.BooleanField(default=False)  # day is optional (MW 2026-11-03)
     submission_date = models.DateField(null=True, blank=True)
     anticipated_total = models.DecimalField(
         max_digits=14,
@@ -390,6 +396,9 @@ class GrantSubmission(ArchivableModel):
     discussion_date = models.DateField(null=True, blank=True)
     feedback_shared_with_cnap = models.BooleanField(null=True, blank=True)
     plans_to_resubmit = models.BooleanField(null=True, blank=True)
+    cayuse_ipf = models.CharField(  # K-State's Cayuse proposal number, for cross-checking (MW 2026-11-03)
+        max_length=40, blank=True
+    )
     funding_source_type = models.CharField(
         max_length=14,
         blank=True,
@@ -402,6 +411,10 @@ class GrantSubmission(ArchivableModel):
         null=True,
         blank=True,
         help_text="If MPI, Co-PI, collaborator or subawardee: the CNAP investigator's portion of the award (RPPR Table 1).",
+    )
+    table1_exclusion_reason = models.TextField(
+        blank=True,
+        help_text="Why the evaluator left this out of RPPR Table 1 (MW 2026-11-04).",
     )
     exclude_from_table1 = models.BooleanField(
         "Leave out of Table 1",
@@ -609,7 +622,7 @@ class OutcomeCheckin(models.Model):
 
 
 class OutcomeReminder(models.Model):
-    """One reminder e-mail about stale publications/grants, so nobody is reminded more often than configured."""
+    """One reminder email about stale publications/grants, so nobody is reminded more often than configured."""
 
     person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="outcome_reminders")
     sent_at = models.DateTimeField(auto_now_add=True)
@@ -625,3 +638,39 @@ class OutcomeReminder(models.Model):
         db_table = "outcome_reminders"
         ordering = ["-sent_at"]
 
+
+
+class GrantNudge(models.Model):
+    """One monthly check-in email about a planned grant proposal, and the answer it brought back (MW 2026-11-03)."""
+
+    class Choice(models.TextChoices):
+        IDEATION = "ideation", (
+            "It has not progressed past the ideation stage. I am hopeful to get things kick-started soon."
+        )
+        BLOCK = "block", "I am experiencing a little writer's block. Thanks for the nudge!"
+        SPECIALIST = "specialist", (
+            "I have taken the first step of notifying my Central Office or departmental grant "
+            "specialist of my plans to submit."
+        )
+        TIMELINE = "timeline", "I have a timeline in place with clear internal due dates."
+        PIVOT = "pivot", "I am pivoting away from this plan, or abandoning it."
+
+    grant = models.ForeignKey(GrantSubmission, on_delete=models.CASCADE, related_name="nudges")
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="grant_nudges")
+    sent_at = models.DateTimeField(auto_now_add=True)
+    sent_to = models.TextField(
+        help_text="Addresses the check-in went to (the person and anyone entering for them)."
+    )
+    choice = models.CharField(max_length=12, blank=True, choices=Choice.choices)
+    comments = models.TextField(blank=True)
+    answered_at = models.DateTimeField(null=True, blank=True)
+    answered_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "grant_nudges"
+        ordering = ["-sent_at"]
+
+    def __str__(self):
+        return f"Nudge to {self.person} about {self.grant.project_title[:40]}"

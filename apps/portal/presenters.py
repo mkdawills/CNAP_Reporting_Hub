@@ -13,17 +13,17 @@ from apps.people.models import PersonRelationship
 from apps.reporting.services import responses as rs
 
 TASK_GROUPS = [
-    ("cores", "Core facilities", "Tell us about the cores you used."),
-    ("grant", "Your CNAP grant", "Feedback on your project and your mentoring relationship."),
-    ("mycore", "Your core", "Reports for the core you direct: progress and who used the core."),
-    ("nih", "NIH documents", "Once a year, for the Center’s progress report to NIH."),
-    ("mentoring", "Projects you mentor", "Your view as a mentor on a CNAP project."),
-    ("admin", "Administrative Core", "How the Center’s administration is serving you."),
-    ("other", "Other Center features and services", "Center programs and events."),
+    ("cores", "Core facilities", "Please tell us about the cores you used."),
+    ("grant", "Your CNAP grant", "These forms ask about your project and your mentoring relationship."),
+    ("mycore", "Your core", "These reports cover the core you direct: its progress and who used it."),
+    ("nih", "NIH documents", "These documents are collected once a year for the Center’s Research Performance Progress Report (RPPR) to NIH."),
+    ("mentoring", "Projects you mentor", "These forms ask for your view as a mentor on a CNAP project."),
+    ("admin", "Administrative Core", "This survey asks how the Center’s administration is serving you."),
+    ("other", "Other Center features and services", "These surveys cover Center programs and events."),
     (
         "hub",
         "CNAP Reporting Hub",
-        "Help us improve this site. You’re using it right now, so this one applies to everyone.",
+        "Please help us improve this site. You’re using it right now, so this one applies to everyone.",
     ),
 ]
 SHADES = ["#b04a5a", "#d38a6a", "#b9b3c6", "#7aa99c", "#2c7a68"]
@@ -113,9 +113,9 @@ def task_list(person, period, mine, just_done=None):
         n_opt = sum(1 for r in g if r["can_opt_out"])
         if n_opt:  # say what Opt out is for right where the button is (MW 2026-10-27)
             sub += (
-                " Opt out of any you didn’t use in the last reporting period."
+                " Please opt out of any you didn’t use in the last reporting period."
                 if n_opt > 1
-                else " Opt out if you didn’t use it in the last reporting period."
+                else " Please opt out if you didn’t use it in the last reporting period."
             )
         groups.append(
             {
@@ -231,7 +231,7 @@ def _prefill(a, fd):
         "start": (
             f"{a.project.start_date:%B} {a.project.start_date.day}, {a.project.start_date:%Y}"
             if a.project_id and a.project.start_date
-            else "Not on file; tell the evaluator"
+            else "This date is not on file. Please tell the evaluator."
         ),
         "holder": holder or "",
         "period": a.reporting_period.name,
@@ -271,6 +271,9 @@ def _question_view(q, value, *, missing_ids, file_obj=None, schema=None):
                     "num": num if rest else "",
                     "text": rest or o.label,
                 }
+                if o.is_na_option:  # the directions above spell NA out, so the tile just says NA (MW 2026-11-04)
+                    item["label"] = "Not applicable (NA)"
+                    item["text"] = "NA"
                 (na if o.is_na_option else pts).append(item)
             view["pts"], view["na"] = pts, na
         else:
@@ -303,6 +306,7 @@ SHORT_HEADS = {
     "n_students": "Students",
     "payment": "Payment",
     "core_data_used": "Data in a grant or paper?",
+    "will_cite_rrid": "Will cite the RRID?",
 }
 
 

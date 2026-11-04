@@ -2,10 +2,10 @@
 {% block title %}My tasks · {{ platform_name }}{% endblock %}
 {% block content %}
 {% if not period %}
-  <div class="head"><div><h1>My tasks</h1><p>{{ "No reporting period is open right now. We’ll e-mail you when the next one opens."|stack }}</p></div></div>
-  {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ cp_check.rppr_due|date:"F j" }}.<br>Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %}<br><a href="{% url 'portal:download' cp_check.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a>{% endif %}</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
+  <div class="head"><div><h1>My tasks</h1><p>{{ "No reporting period is open right now. We’ll email you when the next one opens."|stack }}</p></div></div>
+  {% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending (Other) Support changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ cp_check.rppr_due|date:"F j" }}.<br>Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %}<br><a href="{% url 'portal:download' cp_check.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a>{% endif %}<br><a href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener">NIH’s Current and Pending (Other) Support instructions (opens in a new tab)</a></p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 {% else %}
-{% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong> {{ "You can read every form now with Preview. Answering opens that day; nothing you do here before then is saved."|stack }}</div>{% endif %}
+{% if period.in_preview %}<div class="banner" role="status"><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong><br>{{ "You can read every form now with Preview. Answering opens that day. Nothing you do here before then is saved."|stack }}</div>{% endif %}
 <header class="welcome">
   <div class="ring" role="img" aria-label="{{ done_n }} of {{ total }} done">
     {% if done_n and todo %}<span class="cheer" aria-hidden="true"><svg viewBox="0 0 24 24" class="thumb"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>Keep it up!</span>{% endif %}
@@ -14,9 +14,12 @@
   </div>
   <div class="welcome-text">
     <h1>{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
-    <p class="taskline">{% if not todo %}You’ve finished all {{ total }} tasks for {{ period.short_label }}.{% elif done_n %}You have {{ todo }} task{{ todo|pluralize }} left, about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% else %}You have {{ total }} task{{ total|pluralize }} this period, about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% endif %}</p>
-    {% if todo %}<p class="small muted">{{ due }}.</p>{% endif %}
-    {% for d in is_core_director %}<p class="small muted">Since you’re the {{ d.core.name|cut:" Core" }} ({{ d.core.code }}) Core Director, you do not receive the {{ d.core.code }} Core user survey.</p>{% endfor %}{% if is_core_director %}<p class="small muted">{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Simply opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p>{% endif %}
+    <p class="taskline">{% if not todo %}You’ve finished all {{ total }} tasks for {{ period.short_label }}.{% elif done_n %}You have {{ todo }} task{{ todo|pluralize }} left.<br>{{ todo|pluralize:"It takes,They take" }} about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% else %}You have {{ total }} task{{ total|pluralize }} this period.<br>{{ total|pluralize:"It takes,They take" }} about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all.{% endif %}</p>
+    <p class="small muted">The {{ period.name }} reporting period runs {{ period|span }}.{% if todo %}<br>{{ due }}.{% endif %}</p>
+    {% if is_core_director %}<details class="wnote"><summary title="Why your list of core surveys looks the way it does. Click to read it.">A note about your core surveys</summary>
+      {% for d in is_core_director %}<p class="small muted">Since you’re the {{ d.core.name|cut:" Core" }} ({{ d.core.code }}) Core Director, you do not receive the {{ d.core.code }} Core user survey.</p>{% endfor %}
+      <p class="small muted">{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Please opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p>
+    </details>{% endif %}
   </div>
   {% if first_up and not period.in_preview %}<a class="welcome-next" href="{% url 'portal:form' first_up.a.pk %}">
     <span class="wn-l">Next up</span>
@@ -25,14 +28,17 @@
     <span class="wn-b">{% if first_up.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</span>
   </a>{% endif %}
 </header>
+{% if sow_excerpts %}<details class="sowbox"><summary>Your commitments, from your Statement of Work</summary>
+  {% for d in sow_excerpts %}<blockquote class="sow-quote">{{ d.excerpt|linebreaksbr }}</blockquote><p class="small muted">From “{{ d.title }}” · <a href="{% url 'portal:my_document' d.pk %}">Download it</a> · the full document is on <a href="{% url 'portal:profile' %}">your profile</a>.</p>{% endfor %}
+</details>{% endif %}
 
-{% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ cp_check.rppr_due|date:"F j" }}.<br>Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %}<br><a href="{% url 'portal:download' cp_check.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a>{% endif %}</p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
+{% if cp_check %}<div class="panel nextup" role="status"><p class="nu-done">One quick question: has your Current and Pending (Other) Support changed since the fall?</p><p class="small muted">NIH needs it to be current for CNAP’s <a href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener">Research Performance Progress Report (RPPR)</a>, due {{ cp_check.rppr_due|date:"F j" }}.<br>Please answer by {{ cp_check.due|date:"F j" }}.{% if cp_check.prev_file %}<br><a href="{% url 'portal:download' cp_check.prev_file.pk %}">View your most recently submitted Current and Pending (PDF)</a>{% endif %}<br><a href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener">NIH’s Current and Pending (Other) Support instructions (opens in a new tab)</a></p><div class="fieldrow"><a class="btn" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div></div>{% endif %}
 
 {% if just_done %}
 <div class="panel nextup" role="status" data-confetti="{{ just_done.a.pk }}">
-  <p class="nu-thanks">Thank you, {{ request.user.person.first_name|default:request.user.username }}. {% if just_done.a.status == 'completed_opt_out' %}Your opt-out is recorded{% else %}Your answers are in{% endif %}.</p>
-  <p class="nu-done">{{ just_done.name }}{% if not next_up %} · {% if todo %}{{ todo }} left on your list{% else %}that was your last one{% endif %}{% endif %}.</p>
-  {% if next_up %}<p class="nu-next">Next: {{ next_up.name }}, {{ next_up.time|lower }}.</p>
+  <p class="nu-thanks">Thank you, {{ request.user.person.first_name|default:request.user.username }}.<br>{% if just_done.a.status == 'completed_opt_out' %}Your opt-out is recorded{% else %}Your answers are in{% endif %}.</p>
+  <p class="nu-done">You finished the {{ just_done.name }}.{% if not next_up %}<br>{% if todo %}You have {{ todo }} left on your list.{% else %}That was your last one.{% endif %}{% endif %}</p>
+  {% if next_up %}<p class="nu-next">Next up is the {{ next_up.name }}.<br>It takes {{ next_up.time|lower }}.</p>
   <div class="fieldrow"><a class="btn" href="{% url 'portal:form' next_up.a.pk %}">Start now</a><a class="btn ghost" href="{% url 'portal:tasks' %}">Back to my list</a></div>{% endif %}
 </div>{% endif %}
 
@@ -45,24 +51,25 @@
     <path d="M121 66l10-9M121 66l12 4M121 66l6 12"/>
     <circle cx="134" cy="55" r="3.5" class="spark"/><circle cx="137" cy="71" r="3.5" class="spark"/><circle cx="129" cy="81" r="3.5" class="spark"/>
   </svg>
-  <div><h2>You’re all set for {{ period.short_label }}.</h2><p>{{ "Thank you for your time. Everything you sent feeds the Center’s report to NIH. We’ll e-mail you when the next reporting period opens."|stack }}</p></div>
+  <div><h2>You’re all set for {{ period.short_label }}.</h2><p>{{ "Thank you for your time. Everything you sent feeds the Center’s Research Performance Progress Report (RPPR) to NIH. We’ll email you when the next reporting period opens."|stack }}</p></div>
 </div>
 {% else %}
 <p class="privacy">Other respondents never see your answers.</p>
 <div class="panel">
   <h2 class="sectionhead todohead">To do ({{ todo }})</h2>
-  <div class="scroll"><table class="tasks"><tbody>
+  <p class="small muted">{{ "Your forms are grouped by what they are about. Please click a group to open it, or use Show all."|stack }}</p>
+  <div class="scroll"><table class="tasks" title="Your open forms for this reporting period, grouped by what they are about."><thead class="vh"><tr><th>Form</th><th>Actions</th><th></th><th></th><th>About how long it takes</th></tr></thead><tbody>
   {% for g in groups %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
-    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon g.code %}{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div>{% if g.count > 1 %}<span class="ghcount">You have {{ g.count }} forms here.</span>{% endif %}</div></td></tr>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon g.code %}{{ g.title }}</h3><p>{{ g.sub|stack }}</p></div><span class="ghcount">You have {{ g.count }} form{{ g.count|pluralize }} here.</span></div></td></tr>
     {% for r in g.used %}{% include "portal/_task_row.html" %}{% endfor %}
     {% if g.used and g.rows %}<tr class="subhead"><td colspan="5">{% if g.rows|length == 1 %}Did you also use this core?{% else %}Did you also use these cores?{% endif %}</td></tr>{% endif %}
     {% for r in g.rows %}{% include "portal/_task_row.html" %}{% endfor %}
   {% endfor %}
   {% if outcome and not outcome.done %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
-    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon 'outcomes' %}Publications and grants</h3><p>{{ "Keep your papers and grant proposals up to date."|stack }}</p></div></div></td></tr>
-    {% for i in outcome.items %}{% if not i.done %}<tr class="openrow"><td><strong>{% if i.self %}Update your publications and grants{% else %}Update publications and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">You have {{ i.todo }} thing{{ i.todo|pluralize }} to look at.</div></td>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon 'outcomes' %}Publications, talks, and grants</h3><p>{{ "Please keep your papers, presentations, and grant proposals up to date."|stack }}</p></div></div></td></tr>
+    {% for i in outcome.items %}{% if not i.done %}<tr class="openrow"><td><strong>{% if i.self %}Review your publications, talks, and grants{% else %}Review publications, talks, and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">{% if i.n_review %}You have {{ i.n_review }} product{{ i.n_review|pluralize }} to review{% if i.n_ask %} and {% endif %}{% else %}You have {% endif %}{% if i.n_ask %}{{ i.n_ask }} question{{ i.n_ask|pluralize }} to answer{% endif %}.</div></td>
       <td class="acts">{% if period.in_preview %}<span class="small muted">This opens when the period starts.</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins"><span>About {{ outcome.minutes }} min</span></td></tr>{% endif %}{% endfor %}
   {% endif %}
   </tbody></table></div>
@@ -71,8 +78,8 @@
 
 {% if done or outcome.done %}
 <details class="panel donebox" {% if not todo %}open{% endif %}><summary>Done ({{ done_count }})</summary>
-  <div class="scroll"><table class="tasks"><tbody>{% for r in done %}{% include "portal/_task_row.html" %}{% endfor %}
-  {% if outcome.done %}<tr><td><strong>Publications and grants</strong><div class="small muted">This is up to date for this period.</div></td><td class="acts"><a class="btn small ghost" href="{% url 'portal:outcomes' %}">View</a></td><td class="acts"></td><td class="acts"></td><td class="mins"></td></tr>{% endif %}</tbody></table></div>
+  <div class="scroll"><table class="tasks" title="The forms you already finished this period."><thead class="vh"><tr><th>Form</th><th>Actions</th><th></th><th></th><th>Time</th></tr></thead><tbody>{% for r in done %}{% include "portal/_task_row.html" %}{% endfor %}
+  {% if outcome.done %}<tr><td><strong>Publications, talks, and grants</strong><div class="small muted">This is up to date for this period.</div></td><td class="acts"><a class="btn small ghost" href="{% url 'portal:outcomes' %}">View</a></td><td class="acts"></td><td class="acts"></td><td class="mins"></td></tr>{% endif %}</tbody></table></div>
 </details>{% endif %}
 {% endif %}
 
@@ -93,7 +100,7 @@
   </button>
   <div class="made-trend" id="made-trend" hidden>
     <div class="made-trend-in">
-      <p class="made-trend-h">Year {{ trend.first }} to Year {{ made.gy }}. This year is the brightest bar; it’s still in progress.</p>
+      <p class="made-trend-h">This chart shows Year {{ trend.first }} to Year {{ made.gy }}.<br>This year is the brightest bar, and it’s still in progress.</p>
       <ul class="made-charts">{% for r in trend.rows %}
         <li><p class="made-ct">{{ r.label }}</p>
           <ol class="bars" aria-label="{{ r.label }} by year">{% for b in r.bars %}
@@ -104,7 +111,7 @@
     </div>
   </div>
   {% endif %}
-  <p class="made-foot">{{ "These come from what people enter under Publications, talks and grants, so yours count too."|stack }} <a href="{% url 'portal:center_results' %}?view=products">See the full list</a></p>
+  <p class="made-foot">{{ "These come from what people enter under Publications, talks, and grants, so yours count too."|stack }} <a href="{% url 'portal:center_results' %}?view=products">See the full list</a></p>
 </section>
 <script>
 (function () {
@@ -131,4 +138,47 @@
 })();
 </script>
 {% if docs %}<section class="panel helpdocs"><h2 class="sectionhead">Helpful documents</h2><ul class="doclist">{% for d in docs %}<li><a href="{% if d.file %}{% url 'portal:helpful_doc' d.pk %}{% else %}{{ d.url }}{% endif %}">{{ d.title }}</a>{% if d.note %} <span class="small muted">· {{ d.note }}</span>{% endif %}</li>{% endfor %}</ul></section>{% endif %}
+<script>
+/* Task groups start rolled up to their headings (MW 2026-11-04), so the list feels manageable;
+   click a group heading to open it. Runs after the page-wide scripts, and clears any controls
+   left in a captured copy, so it never doubles up. */
+document.addEventListener("DOMContentLoaded", function () { setTimeout(function () {
+  document.querySelectorAll(".taskfold, .gcaret").forEach(function (e) { e.remove(); });
+  document.querySelectorAll("table.tasks").forEach(function (table) {
+    var heads = Array.from(table.querySelectorAll("tr.grouphead"));
+    if (heads.length < 2 || table.closest(".donebox")) return;
+    function rowsOf(h) {
+      var out = [], r = h.nextElementSibling;
+      while (r && !r.classList.contains("grouphead") && !r.classList.contains("gap")) { out.push(r); r = r.nextElementSibling; }
+      return out;
+    }
+    function set(h, open) {
+      rowsOf(h).forEach(function (r) { r.hidden = !open; });
+      h.classList.toggle("is-open", open);
+      h.setAttribute("aria-expanded", String(open));
+      var c = h.querySelector(".gcaret"); if (c) c.textContent = open ? "\u25be" : "\u25b8";
+    }
+    heads.forEach(function (h) {
+      h.tabIndex = 0;
+      h.setAttribute("role", "button");
+      h.title = "Click to open or close this group of forms.";
+      var t = h.querySelector("h3");
+      var car = document.createElement("span"); car.className = "rollcaret gcaret"; car.setAttribute("aria-hidden", "true");
+      t.insertBefore(car, t.firstChild);
+      function toggle() { set(h, !h.classList.contains("is-open")); }
+      h.addEventListener("click", function (e) { if (e.target.closest("a, button")) return; toggle(); });
+      h.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+      set(h, false);
+    });
+    var bar = document.createElement("p"); bar.className = "small foldall taskfold";
+    [["Show all", true, "Opens every group of forms at once."], ["Collapse all", false, "Rolls every group up to its heading."]].forEach(function (b) {
+      var btn = document.createElement("button"); btn.type = "button"; btn.className = "linkbtn"; btn.textContent = b[0]; btn.title = b[2];
+      btn.addEventListener("click", function () { heads.forEach(function (h) { set(h, b[1]); }); });
+      bar.appendChild(btn);
+    });
+    var wrap = table.closest(".scroll") || table;
+    wrap.parentNode.insertBefore(bar, wrap);
+  });
+}, 0); });
+</script>
 {% endblock %}

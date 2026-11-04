@@ -427,3 +427,29 @@ class PersonEffort(TimestampedModel):
 
     def __str__(self):
         return f"{self.person} Y{self.grant_year}: {self.person_months} person months"
+
+
+class PersonDocument(TimestampedModel):
+    """A document kept on one person's page and shown to that person on their profile, such as
+    their signed Statement of Work (SOW) with its Roles, Responsibilities, and Terms (MW 2026-11-03)."""
+
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="documents")
+    title = models.CharField(max_length=200)
+    file = models.ForeignKey("reporting.File", on_delete=models.PROTECT, related_name="+")
+    excerpt = models.TextField(
+        blank=True,
+        help_text=(
+            "Optional lines pasted from the document. Shown to the person on their My tasks "
+            "page, so they are reminded of what they have committed to and why they are asked."
+        ),
+    )
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "person_documents"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.title} ({self.person})"

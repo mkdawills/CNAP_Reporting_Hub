@@ -1,10 +1,22 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Update status · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>{% if kind == 'pub' %}{{ obj.title }}{% else %}{{ obj.project_title }} ({{ obj.version_label }}){% endif %}</h1><p>Now: {{ obj.get_status_display }}. What’s changed?</p></div></div>
-<div class="panel" style="max-width:640px">
-  <div class="fieldrow">{% for s, label in choices %}<a class="btn" href="?for={{ owner.pk }}&to={{ s }}">{{ label }}</a>{% endfor %}
-  {% if obj.status == 'planned' %}<a class="btn ghost" href="?for={{ owner.pk }}&to=planned">Edit planned details</a>{% endif %}</div>
-  <p class="small" style="margin-top:16px"><a href="{% url 'portal:outcomes' %}?for={{ owner.pk }}">Back</a></p>
+<div class="head"><div><h1>{% if kind == 'pub' %}{{ obj.title }}{% else %}{{ obj.project_title }} ({{ obj.version_label }}){% endif %}</h1>
+  <p>This {% if kind == 'pub' %}paper{% else %}proposal{% endif %} is recorded as {{ obj.get_status_display|lower }}.</p>
+</div></div>
+<div class="panel choosebox">
+  {% if facts %}<p class="choose-facts"><span class="muted">What you have on file:</span> {{ facts }}</p>{% endif %}
+  {% if choices %}
+    <p class="choose-lead">{% if obj.status == 'planned' %}On this page, you can either change the status of this planned {% if kind == 'pub' %}paper{% else %}proposal{% endif %}{% if choices|length == 1 %} to {{ choices.0.1|lower }}{% endif %}, or edit the planned details.{% else %}On this page, you can record what happened to this {% if kind == 'pub' %}paper{% else %}proposal{% endif %}.{% endif %}<br>Please choose what happened.</p>
+    <div class="choose-btns">
+      {% for s, label in choices %}<a class="btn big" href="?for={{ owner.pk }}&to={{ s }}">{{ label }}</a>{% endfor %}
+      {% if obj.status == 'planned' %}<a class="btn ghost big" href="?for={{ owner.pk }}&to=planned">Edit the planned details</a>{% endif %}
+    </div>
+    <p class="small choose-hint">{% if obj.status == 'planned' %}If the details above are out of date, please choose “Edit the planned details.”{% else %}If nothing has changed, you can simply go back.{% endif %}</p>
+  {% else %}
+    <p class="choose-lead">This is its final status, so there is nothing to move it to.<br>You can still view or edit its details.</p>
+    <div class="choose-btns"><a class="btn big" href="?for={{ owner.pk }}&to={{ obj.status }}">View or edit the details</a></div>
+  {% endif %}
+  <p class="small" style="margin-top:18px;text-align:center"><a href="{% url 'portal:outcomes' %}?for={{ owner.pk }}">Back to my publications, talks, and grants</a></p>
 </div>
 {% endblock %}

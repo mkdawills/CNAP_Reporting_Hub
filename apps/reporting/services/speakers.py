@@ -3,7 +3,7 @@ NeuroSync speakers (MW 2026-11-03): "it would be nice if I could send this surve
 their presentation concluding."
 
 The evaluator lists each talk with its end time. When the talk ends, the speaker gets the NeuroSync Speaker
-Survey by e-mail: automatically (the every-10-minutes job) or by hand from the NeuroSync speakers page. External
+Survey by email: automatically (the every-10-minutes job) or by hand from the NeuroSync speakers page. External
 speakers sign in by emailed link; K-State speakers with their eID.
 """
 
@@ -45,13 +45,13 @@ def period_for(when):
 
 @transaction.atomic
 def send(talk, actor=None):
-    """Create the speaker's survey task (once) and e-mail it. Returns the e-mail address used."""
+    """Create the speaker's survey task (once) and email it. Returns the email address used."""
     p = talk.speaker
     if not p.is_active or p.archived_at:
         raise SpeakerError(f"{p} is not active.")
     email = p.primary_email
     if not email:
-        raise SpeakerError(f"{p} has no e-mail address on file.")
+        raise SpeakerError(f"{p} has no email address on file.")
     fd = FormDefinition.objects.filter(code=FORM_CODE).first()
     version = fd.active_version if fd else None
     if not version:

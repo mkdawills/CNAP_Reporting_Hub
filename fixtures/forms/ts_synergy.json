@@ -9,7 +9,7 @@
     "short_name": "Team Synergy",
     "about": [
       "This survey asks how well CNAP members work together across disciplines: communication, trust, clear roles, and whether CNAP has helped your research.",
-      "The Center reports on team science to NIH each year."
+      "The Center reports on team science in its Research Performance Progress Report (RPPR) to NIH each year."
     ],
     "opt_out": {
       "question": "optout",
@@ -167,5 +167,5 @@
   "_source": "Team_Science.pdf (Piestar export), split into four surveys (MW, 2026-10-24); open-ended prompts reworded per topic.",
   "sort_order": 5,
   "_change_notes": "Section titled 'Open-ended questions:' (MW, 2026-10-25).",
-  "intro_text": "Team synergy is how well CNAP’s members, projects and cores work together. When a team has synergy, its combined work accomplishes more than each person could on their own."
+  "intro_text": "Team synergy is how well CNAP’s members, projects, and cores work together. When a team has synergy, its combined work accomplishes more than each person could on their own."
 }

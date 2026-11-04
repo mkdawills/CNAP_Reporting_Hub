@@ -7,9 +7,9 @@ Columns (header names are matched loosely, case and spacing ignored):
     position (optional)
 
 Each row is classified:
-- matched: the e-mail belongs to an existing person;
-- new: no person has the e-mail or the name;
-- possible duplicate: no e-mail match, but a person with the same name exists;
+- matched: the email belongs to an existing person;
+- new: no person has the email or the name;
+- possible duplicate: no email match, but a person with the same name exists;
 - missing: on the roster now, but not in this file.
 
 Default decisions: matched and new rows are accepted (put on the roster);
@@ -43,7 +43,7 @@ from .services import (
 COLUMN_ALIASES = {
     "first_name": {"first", "firstname", "first name", "given name", "given"},
     "last_name": {"last", "lastname", "last name", "surname", "family name"},
-    "email": {"email", "e-mail", "email address", "e-mail address", "mail"},
+    "email": {"email", "e-mail", "email address", "e-mail address", "mail"},  # accepts both spellings in uploaded files
     "institution": {"institution", "university", "organization", "affiliation"},
     "department": {"department", "dept", "unit"},
     "position_title": {"position", "title", "position title", "job title", "role"},
@@ -120,7 +120,7 @@ def parse(actor, uploaded):
         note = ""
         match_kind, matched, decision = ImportMatchKind.NEW, None, "accept"
         if email and not EMAIL_RE.match(email):
-            note = "This e-mail does not look valid."
+            note = "This email does not look valid."
             decision = ""
         row = PersonEmail.objects.filter(email__iexact=email).select_related("person").first()
         if email and row:
@@ -135,10 +135,10 @@ def parse(actor, uploaded):
             if same_name:
                 match_kind, matched, decision = ImportMatchKind.POSSIBLE_DUPLICATE, same_name, ""
                 note = note or (
-                    f"Same name as an existing person ({same_name.primary_email or 'no e-mail'})."
+                    f"Same name as an existing person ({same_name.primary_email or 'no email'})."
                 )
         if not email:
-            note = note or "No e-mail: this person could not receive sign-in links."
+            note = note or "No email: this person could not receive sign-in links."
         counts[match_kind] += 1
         RosterImportRow.objects.create(
             roster_import=imp,

@@ -2,13 +2,14 @@
 {% block title %}Projects and cores · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>Projects and cores</h1><p>{{ "Who leads and mentors each project, and who directs, staffs and uses each core. Change people from their own pages."|stack }}</p></div>
+  <div><h1>Projects and cores{% why "Projects and cores are what CNAP reports on. Each project’s leader and mentor, and each core’s director, come from the relationships recorded here, and they drive progress reports, mentor reports, and the Core Usage Report." %}</h1><p>{{ "Who leads and mentors each project, and who directs, staffs, and uses each core. Change people from their own pages."|stack }}</p></div>
   {% if can_manage %}<div><a class="btn" href="{% url 'manage:project_new' %}">Add a project</a></div>{% endif %}
 </div>
 <div class="panel scroll">
-  <h2 class="sectionhead">Projects</h2>
-  <table>
-    <thead><tr><th>Project</th><th>Type</th><th>Leader</th><th>Mentors</th><th>Others</th></tr></thead>
+  <div class="sechead"><h2 class="sectionhead">Projects{% why "Each project’s team, at a glance. Expand a project to see each person’s eRA Commons ID and their Year {{ gy }} effort, the same numbers that feed RPPR section D.1." %}</h2>
+    <button type="button" class="btn small ghost" id="expall" data-open="0">Expand all: effort and eRA Commons IDs</button></div>
+  <table title="Every research and pilot project, with its leader, mentors, and team.">
+    <thead><tr><th>Project</th><th>Type</th><th>Leader</th><th>Mentors</th><th>Others</th><th></th></tr></thead>
     <tbody>
     {% for r in rows %}
       <tr>
@@ -17,16 +18,22 @@
         <td>{% for x in r.leaders %}<a href="{% url 'manage:person' x.person.pk %}">{{ x.person }}</a>{% empty %}<span class="error" style="padding:2px 8px">None</span>{% endfor %}</td>
         <td>{% for x in r.mentors %}<div><a href="{% url 'manage:person' x.person.pk %}">{{ x.person }}</a></div>{% empty %}<span class="muted">None</span>{% endfor %}</td>
         <td class="small">{% for x in r.others %}<div>{{ x.person }} · {{ x.relationship_type.name }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
+        <td><button type="button" class="btn small ghost pexp">Details</button></td>
       </tr>
-    {% empty %}<tr><td colspan="5" class="muted">No projects yet.</td></tr>{% endfor %}
+      <tr class="pdetail" hidden><td colspan="6">
+        <table class="subtab" title="Each person’s identifiers and effort, the inputs for RPPR section D.1."><thead><tr><th>Person</th><th>Role</th><th>eRA Commons ID</th><th>ORCID iD</th><th>Effort in Year {{ gy }}</th></tr></thead><tbody>
+        {% for x in r.people %}<tr><td><a href="{% url 'manage:person' x.person.pk %}">{{ x.person }}</a></td><td class="small">{{ x.role }}</td><td class="small">{% if x.eid %}{{ x.eid }}{% else %}<span class="gap">none on file</span>{% endif %}</td><td class="small">{% if x.orcid %}{{ x.orcid }}{% else %}<span class="gap">none on file</span>{% endif %}</td><td class="small">{{ x.months }}</td></tr>{% endfor %}
+        </tbody></table></td>
+      </tr>
+    {% empty %}<tr><td colspan="6" class="muted">No projects yet.</td></tr>{% endfor %}
     </tbody>
   </table>
 </div>
 <div class="panel scroll" id="cores">
   <h2 class="sectionhead">Cores</h2>
   <p class="small muted">{{ "Each core’s RRID lets anyone find every paper that used it, even when the grant isn’t cited. Look one up by searching the core’s name at scicrunch.org/resources. Once it’s saved here, people adding a paper that used the core are asked whether they cited it."|stack }}</p>
-  <table>
-    <thead><tr><th>Core</th><th>RRID</th><th>Directors</th><th>Staff</th><th>Recorded users</th></tr></thead>
+  <table title="Every core, its RRID, and who runs it.">
+    <thead><tr><th>Core</th><th>RRID</th><th>Directors</th><th>Staff</th><th title="People given a Core User relationship for this core.">People listed as core users</th><th></th></tr></thead>
     <tbody>
     {% for c in cores %}
       <tr>
@@ -35,10 +42,34 @@
           {% if c.core.rrid %}<div class="small"><a href="https://scicrunch.org/resolver/{{ c.core.rrid }}" rel="noopener">Check it at SciCrunch</a></div>{% endif %}</td>
         <td>{% for x in c.directors %}<div><a href="{% url 'manage:person' x.person.pk %}">{{ x.person }}</a></div>{% empty %}<span class="muted">None</span>{% endfor %}</td>
         <td>{% for x in c.staff %}<div>{{ x.person }}</div>{% empty %}<span class="muted">None</span>{% endfor %}</td>
-        <td>{{ c.users|length }}<div class="small muted">{{ "Only needed for users outside the roster. Everyone on the roster already receives every core survey."|stack }}</div></td>
+        <td>{% for x in c.users %}<div>{{ x.person }}</div>{% empty %}<span class="muted">None</span>{% endfor %}<div class="small muted">{{ "Everyone on the roster automatically receives every core’s user survey, so roster members never need to be listed here. Add a Core User relationship only for someone outside the roster, such as an external collaborator, so that they also get this core’s user survey."|stack }}</div></td>
+        <td><button type="button" class="btn small ghost pexp">Details</button></td>
+      </tr>
+      <tr class="pdetail" hidden><td colspan="6">
+        <table class="subtab" title="Each person’s identifiers and effort, the inputs for RPPR section D.1."><thead><tr><th>Person</th><th>Role</th><th>eRA Commons ID</th><th>ORCID iD</th><th>Effort in Year {{ gy }}</th></tr></thead><tbody>
+        {% for x in c.people %}<tr><td><a href="{% url 'manage:person' x.person.pk %}">{{ x.person }}</a></td><td class="small">{{ x.role }}</td><td class="small">{% if x.eid %}{{ x.eid }}{% else %}<span class="gap">none on file</span>{% endif %}</td><td class="small">{% if x.orcid %}{{ x.orcid }}{% else %}<span class="gap">none on file</span>{% endif %}</td><td class="small">{{ x.months }}</td></tr>{% endfor %}
+        </tbody></table></td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
 </div>
+<script>
+// Details under each project or core: each person's eRA Commons ID and effort (MW 2026-11-03).
+document.querySelectorAll(".pexp").forEach(function (b) {
+  b.addEventListener("click", function () {
+    var d = b.closest("tr").nextElementSibling;
+    d.hidden = !d.hidden;
+    b.textContent = d.hidden ? "Details" : "Hide details";
+  });
+});
+var all = document.getElementById("expall");
+if (all) all.addEventListener("click", function () {
+  var open = all.getAttribute("data-open") !== "1";
+  document.querySelectorAll(".pdetail").forEach(function (d) { d.hidden = !open; });
+  document.querySelectorAll(".pexp").forEach(function (b) { b.textContent = open ? "Hide details" : "Details"; });
+  all.setAttribute("data-open", open ? "1" : "0");
+  all.textContent = open ? "Collapse all" : "Expand all: effort and eRA Commons IDs";
+});
+</script>
 {% endblock %}

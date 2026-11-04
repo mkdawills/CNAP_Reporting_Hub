@@ -129,7 +129,7 @@ def test_password_sign_in_is_throttled(client, center):
     for _ in range(signin.FAILED_LOGIN_LIMIT):
         client.post("/accounts/login/", {"username": "okafor", "password": "wrong"})
     r = client.post("/accounts/login/", {"username": "okafor", "password": "Demo-Password-2026"})
-    assert "Too many sign-in attempts" in r.content.decode()
+    assert "too many sign-in attempts" in r.content.decode()
     assert "_auth_user_id" not in client.session
 
 
@@ -157,14 +157,14 @@ def test_period_open_and_reminder_emails(client, center):
     asg.exempt(None, a, "test")
     rem = next(r for r in emails.plan(center, "reminder") if r["person"] == santos["person"])
     assert len(rem["forms"]) == open_before - 1
-    assert rem["skip"].startswith("E-mailed")  # within 4 days of the "open" e-mail (MW 2026-10-28)
+    assert rem["skip"].startswith("Emailed")  # within 4 days of the "open" e-mail (MW 2026-10-28)
     PeriodEmail.objects.filter(period=center).update(sent_at=timezone.now() - timedelta(days=4))
     emails.send(center, "reminder")
     assert PeriodEmail.objects.filter(
         period=center, kind="reminder", person=santos["person"]
     ).exists()
     rem = next(r for r in emails.plan(center, "reminder") if r["person"] == santos["person"])
-    assert rem["skip"].startswith("E-mailed")
+    assert rem["skip"].startswith("Emailed")
 
 
 def test_emails_only_while_open(center):
@@ -238,7 +238,7 @@ def test_username_variants_share_one_failure_count(client, center):
         client.post("/accounts/login/", {"username": "okafor", "password": "wrong"})
     for variant in ("okafor ", " OKAFOR", "ｏｋａｆｏｒ"):
         r = client.post("/accounts/login/", {"username": variant, "password": "Demo-Password-2026"})
-        assert "Too many sign-in attempts" in r.content.decode(), variant
+        assert "too many sign-in attempts" in r.content.decode(), variant
         assert "_auth_user_id" not in client.session
 
 

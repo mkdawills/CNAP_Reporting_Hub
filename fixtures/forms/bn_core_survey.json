@@ -6,12 +6,12 @@
   "about_core": "BN",
   "confidentiality": "standard",
   "sort_order": 1,
-  "intro_text": "Rate each service you used, from 1 (very poor) to 5 (very good), or choose not applicable (NA) for anything you didn’t use. Then tell us how often you used each one.",
+  "intro_text": "Please rate each service you used. Choose from 1 (very poor) to 5 (very good) or not applicable (NA).\nThen please tell us how often you used each one. Choose from 1 (never) to 5 (always) or not applicable (NA).",
   "display": {
     "task_group": "cores",
     "short_name": "BN Core",
     "about": [
-      "The Behavioral Neuroscience Core provides shared behavioral testing and animal research space, a core technician, and connections to campus services such as IACUC, Comparative Medicine, and Environmental Health and Safety.",
+      "The Behavioral Neuroscience Core provides shared behavioral testing and animal research space, a core technician, and connections to campus services such as the Institutional Animal Care and Use Committee (IACUC), Comparative Medicine, and Environmental Health and Safety.",
       "This survey asks how well those facilities and services worked for you, and how often you used them."
     ],
     "opt_out": {
@@ -105,7 +105,7 @@
         },
         {
           "code": "qual_09",
-          "prompt": "Institutional Animal Care and Use Committee semi-annual inspections",
+          "prompt": "Institutional Animal Care and Use Committee semiannual inspections",
           "type": "likert",
           "answer_set": "Quality",
           "measure": "bn_quality_09",
@@ -163,7 +163,7 @@
     },
     {
       "code": "frequency",
-      "title": "Frequency of use",
+      "title": "Frequency of core use",
       "questions": [
         {
           "code": "freq_01",

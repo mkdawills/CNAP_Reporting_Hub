@@ -18,27 +18,28 @@
     <nav aria-label="Main">
       {% if has_cnap_roles %}
         <div class="navhead">My work</div>
-        <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %}>My tasks</a>
-        <a href="{% url 'portal:history' %}" {% nav_current 'history' %}>My history</a>
-        {% if keeps_outcomes %}<a href="{% url 'portal:outcomes' %}" {% nav_current 'outcomes' 'outcome_new' 'outcome_update' 'presentation_new' 'presentation_edit' %}>Publications, talks and grants</a>{% endif %}
-        <a href="{% url 'portal:center_results' %}" {% nav_current 'center_results' %}>Center results</a>
-        <a href="{% url 'portal:profile' %}" {% nav_current 'profile' %}>Profile</a>
+        <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %} title="Your to-do list for the current reporting period: every form CNAP is asking you to fill in, with how long each takes and its due date. Your answers feed the Center’s NIH progress report. Click to start or continue a form.">My tasks</a>
+        <a href="{% url 'portal:history' %}" {% nav_current 'history' %} title="Everything you have submitted, grouped by reporting period, so you can look back at what you said. Click to open any past form.">My history</a>
+        {% if keeps_outcomes %}<a href="{% url 'portal:outcomes' %}" {% nav_current 'outcomes' 'outcome_new' 'outcome_update' 'presentation_new' 'presentation_edit' %} title="Your papers, talks, and grant proposals, from planned to published or awarded. CNAP reports them to NIH every year, so keeping them current saves you a scramble at report time. Click to add or update one.">Publications, talks, and grants</a>{% endif %}
+        <a href="{% url 'portal:center_results' %}" {% nav_current 'center_results' %} title="What the Center learned from everyone’s answers: combined survey results and products, with no one’s individual answers shown. Click to see the latest results.">Center results</a>
+        <a href="{% url 'portal:profile' %}" {% nav_current 'profile' %} title="Your details for NIH reporting: department, eRA Commons ID, ORCID iD, and effort, plus your roles and documents on file. Click to check or update them.">Profile</a>
       {% endif %}
       {% if can_view_admin %}
         <div class="navhead">Administration</div>
-        <a href="{% url 'manage:home' %}" {% nav_current 'home' %}>Home</a>
-        {% url 'manage:periods' as u_periods %}{% if u_periods %}<a href="{{ u_periods }}" {% nav_current 'periods' 'period' 'period_new' 'launch' %}>Reporting periods</a>{% endif %}
-        {% url 'manage:dashboard' as u_dash %}{% if u_dash %}<a href="{{ u_dash }}" {% nav_current 'dashboard' %}>Period dashboard</a>{% endif %}
-        {% url 'manage:results' as u_res %}{% if u_res %}<a href="{{ u_res }}" {% nav_current 'results' 'form_results' 'response' %}>Results</a>{% endif %}
-        {% url 'manage:longitudinal' as u_long %}{% if u_long %}<a href="{{ u_long }}" {% nav_current 'longitudinal' 'snapshot' %}>Year over year</a>{% endif %}
-        <a href="{% url 'manage:people' %}" {% nav_current 'people' 'person' 'person_new' %}>People</a>
-        <a href="{% url 'manage:speakers' %}" {% nav_current 'speakers' %}>NeuroSync speakers</a>
-        <a href="{% url 'manage:projects' %}" {% nav_current 'projects' 'project' 'project_new' %}>Projects and cores</a>
-        <a href="{% url 'manage:outcomes' %}" {% nav_current 'outcomes' 'publication_new' 'publication_edit' 'grant_new' 'grant_edit' %}>Publications and grants</a>
-        <a href="{% url 'manage:roster_imports' %}" {% nav_current 'roster_imports' 'roster_import' %}>Roster import</a>
-        {% url 'manage:forms' as u_forms %}{% if u_forms %}<a href="{{ u_forms }}" {% nav_current 'forms' 'form_detail' %}>Forms</a>{% endif %}
-        {% url 'manage:quality' as u_q %}{% if u_q %}<a href="{{ u_q }}" {% nav_current 'quality' %}>Data checks</a>{% endif %}
-        <a href="{% url 'manage:audit' %}" {% nav_current 'audit' %}>Audit log</a>
+        <a href="{% url 'manage:home' %}" {% nav_current 'home' %} title="Where every reporting period stands, and what needs your attention today: completion, waiting reviews, and data checks. Click to see the overview.">Home</a>
+        {% url 'manage:periods' as u_periods %}{% if u_periods %}<a href="{{ u_periods }}" {% nav_current 'periods' 'period' 'period_new' 'launch' %} title="Each survey session (Fall, RPPR/Spring, site visit): its dates, its steps from review to finalized, and its emails. Why: a period decides who gets which forms and when. Click to create, launch, close, or finalize one.">Reporting periods</a>{% endif %}
+        {% url 'manage:dashboard' as u_dash %}{% if u_dash %}<a href="{{ u_dash }}" {% nav_current 'dashboard' %} title="The open period, person by person and form by form: who has finished, who is partway, and who has not started. Why: so you can nudge the right people before the due date. Click to see the counts and the full list.">Period dashboard</a>{% endif %}
+        {% url 'manage:results' as u_res %}{% if u_res %}<a href="{{ u_res }}" {% nav_current 'results' 'form_results' 'response' %} title="Each form’s combined results for a reporting period, with year-by-year trends since Year 6, laid out like the site-visit reports. Why: these are the numbers the External Advisory Committee and NIH see. Click to pick a period and open a report.">Results</a>{% endif %}
+        {% url 'manage:longitudinal' as u_long %}{% if u_long %}<a href="{{ u_long }}" {% nav_current 'longitudinal' 'snapshot' %} title="Every form’s averages across all years, side by side, for spotting long-term trends. Click to compare years.">Year over year</a>{% endif %}
+        <a href="{% url 'manage:people' %}" {% nav_current 'people' 'person' 'person_new' %} title="Everyone the Center works with, and the roles that decide which forms each person receives. Why: correct roles mean the right forms reach the right people, and correct IDs feed RPPR D.1. Click to find, add, or edit a person.">People</a>
+        <a href="{% url 'manage:speakers' %}" {% nav_current 'speakers' %} title="The NeuroSync talk schedule. Each speaker receives the Speaker Survey automatically when their talk ends. Click to add talks, one at a time or a whole semester from Excel.">NeuroSync speakers</a>
+        <a href="{% url 'manage:projects' %}" {% nav_current 'projects' 'project' 'project_new' %} title="CNAP’s research projects, pilot projects, and cores: their teams, effort, eRA Commons IDs, and core RRIDs. Why: these decide credits, forms, and RPPR D.1. Click to see or edit them.">Projects and cores</a>
+        <a href="{% url 'manage:outcomes' %}" {% nav_current 'outcomes' 'publication_new' 'publication_edit' 'grant_new' 'grant_edit' %} title="The Center’s products: papers, talks, and grant proposals, with acknowledgment checks, counts, the RPPR lists, the site-visit tables, and reminders. Click to check and report them.">Publications, talks, and grants</a>
+        <a href="{% url 'manage:roster_imports' %}" {% nav_current 'roster_imports' 'roster_import' %} title="Add or update many CNAP members at once from a spreadsheet, such as each semester’s roster. Nothing changes until you review and accept each row. Click to upload a file.">Roster import</a>
+        {% url 'manage:forms' as u_forms %}{% if u_forms %}<a href="{{ u_forms }}" {% nav_current 'forms' 'form_detail' %} title="A read-only copy of every form’s questions, exactly as respondents see them. Why: so you can check wording without launching anything. Click to browse the forms.">Forms</a>{% endif %}
+        {% url 'manage:quality' as u_q %}{% if u_q %}<a href="{{ u_q }}" {% nav_current 'quality' %} title="Automatic checks for gaps that would hurt later reporting, such as a missing email, a project with no leader, or an uncited RRID. Click to see each one and fix or dismiss it.">Data checks</a>{% endif %}
+        <a href="{% url 'manage:audit' %}" {% nav_current 'audit' %} title="Every change anyone makes in the Hub, with who, what, and when. Why: so any question about a record has an answer. Click to browse the log.">Audit log</a>
+        <a href="{% url 'manage:feedback' %}" {% nav_current 'feedback' %} title="Every note people send with the Feedback button on any page, with the page it came from. Why: the people using the Hub spot what is unclear or slow first. Click to read and mark notes done.">Page feedback</a>
       {% endif %}
     </nav>
     <div class="foot">
@@ -48,18 +49,76 @@
   </aside>
   <main id="main">
     {% if is_view_only_admin and request.resolver_match.namespace == 'manage' %}<div class="banner">View only. You can open every screen; changes are made by the evaluator.</div>{% endif %}
-    {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m }}{% else %}{{ m|stack }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+    {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m|stack }}{% else %}{{ m|stack }}{% endif %}</li>{% endfor %}</ul>{% endif %}
     {% block content %}{% endblock %}
   </main>
 </div>
+<button type="button" class="fbk-open" aria-haspopup="dialog" title="Tell us how this page could be better: its design, its wording, its logic, its speed, or a fun idea. Your note goes to the CNAP evaluation team, with the page it came from.">Feedback</button>
+<dialog class="fbk" aria-labelledby="fbk-h">
+  <form method="dialog" class="fbk-form">
+    <h2 id="fbk-h">How could this page be better?</h2>
+    <p class="small muted">{{ "Your note goes to the CNAP evaluation team, along with the page you are on. Big ideas and small fixes are equally welcome."|stack }}</p>
+    <fieldset class="fbk-topics"><legend class="small">What is it about?</legend>
+      <label><input type="radio" name="topic" value="design"> Design and look</label>
+      <label><input type="radio" name="topic" value="clarity"> Clarity of wording or directions</label>
+      <label><input type="radio" name="topic" value="logic"> Logic or flow</label>
+      <label><input type="radio" name="topic" value="speed"> Speed and efficiency</label>
+      <label><input type="radio" name="topic" value="fun"> Fun and motivating touches</label>
+      <label><input type="radio" name="topic" value="broken"> Something is broken</label>
+      <label><input type="radio" name="topic" value="other"> Something else</label>
+    </fieldset>
+    <fieldset class="fbk-rate"><legend class="small">How is this page overall? (optional)</legend>
+      {% for n in "12345" %}<label title="{% if n == '1' %}Poor{% elif n == '5' %}Excellent{% else %}{{ n }} of 5{% endif %}"><input type="radio" name="rating" value="{{ n }}"><span>{{ n }}</span></label>{% endfor %}
+    </fieldset>
+    <label class="small" for="fbk-c">Your note</label>
+    <textarea id="fbk-c" name="comment" rows="4" placeholder="For example: the dates on this page are hard to find."></textarea>
+    <p class="small fbk-msg" role="status"></p>
+    <div class="fieldrow"><button type="button" class="btn fbk-send" title="Sends your note to the CNAP evaluation team.">Send my note</button><button type="button" class="btn ghost fbk-close" title="Closes this box without sending anything.">Cancel</button></div>
+  </form>
+</dialog>
+<script>
+(function () {
+  var open = document.querySelector(".fbk-open"), dlg = document.querySelector("dialog.fbk");
+  if (!open || !dlg || !dlg.showModal) return;
+  var msg = dlg.querySelector(".fbk-msg");
+  open.addEventListener("click", function () { msg.textContent = ""; dlg.showModal(); });
+  dlg.querySelector(".fbk-close").addEventListener("click", function () { dlg.close(); });
+  dlg.querySelector(".fbk-send").addEventListener("click", function () {
+    var f = dlg.querySelector("form"), topic = f.querySelector('input[name="topic"]:checked');
+    var comment = f.comment.value.trim();
+    if (!topic || !comment) { msg.textContent = "Please choose what it is about and write a few words."; return; }
+    var body = new URLSearchParams();
+    body.set("topic", topic.value);
+    body.set("comment", comment);
+    var r = f.querySelector('input[name="rating"]:checked');
+    if (r) body.set("rating", r.value);
+    body.set("path", location.pathname + location.search);
+    body.set("page_title", document.title);
+    var tok = document.cookie.match(/csrftoken=([^;]+)/);
+    fetch("{% url 'page_feedback' %}", { method: "POST", credentials: "same-origin", body: body,
+      headers: { "X-CSRFToken": tok ? tok[1] : "" } })
+      .then(function (res) { return res.json(); })
+      .then(function (d) {
+        if (d.ok) { msg.textContent = "Thank you! Your note is on its way."; f.reset(); setTimeout(function () { dlg.close(); }, 1400); }
+        else msg.textContent = d.error || "That did not send. Please try again.";
+      })
+      .catch(function () { msg.textContent = "That did not send. Please try again."; });
+  });
+})();
+</script>
 {% else %}
 <div class="anon"><main id="main">
-  {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m }}{% else %}{{ m|stack }}{% endif %}</li>{% endfor %}</ul>{% endif %}
+  {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m|stack }}{% else %}{{ m|stack }}{% endif %}</li>{% endfor %}</ul>{% endif %}
   {% block anon %}{% endblock %}
 </main></div>
 {% endif %}
 {% block scripts %}{% endblock %}
 <script src="{% static 'js/nview.js' %}" defer></script>
 <script src="{% static 'js/confetti.js' %}" defer></script>
+<script src="{% static 'js/sorttable.js' %}" defer></script>
+<script src="{% static 'js/foldall.js' %}" defer></script>
+<script src="{% static 'js/headhelp.js' %}" defer></script>
+<script src="{% static 'js/copytext.js' %}" defer></script>
+<script src="{% static 'js/pickfilter.js' %}" defer></script>
 </body>
 </html>

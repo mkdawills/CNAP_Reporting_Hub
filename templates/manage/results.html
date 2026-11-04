@@ -1,19 +1,20 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Results · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Results</h1><p>{{ "Each survey laid out like the site-visit reports: item tables, year-over-year means, themes and verbatims."|stack }}</p></div>
+<div class="head"><div><h1>Results{% why "Each form’s combined results for a period: means, themes, and answers. This is the raw material for the evaluation sections of the RPPR and the site-visit report." %}</h1><p>{{ "Pick a reporting period, then open any form’s report. Each report shows the combined answers: the average rating for every question, how those averages compare with past years, and everything people wrote. The layout matches the reports the Center prepares for its site visits, so the numbers can be copied straight across."|stack }}</p></div>
   <form method="get"><label class="small muted">Reporting period <select name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}{% if pp.status == 'open' %} (open: live, not final){% endif %}</option>{% endfor %}</select></label></form></div>
 {% if p %}
 <h2 style="margin:4px 0 14px">{{ p.name }}</h2>
 {% if p.status == 'open' %}<div class="banner">{{ p.short_label }} is still open. These are live results, not an official snapshot.</div>{% endif %}
+{% if cards and cards.0.historical %}<p class="small muted">{{ "This period predates the Reporting Hub, so answers were never collected here. The forms marked “Prior-year averages” show the year-by-year averages imported from the old site-visit workbooks. The forms marked “Nothing on file” have no imported numbers for this period; if you have those numbers, the Center can import them the same way."|stack }}</p>{% endif %}
 <div class="panel scroll">
-  <table><thead><tr><th>Form</th><th class="num">Complete</th><th class="num">Opted out</th><th>Your access</th><th></th></tr></thead><tbody>
+  <table title="Every form in this period, with completion and your access to its report."><thead><tr><th>Form</th><th class="num">Complete</th><th class="num">Opted out</th><th>Your access</th><th></th></tr></thead><tbody>
   {% for c in cards %}<tr>
     <td><strong>{{ c.fd.name }}</strong>{% if c.fd.confidentiality_class == 'mentoring' %} <span class="chip lockchip">Confidential</span>{% endif %}</td>
     <td class="num">{% if c.comp %}{{ c.comp.complete }} of {{ c.comp.assigned }}{% else %}—{% endif %}</td>
     <td class="num">{% if c.comp %}{{ c.comp.opted_out }}{% else %}—{% endif %}</td>
-    <td class="small">{% if c.locked %}Confidential: no access{% elif c.historical %}Prior-year averages{% elif c.mode == 'identified' %}With names{% elif c.mode == 'deidentified' %}Without names{% else %}Combined results only{% endif %}</td>
-    <td class="acts">{% if not c.locked %}<a class="btn small ghost" href="{% url 'manage:form_report' p.short_label c.fd.code %}">Open report</a>{% endif %}</td>
+    <td class="small">{% if c.locked %}Confidential: no access{% elif c.no_data %}<span class="muted">Nothing on file for this period</span>{% elif c.historical %}Prior-year averages{% elif c.mode == 'identified' %}With names{% elif c.mode == 'deidentified' %}Without names{% else %}Combined results only{% endif %}</td>
+    <td class="acts">{% if not c.locked and not c.no_data %}<a class="btn small ghost" href="{% url 'manage:form_report' p.short_label c.fd.code %}">Open report</a>{% endif %}</td>
   </tr>{% empty %}<tr><td colspan="5" class="muted">No forms in this period.</td></tr>{% endfor %}
   </tbody></table>
 </div>

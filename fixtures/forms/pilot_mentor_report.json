@@ -32,8 +32,8 @@
     ],
     "holder_type": "pilot_awardee",
     "about": [
-      "This report records your meetings with your Pilot Project Leader and your view of their progress toward the pilot program milestones.",
-      "It is used to support the mentee and in the Center’s reporting to NIH."
+      "This report records your meetings with your Pilot Grantee/Mentee and your view of their progress toward the pilot program milestones.",
+      "It is used to support the mentee and in the Center’s Research Performance Progress Report (RPPR) to NIH."
     ]
   },
   "sections": [
@@ -42,7 +42,7 @@
       "title": "Meetings",
       "repeatable": true,
       "repeat_label": "Add a meeting",
-      "instructions": "Add one entry for each meeting during the reporting period.",
+      "instructions": "Please add one entry for each meeting during the reporting period.",
       "questions": [
         {
           "code": "meeting_date",
@@ -64,7 +64,7 @@
           "code": "evaluation",
           "prompt": "Evaluation of Pilot Grant Progress",
           "type": "long_text",
-          "help_text": "Program milestones: national/international presentation citing CNAP; manuscript submission within six months of project completion; extramural grant submission as lead PI within one year of pilot completion.",
+          "help_text": "The program milestones are a national or international presentation citing CNAP, a manuscript submitted within six months of project completion, and an extramural grant submitted as lead Principal Investigator (PI) within one year of pilot completion.",
           "config": {
             "narrative": true
           }

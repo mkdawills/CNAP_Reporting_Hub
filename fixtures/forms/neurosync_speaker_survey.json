@@ -40,7 +40,7 @@
         },
         {
           "code": "item_02",
-          "prompt": "I received the details I needed, such as the date, time, location and audience, in time to prepare.",
+          "prompt": "I received the details I needed, such as the date, time, location, and audience, in time to prepare.",
           "type": "likert",
           "answer_set": "Agreement (no N/A)",
           "measure": "speaker_02",

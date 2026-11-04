@@ -1,4 +1,4 @@
-"""manage.py send_scheduled_emails [--dry-run]: run once a day. Sends each open period's scheduled e-mails."""
+"""manage.py send_scheduled_emails [--dry-run]: run once a day. Sends each open period's scheduled emails."""
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -9,7 +9,7 @@ from apps.reporting.services import emails
 
 
 class Command(BaseCommand):
-    help = "Send today's scheduled period e-mails (opening day, every 4 days to the due date, then daily)."
+    help = "Send today's scheduled period emails (opening day, every 4 days to the due date, then daily)."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 continue
             if dry_run:
                 n = sum(1 for r in emails.plan(p, kind) if not r["skip"])
-                self.stdout.write(f"{p.short_label}: would send {n} {kind} e-mail(s).")
+                self.stdout.write(f"{p.short_label}: would send {n} {kind} email(s).")
                 continue
             for k, n, skipped in emails.run_schedule(p, today):
                 self.stdout.write(f"{p.short_label}: sent {n} {k}; {skipped} skipped.")

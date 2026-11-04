@@ -1,16 +1,22 @@
 from django.urls import path
 
-from .views import audit, home, outcomes, people, periods, quality, results, roster, speakers
+from .views import audit, dashboards, formspec, home, outcomes, people, periods, quality, results, roster, speakers
 
 app_name = "manage"
 
 urlpatterns = [
     path("", home.home, name="home"),
+    path("forms/", formspec.forms, name="forms"),
+    path("forms/<slug:code>/", formspec.form_detail, name="form_detail"),
     path("neurosync/", speakers.talks, name="speakers"),
     path("neurosync/add/", speakers.talk_add, name="speaker_add"),
+    path("neurosync/template/", speakers.talk_template, name="speaker_template"),
+    path("neurosync/upload/", speakers.talk_upload, name="speaker_upload"),
     path("neurosync/<int:pk>/send/", speakers.talk_send, name="speaker_send"),
     path("neurosync/<int:pk>/remove/", speakers.talk_remove, name="speaker_remove"),
     path("documents/add/", home.doc_add, name="doc_add"),
+    path("feedback/", home.feedback_list, name="feedback"),
+    path("site-photo/", home.photo_set, name="photo_set"),
     path("documents/<int:pk>/remove/", home.doc_remove, name="doc_remove"),
     # people and relationships
     path("people/", people.people, name="people"),
@@ -22,6 +28,12 @@ urlpatterns = [
     path("people/<int:pk>/account/", people.person_account, name="person_account"),
     path("people/<int:pk>/roster/", people.person_roster, name="person_roster"),
     path("people/<int:pk>/emails/add/", people.person_email_add, name="person_email_add"),
+    path("people/<int:pk>/documents/add/", people.person_doc_add, name="person_doc_add"),
+    path(
+        "people/<int:pk>/documents/<int:doc_pk>/remove/",
+        people.person_doc_remove,
+        name="person_doc_remove",
+    ),
     path(
         "people/<int:pk>/emails/<int:email_pk>/remove/",
         people.person_email_remove,
@@ -83,8 +95,12 @@ urlpatterns = [
     path("outcomes/publications/<int:pk>/", outcomes.publication_edit, name="publication_edit"),
     path("outcomes/grants/new/", outcomes.grant_edit, name="grant_new"),
     path("outcomes/grants/<int:pk>/", outcomes.grant_edit, name="grant_edit"),
+    path("outcomes/grants/<int:pk>/resubmit/", outcomes.grant_resubmit, name="grant_resubmit"),
+    path("outcomes/grants/<int:pk>/table1/", outcomes.table1_exclude, name="table1_exclude"),
+    path("outcomes/grants/<int:pk>/json/", outcomes.grant_round_json, name="grant_round_json"),
     path("outcomes/<str:kind>/<int:pk>/ack/", outcomes.set_ack, name="set_ack"),
     path("outcomes/export/<slug:kind>/", outcomes.export, name="outcomes_export"),
+    path("outcomes/dashboard/<slug:kind>/", dashboards.dashboard, name="outcomes_dashboard"),
     path("outcomes/reminders/send/", outcomes.send_reminders, name="outcomes_send_reminders"),
     path("outcomes/rppr/mark/", outcomes.mark_rppr, name="outcomes_mark_rppr"),
     path("checks/", quality.checks, name="quality"),

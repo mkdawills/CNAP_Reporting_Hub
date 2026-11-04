@@ -1,7 +1,7 @@
 """
-"Your forms are open" and reminder e-mails for a reporting period (sign-in plan, decisions.md 2026-10-24).
+"Your forms are open" and reminder emails for a reporting period (sign-in plan, decisions.md 2026-10-24).
 
-Each e-mail lists the person's own forms and due date. People who sign in by emailed link get a personal,
+Each email lists the person's own forms and due date. People who sign in by emailed link get a personal,
 single-use link; K-State people (once single sign-on is on) get the site address instead.
 - open: once per person per period, to everyone with forms in the period.
 - reminder: to people with forms still to do, at most once every REMINDER_GAP_DAYS days.
@@ -9,8 +9,8 @@ single-use link; K-State people (once single sign-on is on) get the site address
 plan() shows exactly who would get what, without sending anything.
 
 Automatic schedule (MW 2026-10-28), run daily by manage.py send_scheduled_emails while a period accepts answers
-and its auto_emails is on: the "open" e-mail on opening day; a reminder every 4 days until the due date (counted
-from each person's last e-mail); then a reminder every day after the due date until the period closes.
+and its auto_emails is on: the "open" email on opening day; a reminder every 4 days until the due date (counted
+from each person's last email); then a reminder every day after the due date until the period closes.
 """
 
 from datetime import timedelta
@@ -41,9 +41,9 @@ def _label(a):
 
 
 def plan(period, kind):
-    """Rows of {person, email, forms, with_link, skip}. skip is a reason the person won't be e-mailed, or ''."""
+    """Rows of {person, email, forms, with_link, skip}. skip is a reason the person won't be emailed, or ''."""
     if kind not in PeriodEmail.Kind.values:
-        raise EmailError("Unknown e-mail kind.")
+        raise EmailError("Unknown email kind.")
     qs = (
         Assignment.objects.filter(reporting_period=period)
         .exclude(status=AssignmentStatus.EXEMPT)
@@ -61,7 +61,7 @@ def plan(period, kind):
     for e in PeriodEmail.objects.filter(period=period).order_by("sent_at"):
         if e.kind == kind:
             sent[e.person_id] = e.sent_at
-        last[e.person_id] = e.sent_at  # any e-mail for this period counts toward the gap
+        last[e.person_id] = e.sent_at  # any email for this period counts toward the gap
     today = timezone.localdate()
     gap_days = OVERDUE_GAP_DAYS if kind == PeriodEmail.Kind.OVERDUE else REMINDER_GAP_DAYS
     rows = []
@@ -72,7 +72,7 @@ def plan(period, kind):
         if not p.is_active or p.archived_at:
             skip = "Not active"
         elif not p.primary_email:
-            skip = "No e-mail on file"
+            skip = "No email on file"
         elif not forms:
             skip = "Nothing left to do"
         elif kind == "open" and p.pk in sent:
@@ -82,7 +82,7 @@ def plan(period, kind):
             and p.pk in last
             and (today - timezone.localtime(last[p.pk]).date()).days < gap_days
         ):
-            skip = f"E-mailed {timezone.localtime(last[p.pk]):%b %-d}"
+            skip = f"Emailed {timezone.localtime(last[p.pk]):%b %-d}"
         rows.append(
             {
                 "person": p,
@@ -96,9 +96,9 @@ def plan(period, kind):
 
 
 def send(period, kind, actor=None, dry_run=False):
-    """Send the e-mails plan() says to send. Returns (sent, skipped) counts."""
+    """Send the emails plan() says to send. Returns (sent, skipped) counts."""
     if not period.accepting_responses:
-        raise EmailError("E-mails can be sent only while the period is open for answers.")
+        raise EmailError("Emails can be sent only while the period is open for answers.")
     rows = plan(period, kind)
     due = timezone.localtime(period.due_at)
     n = 0
@@ -155,7 +155,7 @@ def send(period, kind, actor=None, dry_run=False):
 
 
 def scheduled_kind(period, today=None):
-    """Which e-mail the schedule sends today for this period ("open", "reminder", "overdue"), or None."""
+    """Which email the schedule sends today for this period ("open", "reminder", "overdue"), or None."""
     today = today or timezone.localdate()
     if not (period.accepting_responses and period.auto_emails):
         return None
@@ -169,7 +169,7 @@ def scheduled_kind(period, today=None):
 
 
 def run_schedule(period, today=None):
-    """Send what the schedule says for today. Anyone who missed the opening e-mail gets it first.
+    """Send what the schedule says for today. Anyone who missed the opening email gets it first.
 
     Returns a list of (kind, sent, skipped). Safe to run more than once a day: the gaps stop repeats.
     """
@@ -183,7 +183,7 @@ def run_schedule(period, today=None):
 
 
 def schedule_preview(period):
-    """Plain-language description of the automatic schedule, for the e-mails page."""
+    """Plain-language description of the automatic schedule, for the emails page."""
     opens = timezone.localtime(period.opens_at).date()
     due = timezone.localtime(period.due_at).date()
     closes = timezone.localtime(period.closes_at).date() if period.closes_at else None
