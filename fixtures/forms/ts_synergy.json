@@ -14,7 +14,8 @@
     "opt_out": {
       "question": "optout",
       "short": "Not involved enough to answer"
-    }
+    },
+    "intro_title": "What team synergy means"
   },
   "sections": [
     {
