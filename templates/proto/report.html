@@ -4,6 +4,8 @@
 {# Screen 90 prototype: Mentee Survey results only. Same view and data as manage/report.html. #}
 {# The view refuses this page to anyone without confidential mentoring access before this renders. #}
 <div class="r90">
+  <div class="px-top">
+  <div class="px-top-main">
   <header class="px-mast">
     <p class="px-eyebrow">Results · {{ period.name }}</p>
     <div class="px-mast-row">
@@ -32,7 +34,7 @@
   <div class="px-callout warn r90-imported"><p>These are prior-year averages imported from the site-visit reports. There are no individual responses for this period, so the answer-by-answer charts appear only for periods run in the Hub.</p></div>
   {% endif %}
 
-  <div class="px-onpage-layout">
+  </div>
   <nav class="px-onpage" aria-label="On this page">
     <p class="px-label">On this page</p>
     <ol>
@@ -43,6 +45,8 @@
         {% if who or rows %}<ol>{% if who %}<li><a href="#r90-who" data-onpage>Who received and answered</a></li>{% endif %}{% if rows %}<li><a href="#r90-rows" data-onpage>Individual responses</a></li>{% endif %}</ol>{% endif %}</li>{% endif %}
     </ol>
   </nav>
+  </div>
+  <div class="px-onpage-layout">
   <div class="px-onpage-main">
   {# ======================================================== 1. combined results #}
   <div class="px-rollbar foldall taskfold r90-pagebar"><button type="button" data-pageroll="open" title="Opens every part and every section on this page.">Show all</button><button type="button" data-pageroll="close" title="Rolls the page up to its three numbered parts.">Collapse all</button></div>

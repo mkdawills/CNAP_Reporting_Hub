@@ -644,3 +644,10 @@ body.proto .r90 .r90-pagebar { margin: 0 0 var(--px-4); }
 body.proto .r90 .px-section:has(details.r90-partroll:not([open])) { margin-bottom: var(--px-5); }
 /* The ovals summarize a rolled-up section; once open, the large figures say the same thing. */
 body.proto details.r90-sec[open] > summary .r90-rollfigs { display: none; }
+/* "On this page" sits beside the top of the page only; the results below get the full width (MW 2026-11-05). */
+body.proto .px-onpage-layout { display: block; }
+body.proto .px-top { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: var(--px-7); align-items: start; margin-bottom: var(--px-6); }
+body.proto .px-top-main { min-width: 0; }
+body.proto .px-top-main > :last-child { margin-bottom: 0; }
+body.proto .px-top .px-onpage { position: static; padding: var(--px-4) var(--px-5); background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); }
+@media (max-width: 1180px) { body.proto .px-top { grid-template-columns: minmax(0, 1fr); gap: var(--px-5); } }

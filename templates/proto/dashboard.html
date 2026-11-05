@@ -8,6 +8,8 @@
 {% else %}
   {% with opted=form_rows|sum_key:"optout" %}{% with submitted=done|minus:opted open_n=total|minus:done %}{% with dleft=p.due_at|days_until %}
   {# ---------------------------------------------------------------- masthead #}
+  <div class="px-top">
+  <div class="px-top-main">
   <header class="px-mast d53-mast">
     <div class="px-mast-row">
       <div>
@@ -26,13 +28,7 @@
       {% if p.closes_at %}<li><span class="px-label">Period closes</span><span class="v">{{ p.closes_at|date:"F j, Y" }}</span></li>{% endif %}
     </ul>
   </header>
-
-  {# ---------------------------------------------------------------- lifecycle #}
-  <nav class="d53-life" aria-label="Where this period is in its seven steps">
-    <ol>{% for s in steps %}<li class="{{ s.state }}" title="{{ s.help }}"><span class="n" aria-hidden="true">{% if s.state == 'done' %}✓{% else %}{{ s.n }}{% endif %}</span><span class="l">{% if s.url %}<a href="{{ s.url }}">{{ s.label }}</a>{% else %}{{ s.label }}{% endif %}</span><span class="px-sr">{% if s.state == 'done' %} (done){% elif s.state == 'now' %} (current step){% endif %}</span></li>{% endfor %}</ol>
-  </nav>
-
-  <div class="px-onpage-layout">
+  </div>
   <nav class="px-onpage" aria-label="On this page">
     <p class="px-label">On this page</p>
     <ol>
@@ -42,6 +38,14 @@
       <li><a href="#list" data-onpage>People and their forms</a></li>
     </ol>
   </nav>
+  </div>
+
+  {# ---------------------------------------------------------------- lifecycle #}
+  <nav class="d53-life" aria-label="Where this period is in its seven steps">
+    <ol>{% for s in steps %}<li class="{{ s.state }}" title="{{ s.help }}"><span class="n" aria-hidden="true">{% if s.state == 'done' %}✓{% else %}{{ s.n }}{% endif %}</span><span class="l">{% if s.url %}<a href="{{ s.url }}">{{ s.label }}</a>{% else %}{{ s.label }}{% endif %}</span><span class="px-sr">{% if s.state == 'done' %} (done){% elif s.state == 'now' %} (current step){% endif %}</span></li>{% endfor %}</ol>
+  </nav>
+
+  <div class="px-onpage-layout">
   <div class="px-onpage-main">
   {# ---------------------------------------------------------------- headline numbers #}
   <section class="d53-kpis px-surface" id="d53-kpis" aria-labelledby="d53-kpi-h">
