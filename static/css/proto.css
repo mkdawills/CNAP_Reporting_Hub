@@ -942,6 +942,6 @@ body.proto .px-mast:not(.p21-mast)::after {
   opacity: 0; animation: px-glide 1.6s cubic-bezier(.45, .05, .25, 1) .25s 1 both;
 }
 @keyframes px-glide { 0% { transform: translateX(-10%); opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateX(360%); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { body.proto .px-mast::after { animation: none; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { body.proto .px-mast::after, body.proto .px-mast:not(.p21-mast)::after, body.proto .p21-mast::after { animation: none !important; opacity: 0 !important; } }
 /* Opt-out (MW 2026-11-05, option B): white with a thin outline, a separate choice; gray stays with the title panel. */
 body.proto .p21-optout { background: var(--px-surface); border: 1px solid var(--px-line-strong); }
