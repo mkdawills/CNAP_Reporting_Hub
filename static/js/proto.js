@@ -42,13 +42,21 @@
       // Sections with nothing to answer (the outline parts of the Word document, the intro, the end)
       // show no marker, so a check mark never suggests work is done when there was nothing to do.
       // Counts of missing answers mean something only while the form can still be filled in.
-      if (!document.querySelector(".p21-key") || a.dataset.nav === "start" || a.dataset.nav === "finish" || a.dataset.empty) {
+      if (!document.querySelector(".p21-nav[data-editable]") || a.dataset.nav === "start" || a.dataset.nav === "finish" || a.dataset.empty) {
         if (dot) dot.className = "p21-dot p21-none";
         return;
       }
       var n = missingIn(a);
       a.dataset.state = n ? "missing" : "ok";
-      if (dot) { dot.className = n ? "p21-miss" : "p21-ok"; dot.textContent = n ? String(n) : "✓"; }
+      // The words sit in the list itself ("3 missing"), so no key is needed (MW 2026-11-05).
+      if (dot) { dot.className = n ? "p21-miss" : "p21-ok"; dot.textContent = n ? "" : "✓"; }
+      var label = dot && dot.nextElementSibling;
+      if (label) {
+        var mt = label.querySelector(".p21-misstext");
+        if (!mt) { mt = document.createElement("span"); mt.className = "p21-misstext"; mt.setAttribute("aria-hidden", "true"); label.appendChild(mt); }
+        mt.textContent = !n ? "" : (a.dataset.shared ? "Word document missing" : n + " missing");
+        mt.hidden = !n;
+      }
       var words = n ? n + " required answer" + (n === 1 ? "" : "s") + " still missing" : "Nothing required is missing";
       if (a.dataset.shared) words += n ? ": the Word document covering Accomplishments, Plans, and Changes" : ": the Word document is uploaded";
       if (sr) sr.textContent = " (" + words + ")";

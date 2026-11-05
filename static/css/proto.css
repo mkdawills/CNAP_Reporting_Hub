@@ -876,3 +876,7 @@ body.proto .sgap { display: block; height: .45em; }
 body.proto .p21-start-lede { border-left: 2px solid var(--px-line-strong); padding: 2px 0 2px var(--px-4); }
 body.proto .p21-start-lede .rl { display: block; }
 body.proto .p21-start-lede .rl + .rl { margin-top: .45em; }
+/* Section list: a small red dot and "3 missing" in words; a green check when nothing required is missing. */
+body.proto .p21-nav .p21-miss { min-width: 0; width: 8px; height: 8px; padding: 0; margin: 0 6px; background: var(--px-alert); }
+body.proto .p21-misstext { display: block; margin-top: 2px; font-size: var(--px-fs-xs); font-weight: 500; color: var(--px-alert); }
+body.proto .p21-nav a:has(.p21-misstext:not([hidden])) .p21-miss, body.proto .p21-nav a .p21-ok { align-self: flex-start; margin-top: .45em; }
