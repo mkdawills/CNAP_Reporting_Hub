@@ -16,7 +16,7 @@
   </button>
   <div class="made-trend" id="made-trend" hidden>
     <div class="made-trend-in">
-      <p class="made-trend-h">This chart shows Year {{ trend.first }} to Year {{ made.gy }}.<br>This year is the brightest bar, and it’s still in progress.</p>
+      <p class="made-trend-h">This chart shows Year {{ trend.first }} to Year {{ made.gy }}.<br>This year is the solid purple bar, and it’s still in progress.</p>
       <ul class="made-charts">{% for r in trend.rows %}
         <li><p class="made-ct">{{ r.label }}</p>
           <ol class="bars" aria-label="{{ r.label }} by year">{% for b in r.bars %}

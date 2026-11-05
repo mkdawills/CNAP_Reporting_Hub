@@ -896,3 +896,27 @@ body.proto .sheetup-c > summary:hover .sheetup-more { border-color: var(--px-bra
 body.proto .sheetup-c > summary:focus-visible { outline: 2px solid var(--px-brand); outline-offset: 2px; border-radius: var(--px-r-sm); }
 body.proto .sheetup-c .sheetup-body { padding: 0 0 var(--px-4) 32px; display: grid; gap: var(--px-3); }
 @media (max-width: 760px) { body.proto .sheetup-c > summary { align-items: flex-start; flex-wrap: wrap; } body.proto .sheetup-c .sheetup-q { flex: 1 1 200px; } body.proto .sheetup-c .sheetup-body { padding-left: 0; } }
+
+/* "What CNAP has produced this year," option C (MW 2026-11-05): a light banner, so "Next up" is the only
+   dark purple on My tasks. Each number sits in a gray circle; the neuron art and year-by-year chart stay. */
+body.proto .made { background: var(--px-brand-tint); color: var(--px-ink); border: 1px solid var(--px-line); box-shadow: none; }
+body.proto .made-art { color: var(--px-brand); opacity: .09; }
+body.proto .made-h { color: var(--px-ink); }
+body.proto .made-sub, body.proto .made-l, body.proto .made-foot, body.proto .made-trend-h, body.proto .made-ctot, body.proto .by { color: var(--px-ink-2); }
+body.proto .made-i { stroke: var(--px-brand); }
+body.proto .made-row li, body.proto .made-charts > li { border-left-color: var(--px-line-strong); }
+body.proto .made-row li { gap: 0; }
+body.proto .made-n { display: inline-grid; place-items: center; width: 84px; height: 84px; margin: 6px 0 12px; border-radius: 50%; border: 1.5px solid var(--px-line-strong); background: var(--px-surface); color: var(--px-brand-ink); }
+body.proto .made-row:has(+ .made-btn), body.proto .made-foot { border-color: var(--px-line); }
+body.proto .made-foot a { color: var(--px-brand-ink); text-decoration-color: color-mix(in srgb, var(--px-brand) 45%, transparent); }
+body.proto .made-btn { color: var(--px-brand-ink); background: var(--px-surface); box-shadow: 0 0 0 1px var(--px-line-strong), 0 4px 14px rgba(40, 20, 70, .1); }
+body.proto .made-btn svg { stroke: var(--px-brand); }
+body.proto .made-btn:hover { box-shadow: 0 0 0 1px var(--px-brand), 0 0 0 5px color-mix(in srgb, var(--px-brand) 14%, transparent), 0 6px 18px rgba(40, 20, 70, .14); }
+body.proto .made-btn:focus-visible { outline: 3px solid var(--px-brand); }
+body.proto .made-btn[aria-expanded="true"] { background: var(--px-brand); color: #fff; box-shadow: none; }
+body.proto .made-btn[aria-expanded="true"] svg { stroke: #fff; }
+body.proto .made-ct, body.proto .bn { color: var(--px-ink); }
+body.proto .bb { background: color-mix(in srgb, var(--px-brand) 28%, transparent); }
+body.proto .bars li.now .bb { background: var(--px-brand); box-shadow: none; }
+body.proto .bars li.now .by { color: var(--px-brand-ink); }
+@media (max-width: 760px) { body.proto .made-n { width: 68px; height: 68px; } }
