@@ -622,3 +622,9 @@ body.proto details.px-roll:has(.px-roll-h) > .px-roll-body { padding-left: 32px;
 body.proto .d53-actions li > a.px-btn, body.proto .d53-actions li > form { width: auto; justify-self: start; }
 body.proto .d53-actions li > form .px-btn, body.proto .d53-actions li > a.px-btn { width: auto; justify-content: center; }
 body.proto .t3-slot .px-btn { width: auto; }
+/* "On this page" lines read as links: purple text, underline and tint on hover (MW 2026-11-05). */
+body.proto .px-onpage a { color: var(--px-brand); }
+body.proto .px-onpage ol ol a { color: color-mix(in srgb, var(--px-brand) 78%, var(--px-muted)); }
+body.proto .px-onpage a:hover { color: var(--px-brand-ink); background: var(--px-brand-tint); text-decoration: underline; text-underline-offset: 3px; }
+body.proto .p21-nav a { color: var(--px-brand); }
+body.proto .p21-nav a:hover { color: var(--px-brand-ink); background: var(--px-brand-tint); text-decoration: underline; text-underline-offset: 3px; }

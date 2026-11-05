@@ -130,3 +130,10 @@
   }, { rootMargin: "-15% 0px -75% 0px" });
   links.forEach(function (a) { var t = document.querySelector(a.getAttribute("href")); if (t) io.observe(t); });
 })();
+
+/* Hover descriptions for the section lists. */
+document.querySelectorAll(".px-onpage a[data-onpage], .p21-nav a[data-nav]").forEach(function (a) {
+  if (a.title) return;
+  var t = a.textContent.replace(/\s+/g, " ").trim();
+  a.title = "Jump to " + t + ". A rolled-up section opens.";
+});
