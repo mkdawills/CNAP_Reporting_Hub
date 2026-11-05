@@ -1,6 +1,6 @@
 {% load cnap %}{# Prototype result sections (Screen 90). Every number comes from the same report data. #}
 {% for t in tables %}
-<details class="px-roll r90-sec" id="r90-sec{{ t.no }}">
+<details class="px-roll r90-sec" id="r90-sec{{ t.no }}" open>
   <summary title="Click to see how answers were spread and the full item-by-item table.">
     <span class="px-roll-t"><span class="px-label">Table {% if t.skip_main %}{{ t.lon.no }}{% else %}{{ t.no }}{% endif %} · {% if t.skip_main %}Year-by-year averages{% else %}{{ t.title }}{% endif %}</span>
       <h3 class="px-h2" id="r90-t{{ t.no }}">{% if t.skip_main %}{{ t.lon_title|admin_section_name }}{% else %}{{ t.sec_name|admin_section_name }}{% endif %}</h3>

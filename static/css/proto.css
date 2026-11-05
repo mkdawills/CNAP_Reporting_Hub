@@ -553,7 +553,7 @@ body.proto .p21-dot.all { background: var(--px-brand); box-shadow: none; }
 @media (max-width: 760px) { body.proto .p21-mast .px-facts { row-gap: 0; } }
 /* Screen 90: everything inside a numbered part is indented to line up with the part's title,
    not with its number, so the 1-2-3 structure reads at a glance (MW 2026-11-05). */
-body.proto .r90 .px-section > :not(.px-section-head) { margin-left: calc(26px + var(--px-3)); }
+body.proto .r90 .r90-partbody { margin-left: calc(26px + var(--px-3)); }
 /* Roll-up figures sit in soft ovals with room between them (MW 2026-11-05). */
 body.proto .px-roll-figs { gap: var(--px-2) var(--px-3); margin-top: var(--px-2); }
 body.proto .px-roll-figs > span { display: inline-flex; align-items: baseline; gap: 6px; padding: 6px 14px; border-radius: 999px; background: var(--px-sunken); border: 1px solid var(--px-line); line-height: 1.3; white-space: nowrap; }
@@ -631,3 +631,16 @@ body.proto .p21-nav a:hover { color: var(--px-brand-ink); background: var(--px-b
 /* Screen 90: the Identifiable information box extends outward, so its 3 lines up exactly with the 1 and 2 (MW 2026-11-05). */
 body.proto .r90 .r90-ident { --r90-pad: var(--px-6); padding: var(--px-5) var(--r90-pad); margin-left: calc(-1 * (var(--r90-pad) + 1px)); margin-right: calc(-1 * (var(--r90-pad) + 1px)); }
 @media (max-width: 760px) { body.proto .r90 .r90-ident { --r90-pad: 15px; } }
+/* Screen 90: each numbered part rolls up to its heading; one Show all / Collapse all for the page (MW 2026-11-05). */
+body.proto .r90 .px-section details.r90-partroll > summary.px-section-head { flex-direction: row; list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--px-4); padding: var(--px-2) var(--px-3); margin: 0 calc(-1 * var(--px-3)) var(--px-4); border-radius: var(--px-r); transition: background-color .15s ease; }
+body.proto .r90 details.r90-partroll > summary::-webkit-details-marker { display: none; }
+body.proto .r90 details.r90-partroll > summary:hover { background: color-mix(in srgb, var(--px-brand-tint) 70%, transparent); }
+body.proto .r90 details.r90-partroll > summary:focus-visible { outline: none; box-shadow: var(--px-focus); }
+body.proto .r90 details.r90-partroll > summary .px-roll-cue { margin-top: 10px; }
+body.proto .r90 details.r90-partroll:not([open]) > summary { margin-bottom: 0; }
+body.proto .r90 .r90-partt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+body.proto .r90 .r90-partt > .px-note { margin: 0; padding-left: calc(26px + var(--px-3)); max-width: none; }
+body.proto .r90 .r90-pagebar { margin: 0 0 var(--px-4); }
+body.proto .r90 .px-section:has(details.r90-partroll:not([open])) { margin-bottom: var(--px-5); }
+/* The ovals summarize a rolled-up section; once open, the large figures say the same thing. */
+body.proto details.r90-sec[open] > summary .r90-rollfigs { display: none; }

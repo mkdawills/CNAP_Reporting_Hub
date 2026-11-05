@@ -137,3 +137,13 @@ document.querySelectorAll(".px-onpage a[data-onpage], .p21-nav a[data-nav]").for
   var t = a.textContent.replace(/\s+/g, " ").trim();
   a.title = "Jump to " + t + ". A rolled-up section opens.";
 });
+
+/* Screen 90: Show all opens every part and section; Collapse all leaves only the numbered parts. */
+document.addEventListener("click", function (e) {
+  var b = e.target.closest && e.target.closest("[data-pageroll]");
+  if (!b) return;
+  var open = b.dataset.pageroll === "open";
+  var main = b.closest(".px-onpage-main") || document;
+  main.querySelectorAll("details.r90-partroll").forEach(function (d) { d.open = open; });
+  if (open) main.querySelectorAll("details.px-roll").forEach(function (d) { d.open = true; });
+});
