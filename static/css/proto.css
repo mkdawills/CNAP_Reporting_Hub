@@ -729,3 +729,8 @@ body.proto .o36-talks p { margin: 0; }
 }
 body.proto .o36-track li { align-content: start; align-items: start; }
 @media (max-width: 760px) { body.proto .o36-add { flex-direction: column; align-items: flex-start; gap: var(--px-2); } body.proto .o36-acts { gap: var(--px-2) var(--px-3); } }
+/* "On this page" back on the left, on the gray page, no white box (MW 2026-11-05). Still beside the top only. */
+@media (min-width: 1181px) {
+  body.proto .px-top { grid-template-columns: 210px minmax(0, 1fr); }
+  body.proto .px-top .px-onpage { order: -1; padding: var(--px-2) 0; background: none; border: 0; border-radius: 0; }
+}
