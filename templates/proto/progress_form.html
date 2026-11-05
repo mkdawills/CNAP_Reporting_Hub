@@ -35,7 +35,7 @@
         <span><span class="p21-miss" aria-hidden="true">2</span>Required answers still missing</span><span><span class="p21-ok" aria-hidden="true">✓</span>Nothing required is missing</span></p>
       <ol>
         {% if intro %}<li><a href="#p21-start" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>What to upload</span></a></li>{% endif %}
-        {% for sv in sections %}{% if sv.visible %}<li><a href="#sec-{{ sv.s.code }}" data-nav="{{ sv.s.code }}" data-req="{% for v in sv.questions %}{% if v.required and v.widget != 'system' %}{{ v.code }} {% endif %}{% endfor %}"><span class="p21-dot" aria-hidden="true"></span><span>{{ sv.s.title|default:"Questions" }}</span><span class="p21-navstate px-sr"></span></a></li>{% endif %}{% endfor %}
+        {% for sv in sections %}{% if sv.visible %}<li><a href="#sec-{{ sv.s.code }}" data-nav="{{ sv.s.code }}" data-req="{% for v in sv.questions %}{% if v.required and v.widget != 'system' %}{{ v.code }} {% endif %}{% endfor %}"{% if not sv.questions %} data-empty="1"{% endif %}><span class="p21-dot" aria-hidden="true"></span><span>{{ sv.s.title|default:"Questions" }}</span><span class="p21-navstate px-sr"></span></a></li>{% endif %}{% endfor %}
         {% if editable %}<li><a href="#p21-finish" data-nav="finish"><span class="p21-dot" aria-hidden="true"></span><span>Review and submit</span></a></li>{% endif %}
       </ol>
       {% if editable %}<p class="px-note p21-savehint">Typed answers save automatically as you go. An uploaded file saves when you press Save draft or Submit.</p>{% endif %}
