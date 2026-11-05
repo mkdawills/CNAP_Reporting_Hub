@@ -2050,3 +2050,4 @@ details > summary + * { margin-top: 12px; }
 .o33-cta-s { margin: 4px 0 0; font-size: .9rem; color: var(--muted); }
 @media (max-width: 760px) { .o33 { padding: 20px 18px; } .o33 .o33-grid b { font-size: 2.3rem; } }
 .o33 .o33-grid li > * { align-items: center; text-align: center; }
+.gcard-links { margin: 8px 0 0; padding-left: 18px; font-size: .92rem; } .gcard p:has(+ .gcard-links) { margin-bottom: 0; font-size: .92rem; line-height: 1.55; }

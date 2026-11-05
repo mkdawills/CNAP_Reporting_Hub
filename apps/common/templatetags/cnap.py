@@ -171,6 +171,16 @@ def reveal(value):
     )
 
 
+# Links for more information under a key-point card, by the card's label (MW 2026-11-05).
+# Kept here, so the form definitions and their versions stay unchanged.
+CARD_LINKS = {
+    "Your core's RRID": [
+        ("What a Research Resource Identifier (RRID) is", "https://www.rrids.org/"),
+        ("Look up your core's RRID at SciCrunch", "https://scicrunch.org/resources"),
+    ],
+}
+
+
 @register.filter(is_safe=True)
 def guidance(value):
     """
@@ -200,7 +210,12 @@ def guidance(value):
                 items = "".join(format_html("<li>{}</li>", b) for b in bullets)
                 out.append(f'<ul class="guide">{items}</ul>')
                 bullets.clear()
-            cards.append(format_html('<div class="gcard"><p class="gcard-h">{}</p><p>{}</p></div>', label.strip(), stack(body.strip())))
+            more = "".join(
+                format_html('<li><a href="{}" target="_blank" rel="noopener">{} (opens in a new tab)</a></li>', u, t)
+                for t, u in CARD_LINKS.get(label.strip().replace("’", "'"), [])
+            )
+            more = f'<ul class="gcard-links">{more}</ul>' if more else ""
+            cards.append(format_html('<div class="gcard"><p class="gcard-h">{}</p><p>{}</p>{}</div>', label.strip(), stack(body.strip()), mark_safe(more)))
             continue
         if line.startswith("- "):
             bullets.append(line[2:])

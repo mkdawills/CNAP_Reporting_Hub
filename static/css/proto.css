@@ -865,3 +865,9 @@ body.proto .p21-purpose { margin: var(--px-2) 0 0; max-width: var(--px-measure);
 /* At the end of a form, the bar's buttons step aside; the Review and submit section has them. */
 body.proto .p21-bar.at-end .p21-bar-acts { display: none; }
 body.proto .p21-bar.at-end { min-height: 0; }
+/* Links for more information under a key-point card. */
+body.proto .gcard-links { list-style: none; margin: var(--px-3) 0 0; padding: var(--px-3) 0 0; border-top: 1px solid var(--px-line); display: grid; gap: var(--px-1); }
+body.proto .gcard-links a { color: var(--px-accent); font-weight: 500; }
+/* Stacked sentences: a little space between each one, everywhere (MW 2026-11-05).
+   proto.js adds a spacer after each line break; buttons, chips, and table headers keep tight lines. */
+body.proto .sgap { display: block; height: .45em; }

@@ -215,3 +215,24 @@ document.addEventListener("click", function (e) {
     bar.classList.toggle("at-end", es[0].isIntersecting);
   }, { threshold: 0.25 }).observe(fin);
 })();
+
+/* Stacked sentences: a little space between each one, everywhere (MW 2026-11-05). */
+(function () {
+  var skip = "button, .px-btn, .px-chip, th, .px-label, .p21-bar, select, option, svg, pre, .si-photo";
+  function gap(root) {
+    (root || document).querySelectorAll("br").forEach(function (br) {
+      if (br.closest(skip)) return;
+      var n = br.nextSibling;
+      if (n && n.nodeType === 1 && n.classList.contains("sgap")) return;
+      while (n && n.nodeType === 3 && !n.textContent.trim()) n = n.nextSibling;
+      if (!n) return; /* a break at the very end adds nothing */
+      var s = document.createElement("span");
+      s.className = "sgap";
+      s.setAttribute("aria-hidden", "true");
+      br.after(s);
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { gap(); });
+  else gap();
+  window.pxGap = gap;
+})();
