@@ -420,11 +420,11 @@ def usd(value):
 
 
 # Section titles written in the respondent's voice ("My mentor or mentors") read wrongly on an
-# administrator's results page, where "my" would mean the administrator (MW 2026-11-05).
+# administrator's results page. Titles state the subject as a fact, with no pronouns (MW 2026-11-05).
 # Display only: the survey itself keeps its wording.
 _ADMIN_SECTION_NAMES = {
-    "My Mentor or Mentors Survey": "Mentees’ Ratings of Their Mentors",
-    "My Mentor or Mentors Over Time": "Mentees’ Ratings of Their Mentors Over Time",
+    "My Mentor or Mentors Survey": "Mentee Survey",
+    "My Mentor or Mentors Over Time": "Mentee Survey Over Time",
 }
 
 

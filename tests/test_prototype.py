@@ -189,8 +189,8 @@ def test_screen21_markers_count_the_same_required_answers_as_the_server(client, 
 
 @override_settings(UI_PROTOTYPE=True)
 def test_screen90_names_the_section_from_the_administrators_view(client, demo):
-    """The page is for administrators, so "My mentor or mentors" is reworded (MW 2026-11-05)."""
+    """Titles state the subject, with no pronouns: "Mentee Survey," not "My mentor or mentors" (MW 2026-11-05)."""
     client.force_login(User.objects.get(username="mwills"))
     html = client.get(f"/manage/results/{demo.short_label}/mentee_survey/").content.decode()
-    assert "Mentees’ Ratings of Their Mentors" in html
+    assert 'id="r90-t1">Mentee Survey<' in html
     assert "My Mentor or Mentors" not in html
