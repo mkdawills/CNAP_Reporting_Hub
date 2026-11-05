@@ -871,3 +871,8 @@ body.proto .gcard-links a { color: var(--px-accent); font-weight: 500; }
 /* Stacked sentences: a little space between each one, everywhere (MW 2026-11-05).
    proto.js adds a spacer after each line break; buttons, chips, and table headers keep tight lines. */
 body.proto .sgap { display: block; height: .45em; }
+/* Form introductions: a gray bracket on the left marks background information (MW 2026-11-05, option B).
+   Each sentence keeps a little space after it. */
+body.proto .p21-start-lede { border-left: 2px solid var(--px-line-strong); padding: 2px 0 2px var(--px-4); }
+body.proto .p21-start-lede .rl { display: block; }
+body.proto .p21-start-lede .rl + .rl { margin-top: .45em; }
