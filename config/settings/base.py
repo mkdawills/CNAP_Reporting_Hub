@@ -89,6 +89,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Four-screen design prototype (MW 2026-11-05). Off unless the environment turns it on.
+UI_PROTOTYPE = env.bool("UI_PROTOTYPE", default=False)
+
 # PostgreSQL only. SQLite is never used, even for tests: the constraints
 # that protect CNAP data (composite foreign keys, exclusion constraints,
 # NULLS NOT DISTINCT) exist only in PostgreSQL.

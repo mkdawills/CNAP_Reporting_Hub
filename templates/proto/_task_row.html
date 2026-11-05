@@ -1,0 +1,30 @@
+{% load cnap %}{# Prototype task row (Screen 3). Same links, forms, and actions as portal/_task_row.html. #}
+<li class="t3-row{% if r.used_core and r.is_open %} used{% endif %}">
+  <div class="t3-main">
+    <p class="t3-name">{{ r.name }}</p>
+    <p class="t3-meta">{% if r.context %}<span>{{ r.context }}</span>{% endif %}{% if r.used_core and r.is_open %}<span class="t3-pin">The core you used</span>{% endif %}</p>
+    {% if r.a.status == 'in_progress' %}<p class="t3-sub">{% if r.progress and r.progress.1 > 1 and r.progress.0 > 0 %}{{ r.progress.0 }} of {{ r.progress.1 }} sections finished. Your answers are saved.{% else %}Started. Your answers are saved.{% endif %}</p>{% endif %}
+    {% if r.a.status == 'completed_opt_out' %}<p class="t3-sub">You opted out of this survey ({{ r.opt_out_note|default:r.pathway|lower }}).</p>{% endif %}
+    {% if r.a.status == 'exempt' %}<p class="t3-sub">This form isn’t needed this period.</p>{% endif %}
+    {% if r.about %}<details class="px-more t3-about"><summary>What this form is</summary><div class="t3-aboutbody">{% for p in r.about %}<p>{{ p|stack }}</p>{% endfor %}</div></details>{% endif %}
+  </div>
+  <div class="t3-state">
+    {% if r.a.status == 'submitted' %}<span class="px-status" data-s="submitted">Submitted</span>
+    {% elif r.a.status == 'completed_opt_out' %}<span class="px-status" data-s="completed_opt_out">Opted out</span>
+    {% elif r.a.status == 'exempt' %}<span class="px-status" data-s="exempt">Not needed</span>
+    {% elif r.a.status == 'in_progress' %}<span class="px-status" data-s="in_progress">In progress</span>
+    {% else %}<span class="px-status" data-s="not_started">Not started</span>{% endif %}
+    <span class="t3-time">{{ r.time }}</span>
+  </div>
+  <div class="t3-acts">
+    {% if r.is_open and r.preview_only %}
+      <a class="px-btn small" href="{% url 'portal:preview' r.a.pk %}">Preview</a>
+    {% elif r.is_open %}
+      <a class="px-btn small" href="{% url 'portal:form' r.a.pk %}" aria-label="{% if r.a.status == 'in_progress' %}Continue{% else %}Start{% endif %} {{ r.name }}">{% if r.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a>
+      <a class="px-link" href="{% url 'portal:preview' r.a.pk %}" aria-label="Preview {{ r.name }}">Preview</a>
+      {% if r.can_opt_out %}<form method="post" action="{% url 'portal:opt_out' r.a.pk %}">{% csrf_token %}<button class="px-link quietlink" type="submit" title="{{ r.opt_out_note }}" aria-label="Opt out of {{ r.name }}">Opt out</button></form>{% endif %}
+    {% else %}
+      <a class="px-btn small quiet" href="{% url 'portal:form' r.a.pk %}" aria-label="View {{ r.name }}">View</a>
+    {% endif %}
+  </div>
+</li>

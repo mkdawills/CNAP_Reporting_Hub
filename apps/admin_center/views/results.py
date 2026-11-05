@@ -8,6 +8,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
+from apps.common import prototype
 from apps.accounts import access
 from apps.analytics import report as rpt
 from apps.analytics import snapshots
@@ -148,7 +149,9 @@ def form_report(request, label, code):
         }
     return render(
         request,
-        "manage/report.html",
+        prototype.template(
+            request, f"results:{fd.code}", "manage/report.html"
+        ),
         {
             **data,
             "mode": mode,

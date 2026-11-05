@@ -1,0 +1,99 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{{ fd.name }} · {{ period.short_label }} · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Screen 90 prototype: Mentee Survey results only. Same view and data as manage/report.html. #}
+{# The view refuses this page to anyone without confidential mentoring access before this renders. #}
+<div class="r90">
+  <header class="px-mast">
+    <p class="px-eyebrow">Results · {{ period.name }}</p>
+    <div class="px-mast-row">
+      <h1 class="px-title">{{ fd.name }}</h1>
+      <div class="r90-links">
+        <a class="px-link" href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.short_label }}</a>
+        {% if tables %}<a class="px-btn small quiet" href="{% url 'manage:export_report' period.short_label fd.code %}">Download the tables (CSV)</a>{% endif %}
+      </div>
+    </div>
+    <ul class="px-facts">
+      <li><span class="px-label">Results</span><span class="v">{% if snapshot %}{{ snapshot.get_status_display }}{% if snapshot.provenance == 'aggregate_import' %} (imported prior-year averages){% endif %}{% elif period.status == 'open' %}Live: the period is still open{% else %}Not yet generated{% endif %}</span></li>
+      {% if period.assignments.exists %}
+      <li><span class="px-label">Responded</span><span class="v">{% if tables %}{{ opened }}{% else %}{{ completion.complete }}{% endif %} of {{ completion.assigned }}</span></li>
+      {% if tables and opted_out %}<li><span class="px-label">Answered every item</span><span class="v">{{ full }}</span></li><li><span class="px-label">{{ optout_name|default:"Opted out"|capfirst }}</span><span class="v">{{ opted_out }}</span></li>{% endif %}
+      {% if who.waiting %}<li><span class="px-label">Not finished yet</span><span class="v">{{ who.waiting|length }}</span></li>{% endif %}
+      {% endif %}
+    </ul>
+  </header>
+
+  <div class="r90-privacy px-callout" role="note">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+    <p><strong>Confidential mentoring survey.</strong> This page opens only for people with confidential mentoring access. The combined results come first. Anything that could identify a person is kept apart in the last section, “Identifiable information.”</p>
+  </div>
+
+  {% if not period.assignments.exists %}
+  <div class="px-callout warn r90-imported"><p>These are prior-year averages imported from the site-visit reports. There are no individual responses for this period, so the answer-by-answer charts appear only for periods run in the Hub.</p></div>
+  {% endif %}
+
+  {# ======================================================== 1. combined results #}
+  <section class="px-section" aria-labelledby="r90-combined-h">
+    <div class="px-section-head"><h2 class="px-h2 r90-part" id="r90-combined-h"><span>1</span>Combined results</h2>{% if tables %}<button type="button" class="px-link" data-expand-all aria-expanded="false">Open every full table</button>{% endif %}</div>
+    <div class="r90-secs">{% include "proto/_report_tables.html" with show_codes=True %}</div>
+    {% if is_report and not tables %}<p class="px-note">Narrative report. Please read each submission from the list in “Identifiable information.”</p>{% endif %}
+  </section>
+
+  {# ======================================================== 2. what people wrote #}
+  {% if period.assignments.exists and not is_report or followups and followups.counts %}
+  <section class="px-section" aria-labelledby="r90-written-h">
+    <div class="px-section-head"><h2 class="px-h2 r90-part" id="r90-written-h"><span>2</span>Themes and written answers</h2><p class="px-note">Written answers are shown without names.</p></div>
+    {% if period.assignments.exists and not is_report %}
+    <div class="r90-themes">
+      <h3 class="px-h3">Themes</h3>
+      {% if can_edit_themes %}
+        <form method="post" action="{% url 'manage:save_themes' period.short_label fd.code %}">{% csrf_token %}
+          <label class="px-sr" for="r90-themes">Themes, one per line</label>
+          <textarea id="r90-themes" name="themes" rows="4" placeholder="One theme per line">{{ themes|default:"" }}</textarea>
+          <button class="px-btn small" type="submit">Save themes</button></form>
+      {% elif themes %}<ul class="r90-themelist">{% for line in themes.splitlines %}{% if line.strip %}<li>{{ line }}</li>{% endif %}{% endfor %}</ul>
+      {% else %}<p class="px-note">{% if snapshot %}No themes written yet.{% else %}Themes are written once results are generated.{% endif %}</p>{% endif %}
+    </div>
+    <div class="r90-verbatims">
+      {% if show_verbatims %}
+        {% for v in verbatims %}<details class="r90-vq" open><summary><span class="px-h3">{{ v.prompt }}</span><span class="px-label">{{ v.answers|length }} answer{{ v.answers|length|pluralize }}</span></summary>
+          {% if v.answers %}<ul class="r90-quotes">{% for t in v.answers %}<li><blockquote>{{ t }}</blockquote></li>{% endfor %}</ul>{% else %}<p class="px-note">No responses.</p>{% endif %}
+        </details>{% endfor %}
+      {% elif deid_blocked %}<p class="px-note">Written answers aren’t shown because fewer than 5 people completed this survey. The combined results above still apply.</p>
+      {% else %}<p class="px-note">Written answers are visible only to the evaluator and the Center Director and Associate Director.</p>{% endif %}
+    </div>
+    {% endif %}
+    {% if followups and followups.counts %}
+    <div class="r90-optouts">
+      <h3 class="px-h3">People who opted out</h3>
+      {% for prompt, counts in followups.counts.items %}<p class="r90-optq">{{ prompt }}</p><ul class="r90-optcounts">{% for label, n in counts.items %}<li><span>{{ label }}</span><b>{{ n }}</b></li>{% endfor %}</ul>{% endfor %}
+      {% if show_verbatims and followups.texts %}<ul class="r90-quotes">{% for t in followups.texts %}<li><blockquote>{{ t }}</blockquote></li>{% endfor %}</ul>{% endif %}
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {# ======================================================== 3. identifiable #}
+  {% if who or rows or deid_blocked %}
+  <section class="px-section r90-ident" aria-labelledby="r90-ident-h">
+    <div class="px-section-head"><h2 class="px-h2 r90-part" id="r90-ident-h"><span>3</span>Identifiable information</h2><p class="px-note">Names and individual responses. Please don’t share them outside the evaluation team.</p></div>
+    {% if who %}
+    <details class="r90-who"><summary><span class="px-h3">Who received and answered this survey</span><span class="px-label">Names</span></summary>
+      <dl class="r90-wholists">
+        <div><dt>Received the survey ({{ who.received|length }})</dt><dd>{{ who.received|join:", " }}</dd></div>
+        <div><dt>Responded ({{ who.responded|length }})</dt><dd>{{ who.responded|join:", "|default:"No one yet" }}</dd></div>
+        {% if opted_out %}<div><dt>Answered every item ({{ who.full|length }})</dt><dd>{{ who.full|join:", "|default:"No one" }}</dd></div><div><dt>{{ optout_name|default:"Opted out"|capfirst }} ({{ who.opted|length }})</dt><dd>{{ who.opted|join:", "|default:"No one" }}</dd></div>{% endif %}
+        {% if who.waiting %}<div><dt>Not finished yet ({{ who.waiting|length }})</dt><dd>{{ who.waiting|join:", " }}</dd></div>{% endif %}
+      </dl>
+    </details>
+    {% endif %}
+    {% if rows %}
+    <details class="r90-who"><summary><span class="px-h3">Individual responses{% if mode == 'deidentified' %}, de-identified{% endif %}</span><span class="px-label">{{ rows|length }} response{{ rows|length|pluralize }}</span></summary>
+      <table class="px-table r90-rows" title="One row per response, so you can open any individual answer."><thead><tr><th scope="col">{% if mode == 'deidentified' %}Respondent{% else %}Person{% endif %}</th><th scope="col">Project or core</th><th scope="col">How it was completed</th><th scope="col"><span class="px-sr">Open</span></th></tr></thead>
+        <tbody>{% for r in rows %}<tr><th scope="row">{{ r.label }}</th><td>{{ r.ctx }}</td><td>{% if r.a.status == 'completed_opt_out' %}Opted out{% else %}Answered{% endif %}</td><td class="r90-open"><a class="px-btn small quiet" href="{% url 'manage:response' r.a.pk %}">Read</a></td></tr>{% endfor %}</tbody></table>
+    </details>
+    {% elif deid_blocked %}<p class="px-note">Individual responses aren’t shown because fewer than 5 people completed this survey.</p>{% endif %}
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

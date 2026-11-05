@@ -83,6 +83,55 @@ def field_group(name, kind):
 
 
 @register.filter
+def at(seq, i):
+    """seq[i], or "" when out of range (prototype charts pair item cells with scale colors)."""
+    try:
+        return seq[int(i)]
+    except (IndexError, TypeError, ValueError, KeyError):
+        return ""
+
+
+@register.filter
+def sum_key(rows, key):
+    """Add up one number across a list of dicts, e.g. opt-outs across the per-form rows already shown."""
+    return sum(int((r.get(key) if isinstance(r, dict) else getattr(r, key, 0)) or 0) for r in rows or [])
+
+
+@register.filter
+def days_until(when):
+    """Whole days from today until a date or datetime (negative once past)."""
+    from django.utils import timezone
+
+    if not when:
+        return ""
+    d = timezone.localtime(when).date() if hasattr(when, "hour") else when
+    return (d - timezone.localdate()).days
+
+
+@register.filter
+def minus(a, b):
+    try:
+        return int(a) - int(b)
+    except (TypeError, ValueError):
+        return a
+
+
+@register.filter
+def pct(n, total):
+    """n as a whole-number percent of total (0 when total is 0)."""
+    try:
+        return round(100 * int(n) / int(total)) if int(total) else 0
+    except (TypeError, ValueError):
+        return 0
+
+
+@register.filter
+def status_count(rows, status):
+    """How many task rows have this assignment status (prototype: submitted vs opted out)."""
+    return sum(1 for r in rows or [] if getattr(r.get("a") if isinstance(r, dict) else None, "status", None) == status)
+
+
+@register.filter
 def part_no(code, display):
     """1-based position of a section in a form's document outline (display["doc_outline"]), or 0 (MW 2026-11-04)."""
     parts = (display or {}).get("doc_outline") if isinstance(display, dict) else None

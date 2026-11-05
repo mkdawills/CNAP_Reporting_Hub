@@ -8,6 +8,7 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from apps.common import prototype
 from apps.accounts import access
 from apps.analytics import snapshots
 from apps.audit.models import AuditLog, record_event
@@ -483,7 +484,9 @@ def dashboard(request):
     done = qs.filter(status__in=COMPLETE_STATUSES).count()
     return render(
         request,
-        "manage/dashboard.html",
+        prototype.template(
+            request, "dashboard", "manage/dashboard.html"
+        ),
         {
             "p": p,
             "periods": ReportingPeriod.objects.exclude(status=PeriodStatus.DRAFT)

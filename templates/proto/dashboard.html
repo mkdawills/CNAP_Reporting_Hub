@@ -1,0 +1,115 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Period dashboard · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Screen 53 prototype. Same view, same numbers, same actions and confirmations as manage/dashboard.html. #}
+<div class="d53">
+{% if not p %}
+  <header class="px-mast"><p class="px-eyebrow">Period dashboard</p><h1 class="px-title">No reporting periods yet.</h1></header>
+{% else %}
+  {% with opted=form_rows|sum_key:"optout" %}{% with submitted=done|minus:opted open_n=total|minus:done %}{% with dleft=p.due_at|days_until %}
+  {# ---------------------------------------------------------------- masthead #}
+  <header class="px-mast d53-mast">
+    <div class="px-mast-row">
+      <div>
+        <p class="px-eyebrow">Period dashboard</p>
+        <h1 class="px-title">{{ p.name }}</h1>
+      </div>
+      <form method="get" class="d53-pick"><label class="px-label" for="d53-period">Reporting period</label>
+        <select id="d53-period" name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}</option>{% endfor %}</select>
+        <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>
+    </div>
+    <ul class="px-facts">
+      <li><span class="px-label">Status</span><span class="v"><span class="px-status" data-s="{% if p.status == 'open' %}in_progress{% elif p.status == 'finalized' %}submitted{% else %}not_started{% endif %}">{{ p.get_status_display }}</span></span></li>
+      <li><span class="px-label">Period covers</span><span class="v">{{ p|span }}</span></li>
+      <li><span class="px-label">Forms opened</span><span class="v">{{ p.opens_at|date:"F j, Y" }}</span></li>
+      <li><span class="px-label">Forms due</span><span class="v">{{ p.due_at|date:"F j, Y" }}{% if is_open %}{% if dleft > 1 %} · {{ dleft }} days left{% elif dleft == 1 %} · Tomorrow{% elif dleft == 0 %} · Today{% else %} · Past due{% endif %}{% endif %}</span></li>
+      {% if p.closes_at %}<li><span class="px-label">Period closes</span><span class="v">{{ p.closes_at|date:"F j, Y" }}</span></li>{% endif %}
+    </ul>
+  </header>
+
+  {# ---------------------------------------------------------------- lifecycle #}
+  <nav class="d53-life" aria-label="Where this period is in its seven steps">
+    <ol>{% for s in steps %}<li class="{{ s.state }}" title="{{ s.help }}"><span class="n" aria-hidden="true">{% if s.state == 'done' %}✓{% else %}{{ s.n }}{% endif %}</span><span class="l">{% if s.url %}<a href="{{ s.url }}">{{ s.label }}</a>{% else %}{{ s.label }}{% endif %}</span><span class="px-sr">{% if s.state == 'done' %} (done){% elif s.state == 'now' %} (current step){% endif %}</span></li>{% endfor %}</ol>
+  </nav>
+
+  {# ---------------------------------------------------------------- headline numbers #}
+  <section class="d53-kpis px-surface" aria-labelledby="d53-kpi-h">
+    <h2 class="px-sr" id="d53-kpi-h">Completion</h2>
+    <div class="d53-hero">
+      <p class="px-label">Complete</p>
+      <p class="d53-pct px-num">{{ pct }}<span>%</span></p>
+      <div class="px-meter" role="img" aria-label="{{ submitted }} submitted and {{ opted }} opted out, out of {{ total }} forms.">
+        <span class="m-ok" style="width: {{ submitted|pct:total }}%"></span><span class="m-opt" style="width: {{ opted|pct:total }}%"></span>
+      </div>
+      <p class="px-note">{{ done }} of {{ total }} forms finished. Opt-outs count as finished. Exempt forms are not counted.</p>
+    </div>
+    <dl class="d53-figs">
+      <div><dt><span class="px-key"><i class="k-ok"></i>Submitted</span></dt><dd class="px-num">{{ submitted }}</dd></div>
+      <div><dt><span class="px-key"><i class="k-opt"></i>Opted out</span></dt><dd class="px-num">{{ opted }}</dd></div>
+      <div><dt><span class="px-key"><i class="k-todo"></i>Not finished</span></dt><dd class="px-num">{{ open_n }}</dd>{% if is_open and dleft < 0 and open_n %}<span class="px-status" data-s="overdue">Past due</span>{% endif %}</div>
+      <div><dt>Exempt</dt><dd class="px-num">{{ exempt_n }}</dd></div>
+    </dl>
+  </section>
+
+  {# ---------------------------------------------------------------- next actions #}
+  <section class="px-section d53-next" aria-labelledby="d53-next-h">
+    <div class="px-section-head"><h2 class="px-h2" id="d53-next-h">What needs your attention</h2></div>
+    <ol class="d53-actions">
+      {% if is_open and open_n %}<li><div><p class="d53-a-t">{{ open_n }} form{{ open_n|pluralize }} not finished{% if dleft < 0 %}, past the due date{% endif %}</p><p class="px-note">The automatic reminder emails cover most people. A personal note from you often works better late in the period.</p></div>
+        <a class="px-btn small quiet" href="?period={{ p.short_label }}&who=not_started#list">See who hasn’t started</a></li>{% endif %}
+      {% with low=form_rows|dictsort:"pct"|first %}{% if low and low.pct < 100 %}<li><div><p class="d53-a-t">Lowest completion: {{ low.fd.name }}, {{ low.pct }}%</p><p class="px-note">{{ low.done }} of {{ low.assigned }} finished. Low completion on one form is worth a look before the RPPR is written.</p></div>
+        <a class="px-btn small quiet" href="?period={{ p.short_label }}&form={{ low.fd.code }}#list">See this form’s list</a></li>{% endif %}{% endwith %}
+      {% if exempt_n %}<li><div><p class="d53-a-t">{{ exempt_n }} exemption{{ exempt_n|pluralize }} on record</p><p class="px-note">Each exemption has a reason. Please check them before the period closes.</p></div>
+        <a class="px-btn small quiet" href="?period={{ p.short_label }}&status=exempt#list">Review exemptions</a></li>{% endif %}
+      {% if can_manage and is_open %}<li><div><p class="d53-a-t">Assign forms from current relationships</p><p class="px-note">Use this after you add or change someone’s roles. Safe to run again: existing forms are never duplicated or removed.</p></div>
+        <form method="post" action="{% url 'manage:generate_assignments' p.pk %}">{% csrf_token %}<button class="px-btn small quiet" type="submit">Assign forms</button></form></li>{% endif %}
+      {% if not is_open and not open_n %}<li><div><p class="d53-a-t">Nothing needs attention right now.</p></div></li>{% endif %}
+    </ol>
+  </section>
+
+  {# ---------------------------------------------------------------- by form #}
+  <section class="px-section" aria-labelledby="d53-forms-h">
+    <div class="px-section-head"><h2 class="px-h2" id="d53-forms-h">Completion by form</h2><p class="px-note">Click a number to see exactly who it covers.</p></div>
+    <div class="px-surface d53-tablewrap"><table class="px-table d53-forms" title="Each form in this period: how many people received it, and how far they have come.">
+      <thead><tr><th scope="col">Form</th><th scope="col" class="num">Assigned</th><th scope="col" class="num">Finished</th><th scope="col" class="num">Opted out</th><th scope="col">Completion</th></tr></thead>
+      <tbody>{% for r in form_rows %}<tr>
+        <th scope="row"><a href="{% url 'manage:form_detail' r.fd.code %}" title="Read this form’s questions">{{ r.fd.name }}</a></th>
+        <td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}#list">{{ r.assigned }}</a></td>
+        <td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}&status=complete#list">{{ r.done }}</a></td>
+        <td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}&status=completed_opt_out#list">{{ r.optout }}</a></td>
+        <td><div class="d53-cell"><div class="px-meter"><span class="m-ok" style="width: {{ r.pct }}%"></span></div><span class="d53-cellpct">{{ r.pct }}%</span></div></td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+
+  {# ---------------------------------------------------------------- people #}
+  <section class="px-section" id="list" aria-labelledby="d53-people-h">
+    <div class="px-section-head"><h2 class="px-h2" id="d53-people-h">People and their forms</h2>{% if hidden_names %}<p class="px-note">Core, NeuroSync, and Team Science surveys show as counts only, so no one’s name is tied to those surveys.</p>{% endif %}</div>
+    {% if named_forms %}
+    <form method="get" class="d53-filters px-surface"><input type="hidden" name="period" value="{{ p.short_label }}">
+      <label><span class="px-label">Form</span><select name="form"><option value="">All forms</option>{% for f in named_forms %}<option value="{{ f.code }}" {% if f.code == f_form %}selected{% endif %}>{{ f.name }}</option>{% endfor %}</select></label>
+      <label><span class="px-label">Status</span><select name="status"><option value="">Any</option><option value="not_started" {% if f_status == 'not_started' %}selected{% endif %}>Not started</option><option value="in_progress" {% if f_status == 'in_progress' %}selected{% endif %}>In progress</option><option value="complete" {% if f_status == 'complete' %}selected{% endif %}>Complete</option><option value="completed_opt_out" {% if f_status == 'completed_opt_out' %}selected{% endif %}>Opted out</option><option value="exempt" {% if f_status == 'exempt' %}selected{% endif %}>Exempt</option></select></label>
+      <label title="Narrow the list to people by how far they have come with all their forms."><span class="px-label">People</span><select name="who"><option value="">Anyone</option><option value="finished" {% if f_who == 'finished' %}selected{% endif %}>Finished everything</option><option value="partway" {% if f_who == 'partway' %}selected{% endif %}>Partway through</option><option value="not_started" {% if f_who == 'not_started' %}selected{% endif %}>Not started anything</option></select></label>
+      <button class="px-btn small" type="submit">Apply filters</button>
+      {% if f_form or f_status or f_who %}<a class="px-link" href="?period={{ p.short_label }}#list">Clear</a>{% endif %}
+    </form>
+    <p class="px-note d53-count" role="status">{{ rows|length }} assignment{{ rows|length|pluralize }}{% if rows_n > 300 %}, showing 300 of {{ rows_n }}. Please filter to narrow the list{% endif %}.</p>
+    <div class="px-surface d53-tablewrap"><table class="px-table d53-people" title="Every assignment in this period, one row per person per form, with its status.">
+      <thead><tr><th scope="col">Person</th><th scope="col">Form</th><th scope="col">Status</th>{% if can_manage %}<th scope="col"><span class="px-sr">Actions</span></th>{% endif %}</tr></thead>
+      <tbody>{% for a in rows %}<tr class="{% ifchanged a.person_id %}d53-first{% else %}d53-same{% endifchanged %}">
+        <th scope="row" data-person="{{ a.person_id }}"><a href="{% url 'manage:person' a.person_id %}">{{ a.person }}</a></th>
+        <td>{{ a.form_definition.name }}{% if a.project %}<div class="px-note">{{ a.project.title }}</div>{% elif a.core and a.context_kind == 'core' %}<div class="px-note">{{ a.core.name }}</div>{% endif %}</td>
+        <td><span class="px-status" data-s="{{ a.status }}">{% if a.status == 'submitted' %}Submitted{% elif a.status == 'completed_opt_out' %}Opted out{% elif a.status == 'in_progress' %}In progress{% elif a.status == 'exempt' %}Exempt{% else %}Not started{% endif %}</span>{% if a.exempt_reason %}<div class="px-note">{{ a.exempt_reason }}</div>{% endif %}</td>
+        {% if can_manage %}<td class="d53-acts">{% if is_open %}<form method="post" action="{% url 'manage:assignment_action' a.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+          {% if a.status == 'not_started' or a.status == 'in_progress' %}<details class="d53-exempt"><summary class="px-link">Exempt</summary><div class="d53-exempt-box"><label><span class="px-label">Reason (required)</span><input type="text" name="reason" required></label><button class="px-btn small" name="action" value="exempt">Save exemption</button></div></details>{% endif %}
+          {% if a.status == 'submitted' or a.status == 'completed_opt_out' %}<button class="px-link" name="action" value="reopen" onclick="return confirm('Reopen this form? Their answers are kept and they can resubmit.')">Reopen</button>{% endif %}
+          {% if a.status == 'exempt' %}<button class="px-link" name="action" value="unexempt">Remove exemption</button>{% endif %}</form>{% endif %}</td>{% endif %}
+      </tr>{% empty %}<tr><td colspan="4"><div class="px-empty">No forms match these filters.</div></td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+  </section>
+  {% endwith %}{% endwith %}{% endwith %}
+{% endif %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}

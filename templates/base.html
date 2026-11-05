@@ -10,14 +10,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% if request.proto_active %}<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/proto.css' %}">{% endif %}
 </head>
-<body>
+<body{% if request.proto_active %} class="proto"{% endif %}>
 {% if user.is_authenticated %}
 <div class="app">
-  <aside class="side">
+  <aside class="side">{% if request.proto_active %}<button type="button" class="px-menu" aria-expanded="false" aria-controls="px-sidenav" onclick="var o=this.getAttribute('aria-expanded')==='true';this.setAttribute('aria-expanded',String(!o));this.closest('.side').classList.toggle('px-open',!o)">Menu</button>{% endif %}
     <a class="brand" href="{% url 'home' %}" title="CNAP Reporting Hub home"><picture><source srcset="{% static 'img/cnap-logo-on-purple.png' %}" media="(prefers-color-scheme: dark)"><img class="brand-logo" src="{% static 'img/cnap-logo.png' %}" alt="CNAP Center: Cognitive and Neurobiological Approaches to Plasticity"></picture><span class="brand-hub">Reporting Hub</span><small>Kansas State University</small></a>
     {% if has_cnap_roles %}<a class="who" href="{% url 'portal:profile' %}" title="Your profile">{{ user.person.first_name|default:user.username }} {{ user.person.last_name }}<span>{{ access_label }}</span></a>{% else %}<div class="who">{{ user.person.first_name|default:user.username }} {{ user.person.last_name }}<span>{{ access_label }}</span></div>{% endif %}
-    <nav aria-label="Main">
+    <nav aria-label="Main"{% if request.proto_active %} id="px-sidenav"{% endif %}>
       {% if has_cnap_roles %}
         <div class="navhead">My work</div>
         <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %} title="Your to-do list for the current reporting period: every form CNAP is asking you to fill in, with how long each takes and its due date. Your answers feed the Center’s NIH progress report. Click to start or continue a form.">My tasks</a>
@@ -55,6 +57,7 @@
     {% block content %}{% endblock %}
   </main>
 </div>
+{% if request.proto_screen %}<style>.protoswitch{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;background:#17141f;color:#fff;font:600 12px/1 "IBM Plex Sans",system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.18)}.protoswitch span{padding:0 10px;opacity:.7}.protoswitch a{padding:7px 12px;border-radius:999px;color:#fff;text-decoration:none}.protoswitch a[aria-current]{background:#fff;color:#17141f}.protoswitch a:focus-visible{outline:2px solid #c9adf5;outline-offset:2px}</style><div class="protoswitch" role="group" aria-label="Design preview"><span>Design preview</span><a href="{% url 'ui_switch' 'before' %}?next={{ request.get_full_path|urlencode }}"{% if not request.proto_active %} aria-current="true"{% endif %}>Current</a><a href="{% url 'ui_switch' 'after' %}?next={{ request.get_full_path|urlencode }}"{% if request.proto_active %} aria-current="true"{% endif %}>Prototype</a></div>{% endif %}
 <button type="button" class="fbk-open" aria-haspopup="dialog" title="Tell us how this page could be better: its design, its wording, its logic, its speed, or a fun idea. Your note goes to the CNAP evaluation team, with the page it came from.">Page feedback</button>
 <dialog class="fbk" aria-labelledby="fbk-h">
   <form method="dialog" class="fbk-form">

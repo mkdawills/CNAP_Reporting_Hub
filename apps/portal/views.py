@@ -89,7 +89,9 @@ def tasks(request):
             ctx["minutes_left"] += oc["minutes"]
         ctx["done_n"] = ctx["total"] - ctx["todo"]
         ctx["pct"] = round(100 * ctx["done_n"] / ctx["total"]) if ctx["total"] else 0
-    return render(request, "portal/tasks.html", ctx)
+    from apps.common import prototype
+
+    return render(request, prototype.template(request, "tasks", "portal/tasks.html"), ctx)
 
 
 def _own_assignment(request, pk):
@@ -239,7 +241,10 @@ def form(request, pk):
             return redirect("portal:form", pk)
         a.refresh_from_db()
     ctx = presenters.form_page(request, a, editable=editable, errors=errors, missing=missing)
-    return render(request, "portal/form.html", ctx)
+    from apps.common import prototype
+
+    tpl = prototype.template(request, f"form:{a.form_definition.code}", "portal/form.html")
+    return render(request, tpl, ctx)
 
 
 @login_required

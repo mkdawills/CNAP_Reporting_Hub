@@ -1,0 +1,148 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}My tasks · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Screen 3 prototype. Same view and data as portal/tasks.html; presentation only. #}
+<div class="t3">
+{% if not period %}
+  <header class="px-mast">
+    <p class="px-eyebrow">My tasks</p>
+    <h1 class="px-title">No reporting period is open right now.</h1>
+    <p class="px-lede">We’ll email you when the next one opens.</p>
+  </header>
+  {% if cp_check %}<section class="px-section"><div class="px-section-head"><h2 class="px-h2">To do</h2></div>
+    <ul class="t3-list px-surface">{% include "proto/_cp_row.html" %}</ul></section>{% endif %}
+{% else %}
+
+  {% if period.in_preview %}<div class="px-callout" role="status"><p><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong><br>You can read every form now with Preview. Answering opens that day. Nothing you do here before then is saved.</p></div>{% endif %}
+
+  {# ---------------------------------------------------------------- masthead #}
+  <header class="px-mast t3-mast">
+    <p class="px-eyebrow">{{ period.name }}</p>
+    <h1 class="px-title">{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
+    <ul class="px-facts" aria-label="This reporting period">
+      <li><span class="px-label">Period covers</span><span class="v">{{ period|span }}</span></li>
+      {% if todo %}{% with d=period.due_at|days_until %}<li><span class="px-label">Forms due</span><span class="v">{{ period.due_at|date:"l, F j" }}{% if d > 1 %} · {{ d }} days left{% elif d == 1 %} · Tomorrow{% elif d == 0 %} · Today{% else %} · Past due{% endif %}</span></li>{% endwith %}{% endif %}
+      {% if todo %}<li><span class="px-label">Time left to finish</span><span class="v">About {{ minutes_left }} minute{{ minutes_left|pluralize }}</span></li>{% endif %}
+    </ul>
+  </header>
+
+  {% if just_done %}
+  <div class="px-callout ok t3-thanks" role="status" data-confetti="{{ just_done.a.pk }}">
+    <div><p><strong>Thank you, {{ request.user.person.first_name|default:request.user.username }}. {% if just_done.a.status == 'completed_opt_out' %}Your opt-out is recorded{% else %}Your answers are in{% endif %}.</strong><br>You finished the {{ just_done.name }}.{% if not next_up %} {% if todo %}You have {{ todo }} left on your list.{% else %}That was your last one.{% endif %}{% endif %}</p>
+    {% if next_up %}<p class="t3-thanks-next">Next up is the {{ next_up.name }}. The form will take {{ next_up.time|lower }}.</p>{% endif %}</div>
+    {% if next_up %}<div class="t3-thanks-acts"><a class="px-btn" href="{% url 'portal:form' next_up.a.pk %}">Start now</a><a class="px-btn quiet" href="{% url 'portal:tasks' %}">Back to my list</a></div>{% endif %}
+  </div>
+  {% endif %}
+
+  {# ---------------------------------------------------------------- progress + next up #}
+  {% with opted=done|status_count:"completed_opt_out" %}{% with submitted=done_n|minus:opted %}
+  <section class="t3-top" aria-label="Reporting progress and your next form">
+    <div class="t3-progress">
+      <h2 class="px-h2">Reporting progress</h2>
+      <p class="px-note t3-progress-sub">{{ total }} form{{ total|pluralize }} for you this period.</p>
+      <div class="px-meter t3-meter" role="img" aria-label="{{ submitted }} submitted, {{ opted }} opted out, {{ todo }} still to do, out of {{ total }}.">
+        <span class="m-ok" style="width: {{ submitted|pct:total }}%"></span><span class="m-opt" style="width: {{ opted|pct:total }}%"></span>
+      </div>
+      <dl class="t3-counts">
+        <div><dt><span class="px-key"><i class="k-ok"></i>Submitted</span></dt><dd class="px-num">{{ submitted }}</dd></div>
+        <div><dt><span class="px-key"><i class="k-opt"></i>Opted out</span></dt><dd class="px-num">{{ opted }}</dd></div>
+        <div><dt><span class="px-key"><i class="k-todo"></i>Still to do</span></dt><dd class="px-num">{{ todo }}</dd></div>
+      </dl>
+    </div>
+    {% if first_up and not period.in_preview %}
+    <a class="t3-next" href="{% url 'portal:form' first_up.a.pk %}">
+      <span class="px-label">Next up</span>
+      <span class="t3-next-name">{{ first_up.name }}</span>
+      <span class="t3-next-time">{{ first_up.time }}</span>
+      <span class="px-btn t3-next-btn">{% if first_up.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</span>
+    </a>
+    {% elif not todo and not cp_check %}
+    <div class="t3-next done"><span class="px-label">All set</span><span class="t3-next-name">You’re all set for {{ period.short_label }}.</span><span class="t3-next-time">Everything you sent feeds the Center’s Research Performance Progress Report (RPPR) to NIH. We’ll email you when the next reporting period opens.</span></div>
+    {% endif %}
+  </section>
+  {% endwith %}{% endwith %}
+
+  {% if is_core_director %}<details class="px-more t3-note"><summary>A note about your core surveys</summary>
+    <div class="t3-notebody">{% for d in is_core_director %}<p>Since you’re the {{ d.core.name|cut:" Core" }} ({{ d.core.code }}) Core Director, you do not receive the {{ d.core.code }} Core user survey.</p>{% endfor %}
+    <p>{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Please opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p></div>
+  </details>{% endif %}
+
+  {# ---------------------------------------------------------------- the list #}
+  {% if todo or cp_check %}
+  <section class="px-section" aria-labelledby="t3-todo-h">
+    <div class="px-section-head">
+      <h2 class="px-h2" id="t3-todo-h">Your forms</h2>
+      <p class="px-note">Grouped by what they are about. Other respondents never see your answers.</p>
+    </div>
+    {% if cp_check %}<div class="t3-group"><div class="t3-ghead"><h3 class="px-h3">A quick NIH question</h3><span class="px-label">1 question</span></div><ul class="t3-list px-surface">{% include "proto/_cp_row.html" %}</ul></div>{% endif %}
+    {% for g in groups %}
+    <div class="t3-group">
+      <div class="t3-ghead"><div><h3 class="px-h3">{{ g.title }}</h3><p class="px-note">{{ g.sub|stack }}</p></div><span class="px-label">{{ g.count }} form{{ g.count|pluralize }}</span></div>
+      <ul class="t3-list px-surface">
+        {% for r in g.used %}{% include "proto/_task_row.html" %}{% endfor %}
+        {% if g.used and g.rows %}<li class="t3-divider">{% if g.rows|length == 1 %}Did you also use this core?{% else %}Did you also use these cores?{% endif %}</li>{% endif %}
+        {% for r in g.rows %}{% include "proto/_task_row.html" %}{% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+    {% if outcome and not outcome.done %}
+    <div class="t3-group">
+      <div class="t3-ghead"><div><h3 class="px-h3">Publications, talks, and grants</h3><p class="px-note">Please keep your papers, presentations, and grant proposals up to date.</p></div></div>
+      <ul class="t3-list px-surface">{% for i in outcome.items %}{% if not i.done %}
+        <li class="t3-row"><div class="t3-main"><p class="t3-name">{% if i.self %}Review your publications, talks, and grants{% else %}Review publications, talks, and grants for {{ i.owner }}{% endif %}</p>
+          <p class="t3-sub">{% if i.n_review %}{{ i.n_review }} product{{ i.n_review|pluralize }} to review{% if i.n_ask %} and {% endif %}{% endif %}{% if i.n_ask %}{{ i.n_ask }} question{{ i.n_ask|pluralize }} to answer{% endif %}.</p></div>
+          <div class="t3-state"><span class="px-status" data-s="not_started">Not started</span><span class="t3-time">About {{ outcome.minutes }} min</span></div>
+          <div class="t3-acts">{% if period.in_preview %}<span class="px-note">This opens when the period starts.</span>{% else %}<a class="px-btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</div></li>
+      {% endif %}{% endfor %}</ul>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if done or outcome.done %}
+  <section class="px-section">
+    <details class="t3-done"{% if not todo %} open{% endif %}>
+      <summary><span class="px-h2">Finished</span><span class="px-label">{{ done_count }} form{{ done_count|pluralize }}</span></summary>
+      <ul class="t3-list px-surface">{% for r in done %}{% include "proto/_task_row.html" %}{% endfor %}
+        {% if outcome.done %}<li class="t3-row"><div class="t3-main"><p class="t3-name">Publications, talks, and grants</p><p class="t3-sub">Up to date for this period.</p></div><div class="t3-state"><span class="px-status" data-s="submitted">Up to date</span></div><div class="t3-acts"><a class="px-btn small quiet" href="{% url 'portal:outcomes' %}">View</a></div></li>{% endif %}
+      </ul>
+    </details>
+  </section>
+  {% endif %}
+
+  {% if sow_excerpts %}
+  <section class="px-section t3-sow" aria-labelledby="t3-sow-h">
+    <div class="px-section-head"><h2 class="px-h2" id="t3-sow-h">Your commitments</h2><p class="px-note">From your Statement of Work.</p></div>
+    {% for d in sow_excerpts %}<figure class="t3-quote"><blockquote>{{ d.excerpt|linebreaksbr }}</blockquote><figcaption>From “{{ d.title }}” · <a href="{% url 'portal:my_document' d.pk %}">Download it</a> · The full document is on <a href="{% url 'portal:profile' %}">your profile</a>.</figcaption></figure>{% endfor %}
+  </section>
+  {% endif %}
+{% endif %}
+
+  {# ---------------------------------------------------------------- the Center this year #}
+  {% if made %}
+  <section class="px-section t3-made" aria-labelledby="t3-made-h">
+    <div class="px-section-head"><h2 class="px-h2" id="t3-made-h">What CNAP has produced this year</h2><p class="px-note">Year {{ made.gy }}, since June 1, {{ made.start.year }}. Center-wide totals.</p></div>
+    <dl class="t3-madegrid">
+      <div><dt>Papers published</dt><dd class="px-num">{{ made.papers }}</dd></div>
+      <div><dt>Talks and posters</dt><dd class="px-num">{{ made.talks }}</dd></div>
+      <div><dt>Proposals submitted</dt><dd class="px-num">{{ made.proposals }}</dd></div>
+      <div><dt>Proposals awarded</dt><dd class="px-num">{{ made.awards }}</dd></div>
+    </dl>
+    {% if trend %}
+    <details class="px-more t3-trend"><summary>See year by year</summary>
+      <p class="px-note">Year {{ trend.first }} to Year {{ made.gy }}. This year is still in progress.</p>
+      <div class="t3-charts">{% for r in trend.rows %}
+        <figure class="t3-chart"><figcaption>{{ r.label }} <span>{{ r.total }} in all</span></figcaption>
+          <ol aria-label="{{ r.label }} by year">{% for b in r.bars %}<li class="{% if b.now %}now{% endif %}"><span class="n">{{ b.n }}</span><span class="b" style="--h: {{ b.h }}%"></span><span class="y"><span class="px-sr">Year </span>Y{{ b.year }}</span></li>{% endfor %}</ol>
+        </figure>{% endfor %}
+      </div>
+    </details>
+    {% endif %}
+    <p class="px-note t3-madefoot">These come from what people enter under Publications, talks, and grants, so yours count too. <a href="{% url 'portal:center_results' %}?view=products">See the full list</a></p>
+  </section>
+  {% endif %}
+
+  {% if docs %}<section class="px-section"><div class="px-section-head"><h2 class="px-h2">Helpful documents</h2></div>
+    <ul class="t3-docs">{% for d in docs %}<li><a href="{% if d.file %}{% url 'portal:helpful_doc' d.pk %}{% else %}{{ d.url }}{% endif %}">{{ d.title }}</a>{% if d.note %} <span class="px-note">{{ d.note }}</span>{% endif %}</li>{% endfor %}</ul></section>{% endif %}
+</div>
+{% endblock %}

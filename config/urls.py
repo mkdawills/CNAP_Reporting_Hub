@@ -11,7 +11,10 @@ admin.site.site_header = "CNAP Reporting Hub: database administration"
 admin.site.site_title = "CNAP Reporting Hub"
 admin.site.index_title = "Administration"
 
+from apps.common import prototype as ui_prototype
+
 urlpatterns = [
+    path("ui-preview/<str:view>/", ui_prototype.switch, name="ui_switch"),
     path("admin/login/", account_views.admin_login),
     path("admin/", admin.site.urls),
     path("accounts/login/", account_views.LoginView.as_view(), name="login"),
