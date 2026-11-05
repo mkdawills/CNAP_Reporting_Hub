@@ -778,3 +778,7 @@ body.proto .px-onpage a, body.proto .p21-nav a { color: var(--px-ink-2); }
 body.proto .px-onpage ol ol a { color: var(--px-muted); }
 body.proto .px-onpage a:hover, body.proto .p21-nav a:hover { color: var(--px-brand-ink); }
 body.proto .px-onpage a.on, body.proto .p21-nav a.on { color: var(--px-brand-ink); }
+/* Numbers sit exactly in the middle of their circles (MW 2026-11-05). */
+body.proto .px-onpage a:has(.px-onpage-n) { align-items: center; }
+body.proto .px-onpage-n { box-sizing: border-box; width: 20px; height: 20px; padding: 0; display: inline-flex; align-items: center; justify-content: center; line-height: 1; font-size: .6875rem; font-variant-numeric: tabular-nums; text-align: center; }
+body.proto .r90-part span { display: inline-flex; align-items: center; justify-content: center; line-height: 1; box-sizing: border-box; font-variant-numeric: tabular-nums; }
