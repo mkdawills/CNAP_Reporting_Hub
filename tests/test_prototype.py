@@ -165,3 +165,23 @@ def test_screen90_separates_identifiable_information(client, demo):
     for name in (okafor.full_name,):
         if name in html:
             assert html.index(name) > ident
+
+
+@override_settings(UI_PROTOTYPE=True)
+def test_screen21_markers_count_the_same_required_answers_as_the_server(client, demo):
+    """Option B (MW 2026-11-05): each section's marker counts the server's own required questions."""
+    from apps.forms_engine.runtime import FormSchema
+    from apps.reporting.services import responses as rs
+
+    okafor, pilot, _ = _pages(demo)
+    client.force_login(okafor)
+    html = client.get(f"/tasks/{pilot.pk}/").content.decode()
+    on_page = set()
+    for codes in re.findall(r'data-req="([^"]*)"', html):
+        on_page |= set(codes.split())
+    schema = FormSchema(pilot.form_version)
+    answers, rows, _ = rs.answers_of(rs.current_response(pilot), schema)
+    answers |= rs.system_answers(pilot, schema)
+    server_missing = {q.code for q in schema.missing_required(answers, rows)}
+    # every question the server says is missing is one the page counts
+    assert server_missing <= on_page

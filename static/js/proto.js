@@ -1,9 +1,8 @@
 /* Screen 21 prototype: the section navigator (MW 2026-11-05).
    Read-only helper: it never changes answers or submits anything.
    - Highlights the section you are reading.
-   - Shows, per section, whether its questions have answers: all, some, or none yet.
-     This is a description of what is filled in, not a promise that the section is valid;
-     the server still checks every required answer when you press Submit. */
+   - Shows, per section, how many required answers are still empty, or a check mark.
+     The server still checks every required answer when you press Submit. */
 (function () {
   var nav = document.querySelector(".p21-nav");
   if (!nav) return;
@@ -21,22 +20,30 @@
     if (!fields.length) return null;
     return fields.some(function (f) { return String(f.value || "").trim() !== ""; });
   }
-  function state(sec) {
-    var qs = questionsIn(sec).map(answered).filter(function (v) { return v !== null; });
-    if (!qs.length) return "";
-    var n = qs.filter(Boolean).length;
-    return n === 0 ? "none" : n === qs.length ? "all" : "some";
+  // Markers (MW 2026-11-05, option B): how many required answers in each section are still empty.
+  // A question is required when the form marks it so; the server re-checks everything on Submit.
+  function missingIn(a) {
+    var codes = (a.dataset.req || "").trim().split(/\s+/).filter(Boolean);
+    return codes.filter(function (c) {
+      var q = document.getElementById("q-" + c);
+      if (!q || q.closest("[hidden]")) return false;
+      return answered(q) === false;
+    }).length;
   }
-  var words = { all: "All questions answered", some: "Some questions answered", none: "Not answered yet" };
   function refresh() {
     links.forEach(function (a) {
-      var sec = document.getElementById("sec-" + a.dataset.nav);
-      if (!sec) return;
-      var s = state(sec);
-      a.dataset.state = s;
+      var dot = a.querySelector(".p21-dot, .p21-miss, .p21-ok");
       var sr = a.querySelector(".p21-navstate");
-      if (sr) sr.textContent = s ? " (" + words[s] + ")" : "";
-      a.title = s ? words[s] : "";
+      if (a.dataset.nav === "start" || a.dataset.nav === "finish") {
+        if (dot) dot.className = "p21-dot p21-none";
+        return;
+      }
+      var n = missingIn(a);
+      a.dataset.state = n ? "missing" : "ok";
+      if (dot) { dot.className = n ? "p21-miss" : "p21-ok"; dot.textContent = n ? String(n) : "✓"; }
+      var words = n ? n + " required answer" + (n === 1 ? "" : "s") + " still missing" : "Nothing required is missing";
+      if (sr) sr.textContent = " (" + words + ")";
+      a.title = words;
     });
   }
   refresh();

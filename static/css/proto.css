@@ -603,3 +603,9 @@ body.proto .t3-next-btn { gap: 8px; box-shadow: 0 4px 14px -4px rgba(23, 21, 29,
 body.proto .t3-arrow { transition: transform .2s ease; }
 body.proto .t3-next:hover .t3-arrow, body.proto .t3-next:focus-visible .t3-arrow { transform: translateX(3px); }
 @media (prefers-reduced-motion: reduce) { body.proto .t3-next:not(.done) { animation: none; } body.proto .t3-next:not(.done), body.proto .t3-arrow { transition: none; } body.proto .t3-next:not(.done):hover { transform: none; } }
+/* Screen 21 markers, option B (MW 2026-11-05): a red count of missing required answers, or a check. */
+body.proto .p21-miss, body.proto .p21-ok { flex: none; display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; font: 600 .6875rem/1 var(--px-sans); box-sizing: border-box; }
+body.proto .p21-miss { background: var(--px-alert-tint); color: var(--px-alert); }
+body.proto .p21-ok { color: var(--px-ok); font-size: .8125rem; }
+body.proto .p21-dot.p21-none { width: 20px; height: 6px; background: none; box-shadow: none; }
+body.proto .p21-key { gap: 6px var(--px-4); }
