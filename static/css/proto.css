@@ -544,7 +544,7 @@ body.proto .p21-dot.some { background: linear-gradient(90deg, var(--px-brand) 50
 body.proto .p21-dot.all { background: var(--px-brand); box-shadow: none; }
 @media (max-width: 980px) {
   body.proto .p21-nav ol { display: grid; gap: 0; }
-  body.proto .p21-nav li + li { border-top: 1px solid var(--px-line); }
+  body.proto .p21-nav li + li { border-top: 0; } /* no lines between items, to match desktop (MW 2026-11-05) */
   body.proto .p21-nav a { padding: 10px 8px; }
 }
 @media (max-width: 760px) {
