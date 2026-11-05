@@ -34,7 +34,7 @@
 
   {# ======================================================== 1. combined results #}
   <section class="px-section" aria-labelledby="r90-combined-h">
-    <div class="px-section-head"><h2 class="px-h2 r90-part" id="r90-combined-h"><span>1</span>Combined results</h2>{% if tables %}<button type="button" class="px-link" data-expand-all aria-expanded="false">Open every full table</button>{% endif %}</div>
+    <div class="px-section-head"><h2 class="px-h2 r90-part" id="r90-combined-h"><span>1</span>Combined results</h2></div>
     <div class="r90-secs">{% include "proto/_report_tables.html" with show_codes=True %}</div>
     {% if is_report and not tables %}<p class="px-note">Narrative report. Please read each submission from the list in “Identifiable information.”</p>{% endif %}
   </section>

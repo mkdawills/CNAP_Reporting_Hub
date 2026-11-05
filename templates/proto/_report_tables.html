@@ -14,15 +14,8 @@
     <ul class="r90-legend">{% for sg in g.segments %}<li><i style="background: {{ sg.color }}"></i>{{ sg.text }} <span>{{ sg.pct }}%</span></li>{% endfor %}</ul>
   </figure>
   {% endif %}
-  <ol class="r90-items" aria-label="Each item: its average and how answers were spread">
-    {% for r in t.rows %}<li>
-      <div class="r90-q"><span class="r90-no">{{ r.no }}</span><p>{{ r.q.prompt }}</p></div>
-      <div class="r90-mini" role="img" aria-label="{% for c in r.cells %}{% with sc=t.scale|at:forloop.counter0 %}{{ sc.text }} {{ c.pct }}%{% endwith %}{% if not forloop.last %}, {% endif %}{% endfor %}">{% for c in r.cells %}{% with sg=g.segments|at:forloop.counter0 %}<span style="width: {{ c.pct }}%; background: {{ sg.color|default:'#9a97a3' }}"></span>{% endwith %}{% endfor %}</div>
-      <div class="r90-mean"><span class="r90-m">{% if r.mean is not None %}{{ r.mean|floatformat:1 }}{% else %}—{% endif %}</span><span class="r90-n">n = {{ r.n }}</span></div>
-    </li>{% endfor %}
-  </ol>
   {% endwith %}
-  <details class="tmore"><summary><span class="tmore-open">Show the full table: counts, percentages, mean, and SD</span><span class="tmore-close">Hide the full table</span></summary>
+  <div class="r90-full">
 <div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on" title="Show both the number of people (n) and the share (%) for each answer. The table stays the same; only the columns shown change.">n and %</button><button type="button" data-nview="n" title="Show only how many people chose each answer, the way the site-visit counts tables read.">n only</button><button type="button" data-nview="p" title="Show only the share of answers for each option, easiest for comparing items with different numbers of answers.">% only</button></div>
 <div class="scroll"><table class="reptab" title="Every item in this section for this period: the mean, the standard deviation, and how many people chose each answer.">
   <thead>
@@ -60,7 +53,7 @@
     </tr>
   </tbody>
 </table></div>
-</details>
+</div>
   {% if t.left_out %}<p class="px-note">{{ t.left_out }} item{{ t.left_out|pluralize }} aren’t shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"that item,those items" }}. This keeps anyone’s answers from being worked out.</p>{% endif %}
 </section>{% endif %}
 {% if t.lon and t.lon.periods|length > 1 %}

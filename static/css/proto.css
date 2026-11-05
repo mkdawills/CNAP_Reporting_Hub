@@ -436,19 +436,12 @@ body.proto .r90-bar b.d { color: #fff; }
 body.proto .r90-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 6px var(--px-5); margin: var(--px-3) 0 0; padding: 0; font-size: var(--px-fs-xs); color: var(--px-ink-2); }
 body.proto .r90-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
 body.proto .r90-legend span { color: var(--px-muted); margin-left: 2px; }
-body.proto .r90-items { list-style: none; margin: 0 0 var(--px-4); padding: 0; border-top: 1px solid var(--px-line); }
-body.proto .r90-items li { display: grid; grid-template-columns: minmax(0, 1fr) 220px 88px; gap: var(--px-5); align-items: center; padding: var(--px-3) 0; border-bottom: 1px solid var(--px-line); }
-body.proto .r90-q { display: flex; gap: var(--px-3); align-items: baseline; }
-body.proto .r90-q p { margin: 0; color: var(--px-ink); font-size: var(--px-fs-sm); line-height: 1.5; }
-body.proto .r90-no { flex: none; width: 1.6em; color: var(--px-faint); font-size: var(--px-fs-xs); font-variant-numeric: tabular-nums; }
-body.proto .r90-mini { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--px-sunken); }
-body.proto .r90-mean { display: grid; justify-items: end; }
-body.proto .r90-m { font: 500 1.25rem/1 var(--px-serif); color: var(--px-ink); font-variant-numeric: tabular-nums; }
-body.proto .r90-n { font-size: var(--px-fs-xs); color: var(--px-muted); }
-@media (max-width: 760px) { body.proto .r90-items li { grid-template-columns: 1fr auto; } body.proto .r90-mini { grid-column: 1 / -1; grid-row: 2; } }
 body.proto .r90 details.tmore { margin-top: var(--px-3); }
 body.proto .r90 details.tmore > summary { font: 500 var(--px-fs-sm)/1.4 var(--px-sans); color: var(--px-brand); cursor: pointer; }
 body.proto .r90 .reptab, body.proto .r90 .lontab { font-size: var(--px-fs-xs); }
+body.proto .r90-full { margin-top: var(--px-5); min-width: 0; }
+body.proto .r90-secs > * { min-width: 0; }
+body.proto .r90 .reptab { font-size: var(--px-fs-sm); }
 body.proto .r90 .trend { margin: 0 0 var(--px-4); }
 body.proto .r90-themes { margin: 0 0 var(--px-6); padding: var(--px-5) var(--px-6); background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); }
 body.proto .r90-themes textarea { width: 100%; margin: var(--px-3) 0; padding: 10px 12px; border: 1px solid var(--px-line-strong); border-radius: var(--px-r-sm); font: 400 var(--px-fs-base)/1.5 var(--px-sans); }
