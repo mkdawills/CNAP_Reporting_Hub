@@ -843,3 +843,4 @@ body.proto .cp30-file input { max-width: 100%; }
   body.proto .p21-layout.navclosed:not(.p21-nonav)::before { left: calc(var(--px-6) + 64px + var(--px-7) / 2); }
   body.proto .p21-layout:not(.p21-nonav) .p21-bar { margin-left: 0; margin-right: 0; border-radius: 0; }
 }
+@media (max-width: 860px) { body.proto .si-photo { order: 2; } body.proto .si-card { order: 1; } }
