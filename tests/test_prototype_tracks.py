@@ -182,3 +182,19 @@ def test_a_resubmission_keeps_everyone_involved(center):
     journey.copy_people("grant", g, nxt)
     assert set(nxt.people.values_list("person_id", flat=True)) == set(g.people.values_list("person_id", flat=True))
     assert nxt.people.get(person=varga).role == "co_i"
+
+
+@override_settings(UI_PROTOTYPE=True, EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+def test_a_change_made_for_someone_else_names_both_people(client, center):
+    """Jordan Lee enters for Dr. Okafor: the email says so, and Dr. Okafor hears about it too (MW 2026-11-05)."""
+    owner = login(client, "okafor").person
+    lee = User.objects.get(username="lee")
+    varga = User.objects.get(username="varga").person
+    client.post("/outcomes/delegates/add/", {"person": lee.person.pk})
+    g = okafor_grant()
+    journey.add_person("grant", g, varga, "co_i")
+    mail.outbox.clear()
+    journey.notify("grant", g, lee, "changed the status from Planned to Submitted")
+    recipients = sorted(t for m in mail.outbox for t in m.to)
+    assert recipients == sorted([email_of("okafor"), email_of("varga")])
+    assert f"{lee.person.full_name}, entering for {owner.full_name}, changed the status" in mail.outbox[0].body

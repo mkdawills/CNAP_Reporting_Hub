@@ -212,6 +212,10 @@ def notify(kind, obj, actor_user, what, request=None, only=None):
     """
     actor = getattr(actor_user, "person", None)
     name = actor.full_name if actor else actor_user.get_username()
+    # Someone entering on another person's behalf is named with that person (MW 2026-11-05).
+    behalf = acting_person(actor_user, obj)
+    if actor and behalf and behalf.pk != actor.pk:
+        name = f"{actor.full_name}, entering for {behalf.full_name},"
     title = obj.title if kind == "pub" else f"{obj.project_title} ({obj.version_label})"
     url = reverse("portal:outcomes")
     if request is not None:
