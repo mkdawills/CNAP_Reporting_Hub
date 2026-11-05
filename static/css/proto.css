@@ -584,3 +584,22 @@ body.proto .px-onpage-n { flex: none; display: inline-grid; place-items: center;
   body.proto .px-onpage ol ol a { padding: 4px 8px 4px 34px; }
   body.proto .px-onpage a.on { background: var(--px-brand-tint); }
 }
+/* Screen 3 "Next up": a soft, layered purple glow and a small arrow, so no one misses it (MW 2026-11-05). */
+body.proto .t3-next:not(.done) {
+  background: radial-gradient(120% 140% at 100% 0%, #6b3fae 0%, var(--px-brand) 45%, #43206f 100%);
+  box-shadow: 0 0 0 1px rgba(81, 40, 136, .18), 0 10px 24px -10px rgba(81, 40, 136, .55), 0 22px 60px -18px rgba(124, 77, 196, .55);
+  transition: box-shadow .25s ease, transform .25s ease;
+}
+body.proto .t3-next:not(.done)::before { content: ""; position: absolute; inset: -40% -20% auto auto; width: 60%; height: 120%; background: radial-gradient(closest-side, rgba(255, 255, 255, .16), transparent 70%); pointer-events: none; }
+body.proto .t3-next:not(.done):hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(81, 40, 136, .25), 0 14px 30px -10px rgba(81, 40, 136, .6), 0 28px 72px -16px rgba(124, 77, 196, .7); }
+/* Three slow halo pulses after the page loads, then it rests. */
+body.proto .t3-next:not(.done) { animation: t3-halo 3.2s ease-out 1s 3; }
+body.proto .t3-next:not(.done):hover { animation: none; }
+@keyframes t3-halo {
+  0% { box-shadow: 0 0 0 0 rgba(155, 110, 222, .5), 0 0 0 1px rgba(81, 40, 136, .18), 0 10px 24px -10px rgba(81, 40, 136, .55), 0 22px 60px -18px rgba(124, 77, 196, .55); }
+  70%, 100% { box-shadow: 0 0 0 14px rgba(155, 110, 222, 0), 0 0 0 1px rgba(81, 40, 136, .18), 0 10px 24px -10px rgba(81, 40, 136, .55), 0 22px 60px -18px rgba(124, 77, 196, .55); }
+}
+body.proto .t3-next-btn { gap: 8px; box-shadow: 0 4px 14px -4px rgba(23, 21, 29, .35); }
+body.proto .t3-arrow { transition: transform .2s ease; }
+body.proto .t3-next:hover .t3-arrow, body.proto .t3-next:focus-visible .t3-arrow { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) { body.proto .t3-next:not(.done) { animation: none; } body.proto .t3-next:not(.done), body.proto .t3-arrow { transition: none; } body.proto .t3-next:not(.done):hover { transform: none; } }
