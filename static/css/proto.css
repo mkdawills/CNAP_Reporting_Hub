@@ -880,3 +880,7 @@ body.proto .p21-start-lede .rl + .rl { margin-top: .45em; }
 body.proto .p21-nav .p21-miss { min-width: 0; width: 8px; height: 8px; padding: 0; margin: 0 6px; background: var(--px-alert); }
 body.proto .p21-misstext { display: block; margin-top: 2px; font-size: var(--px-fs-xs); font-weight: 500; color: var(--px-alert); }
 body.proto .p21-nav a:has(.p21-misstext:not([hidden])) .p21-miss, body.proto .p21-nav a .p21-ok { align-self: flex-start; margin-top: .45em; }
+/* February check: each step's text lines up with the option's title ("It has changed"); numbers hang under the letter (MW 2026-11-05). */
+body.proto .cp30-opt .cp30-steps { margin-left: 0; padding-left: 40px; }
+@media (max-width: 760px) { body.proto .cp30-opt .cp30-steps { margin-left: 0; padding-left: 40px; } }
+@media (max-width: 760px) { body.proto .cp30-opt > .px-note { margin-left: 40px; } }
