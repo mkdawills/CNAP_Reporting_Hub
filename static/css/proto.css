@@ -943,3 +943,5 @@ body.proto .px-mast:not(.p21-mast)::after {
 }
 @keyframes px-glide { 0% { transform: translateX(-10%); opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateX(360%); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { body.proto .px-mast::after { animation: none; opacity: 0; } }
+/* Opt-out (MW 2026-11-05, option B): white with a thin outline, a separate choice; gray stays with the title panel. */
+body.proto .p21-optout { background: var(--px-surface); border: 1px solid var(--px-line-strong); }
