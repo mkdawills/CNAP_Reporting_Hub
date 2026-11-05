@@ -29,13 +29,13 @@
 
   <div class="p21-layout">
     {# ------------------------------------------------ section navigator #}
-    <nav class="p21-nav" aria-label="Sections of this report">
-      <p class="px-label">In this report</p>
+    <nav class="p21-nav" id="p21-nav" aria-label="Sections of this report">
+      <div class="p21-navtop"><p class="px-label">In this report</p><button type="button" class="p21-collapse" data-navtoggle aria-controls="p21-nav" aria-expanded="true" title="Hide this list to give the form more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
       <p class="p21-key" title="The number in each section counts required answers that are still empty. The server checks every required answer again when you press Submit.">
         <span><span class="p21-miss" aria-hidden="true">2</span>Required answers still missing</span><span><span class="p21-ok" aria-hidden="true">✓</span>Nothing required is missing</span></p>
       <ol>
         {% if intro %}<li><a href="#p21-start" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>What to upload</span></a></li>{% endif %}
-        {% for sv in sections %}{% if sv.visible %}<li><a href="#sec-{{ sv.s.code }}" data-nav="{{ sv.s.code }}" data-req="{% for v in sv.questions %}{% if v.required and v.widget != 'system' %}{{ v.code }} {% endif %}{% endfor %}"{% if not sv.questions %} data-empty="1"{% endif %}><span class="p21-dot" aria-hidden="true"></span><span>{{ sv.s.title|default:"Questions" }}</span><span class="p21-navstate px-sr"></span></a></li>{% endif %}{% endfor %}
+        {% for sv in sections %}{% if sv.visible %}<li><a href="#sec-{{ sv.s.code }}" data-nav="{{ sv.s.code }}" data-req="{% for v in sv.questions %}{% if v.required and v.widget != 'system' %}{{ v.code }} {% endif %}{% endfor %}"{% with part=sv.s.code|part_no:fd.display %}{% if part %} data-part="1"{% elif not sv.questions %} data-empty="1"{% endif %}{% endwith %}><span class="p21-dot" aria-hidden="true"></span><span>{{ sv.s.title|default:"Questions" }}</span><span class="p21-navstate px-sr"></span></a></li>{% endif %}{% endfor %}
         {% if editable %}<li><a href="#p21-finish" data-nav="finish"><span class="p21-dot" aria-hidden="true"></span><span>Review and submit</span></a></li>{% endif %}
       </ol>
       {% if editable %}<p class="px-note p21-savehint">Typed answers save automatically as you go. An uploaded file saves when you press Save draft or Submit.</p>{% endif %}

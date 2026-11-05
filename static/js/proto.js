@@ -30,6 +30,11 @@
       return answered(q) === false;
     }).length;
   }
+  // The Word document covers Accomplishments, Plans, and Changes together (MW 2026-11-05), so those
+  // outline parts share one marker: the required answers across all of them.
+  var partLinks = links.filter(function (a) { return a.dataset.part; });
+  var partReq = partLinks.map(function (a) { return a.dataset.req || ""; }).join(" ");
+  partLinks.forEach(function (a) { a.dataset.req = partReq; a.dataset.shared = "1"; });
   function refresh() {
     links.forEach(function (a) {
       var dot = a.querySelector(".p21-dot, .p21-miss, .p21-ok");
@@ -44,6 +49,7 @@
       a.dataset.state = n ? "missing" : "ok";
       if (dot) { dot.className = n ? "p21-miss" : "p21-ok"; dot.textContent = n ? String(n) : "✓"; }
       var words = n ? n + " required answer" + (n === 1 ? "" : "s") + " still missing" : "Nothing required is missing";
+      if (a.dataset.shared) words += n ? ": the Word document covering Accomplishments, Plans, and Changes" : ": the Word document is uploaded";
       if (sr) sr.textContent = " (" + words + ")";
       a.title = words;
     });
@@ -158,4 +164,24 @@ document.addEventListener("click", function (e) {
   }
   document.querySelectorAll("select[data-role]").forEach(sync);
   document.addEventListener("change", function (e) { if (e.target.matches && e.target.matches("select[data-role]")) sync(e.target); });
+})();
+
+/* Screen 21: the section list can collapse to a slim strip on the left (MW 2026-11-05).
+   The choice is remembered in this browser only. */
+(function () {
+  var nav = document.getElementById("p21-nav");
+  var btn = nav && nav.querySelector("[data-navtoggle]");
+  if (!btn) return;
+  var layout = nav.closest(".p21-layout");
+  function set(closed, save) {
+    layout.classList.toggle("navclosed", closed);
+    btn.setAttribute("aria-expanded", String(!closed));
+    btn.querySelector(".p21-cw").textContent = closed ? "Show" : "Hide";
+    btn.title = closed ? "Show the list of sections again." : "Hide this list to give the form more room. You can bring it back any time.";
+    if (save) { try { localStorage.setItem("p21-nav-closed", closed ? "1" : "0"); } catch (e) {} }
+  }
+  var saved = null;
+  try { saved = localStorage.getItem("p21-nav-closed"); } catch (e) {}
+  set(saved === "1", false);
+  btn.addEventListener("click", function () { set(!layout.classList.contains("navclosed"), true); });
 })();
