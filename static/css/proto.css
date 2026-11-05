@@ -920,3 +920,26 @@ body.proto .bb { background: color-mix(in srgb, var(--px-brand) 28%, transparent
 body.proto .bars li.now .bb { background: var(--px-brand); box-shadow: none; }
 body.proto .bars li.now .by { color: var(--px-brand-ink); }
 @media (max-width: 760px) { body.proto .made-n { width: 68px; height: 68px; } }
+
+/* Page arrival (MW 2026-11-05): one sleek light runs once around the form's title panel, or once along the
+   line under a page header, then fades. Off when the device asks for reduced motion. */
+@property --px-sweep { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+body.proto .p21-mast { position: relative; isolation: isolate; }
+body.proto .p21-mast::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 2px; pointer-events: none;
+  background: conic-gradient(from var(--px-sweep), transparent 0deg, transparent 290deg,
+    color-mix(in srgb, var(--px-brand) 30%, transparent) 318deg, color-mix(in srgb, var(--px-brand) 85%, #fff) 346deg, #fff 354deg, transparent 360deg);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--px-brand) 45%, transparent));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0; animation: px-sweep 1.9s cubic-bezier(.45, .05, .25, 1) .25s 1 both;
+}
+@keyframes px-sweep { 0% { --px-sweep: 0deg; opacity: 0; } 12% { opacity: 1; } 78% { opacity: 1; } 100% { --px-sweep: 360deg; opacity: 0; } }
+body.proto .px-mast:not(.p21-mast) { position: relative; }
+body.proto .px-mast:not(.p21-mast)::after {
+  content: ""; position: absolute; left: 0; bottom: -1px; height: 1.5px; width: 28%; pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--px-brand) 70%, #fff), transparent);
+  opacity: 0; animation: px-glide 1.6s cubic-bezier(.45, .05, .25, 1) .25s 1 both;
+}
+@keyframes px-glide { 0% { transform: translateX(-10%); opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateX(360%); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { body.proto .px-mast::after { animation: none; opacity: 0; } }
