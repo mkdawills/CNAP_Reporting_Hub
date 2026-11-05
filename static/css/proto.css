@@ -554,8 +554,6 @@ body.proto .p21-dot.all { background: var(--px-brand); box-shadow: none; }
 /* Screen 90: everything inside a numbered part is indented to line up with the part's title,
    not with its number, so the 1-2-3 structure reads at a glance (MW 2026-11-05). */
 body.proto .r90 .px-section > :not(.px-section-head) { margin-left: calc(26px + var(--px-3)); }
-body.proto .r90 .px-section > .px-section-head > .px-note { padding-left: 0; }
-@media (max-width: 760px) { body.proto .r90 .px-section > .px-section-head > .px-note { padding-left: calc(26px + var(--px-3)); } }
 /* Roll-up figures sit in soft ovals with room between them (MW 2026-11-05). */
 body.proto .px-roll-figs { gap: var(--px-2) var(--px-3); margin-top: var(--px-2); }
 body.proto .px-roll-figs > span { display: inline-flex; align-items: baseline; gap: 6px; padding: 6px 14px; border-radius: 999px; background: var(--px-sunken); border: 1px solid var(--px-line); line-height: 1.3; white-space: nowrap; }
@@ -609,3 +607,14 @@ body.proto .p21-miss { background: var(--px-alert-tint); color: var(--px-alert);
 body.proto .p21-ok { color: var(--px-ok); font-size: .8125rem; }
 body.proto .p21-dot.p21-none { width: 20px; height: 6px; background: none; box-shadow: none; }
 body.proto .p21-key { gap: 6px var(--px-4); }
+/* Screen 90: each part's note sits under its title, starting under the title's first letter (MW 2026-11-05). */
+body.proto .r90 .px-section > .px-section-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+body.proto .r90 .px-section > .px-section-head > .px-note { margin: 0; padding-left: calc(26px + var(--px-3)); }
+body.proto .r90 .px-section > .px-section-head > .px-note { max-width: none; }
+/* Screen 53: action buttons sit in one fixed column, same width, aligned on the left (MW 2026-11-05). */
+body.proto .d53-actions li { display: grid; grid-template-columns: minmax(0, 1fr) 220px; justify-content: stretch; }
+body.proto .d53-actions li > a.px-btn, body.proto .d53-actions li > form { justify-self: start; width: 100%; }
+body.proto .d53-actions li > form .px-btn, body.proto .d53-actions li > a.px-btn { width: 100%; justify-content: flex-start; }
+@media (max-width: 700px) { body.proto .d53-actions li { grid-template-columns: 1fr; } body.proto .d53-actions li > a.px-btn, body.proto .d53-actions li > form { width: 220px; max-width: 100%; } }
+/* Under a rolled-up heading with an icon, the contents start under the title, not the icon (MW 2026-11-05). */
+body.proto details.px-roll:has(.px-roll-h) > .px-roll-body { padding-left: 32px; }
