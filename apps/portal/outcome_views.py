@@ -256,6 +256,10 @@ def _facts(kind, obj):
 @entry_open
 def update(request, kind, pk):
     obj, owner = _obj(kind, pk, request)
+    if journey.enabled():
+        # Prototype screen 5, option A (MW 2026-11-05): the form shows, and a save records, the role
+        # of the person filling it in. A co-investigator's update never changes the PI's role.
+        owner = journey.acting_person(request.user, obj) or owner
     to = request.GET.get("to") or request.POST.get("to")
     allowed = NEXT[kind].get(obj.status, [])
     if to not in allowed + [obj.status]:

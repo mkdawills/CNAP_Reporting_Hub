@@ -128,7 +128,7 @@ def test_people_involved_see_update_and_the_others_hear_about_it(client, center)
             "funding_source": "federal",
             "federal_agency": "NIH",
             "project_title": g.project_title,
-            "role": "pi",
+            "role": "co_i",
             "submission_date": "2026-11-04",
             "requested_total": "120000",
             "resources": [cn.pk],
@@ -144,6 +144,15 @@ def test_people_involved_see_update_and_the_others_hear_about_it(client, center)
     assert varga.full_name in body and "from Planned to Submitted" in body
     # after saving, the co-investigator lands on their own page, not a refusal
     assert client.get(r["Location"]).status_code == 200
+    # option A: the save recorded the co-investigator's own role and left the PI's alone
+    okafor = User.objects.get(username="okafor").person
+    assert g.people.get(person=varga).role == "co_i"
+    assert g.people.get(person=okafor).role == "pi"
+    # and the form shows the co-investigator their own role
+    html = client.get(f"/outcomes/grant/{g.pk}/?to=submitted").content.decode()
+    import re as _re
+    sel = _re.search(r'<select[^>]*name="role"[^>]*>(.*?)</select>', html, _re.S)
+    assert sel and _re.search(r'<option value="co_i"[^>]*selected', sel.group(1))
 
 
 @override_settings(UI_PROTOTYPE=True)

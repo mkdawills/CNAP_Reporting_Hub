@@ -151,6 +151,19 @@ def card(kind, obj, review=False):
     }
 
 
+def acting_person(user, obj):
+    """Whose role a save records (MW 2026-11-05, option A): the person filling in the form when they
+    are on the item; otherwise the person on it they enter for; never someone else by default."""
+    me = getattr(user, "person", None)
+    linked = [x.person for x in obj.people.select_related("person")]
+    if me and any(p.pk == me.pk for p in linked):
+        return me
+    for p in linked:
+        if os.can_act_for(user, p):
+            return p
+    return None
+
+
 ROLE_CHOICES = [(r.value, r.label) for r in GrantRole]
 
 
