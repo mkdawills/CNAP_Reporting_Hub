@@ -1,74 +1,110 @@
 {% extends "base.html" %}{% load cnap static %}
 {% block title %}{{ fd.name }} · {{ platform_name }}{% endblock %}
 {% block content %}
-{# Screen 21 prototype: Pilot Project Semiannual Progress Report only. Same view, same form, #}
-{# same field names, same Save draft / Submit actions, same autosave endpoint as portal/form.html. #}
-<div class="p21">
+{# Every respondent form (Screen 21 design, extended to all forms in Batch 1, MW 2026-11-05). #}
+{# Same view, same form, same field names, same Save draft / Submit actions, same autosave address, #}
+{# same opt-out behavior, and same preview mode as portal/form.html. Presentation only. #}
+{% with nsec=sections|length %}
+<div class="p21{% if nsec < 2 and not intro %} p21-short{% endif %}">
   <a class="px-link p21-back" href="{% url 'portal:tasks' %}">Back to my tasks</a>
 
   <header class="px-mast p21-mast">
-    <p class="px-eyebrow">{{ a.reporting_period.name }}{% if context_line %} · {{ context_line }}{% endif %}</p>
+    <p class="px-eyebrow">{% if not fd.display.no_period_line %}{{ a.reporting_period.name }}{% else %}{{ noun|capfirst }}{% endif %}{% if context_line %} · {{ context_line }}{% endif %}</p>
     <div class="px-mast-row">
       <h1 class="px-title">{{ fd.name }}</h1>
-      <span class="px-status" data-s="{{ a.status }}">{% if a.status == 'submitted' %}Submitted{% elif a.status == 'in_progress' %}In progress{% elif a.status == 'completed_opt_out' %}Opted out{% elif a.status == 'exempt' %}Not needed{% else %}Not started{% endif %}</span>
+      {% if preview %}<span class="px-status" data-s="not_started">Preview</span>{% else %}<span class="px-status" data-s="{{ a.status }}">{% if a.status == 'submitted' %}Submitted{% elif a.status == 'in_progress' %}In progress{% elif a.status == 'completed_opt_out' %}Opted out{% elif a.status == 'exempt' %}Not needed{% else %}Not started{% endif %}</span>{% endif %}
     </div>
-    <ul class="px-facts" aria-label="Dates for this report">
-      <li><span class="px-label">Report on work from</span><span class="v">{{ a.reporting_period|span }}</span></li>
-      <li><span class="px-label">Submission due</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
+    <ul class="px-facts" aria-label="Dates for this {{ noun }}">
+      {% if fd.display.no_period_line %}
+      <li><span class="px-label">Please answer by</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
+      {% else %}
+      <li><span class="px-label">{% if noun == 'report' %}Report on work from{% else %}Reporting period{% endif %}</span><span class="v">{{ a.reporting_period|span }}</span></li>
+      <li><span class="px-label">{% if noun == 'report' %}Submission due{% else %}Please answer by{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
+      {% endif %}
       {% for label, value in prefill %}<li><span class="px-label">{{ label }}</span><span class="v">{{ value|default:"—" }}</span></li>{% endfor %}
     </ul>
-    <p class="px-note p21-private">Other respondents never see your answers.</p>
+    <p class="px-note p21-private">{% if not fd.display.no_period_line %}Please {% if noun == 'report' %}report{% else %}answer{% endif %} only on what happened during this reporting period.<br>{% endif %}Other respondents never see your answers.</p>
   </header>
 
-  {% if resume %}<div class="px-callout p21-msg" role="status"><p>Welcome back. Your earlier answers are filled in, so you can pick up where you left off.</p></div>{% endif %}
-  {% if not editable %}<div class="px-callout ok p21-msg" role="status"><p>{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}<strong>Submitted.</strong> Below is a read-only copy of everything you entered.{% if can_edit_again %} You can change your answers until the period closes.{% else %} If you need to change something, please ask the evaluator to reopen it: <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.{% endif %}{% else %}This period is closed, so this form is read-only.{% endif %}</p>
-    {% if can_edit_again %}<form method="post" action="{% url 'portal:edit_again' a.pk %}">{% csrf_token %}<button class="px-btn small quiet" type="submit">Edit my answers</button></form>{% endif %}</div>{% endif %}
+  {% if preview %}<div class="px-callout p21-msg p21-preview" role="status"><p>{% if a.status == 'in_progress' %}You previously started this {{ noun }}, and your answers are saved.<br>This preview doesn’t change anything.{% elif a.reporting_period.in_preview %}This is a preview.<br>Answering opens {{ a.reporting_period.opens_at|date:"l, F j" }}.{% else %}This is a preview.<br>Nothing here is saved.{% endif %}</p>
+    {% if a.reporting_period.in_preview %}<a class="px-btn small quiet" href="{% url 'portal:tasks' %}">Back to my list</a>{% elif a.status == 'not_started' or a.status == 'in_progress' %}<a class="px-btn small" href="{% url 'portal:form' a.pk %}" title="Open the {{ noun }} and begin answering.">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a>{% endif %}</div>{% endif %}
+  {% if resume %}<div class="px-callout p21-msg" role="status"><p>Welcome back.<br>Your earlier answers are filled in, so you can pick up where you left off.</p></div>{% endif %}
+  {% if not editable and not preview %}<div class="px-callout ok p21-msg" role="status"><p>{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}<strong>Submitted.</strong><br>Below is a read-only copy of everything you entered.{% if can_edit_again %}<br>You can change your answers until the period closes.{% else %}<br>If you need to change something, please ask the evaluator to reopen it: {{ evaluator_email }}.{% endif %}{% else %}This period is closed, so this {{ noun }} is read-only.{% endif %}</p>
+    {% if can_edit_again %}<form method="post" action="{% url 'portal:edit_again' a.pk %}">{% csrf_token %}<button class="px-btn small quiet" type="submit" title="Reopen your answers so you can change them.">Edit my answers</button></form>{% endif %}</div>{% endif %}
   {% if errors %}<div class="px-callout p21-err" role="alert">{% for e in errors %}<p>{{ e|stack }}</p>{% endfor %}</div>{% endif %}
-  {% if missing_list %}<div class="px-callout p21-err" role="alert" tabindex="-1" id="p21-missing"><div><p><strong>{% if missing_list|length == 1 %}One required answer is still missing{% else %}{{ missing_list|length }} required answers are still missing{% endif %}.</strong> Please complete {% if missing_list|length == 1 %}it{% else %}them{% endif %} before you submit. Your draft is saved.</p>
+  {% if missing_list %}<div class="px-callout p21-err" role="alert" tabindex="-1" id="p21-missing"><div><p><strong>{% if missing_list|length == 1 %}One required answer is still missing{% else %}{{ missing_list|length }} required answers are still missing{% endif %}.</strong><br>Please complete {% if missing_list|length == 1 %}it{% else %}them{% endif %} before you submit. Your draft is saved.</p>
     <ul class="p21-misslist">{% for m in missing_list %}<li><a href="#q-{{ m.code }}">{{ m.prompt }}</a></li>{% endfor %}</ul></div></div>{% endif %}
 
-  <div class="p21-layout">
-    {# ------------------------------------------------ section navigator #}
-    <nav class="p21-nav" id="p21-nav" aria-label="Sections of this report">
-      <div class="p21-navtop"><p class="px-label">In this report</p><button type="button" class="p21-collapse" data-navtoggle aria-controls="p21-nav" aria-expanded="true" title="Hide this list to give the form more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
-      <p class="p21-key" title="The number in each section counts required answers that are still empty. The server checks every required answer again when you press Submit.">
-        <span><span class="p21-miss" aria-hidden="true">2</span>Required answers still missing</span><span><span class="p21-ok" aria-hidden="true">✓</span>Nothing required is missing</span></p>
+  <div class="p21-layout{% if nsec < 2 and not intro %} p21-nonav{% endif %}">
+    {# ------------------------------------------------ section navigator (forms with more than one part) #}
+    {% if nsec > 1 or intro %}
+    <nav class="p21-nav" id="p21-nav" aria-label="Sections of this {{ noun }}">
+      <div class="p21-navtop"><p class="px-label">In this {{ noun }}</p><button type="button" class="p21-collapse" data-navtoggle aria-controls="p21-nav" aria-expanded="true" title="Hide this list to give the form more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
+      {% if editable %}<p class="p21-key" title="The number in each section counts required answers that are still empty. The server checks every required answer again when you press Submit.">
+        <span><span class="p21-miss" aria-hidden="true">2</span>Required answers still missing</span><span><span class="p21-ok" aria-hidden="true">✓</span>Nothing required is missing</span></p>{% endif %}
       <ol>
-        {% if intro %}<li><a href="#p21-start" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>What to upload</span></a></li>{% endif %}
-        {% for sv in sections %}{% if sv.visible %}<li><a href="#sec-{{ sv.s.code }}" data-nav="{{ sv.s.code }}" data-req="{% for v in sv.questions %}{% if v.required and v.widget != 'system' %}{{ v.code }} {% endif %}{% endfor %}"{% with part=sv.s.code|part_no:fd.display %}{% if part %} data-part="1"{% elif not sv.questions %} data-empty="1"{% endif %}{% endwith %}><span class="p21-dot" aria-hidden="true"></span><span>{{ sv.s.title|default:"Questions" }}</span><span class="p21-navstate px-sr"></span></a></li>{% endif %}{% endfor %}
+        {% if intro %}<li><a href="#p21-start" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>{% if fd.display.doc_outline %}What to upload{% elif fd.display.intro_title %}{{ fd.display.intro_title }}{% else %}Before you begin{% endif %}</span></a></li>{% endif %}
+        {% if optout %}<li><a href="#p21-optout" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>Opt out</span></a></li>{% endif %}
+        {% for sv in sections %}<li{% if not sv.visible %} hidden{% endif %} data-navsec="{{ sv.s.code }}"><a href="#sec-{{ sv.s.code }}" data-nav="{{ sv.s.code }}" data-req="{% for v in sv.questions %}{% if v.required and v.widget != 'system' %}{{ v.code }} {% endif %}{% endfor %}"{% with part=sv.s.code|part_no:fd.display %}{% if part %} data-part="1"{% elif not sv.questions %} data-empty="1"{% endif %}{% endwith %}><span class="p21-dot" aria-hidden="true"></span><span>{{ sv.s.title|default:"Questions" }}</span><span class="p21-navstate px-sr"></span></a></li>{% endfor %}
         {% if editable %}<li><a href="#p21-finish" data-nav="finish"><span class="p21-dot" aria-hidden="true"></span><span>Review and submit</span></a></li>{% endif %}
       </ol>
-      {% if editable %}<p class="px-note p21-savehint">Typed answers save automatically as you go. An uploaded file saves when you press Save draft or Submit.</p>{% endif %}
+      {% if editable %}<p class="px-note p21-savehint">Typed answers save automatically as you go.{% if fd.display.doc_outline %}<br>An uploaded file saves when you press Save draft or Submit.{% endif %}</p>{% endif %}
     </nav>
+    {% endif %}
 
     {# ------------------------------------------------ the form (field names unchanged) #}
     <form method="post" enctype="multipart/form-data" id="runner" class="p21-form" novalidate data-minutes="{{ minutes }}"{% if editable %} data-autosave="{% url 'portal:autosave' a.pk %}"{% endif %}>{% csrf_token %}
       {% if intro %}<section class="p21-start" id="p21-start" aria-labelledby="p21-start-h">
-        <h2 class="px-h2" id="p21-start-h">What to upload</h2>
-        <p class="p21-start-lede">{{ intro|stack }}</p>
+        <h2 class="px-h2" id="p21-start-h">{% if fd.display.doc_outline %}What to upload{% elif fd.display.intro_title %}{{ fd.display.intro_title }}{% else %}Before you begin{% endif %}</h2>
+        <p class="p21-start-lede">{% if fd.display.doc_outline or fd.display.intro_title %}{{ intro|stack }}{% else %}{{ intro|reveal }}{% endif %}</p>
       </section>{% endif %}
       <div class="formprog" id="formprog" hidden aria-live="polite"><span id="formprog-t"></span><span class="formprog-bar"><span id="formprog-f"></span></span></div>
+      {% if optout %}
+      <section class="p21-optout" id="p21-optout" aria-labelledby="p21-optout-h">
+        <h2 class="px-h3" id="p21-optout-h">Opt out</h2>
+        <label class="p21-optbox"><input type="checkbox" id="optout" name="q-{{ optout.code }}" value="yes" {% if opted %}checked{% endif %} {% if not editable %}disabled{% endif %}><span>{{ optout.prompt|stack }}</span></label>
+        <p class="px-note">{% if optout_followups %}Choosing this replaces the survey with a few short questions.<br>Please answer them, then submit.{% else %}Choosing this completes the survey.<br>You won’t see the remaining questions.{% endif %}</p>
+      </section>{% endif %}
       {% for sv in sections %}{% include "portal/_section.html" %}{% endfor %}
+      {% if preview_followup %}<p class="px-note p21-followup-note">If you opt out, you’ll see these questions instead:</p>{% with sv=preview_followup %}{% include "portal/_section.html" with sv=sv %}{% endwith %}{% endif %}
 
       {% if editable %}
       <section class="p21-finish" id="p21-finish" aria-labelledby="p21-finish-h">
         <h2 class="px-h2" id="p21-finish-h">Review and submit</h2>
-        <p class="px-note">Please choose one. Both buttons are also in the bar at the bottom of the screen.</p>
+        <p class="px-note">Please choose one.<br>Both buttons are also in the bar at the bottom of the screen.</p>
         <ul class="p21-choices">
-          <li><button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate title="Saves your work without sending the report.">Save draft</button><p>Keeps your work, including any file you chose, without sending the report.<br>You can come back any time before the period closes.</p></li>
-          <li><button class="px-btn" type="submit" name="action" value="submit" title="Sends your report to the Center.">Submit report</button><p>Sends your report to the Center.<br>Every required answer must be complete first.</p></li>
+          <li><button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate title="Saves your work without sending the {{ noun }}.">Save draft</button><p>Keeps your work{% if fd.display.doc_outline %}, including any file you chose,{% endif %} without sending the {{ noun }}.<br>You can come back any time before the period closes.</p></li>
+          <li><button class="px-btn" type="submit" name="action" value="submit" data-submitlabel title="Sends your {{ noun }} to the Center.">{% if opted %}Submit opt-out{% else %}Submit {{ noun }}{% endif %}</button><p>Sends your {{ noun }} to the Center.<br>Every required answer must be complete first.</p></li>
         </ul>
       </section>
       <div class="p21-bar" role="region" aria-label="Save or submit">
         <span class="p21-savestate" id="savestate" role="status" aria-live="polite">Answers save as you type.</span>
         <div class="p21-bar-acts">
-          <button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate title="Saves your work without sending the report.">Save draft</button>
-          <button class="px-btn" type="submit" name="action" value="submit" id="submitbtn" title="Sends your report to the Center.">Submit report</button>
+          <button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate title="Saves your work without sending the {{ noun }}.">Save draft</button>
+          <button class="px-btn" type="submit" name="action" value="submit" id="submitbtn" data-submitlabel title="Sends your {{ noun }} to the Center.">{% if opted %}Submit opt-out{% else %}Submit {{ noun }}{% endif %}</button>
         </div>
       </div>
+      {% elif preview and not a.reporting_period.in_preview and a.status != 'submitted' and a.status != 'completed_opt_out' and a.status != 'exempt' %}
+      <div class="p21-endacts"><a class="px-btn" href="{% url 'portal:form' a.pk %}" title="Open the {{ noun }} and begin answering.">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a></div>
       {% endif %}
     </form>
   </div>
 </div>
+{% endwith %}
 {% endblock %}
-{% block scripts %}<script src="{% static 'js/runner.js' %}" defer></script><script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}
+{% block scripts %}<script src="{% static 'js/runner.js' %}" defer></script><script src="{% static 'js/proto.js' %}" defer></script>{% if optout and editable %}
+<script>
+/* Same opt-out behavior as portal/form.html: the checkbox hides or shows the same sections. */
+(function () {
+  var box = document.getElementById("optout");
+  var hide = {{ hide_on_optout|safe|default:"[]" }}, show = {{ show_on_optout|safe|default:"[]" }};
+  var label = document.querySelector("[data-submitlabel]") ? document.querySelector("[data-submitlabel]").textContent : "Submit";
+  function apply() {
+    hide.forEach(function (c) { var s = document.getElementById("sec-" + c); if (s) s.hidden = box.checked; var n = document.querySelector('[data-navsec="' + c + '"]'); if (n) n.hidden = box.checked; });
+    show.forEach(function (c) { var s = document.getElementById("sec-" + c); if (s) s.hidden = !box.checked; var n = document.querySelector('[data-navsec="' + c + '"]'); if (n) n.hidden = !box.checked; });
+    document.querySelectorAll("[data-submitlabel]").forEach(function (b) { b.textContent = box.checked ? "Submit opt-out" : label.replace("Submit opt-out", "Submit {{ noun }}"); });
+    document.dispatchEvent(new Event("change"));
+  }
+  box.addEventListener("change", apply);
+})();
+</script>{% endif %}{% endblock %}

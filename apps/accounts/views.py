@@ -22,6 +22,11 @@ def _safe_next(request, default="/tasks/"):
 class LoginView(auth_views.LoginView):
     """Django's login, refusing for 15 minutes after repeated failures for a username or address."""
 
+    def get_template_names(self):
+        from apps.common import prototype
+
+        return [prototype.template(self.request, "login", "registration/login.html")]
+
     def post(self, request, *args, **kwargs):
         username = request.POST.get("username", "")
         ip = signin.client_ip(request)
@@ -52,9 +57,11 @@ def link_request(request):
     if request.method == "POST":
         signin.request_link(request.POST.get("email", ""), ip=signin.client_ip(request))
         sent = True
+    from apps.common import prototype
+
     return render(
         request,
-        "registration/link_request.html",
+        prototype.template(request, "link", "registration/link_request.html"),
         {"sent": sent, "days": signin.LINK_DAYS, "email": request.POST.get("email", "")},
     )
 

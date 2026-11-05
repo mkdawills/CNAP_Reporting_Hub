@@ -16,10 +16,15 @@ from django.utils.http import url_has_allowed_host_and_scheme
 # screen key -> prototype template
 SCREENS = {
     "tasks": "proto/tasks.html",  # Screen 3
-    "form:progress_pilot": "proto/progress_form.html",  # Screen 21 (this form only)
+    "form:progress_pilot": "proto/progress_form.html",  # Screen 21; Batch 1 extends it to every form
+    "preview": "proto/progress_form.html",  # Batch 1, screen 29: the same page in preview mode
     "dashboard": "proto/dashboard.html",  # Screen 53
     "results:mentee_survey": "proto/report.html",  # Screen 90 (this form only)
     "outcomes": "proto/outcomes.html",  # Screen 36, progress tracks (prototype screen 5)
+    # Batch 1 (MW 2026-11-05)
+    "login": "proto/registration/login.html",  # screen 1
+    "link": "proto/registration/link_request.html",  # screen 2
+    "cp_check": "proto/portal/cp_check.html",  # screen 30
 }
 
 
@@ -28,7 +33,9 @@ def enabled(request):
 
 
 def template(request, key, default):
-    """The prototype template for one of the four screens, or the original one."""
+    """The prototype template for a redesigned screen, or the original one."""
+    if key.startswith("form:"):
+        key = "form:progress_pilot"  # Batch 1 (MW 2026-11-05): every respondent form uses the Screen 21 design
     if key in SCREENS and getattr(settings, "UI_PROTOTYPE", False):
         request.proto_screen = key  # lets base.html offer the before/after switch
         if enabled(request):

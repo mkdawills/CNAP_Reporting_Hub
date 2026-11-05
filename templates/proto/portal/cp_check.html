@@ -1,0 +1,45 @@
+{% extends "base.html" %}{% load cnap %}
+{% block title %}Current and Pending check · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Batch 1, screen 30. Same view, same two actions, same upload field as portal/cp_check.html. #}
+<div class="cp30">
+  <a class="px-link p21-back" href="{% url 'portal:tasks' %}">Back to my tasks</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">February check</p>
+    <div class="px-mast-row"><h1 class="px-title">Has your Current and Pending (Other) Support changed?</h1>
+      <span class="px-status" data-s="{% if c.answered_at %}submitted{% else %}not_started{% endif %}">{% if c.answered_at %}Answered{% else %}Not answered{% endif %}</span></div>
+    <ul class="px-facts">
+      <li><span class="px-label">Please answer by</span><span class="v">{{ c.due|date:"l, F j" }}</span></li>
+      <li><span class="px-label">Last turned in</span><span class="v">{% if c.assignment.submitted_at %}{{ c.assignment.submitted_at|date:"F j, Y" }}{% else %}On file with the Center{% endif %}</span></li>
+      <li><span class="px-label">RPPR due to NIH</span><span class="v">{{ c.rppr_due|date:"F j" }}</span></li>
+    </ul>
+    <p class="px-note p21-private">NIH needs your Current and Pending (Other) Support to be up to date for CNAP’s <a class="px-link" href="https://grants.nih.gov/grants-process/post-award-monitoring-and-reporting/reporting-requirements/research-performance-progress-report-rppr" target="_blank" rel="noopener" title="NIH’s page about the yearly Research Performance Progress Report (RPPR). Opens in a new tab.">Research Performance Progress Report (RPPR)</a>.{% if c.prev_file %}<br><a class="px-link" href="{% url 'portal:download' c.prev_file.pk %}" title="Opens the Current and Pending (Other) Support you sent CNAP most recently, so you can compare.">Your most recent Current and Pending (PDF)</a>{% endif %}</p>
+  </header>
+
+  {% if c.answered_at %}
+  <div class="px-callout ok" role="status"><p><strong>Thank you.</strong><br>{% if c.changed %}Your new Current and Pending ({{ c.file.original_filename }}) is saved.{% else %}You told us nothing changed.{% endif %}<br>If something changes again before the spring, please email the evaluator at {{ evaluator_email }}.</p></div>
+  {% else %}
+  {% if error %}<div class="px-callout p21-err" role="alert"><p>{{ error }}</p></div>{% endif %}
+  <ol class="cp30-opts">
+    <li class="cp30-opt">
+      <h2 class="px-h2"><span class="cp30-n" aria-hidden="true">A</span>Nothing has changed</h2>
+      <p class="px-note">Nothing is new since I last submitted my Current and Pending.<br>No new pending submissions, no new awards, and no changes to effort among my current awards.<br>No new in-kind support.</p>
+      <form method="post">{% csrf_token %}<input type="hidden" name="action" value="nochange"><button class="px-btn" type="submit" title="Tell the Center your Current and Pending is the same as last time.">Nothing has changed</button></form>
+    </li>
+    <li class="cp30-opt">
+      <h2 class="px-h2"><span class="cp30-n" aria-hidden="true">B</span>It has changed</h2>
+      <ol class="cp30-steps">
+        <li>Please update your Current and Pending in <a class="px-link" href="https://www.ncbi.nlm.nih.gov/sciencv/" target="_blank" rel="noopener" title="Opens SciENcv in a new tab.">SciENcv</a>.</li>
+        <li>Please certify it in SciENcv, then download the certified PDF.<br>Please don’t flatten the PDF.</li>
+        <li>Please upload the PDF here.</li>
+      </ol>
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="changed">
+        <label class="filezone cp30-file"><span class="filezone-t">Choose a file from your computer</span><span class="filezone-s">PDF only. Your file uploads when you press Upload the new PDF.</span><input type="file" name="file-current_pending" accept=".pdf" aria-label="New Current and Pending (certified PDF)"></label>
+        <div class="si-acts"><button class="px-btn" type="submit" title="Send the Center your new certified PDF.">Upload the new PDF</button><a class="px-link" href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener" title="NIH’s instructions for the Common Form. Opens in a new tab.">NIH’s instructions</a></div>
+      </form>
+    </li>
+  </ol>
+  {% endif %}
+  <div class="px-callout cp30-help"><p><strong>Need help with SciENcv?</strong><br>Please contact your Central Office grant specialist.<br>Unsure who that is? Start with Morgan Wills at {{ evaluator_email }}.<br>Morgan can point you in the right direction.</p></div>
+</div>
+{% endblock %}

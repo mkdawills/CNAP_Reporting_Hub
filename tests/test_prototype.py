@@ -65,14 +65,14 @@ def test_off_by_default_every_screen_keeps_its_original_template(client, demo):
 
 
 @override_settings(UI_PROTOTYPE=True)
-def test_on_only_the_four_screens_change(client, demo):
+def test_on_only_the_redesigned_screens_change(client, demo):
     okafor, pilot, other = _pages(demo)
     client.force_login(okafor)
     assert "proto/tasks.html" in _templates(client.get("/tasks/"))
     assert "proto/progress_form.html" in _templates(client.get(f"/tasks/{pilot.pk}/"))
-    # any other form keeps the original runner
+    # Batch 1 (MW 2026-11-05): every other form uses the same design
     r = client.get(f"/tasks/{other.pk}/")
-    assert "portal/form.html" in _templates(r) and PROTO_CSS not in r.content.decode()
+    assert "proto/progress_form.html" in _templates(r)
     client.force_login(User.objects.get(username="mwills"))
     assert "proto/dashboard.html" in _templates(client.get("/manage/dashboard/"))
     assert "proto/report.html" in _templates(

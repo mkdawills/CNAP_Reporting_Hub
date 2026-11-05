@@ -158,7 +158,11 @@ def cp_check(request, pk):
             error = str(exc)
         else:
             return redirect("portal:cp_check", pk)
-    return render(request, "portal/cp_check.html", {"c": c, "error": error})
+    from apps.common import prototype
+
+    return render(
+        request, prototype.template(request, "cp_check", "portal/cp_check.html"), {"c": c, "error": error}
+    )
 
 
 @login_required
@@ -276,7 +280,9 @@ def preview(request, pk):
     if gate:
         return gate
     ctx = presenters.form_page(request, a, editable=False, preview=True)
-    return render(request, "portal/form.html", ctx)
+    from apps.common import prototype
+
+    return render(request, prototype.template(request, "preview", "portal/form.html"), ctx)
 
 
 @login_required

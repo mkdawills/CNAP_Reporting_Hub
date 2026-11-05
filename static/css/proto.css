@@ -782,3 +782,64 @@ body.proto .px-onpage a.on, body.proto .p21-nav a.on { color: var(--px-brand-ink
 body.proto .px-onpage a:has(.px-onpage-n) { align-items: center; }
 body.proto .px-onpage-n { box-sizing: border-box; width: 20px; height: 20px; padding: 0; display: inline-flex; align-items: center; justify-content: center; line-height: 1; font-size: .6875rem; font-variant-numeric: tabular-nums; text-align: center; }
 body.proto .r90-part span { display: inline-flex; align-items: center; justify-content: center; line-height: 1; box-sizing: border-box; font-variant-numeric: tabular-nums; }
+
+/* ===================================================================== Batch 1: sign-in (MW 2026-11-05) */
+body.proto .anon main:has(.si) { max-width: 1120px; margin: 0 auto; padding-block: var(--px-7); }
+body.proto .si { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--px-7); align-items: center; }
+body.proto .si.si-solo { grid-template-columns: minmax(0, 520px); justify-content: center; }
+body.proto .si-photo { margin: 0; }
+body.proto .si-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--px-r-lg); box-shadow: 0 18px 50px -24px rgba(23, 21, 29, .45); }
+body.proto .si-photo figcaption { margin-top: var(--px-2); font-size: var(--px-fs-xs); color: var(--px-muted); }
+body.proto .si-card { padding: var(--px-7) var(--px-7) var(--px-6); background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); box-shadow: var(--px-shadow); }
+body.proto .si-logo { display: block; width: 210px; max-width: 100%; height: auto; margin: 0 0 var(--px-5); }
+body.proto .si-title { font-size: var(--px-fs-xl); margin: 0; }
+body.proto .si-lede { margin: var(--px-2) 0 var(--px-5); }
+body.proto .si-card .px-callout { margin: 0 0 var(--px-4); }
+body.proto .si-form { display: grid; gap: var(--px-4); }
+body.proto .si-field { display: grid; gap: 6px; }
+body.proto .si-field input { width: 100%; box-sizing: border-box; padding: 11px 12px; border: 1px solid var(--px-line-strong); border-radius: var(--px-r-sm); background: var(--px-surface); font: 400 var(--px-fs-base)/1.4 var(--px-sans); color: var(--px-ink); }
+body.proto .si-field input:focus { outline: none; border-color: var(--px-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--px-brand) 18%, transparent); }
+body.proto .si-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--px-3) var(--px-4); }
+body.proto .si-or { display: flex; align-items: center; gap: var(--px-3); margin: var(--px-5) 0; color: var(--px-faint); font-size: var(--px-fs-xs); }
+body.proto .si-or::before, body.proto .si-or::after { content: ""; flex: 1; height: 1px; background: var(--px-line); }
+body.proto .si-foot { margin: var(--px-5) 0 0; padding-top: var(--px-4); border-top: 1px solid var(--px-line); }
+@media (max-width: 860px) {
+  body.proto .si { grid-template-columns: minmax(0, 1fr); gap: var(--px-5); }
+  body.proto .si-photo img { aspect-ratio: 16 / 9; }
+  body.proto .si-card { padding: var(--px-5) var(--px-4); }
+}
+
+/* ===================================================================== Batch 1: every form (MW 2026-11-05) */
+body.proto .p21-nonav { grid-template-columns: minmax(0, 1fr) !important; }
+body.proto .p21-nonav::before { display: none !important; }
+body.proto .p21-nonav .p21-form { max-width: 900px; }
+body.proto .p21-optout { margin: var(--px-6) 0 0; padding: var(--px-5); border: 1px solid var(--px-line); border-radius: var(--px-r); background: var(--px-sunken); scroll-margin-top: var(--px-5); }
+body.proto .p21-optout .px-h3 { margin: 0 0 var(--px-3); }
+body.proto .p21-optbox { display: flex; align-items: flex-start; gap: var(--px-3); font-weight: 500; color: var(--px-ink); cursor: pointer; }
+body.proto .p21-optbox input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--px-brand); flex: none; }
+body.proto .p21-optout .px-note { margin: var(--px-3) 0 0 30px; }
+body.proto .p21-preview { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--px-3); }
+body.proto .p21-followup-note { margin: var(--px-6) 0 0; }
+body.proto .p21-endacts { display: flex; gap: var(--px-3); padding: var(--px-5) 0 var(--px-6); border-top: 1px solid var(--px-line); margin-top: var(--px-5); }
+/* Batch 1, screen 30: the February Current and Pending check */
+body.proto .cp30-opts { list-style: none; margin: 0 0 var(--px-5); padding: 0; display: grid; gap: var(--px-4); }
+body.proto .cp30-opt { padding: var(--px-5) var(--px-6); background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); box-shadow: var(--px-shadow); display: grid; gap: var(--px-3); justify-items: start; }
+body.proto .cp30-opt .px-h2 { display: flex; align-items: center; gap: var(--px-3); margin: 0; }
+body.proto .cp30-opt > .px-note, body.proto .cp30-opt > form, body.proto .cp30-steps { margin-left: 40px; }
+body.proto .cp30-opt > form { display: grid; gap: var(--px-4); justify-items: start; width: calc(100% - 40px); }
+body.proto .cp30-n { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--px-brand) 35%, var(--px-line)); color: var(--px-brand); font: 600 var(--px-fs-sm)/1 var(--px-sans); flex: none; }
+body.proto .cp30-steps { margin-top: 0; margin-bottom: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--px-ink-2); }
+body.proto .cp30-file { box-sizing: border-box; width: 100%; display: grid; gap: 4px; padding: var(--px-5); border: 1.5px dashed var(--px-line-strong); border-radius: var(--px-r); background: var(--px-sunken); cursor: pointer; }
+body.proto .cp30-file .filezone-t { font-weight: 600; color: var(--px-ink); }
+body.proto .cp30-file .filezone-s { font-size: var(--px-fs-xs); color: var(--px-muted); }
+body.proto .cp30-file input { max-width: 100%; }
+@media (max-width: 760px) { body.proto .cp30-opt { padding: var(--px-4); } body.proto .cp30-opt > .px-note, body.proto .cp30-opt > form, body.proto .cp30-steps { margin-left: 0; } body.proto .cp30-opt > form { width: 100%; } }
+/* Forms: the section list and the form share one white page, divided by a line (MW 2026-11-05),
+   so the list reads as part of the form, not a second strip beside the menu. */
+@media (min-width: 981px) {
+  body.proto .p21-layout:not(.p21-nonav) { background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); box-shadow: var(--px-shadow); padding: var(--px-6) var(--px-6) 0; }
+  body.proto .p21-layout:not(.p21-nonav) .p21-form { border: 0; box-shadow: none; border-radius: 0; padding-top: 0; padding-left: 0; padding-right: 0; background: none; }
+  body.proto .p21-layout:not(.p21-nonav)::before { top: var(--px-6); bottom: 0; left: calc(var(--px-6) + 232px + var(--px-7) / 2); }
+  body.proto .p21-layout.navclosed:not(.p21-nonav)::before { left: calc(var(--px-6) + 64px + var(--px-7) / 2); }
+  body.proto .p21-layout:not(.p21-nonav) .p21-bar { margin-left: 0; margin-right: 0; border-radius: 0; }
+}

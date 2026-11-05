@@ -41,7 +41,8 @@
       var sr = a.querySelector(".p21-navstate");
       // Sections with nothing to answer (the outline parts of the Word document, the intro, the end)
       // show no marker, so a check mark never suggests work is done when there was nothing to do.
-      if (a.dataset.nav === "start" || a.dataset.nav === "finish" || a.dataset.empty) {
+      // Counts of missing answers mean something only while the form can still be filled in.
+      if (!document.querySelector(".p21-key") || a.dataset.nav === "start" || a.dataset.nav === "finish" || a.dataset.empty) {
         if (dot) dot.className = "p21-dot p21-none";
         return;
       }
