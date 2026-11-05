@@ -551,3 +551,8 @@ body.proto .p21-dot.all { background: var(--px-brand); box-shadow: none; }
   body.proto .p21-bar-acts { margin-left: 0; width: 100%; justify-content: flex-start; }
 }
 @media (max-width: 760px) { body.proto .p21-mast .px-facts { row-gap: 0; } }
+/* Screen 90: everything inside a numbered part is indented to line up with the part's title,
+   not with its number, so the 1-2-3 structure reads at a glance (MW 2026-11-05). */
+body.proto .r90 > .px-section > :not(.px-section-head) { margin-left: calc(26px + var(--px-3)); }
+body.proto .r90 > .px-section > .px-section-head > .px-note { padding-left: 0; }
+@media (max-width: 760px) { body.proto .r90 > .px-section > .px-section-head > .px-note { padding-left: calc(26px + var(--px-3)); } }
