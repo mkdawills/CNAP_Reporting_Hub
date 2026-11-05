@@ -32,8 +32,19 @@
     <ol>{% for s in steps %}<li class="{{ s.state }}" title="{{ s.help }}"><span class="n" aria-hidden="true">{% if s.state == 'done' %}✓{% else %}{{ s.n }}{% endif %}</span><span class="l">{% if s.url %}<a href="{{ s.url }}">{{ s.label }}</a>{% else %}{{ s.label }}{% endif %}</span><span class="px-sr">{% if s.state == 'done' %} (done){% elif s.state == 'now' %} (current step){% endif %}</span></li>{% endfor %}</ol>
   </nav>
 
+  <div class="px-onpage-layout">
+  <nav class="px-onpage" aria-label="On this page">
+    <p class="px-label">On this page</p>
+    <ol>
+      <li><a href="#d53-kpis" data-onpage>Completion</a></li>
+      <li><a href="#d53-next" data-onpage>What needs your attention</a></li>
+      <li><a href="#d53-forms" data-onpage>Completion by form</a></li>
+      <li><a href="#list" data-onpage>People and their forms</a></li>
+    </ol>
+  </nav>
+  <div class="px-onpage-main">
   {# ---------------------------------------------------------------- headline numbers #}
-  <section class="d53-kpis px-surface" aria-labelledby="d53-kpi-h">
+  <section class="d53-kpis px-surface" id="d53-kpis" aria-labelledby="d53-kpi-h">
     <h2 class="px-sr" id="d53-kpi-h">Completion</h2>
     <div class="d53-hero">
       <p class="px-label">Complete</p>
@@ -120,6 +131,8 @@
     {% endif %}
     </div>
   </details>
+  </div>
+  </div>
   </div>
   {% endwith %}{% endwith %}{% endwith %}
 {% endif %}

@@ -105,3 +105,21 @@
     if (a && a.getAttribute("href").length > 1) reveal(a.getAttribute("href").slice(1));
   });
 })();
+
+/* "On this page": highlight the section being read. */
+(function () {
+  var links = Array.from(document.querySelectorAll(".px-onpage a[data-onpage]"));
+  if (!links.length || !("IntersectionObserver" in window)) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var id = "#" + e.target.id;
+      links.forEach(function (a) {
+        var on = a.getAttribute("href") === id;
+        a.classList.toggle("on", on);
+        if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current");
+      });
+    });
+  }, { rootMargin: "-15% 0px -75% 0px" });
+  links.forEach(function (a) { var t = document.querySelector(a.getAttribute("href")); if (t) io.observe(t); });
+})();

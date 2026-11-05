@@ -553,6 +553,34 @@ body.proto .p21-dot.all { background: var(--px-brand); box-shadow: none; }
 @media (max-width: 760px) { body.proto .p21-mast .px-facts { row-gap: 0; } }
 /* Screen 90: everything inside a numbered part is indented to line up with the part's title,
    not with its number, so the 1-2-3 structure reads at a glance (MW 2026-11-05). */
-body.proto .r90 > .px-section > :not(.px-section-head) { margin-left: calc(26px + var(--px-3)); }
-body.proto .r90 > .px-section > .px-section-head > .px-note { padding-left: 0; }
-@media (max-width: 760px) { body.proto .r90 > .px-section > .px-section-head > .px-note { padding-left: calc(26px + var(--px-3)); } }
+body.proto .r90 .px-section > :not(.px-section-head) { margin-left: calc(26px + var(--px-3)); }
+body.proto .r90 .px-section > .px-section-head > .px-note { padding-left: 0; }
+@media (max-width: 760px) { body.proto .r90 .px-section > .px-section-head > .px-note { padding-left: calc(26px + var(--px-3)); } }
+/* Roll-up figures sit in soft ovals with room between them (MW 2026-11-05). */
+body.proto .px-roll-figs { gap: var(--px-2) var(--px-3); margin-top: var(--px-2); }
+body.proto .px-roll-figs > span { display: inline-flex; align-items: baseline; gap: 6px; padding: 6px 14px; border-radius: 999px; background: var(--px-sunken); border: 1px solid var(--px-line); line-height: 1.3; white-space: nowrap; }
+body.proto .px-roll-figs > span:has(b.pos) { background: var(--px-ok-tint); border-color: color-mix(in srgb, var(--px-ok) 22%, transparent); }
+body.proto .px-roll-figs > span:has(b.neg) { background: var(--px-alert-tint); border-color: color-mix(in srgb, var(--px-alert) 22%, transparent); }
+body.proto .px-roll-figs b { margin-right: 0; }
+/* "On this page" (MW 2026-11-05): long pages list their sections, like Screen 21's "In this report".
+   A link to a rolled-up section opens it. Beside the page on wide screens; stacked at the top otherwise. */
+body.proto .px-onpage-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: var(--px-7); align-items: start; }
+body.proto .px-onpage-main { min-width: 0; }
+body.proto .px-onpage { position: sticky; top: var(--px-5); padding: var(--px-2) 0; }
+body.proto .px-onpage ol { list-style: none; margin: var(--px-3) 0 0; padding: 0; border-left: 1px solid var(--px-line); }
+body.proto .px-onpage ol ol { margin: 0 0 var(--px-1); border-left: 0; }
+body.proto .px-onpage a { display: flex; align-items: baseline; gap: 8px; margin-left: -1px; padding: 7px 12px; border-left: 2px solid transparent; border-radius: 0 var(--px-r-sm) var(--px-r-sm) 0; color: var(--px-ink-2); text-decoration: none; font-size: var(--px-fs-sm); line-height: 1.35; transition: background-color .15s ease; }
+body.proto .px-onpage ol ol a { padding: 5px 12px 5px 34px; font-size: var(--px-fs-xs); color: var(--px-muted); }
+body.proto .px-onpage a:hover { color: var(--px-ink); background: var(--px-sunken); }
+body.proto .px-onpage a:focus-visible { outline: none; box-shadow: var(--px-focus); }
+body.proto .px-onpage a.on { border-left-color: var(--px-brand); color: var(--px-brand-ink); font-weight: 600; }
+body.proto .px-onpage-n { flex: none; display: inline-grid; place-items: center; width: 18px; height: 18px; border: 1px solid color-mix(in srgb, var(--px-brand) 35%, var(--px-line)); border-radius: 999px; font-size: .6875rem; font-weight: 500; color: var(--px-brand); }
+@media (max-width: 1180px) {
+  body.proto .px-onpage-layout { grid-template-columns: minmax(0, 1fr); gap: var(--px-5); }
+  body.proto .px-onpage { position: static; padding: var(--px-3) var(--px-4); background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r); }
+  body.proto .px-onpage ol { border-left: 0; }
+  body.proto .px-onpage > ol > li + li { border-top: 1px solid var(--px-line); }
+  body.proto .px-onpage a { border-left: 0; border-radius: var(--px-r-sm); padding: 9px 8px; }
+  body.proto .px-onpage ol ol a { padding: 4px 8px 4px 34px; }
+  body.proto .px-onpage a.on { background: var(--px-brand-tint); }
+}
