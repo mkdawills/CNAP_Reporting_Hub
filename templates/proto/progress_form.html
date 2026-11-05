@@ -14,11 +14,12 @@
       <h1 class="px-title">{{ fd.name }}</h1>
       {% if preview %}<span class="px-status" data-s="not_started">Preview</span>{% else %}<span class="px-status" data-s="{{ a.status }}">{% if a.status == 'submitted' %}Submitted{% elif a.status == 'in_progress' %}In progress{% elif a.status == 'completed_opt_out' %}Opted out{% elif a.status == 'exempt' %}Not needed{% else %}Not started{% endif %}</span>{% endif %}
     </div>
+    {% with purpose=fd.code|form_purpose %}{% if purpose %}<p class="p21-purpose">{{ purpose|stack }}</p>{% endif %}{% endwith %}
     <ul class="px-facts" aria-label="Dates for this {{ noun }}">
       {% if fd.display.no_period_line %}
       <li><span class="px-label">Please answer by</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
       {% else %}
-      <li><span class="px-label">{% if noun == 'report' %}Report on work from{% else %}Reporting period{% endif %}</span><span class="v">{{ a.reporting_period|span }}</span></li>
+      <li><span class="px-label">{% if noun == 'report' %}Report on work from{% else %}CNAP reporting period{% endif %}</span><span class="v">{{ a.reporting_period|span }}</span></li>
       <li><span class="px-label">{% if noun == 'report' %}Submission due{% else %}Please answer by{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
       {% endif %}
       {% for label, value in prefill %}<li><span class="px-label">{{ label }}</span><span class="v">{{ value|default:"—" }}</span></li>{% endfor %}
@@ -71,7 +72,7 @@
       {% if editable %}
       <section class="p21-finish" id="p21-finish" aria-labelledby="p21-finish-h">
         <h2 class="px-h2" id="p21-finish-h">Review and submit</h2>
-        <p class="px-note">Please choose one.<br>Both buttons are also in the bar at the bottom of the screen.</p>
+        <p class="px-note">Please choose one.</p>
         <ul class="p21-choices">
           <li><button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate title="Saves your work without sending the {{ noun }}.">Save draft</button><p>Keeps your work{% if fd.display.doc_outline %}, including any file you chose,{% endif %} without sending the {{ noun }}.<br>You can come back any time before the period closes.</p></li>
           <li><button class="px-btn" type="submit" name="action" value="submit" data-submitlabel title="Sends your {{ noun }} to the Center.">{% if opted %}Submit opt-out{% else %}Submit {{ noun }}{% endif %}</button><p>Sends your {{ noun }} to the Center.<br>Every required answer must be complete first.</p></li>

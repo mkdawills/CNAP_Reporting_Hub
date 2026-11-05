@@ -205,3 +205,13 @@ document.addEventListener("click", function (e) {
     btn.addEventListener("click", function () { set(!layout.classList.contains("navclosed"), true); });
   });
 })();
+
+/* At the end of a form, the Review and submit section has both buttons, so the bottom bar's
+   copies step aside and only the save status stays (MW 2026-11-05). */
+(function () {
+  var fin = document.getElementById("p21-finish"), bar = document.querySelector(".p21-bar");
+  if (!fin || !bar || !("IntersectionObserver" in window)) return;
+  new IntersectionObserver(function (es) {
+    bar.classList.toggle("at-end", es[0].isIntersecting);
+  }, { threshold: 0.25 }).observe(fin);
+})();

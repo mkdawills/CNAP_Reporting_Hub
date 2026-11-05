@@ -330,7 +330,9 @@ def seed_demo(stdout=None):
             start_date=dt.date(2026, 6, 1),
             end_date=dt.date(2026, 11, 30),
             opens_at=now - dt.timedelta(days=10),
-            due_at=now + dt.timedelta(days=24),
+            # Answers are due on the last day of the reporting period (MW 2026-11-05). Sample data
+            # falls back to a date three weeks out once that day has passed, so the demo stays open.
+            due_at=max(dt.datetime(2026, 11, 30, 17, tzinfo=tz), now + dt.timedelta(days=21)),
             status=PeriodStatus.OPEN,
         ),
     )
@@ -343,7 +345,7 @@ def seed_demo(stdout=None):
             start_date=dt.date(2026, 12, 1),
             end_date=dt.date(2027, 5, 31),
             opens_at=dt.datetime(2027, 5, 1, 8, tzinfo=tz),
-            due_at=dt.datetime(2027, 6, 1, 17, tzinfo=tz),
+            due_at=dt.datetime(2027, 5, 31, 17, tzinfo=tz),
             status=PeriodStatus.DRAFT,
         ),
     )

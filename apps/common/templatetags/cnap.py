@@ -431,3 +431,33 @@ _ADMIN_SECTION_NAMES = {
 @register.filter
 def admin_section_name(value):
     return _ADMIN_SECTION_NAMES.get(str(value or ""), value)
+
+
+# One sentence under each form's title that says why the form is asked (MW 2026-11-05).
+# Kept in the prototype layer, so the form definitions and their versions stay unchanged.
+# Nouns, not pronouns, so each sentence stands on its own.
+FORM_PURPOSE = {
+    "bn_core_survey": "This survey asks how well the Behavioral Neuroscience Core's facilities and services worked for you, and how often you used the Behavioral Neuroscience Core.",
+    "cn_core_survey": "This survey asks how well the Cognitive Neuroscience Core's spaces, equipment, and support worked for you, and how often you used the Cognitive Neuroscience Core.",
+    "ni_core_survey": "This survey asks how well the Neuroinformatics Core's resources supported your research, and how often you used the Neuroinformatics Core.",
+    "core_usage_report": "This report shows the National Institutes of Health who used your core and what came of that use.",
+    "mentee_survey": "This survey asks how available, helpful, and supportive your mentor or mentors have been on your CNAP project.",
+    "mentor_questionnaire": "This questionnaire asks about your role as a CNAP mentor, considering all of your mentees together.",
+    "neurosync_speaker_survey": "This survey asks NeuroSync speakers how the NeuroSync visit went.",
+    "neurosync_survey": "Your ratings help the Center choose NeuroSync speakers and topics, and decide how the series is run.",
+    "nih_documents": "Each year, the Center reviews Current and Pending (Other) Support for Core Directors, Research Project Leaders, Pilot Project Leaders, and the Program Director/Principal Investigator.",
+    "pilot_mentor_report": "This report records your meetings with your Pilot Grantee/Mentee and your view of the Pilot Grantee/Mentee's progress toward the pilot program milestones.",
+    "primary_mentor_report": "This report records your meetings with your Research Project Leader and your view of the Research Project Leader's progress toward the project milestones.",
+    "progress_core": "Your semiannual progress report summarizes your core's accomplishments, plans, and changes.",
+    "progress_pilot": "Your semiannual progress report summarizes your pilot project's accomplishments, plans, and changes, including plans for grant submissions.",
+    "progress_research": "Your semiannual progress report summarizes your research project's accomplishments, plans, and changes.",
+    "ts_admin_core": "This survey asks how well the Administrative Core is serving you.",
+    "ts_grant_writing": "This survey asks whether the Grant Writing Program is helping you write and submit grants.",
+    "ts_reporting_hub": "This survey asks how well the CNAP Reporting Hub works for completing your Center surveys and reports.",
+    "ts_synergy": "This survey asks how well CNAP members work together across disciplines, and whether CNAP has helped your research.",
+}
+
+
+@register.filter
+def form_purpose(code):
+    return FORM_PURPOSE.get(str(code or ""), "")

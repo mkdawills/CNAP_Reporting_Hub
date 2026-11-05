@@ -16,7 +16,7 @@
         <p class="px-eyebrow">Period dashboard</p>
         <h1 class="px-title">{{ p.name }}</h1>
       </div>
-      <form method="get" class="d53-pick"><label class="px-label" for="d53-period">Reporting period</label>
+      <form method="get" class="d53-pick"><label class="px-label" for="d53-period">CNAP reporting period</label>
         <select id="d53-period" name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}</option>{% endfor %}</select>
         <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>
     </div>

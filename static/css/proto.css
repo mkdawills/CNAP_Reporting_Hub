@@ -858,3 +858,10 @@ body.proto .p21 .scale-na .na-tile > span::after { content: "Not applicable"; fo
   body.proto .p21 .scale-na .na-tile { flex-direction: row; justify-content: flex-start; padding: 8px 12px; }
 }
 @media (max-width: 760px) { body.proto .p21 .scale:not(.yn) .scale-pts { flex: 0 0 auto; max-width: none; } }
+/* One sentence under each form's title says why it is asked (MW 2026-11-05). */
+body.proto .p21-purpose { margin: var(--px-2) 0 0; max-width: var(--px-measure); font-size: var(--px-fs-md); line-height: 1.55; color: var(--px-ink-2); }
+/* On phones, "Not applicable" is as wide as the answers above it. */
+@media (max-width: 760px) { body.proto .p21 .scale-na { display: block; } body.proto .p21 .scale-na .na-tile { width: 100%; box-sizing: border-box; } }
+/* At the end of a form, the bar's buttons step aside; the Review and submit section has them. */
+body.proto .p21-bar.at-end .p21-bar-acts { display: none; }
+body.proto .p21-bar.at-end { min-height: 0; }
