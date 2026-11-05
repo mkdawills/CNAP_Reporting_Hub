@@ -393,7 +393,8 @@ body.proto .d53-exempt-box { position: absolute; right: 0; top: calc(100% + 6px)
 body.proto .d53-exempt-box label { display: grid; gap: 4px; }
 @media (max-width: 760px) { body.proto .d53-people thead { display: none; } body.proto .d53-people tr { display: grid; padding: var(--px-3) var(--px-4); border-bottom: 1px solid var(--px-line); } body.proto .d53-people td, body.proto .d53-people th[scope=row] { border: 0 !important; padding: 2px 0 !important; } body.proto .d53-acts { text-align: left; } body.proto .d53-forms th:nth-child(4), body.proto .d53-forms td:nth-child(4) { display: none; } }
 /* tables: hairline rows only, and numbers centered (MW's standing preference) */
-body.proto .px-table td, body.proto .px-table th { border-left: 0 !important; border-right: 0 !important; }
+/* Long tables get light vertical lines between columns, to ease reading (MW 2026-11-05). Phones stack rows instead. */
+@media (min-width: 761px) { body.proto .px-table :is(th, td) + :is(th, td) { border-left: 1px solid var(--px-line) !important; } }
 body.proto .px-table .num, body.proto .px-table th.num { text-align: center; }
 body.proto .d53-filters select { width: auto; min-width: 180px; max-width: 380px; }
 /* each person's name shows once, at the top of their group of forms */
