@@ -26,13 +26,21 @@
     {% endwith %}{% empty %}<p class="small muted">There are no entries yet.</p>{% endfor %}
     {% if not editable and sv.summary %}</details>{% endif %}
     {% if editable %}<button class="btn small ghost" type="submit" name="action" value="add:{{ sv.s.code }}" formnovalidate>{{ sv.s.repeat_label|default:"Add an entry" }}</button>{% endif %}
-    {% if editable %}<div class="sheetup">
+    {% if editable %}{% if request.proto_active %}{% with item=sv.s.repeat_label|default:"Add an entry"|cut:"Add a "|cut:"Add an "|lower %}<details class="sheetup sheetup-c">
+      {# Option C (MW 2026-11-05): one quiet line that opens to the same directions, template, and upload. #}
+      <summary><svg class="sheetup-ic" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9h17M3.5 14.5h17M9 3.5v17"/></svg><span class="sheetup-q">Prefer to use Excel instead of typing each {{ item }} here?</span><span class="sheetup-more" aria-hidden="true"></span></summary>
+      <div class="sheetup-body"><p class="small">The template is optional: a tool you can use if you like.<br>Please download the template, fill it in on your desktop (one row per {{ item }}), and upload it here whenever you are ready.<br>Your rows fill in the entries above automatically, so you can check and edit them before you submit.</p>
+      <div class="sheetup-row"><a class="btn small ghost" href="{% url 'portal:sheet_template' a.pk sv.s.code %}" download>Download the Excel template</a>
+        <input type="file" name="sheet-{{ sv.s.code }}" accept=".xlsx" aria-label="Your filled-in Excel sheet for {{ sv.s.title }}">
+        <button class="btn small" type="submit" name="action" value="sheet:{{ sv.s.code }}" formnovalidate>Add the rows from my sheet</button></div>
+      </div>
+    </details>{% endwith %}{% else %}<div class="sheetup">
       <p class="sheetup-h">Prefer to work in Excel?</p>
       <p class="small">The template is optional: a tool you can use if you like.<br>Please download the template, fill it in on your desktop (one row per entry), and upload it here whenever you are ready.<br>Your rows fill in the entries above automatically, so you can check and edit them before you submit.</p>
       <div class="sheetup-row"><a class="btn small ghost" href="{% url 'portal:sheet_template' a.pk sv.s.code %}" download>Download the Excel template</a>
         <input type="file" name="sheet-{{ sv.s.code }}" accept=".xlsx" aria-label="Your filled-in Excel sheet for {{ sv.s.title }}">
         <button class="btn small" type="submit" name="action" value="sheet:{{ sv.s.code }}" formnovalidate>Add the rows from my sheet</button></div>
-    </div>{% endif %}
+    </div>{% endif %}{% endif %}
     {% if editable %}{% if sv.summary %}<div class="rsumlist"><p class="rsum-h">{% if editable %}What you’ve listed so far ({{ sv.summary.rows|length }}){% else %}What you listed ({{ sv.summary.rows|length }}){% endif %}</p>
       <div class="scroll"><table class="rsumtab"><thead><tr><th>#</th>{% for h in sv.summary.heads %}<th>{{ h }}</th>{% endfor %}</tr></thead>
       <tbody>{% for r in sv.summary.rows %}<tr><td class="muted">{{ forloop.counter }}</td>{% for v in r %}<td>{{ v|default:"–" }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div></div>{% endif %}{% endif %}

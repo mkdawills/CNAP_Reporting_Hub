@@ -884,3 +884,15 @@ body.proto .p21-nav a:has(.p21-misstext:not([hidden])) .p21-miss, body.proto .p2
 body.proto .cp30-opt .cp30-steps { margin-left: 0; padding-left: 40px; }
 @media (max-width: 760px) { body.proto .cp30-opt .cp30-steps { margin-left: 0; padding-left: 40px; } }
 @media (max-width: 760px) { body.proto .cp30-opt > .px-note { margin-left: 40px; } }
+/* Excel option, option C (MW 2026-11-05): one quiet line between hairlines that opens to the directions and upload. */
+body.proto .p21 .sheetup-c { background: none; border: 0; border-top: 1px solid var(--px-line); border-bottom: 1px solid var(--px-line); border-radius: 0; padding: 0; margin: var(--px-5) 0 0; }
+body.proto .sheetup-c > summary { display: flex; align-items: center; gap: var(--px-3); padding: var(--px-3) 0; cursor: pointer; list-style: none; color: var(--px-ink); font-weight: 500; }
+body.proto .sheetup-c > summary::-webkit-details-marker { display: none; }
+body.proto .sheetup-c .sheetup-ic { flex: none; color: var(--px-brand); }
+body.proto .sheetup-c .sheetup-more { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--px-line-strong); border-radius: 999px; color: var(--px-brand); font-size: var(--px-fs-xs); font-weight: 600; }
+body.proto .sheetup-c .sheetup-more::before { content: "Show how"; }
+body.proto .sheetup-c[open] .sheetup-more::before { content: "Hide"; }
+body.proto .sheetup-c > summary:hover .sheetup-more { border-color: var(--px-brand); background: var(--px-brand-tint, color-mix(in srgb, var(--px-brand) 8%, transparent)); }
+body.proto .sheetup-c > summary:focus-visible { outline: 2px solid var(--px-brand); outline-offset: 2px; border-radius: var(--px-r-sm); }
+body.proto .sheetup-c .sheetup-body { padding: 0 0 var(--px-4) 32px; display: grid; gap: var(--px-3); }
+@media (max-width: 760px) { body.proto .sheetup-c > summary { align-items: flex-start; flex-wrap: wrap; } body.proto .sheetup-c .sheetup-q { flex: 1 1 200px; } body.proto .sheetup-c .sheetup-body { padding-left: 0; } }

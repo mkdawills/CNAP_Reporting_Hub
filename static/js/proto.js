@@ -46,6 +46,23 @@
         if (dot) dot.className = "p21-dot p21-none";
         return;
       }
+      // Optional sections show no marker until something is typed in them, so an empty
+      // section never looks finished (MW 2026-11-05).
+      if (!(a.dataset.req || "").trim()) {
+        var sec = document.querySelector(a.getAttribute("href"));
+        var typed = sec && Array.prototype.some.call(sec.querySelectorAll("textarea, input[type=text], input[type=number], input[type=date], select, input[type=radio]:checked, input[type=checkbox]:checked"), function (el) {
+          return (el.type === "radio" || el.type === "checkbox") ? true : (el.value || "").trim() !== "";
+        });
+        if (!typed) {
+          if (dot) { dot.className = "p21-dot p21-none"; dot.textContent = ""; }
+          var mt0 = dot && dot.nextElementSibling && dot.nextElementSibling.querySelector(".p21-misstext");
+          if (mt0) mt0.hidden = true;
+          a.dataset.state = "";
+          if (sr) sr.textContent = " (Optional)";
+          a.title = "Optional";
+          return;
+        }
+      }
       var n = missingIn(a);
       a.dataset.state = n ? "missing" : "ok";
       // The words sit in the list itself ("3 missing"), so no key is needed (MW 2026-11-05).
