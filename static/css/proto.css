@@ -844,3 +844,17 @@ body.proto .cp30-file input { max-width: 100%; }
   body.proto .p21-layout:not(.p21-nonav) .p21-bar { margin-left: 0; margin-right: 0; border-radius: 0; }
 }
 @media (max-width: 860px) { body.proto .si-photo { order: 2; } body.proto .si-card { order: 1; } }
+/* Rating scales: "Not applicable" sits at the end of the same row, set apart by a gap and a line, and is
+   spelled out, so it never reads as part of answer 1 (MW 2026-11-05). */
+body.proto .p21 .scale:not(.yn) .scale-row { display: flex; flex-wrap: nowrap; align-items: stretch; gap: 0; }
+body.proto .p21 .scale:not(.yn) .scale-pts { flex: 1 1 auto; max-width: 620px; }
+body.proto .p21 .scale-na { flex: none; display: flex; align-items: stretch; margin-left: var(--px-4); padding-left: var(--px-4); border-left: 1px solid var(--px-line-strong); }
+body.proto .p21 .scale-na .na-tile { min-width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+body.proto .p21 .scale-na .na-tile > span { font-size: 0; }
+body.proto .p21 .scale-na .na-tile > span::after { content: "Not applicable"; font-size: var(--px-fs-xs); line-height: 1.25; text-align: center; color: var(--px-ink-2); }
+@media (max-width: 760px) {
+  body.proto .p21 .scale:not(.yn) .scale-row { flex-direction: column; }
+  body.proto .p21 .scale-na { margin: var(--px-2) 0 0; padding: var(--px-2) 0 0; border-left: 0; border-top: 1px solid var(--px-line); }
+  body.proto .p21 .scale-na .na-tile { flex-direction: row; justify-content: flex-start; padding: 8px 12px; }
+}
+@media (max-width: 760px) { body.proto .p21 .scale:not(.yn) .scale-pts { flex: 0 0 auto; max-width: none; } }
