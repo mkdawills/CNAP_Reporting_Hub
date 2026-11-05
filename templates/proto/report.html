@@ -35,8 +35,10 @@
   {% endif %}
 
   </div>
+  </div>
+  <div class="px-onpage-layout">
   <nav class="px-onpage" aria-label="On this page">
-    <p class="px-label">On this page</p>
+    <div class="p21-navtop"><p class="px-label">On this page</p><button type="button" class="p21-collapse" data-navtoggle aria-expanded="true" title="Hide this list to give the page more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
     <ol>
       <li><a href="#r90-part1" data-onpage><span class="px-onpage-n">1</span>Combined results</a>
         {% if tables %}<ol>{% for t in tables %}<li><a href="#r90-sec{{ t.no }}" data-onpage>{% if t.skip_main %}{{ t.lon_title|admin_section_name }}{% else %}{{ t.sec_name|admin_section_name }}{% endif %}</a></li>{% endfor %}</ol>{% endif %}</li>
@@ -45,8 +47,6 @@
         {% if who or rows %}<ol>{% if who %}<li><a href="#r90-who" data-onpage>Who received and answered</a></li>{% endif %}{% if rows %}<li><a href="#r90-rows" data-onpage>Individual responses</a></li>{% endif %}</ol>{% endif %}</li>{% endif %}
     </ol>
   </nav>
-  </div>
-  <div class="px-onpage-layout">
   <div class="px-onpage-main">
   {# ======================================================== 1. combined results #}
   <div class="px-rollbar foldall taskfold r90-pagebar"><button type="button" data-pageroll="open" title="Opens every part and every section on this page.">Show all</button><button type="button" data-pageroll="close" title="Rolls the page up to its three numbered parts.">Collapse all</button></div>

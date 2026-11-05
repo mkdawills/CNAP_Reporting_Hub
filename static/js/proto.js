@@ -178,10 +178,29 @@ document.addEventListener("click", function (e) {
     btn.setAttribute("aria-expanded", String(!closed));
     btn.querySelector(".p21-cw").textContent = closed ? "Show" : "Hide";
     btn.title = closed ? "Show the list of sections again." : "Hide this list to give the form more room. You can bring it back any time.";
-    if (save) { try { localStorage.setItem("p21-nav-closed", closed ? "1" : "0"); } catch (e) {} }
+    if (save) { try { localStorage.setItem("px-nav-closed", closed ? "1" : "0"); } catch (e) {} }
   }
   var saved = null;
-  try { saved = localStorage.getItem("p21-nav-closed"); } catch (e) {}
+  try { saved = localStorage.getItem("px-nav-closed"); } catch (e) {}
   set(saved === "1", false);
   btn.addEventListener("click", function () { set(!layout.classList.contains("navclosed"), true); });
+})();
+
+/* "On this page" Hide on every long page (MW 2026-11-05, option A). One remembered choice for all pages. */
+(function () {
+  document.querySelectorAll(".px-onpage [data-navtoggle]").forEach(function (btn) {
+    var layout = btn.closest(".px-onpage-layout");
+    if (!layout) return;
+    function set(closed, save) {
+      layout.classList.toggle("navclosed", closed);
+      btn.setAttribute("aria-expanded", String(!closed));
+      btn.querySelector(".p21-cw").textContent = closed ? "Show" : "Hide";
+      btn.title = closed ? "Show the list of sections again." : "Hide this list to give the page more room. You can bring it back any time.";
+      if (save) { try { localStorage.setItem("px-nav-closed", closed ? "1" : "0"); } catch (e) {} }
+    }
+    var saved = null;
+    try { saved = localStorage.getItem("px-nav-closed"); } catch (e) {}
+    set(saved === "1", false);
+    btn.addEventListener("click", function () { set(!layout.classList.contains("navclosed"), true); });
+  });
 })();
