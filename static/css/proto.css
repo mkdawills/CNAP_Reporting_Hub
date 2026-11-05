@@ -945,3 +945,6 @@ body.proto .px-mast:not(.p21-mast)::after {
 @media (prefers-reduced-motion: reduce) { body.proto .px-mast::after, body.proto .px-mast:not(.p21-mast)::after, body.proto .p21-mast::after { animation: none !important; opacity: 0 !important; } }
 /* Opt-out (MW 2026-11-05, option B): white with a thin outline, a separate choice; gray stays with the title panel. */
 body.proto .p21-optout { background: var(--px-surface); border: 1px solid var(--px-line-strong); }
+/* Read-only forms show no markers, so the list drops the empty marker space and names start at the left (MW 2026-11-05). */
+body.proto .p21-nav:not([data-editable]) a[data-nav] > span:first-child:empty,
+body.proto .p21-nav:not([data-editable]) a[data-nav] > .p21-dot { display: none; }
