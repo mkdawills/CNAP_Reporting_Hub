@@ -3,7 +3,7 @@
 <details class="px-roll r90-sec" id="r90-sec{{ t.no }}">
   <summary title="Click to see how answers were spread and the full item-by-item table.">
     <span class="px-roll-t"><span class="px-label">Table {% if t.skip_main %}{{ t.lon.no }}{% else %}{{ t.no }}{% endif %} · {% if t.skip_main %}Year-by-year averages{% else %}{{ t.title }}{% endif %}</span>
-      <h3 class="px-h2" id="r90-t{{ t.no }}">{% if t.skip_main %}{{ t.lon_title }}{% else %}{{ t.sec_name }}{% endif %}</h3>
+      <h3 class="px-h2" id="r90-t{{ t.no }}">{% if t.skip_main %}{{ t.lon_title|admin_section_name }}{% else %}{{ t.sec_name|admin_section_name }}{% endif %}</h3>
       {% if not t.skip_main and t.glance %}<span class="px-roll-figs r90-rollfigs"><span><b>{{ t.grand_mean|floatformat:1 }}</b>average of {{ t.scale|length }} ({{ t.glance.word }})</span><span><b class="pos">{{ t.glance.top_pct }}%</b>{{ t.glance.top_label|lower }}</span><span><b class="neg">{{ t.glance.bot_pct }}%</b>{{ t.glance.bot_label|lower }}</span><span>{{ t.rows|length }} item{{ t.rows|length|pluralize }}</span></span>{% endif %}
     </span><span class="px-roll-cue" aria-hidden="true"></span>
   </summary>
@@ -65,7 +65,7 @@
 {% endif %}
 {% if t.lon and t.lon.periods|length > 1 %}
 <div class="r90-lon">
-  <p class="px-label r90-lonlabel">Table {{ t.lon.no }} · {% with first=t.lon.periods|first last=t.lon.periods|last %}{{ first.short_label }} to {{ last.short_label }} averages{% endwith %}</p><h4 class="px-h3" id="r90-lon{{ t.lon.no }}">Year by year: {{ t.lon_title }}</h4>
+  <p class="px-label r90-lonlabel">Table {{ t.lon.no }} · {% with first=t.lon.periods|first last=t.lon.periods|last %}{{ first.short_label }} to {{ last.short_label }} averages{% endwith %}</p><h4 class="px-h3" id="r90-lon{{ t.lon.no }}">Year by year: {{ t.lon_title|admin_section_name }}</h4>
   {% with tr=t.lon.trend %}{% if tr %}
 <div class="trend">
   <figure class="trend-fig">

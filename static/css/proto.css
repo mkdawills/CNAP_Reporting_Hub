@@ -628,3 +628,6 @@ body.proto .px-onpage ol ol a { color: color-mix(in srgb, var(--px-brand) 78%, v
 body.proto .px-onpage a:hover { color: var(--px-brand-ink); background: var(--px-brand-tint); text-decoration: underline; text-underline-offset: 3px; }
 body.proto .p21-nav a { color: var(--px-brand); }
 body.proto .p21-nav a:hover { color: var(--px-brand-ink); background: var(--px-brand-tint); text-decoration: underline; text-underline-offset: 3px; }
+/* Screen 90: the Identifiable information box extends outward, so its 3 lines up exactly with the 1 and 2 (MW 2026-11-05). */
+body.proto .r90 .r90-ident { --r90-pad: var(--px-6); padding: var(--px-5) var(--r90-pad); margin-left: calc(-1 * (var(--r90-pad) + 1px)); margin-right: calc(-1 * (var(--r90-pad) + 1px)); }
+@media (max-width: 760px) { body.proto .r90 .r90-ident { --r90-pad: 15px; } }

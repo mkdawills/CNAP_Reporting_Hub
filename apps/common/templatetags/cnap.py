@@ -417,3 +417,17 @@ def usd(value):
         return f"${float(value):,.0f}"
     except (TypeError, ValueError):
         return value
+
+
+# Section titles written in the respondent's voice ("My mentor or mentors") read wrongly on an
+# administrator's results page, where "my" would mean the administrator (MW 2026-11-05).
+# Display only: the survey itself keeps its wording.
+_ADMIN_SECTION_NAMES = {
+    "My Mentor or Mentors Survey": "Mentees’ Ratings of Their Mentors",
+    "My Mentor or Mentors Over Time": "Mentees’ Ratings of Their Mentors Over Time",
+}
+
+
+@register.filter
+def admin_section_name(value):
+    return _ADMIN_SECTION_NAMES.get(str(value or ""), value)

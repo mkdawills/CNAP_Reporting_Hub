@@ -37,7 +37,7 @@
     <p class="px-label">On this page</p>
     <ol>
       <li><a href="#r90-part1" data-onpage><span class="px-onpage-n">1</span>Combined results</a>
-        {% if tables %}<ol>{% for t in tables %}<li><a href="#r90-sec{{ t.no }}" data-onpage>{% if t.skip_main %}{{ t.lon_title }}{% else %}{{ t.sec_name }}{% endif %}</a></li>{% endfor %}</ol>{% endif %}</li>
+        {% if tables %}<ol>{% for t in tables %}<li><a href="#r90-sec{{ t.no }}" data-onpage>{% if t.skip_main %}{{ t.lon_title|admin_section_name }}{% else %}{{ t.sec_name|admin_section_name }}{% endif %}</a></li>{% endfor %}</ol>{% endif %}</li>
       {% if period.assignments.exists and not is_report or followups and followups.counts %}<li><a href="#r90-part2" data-onpage><span class="px-onpage-n">2</span>Themes and written answers</a></li>{% endif %}
       {% if who or rows or deid_blocked %}<li><a href="#r90-part3" data-onpage><span class="px-onpage-n">3</span>Identifiable information</a>
         {% if who or rows %}<ol>{% if who %}<li><a href="#r90-who" data-onpage>Who received and answered</a></li>{% endif %}{% if rows %}<li><a href="#r90-rows" data-onpage>Individual responses</a></li>{% endif %}</ol>{% endif %}</li>{% endif %}
