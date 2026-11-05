@@ -29,6 +29,7 @@ urlpatterns = [
     path("outcomes/new/<slug:kind>/", ov.new, name="outcome_new"),
     path("outcomes/<slug:kind>/<int:pk>/", ov.update, name="outcome_update"),
     path("outcomes/<slug:kind>/<int:pk>/confirm/", ov.confirm, name="outcome_confirm"),
+    path("outcomes/<slug:kind>/<int:pk>/people/", ov.people, name="outcome_people"),
     path("outcomes/plans/<slug:kind>/", ov.plans, name="outcome_plans"),
     path("outcomes/delegates/add/", ov.delegate_add, name="outcome_delegate_add"),
     path("outcomes/delegates/<int:pk>/end/", ov.delegate_end, name="outcome_delegate_end"),

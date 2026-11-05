@@ -7,7 +7,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from apps.common import prototype
 from apps.common.enums import GrantStatus, PeriodStatus, PublicationStatus
+from apps.outcomes import journey
 from apps.outcomes import services as os
 from apps.outcomes.models import GrantSubmission, OutcomeDelegate, Publication
 from apps.people.models import Person
@@ -71,7 +73,14 @@ def _owner(request):
     if pk:
         owner = get_object_or_404(Person, pk=pk)
         if not os.can_act_for(request.user, owner):
-            raise PermissionDenied("You can’t enter publications or grants for this person.")
+            if not journey.enabled():
+                raise PermissionDenied("You can’t enter publications or grants for this person.")
+            # Prototype screen 5: CNAP people involved in someone else's item come back to their own
+            # page after an update. They still see only items they are linked to (MW 2026-11-05).
+            pk = None
+        else:
+            return owner, owners
+    if pk:
         return owner, owners
     if not owners:
         raise PermissionDenied(
@@ -94,10 +103,15 @@ def home(request):
     delegates = OutcomeDelegate.objects.filter(owner=owner, ended_at__isnull=True).select_related(
         "delegate"
     )
+    tpl = prototype.template(request, "outcomes", "portal/outcomes.html")
+    extra = {}
+    if tpl != "portal/outcomes.html":
+        extra = _journey_cards(st)
     return render(
         request,
-        "portal/outcomes.html",
+        tpl,
         {
+            **extra,
             "owner": owner,
             "owners": owners,
             "period": period,
@@ -115,6 +129,30 @@ def home(request):
             ),
         },
     )
+
+
+def _journey_cards(st):
+    """Prototype screen 5: one card per paper or proposal, its latest attempt only; earlier attempts
+    show on the card's track. Items still planned or submitted come first, those to review on top."""
+    review = {("pub", p.pk) for p in st["review_pubs"]} | {("grant", g.pk) for g in st["review_grants"]}
+    later_pubs = set(
+        Publication.objects.filter(resubmission_of__in=st["pubs"], archived_at__isnull=True).values_list(
+            "resubmission_of_id", flat=True
+        )
+    )
+    latest = {}
+    for g in st["grants"]:
+        if g.grant_family_id not in latest or g.version_no > latest[g.grant_family_id].version_no:
+            latest[g.grant_family_id] = g
+    items = [("pub", p) for p in st["pubs"] if p.pk not in later_pubs] + [("grant", g) for g in latest.values()]
+    cards = [journey.card(k, o, review=(k, o.pk) in review) for k, o in items]
+    open_ = sorted((c for c in cards if c["open"]), key=lambda c: (not c["review"], c["kind"], c["title"].lower()))
+    return {
+        "open_cards": open_,
+        "done_pubs": [c for c in cards if not c["open"] and c["kind"] == "pub"],
+        "done_grants": [c for c in cards if not c["open"] and c["kind"] == "grant"],
+        "role_choices": journey.ROLE_CHOICES,
+    }
 
 
 def _start_resources(owner):
@@ -334,10 +372,25 @@ def update(request, kind, pk):
             rrid = rrid_answers(form)
             for name in form.rrid_fields.values():
                 d.pop(name, None)
+        was = obj.status
         if kind == "pub":
             created = os.update_publication(request.user, obj, to, d, res, prj, other, rrid=rrid)
         else:
             created = os.update_grant(request.user, obj, to, d, res, prj, other, owner=owner)
+        if journey.enabled():
+            # Prototype screen 5 (MW 2026-11-05): a resubmission keeps everyone involved, and the
+            # other people involved hear right away who changed what.
+            if created:
+                journey.copy_people(kind, obj, created)
+            words = journey.WORDS[kind]
+            what = (
+                f"changed the status from {words[was]} to {words[to]}"
+                if to != was
+                else "updated the details"
+            )
+            if created:
+                what += " and started the next attempt"
+            journey.notify(kind, obj, request.user, what, request=request)
         if (
             kind == "pub"
             and to == "published"
@@ -569,3 +622,31 @@ __all__ = [
     "GrantStatus",
     "PublicationStatus",
 ]
+
+
+@login_required
+@require_POST
+def people(request, kind, pk):
+    """Prototype screen 5: add or remove a CNAP person involved in a paper or proposal (MW 2026-11-05).
+    Anyone who can update the item can do this; the first person linked always stays."""
+    from django.http import Http404
+
+    if not journey.enabled() or kind not in ("pub", "grant"):
+        raise Http404
+    obj, owner = _obj(kind, pk, request)
+    person = get_object_or_404(Person, pk=request.POST.get("person"), archived_at__isnull=True)
+    title = obj.title if kind == "pub" else obj.project_title
+    if request.POST.get("action") == "remove":
+        if journey.remove_person(kind, obj, person):
+            messages.success(request, f"{person} is no longer listed on “{title[:60]}.”")
+        else:
+            messages.warning(request, "The person who entered this item always stays listed.")
+    else:
+        role = request.POST.get("role", "")
+        if journey.add_person(kind, obj, person, role, request.POST.get("role_other", "").strip()):
+            label = dict(journey.ROLE_CHOICES).get(role, "Co-author") if kind == "grant" else "a co-author"
+            journey.notify(kind, obj, request.user, f"added you as {label}", request=request, only={person.pk})
+            messages.success(request, f"{person} can now see and update “{title[:60]}.” We emailed them.")
+        else:
+            messages.info(request, f"{person} is already listed.")
+    return redirect(reverse("portal:outcomes") + f"#item-{kind}-{obj.pk}")

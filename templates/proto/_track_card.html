@@ -1,0 +1,47 @@
+{% load cnap %}{# Prototype screen 5: one paper or proposal as a progress track (MW 2026-11-05). #}
+<article class="o36-card{% if c.review %} review{% endif %}" id="item-{{ c.kind }}-{{ c.obj.pk }}" aria-labelledby="t-{{ c.kind }}-{{ c.obj.pk }}">
+  <header class="o36-head">
+    <div class="o36-headt">
+      <p class="px-label">{% if c.kind == 'pub' %}Paper{% else %}Grant proposal · {{ c.obj.version_label }}{% endif %}{% if c.review %} <span class="px-status" data-s="in_progress">Please review</span>{% endif %}</p>
+      <h3 class="o36-ttl" id="t-{{ c.kind }}-{{ c.obj.pk }}">{{ c.title }}</h3>
+      {% if c.sub %}<p class="px-note">{{ c.sub }}</p>{% endif %}
+    </div>
+    {% if window.0 %}<div class="o36-acts">
+      {% if c.open %}
+        <a class="px-btn small" href="{% url 'portal:outcome_update' c.kind c.obj.pk %}?for={{ owner.pk }}" title="Record the next step, such as submitted, published, funded, or not funded.">Update progress</a>
+        {% if c.review %}<form method="post" action="{% url 'portal:outcome_confirm' c.kind c.obj.pk %}">{% csrf_token %}<button class="px-btn small quiet" title="Nothing has changed since the last reporting period.">No change</button></form>{% endif %}
+        <a class="px-link" href="{% url 'portal:outcome_update' c.kind c.obj.pk %}?to={{ c.obj.status }}&amp;for={{ owner.pk }}" title="Fix or add details without changing the stage.">Edit details</a>
+      {% else %}
+        {% if c.obj.status == 'not_funded' or c.obj.status == 'declined' %}{% with last=c.attempts|last %}{% if last.obj.pk == c.obj.pk %}<a class="px-btn small" href="{% url 'portal:outcome_update' c.kind c.obj.pk %}?to={{ c.obj.status }}&amp;for={{ owner.pk }}" title="Answer Yes to “Do you plan to resubmit?” and the next attempt starts, already filled in.">Plan a resubmission</a>{% endif %}{% endwith %}{% endif %}
+        <a class="px-btn small quiet" href="{% url 'portal:outcome_update' c.kind c.obj.pk %}?to={{ c.obj.status }}&amp;for={{ owner.pk }}" title="See or change what was recorded.">View or edit</a>
+      {% endif %}
+    </div>{% endif %}
+  </header>
+
+  <ol class="o36-track" aria-label="Progress">
+    {% for s in c.stages %}<li class="{{ s.state }}">
+      <span class="o36-dot" aria-hidden="true">{% if 'done' in s.state %}{% if 'bad' in s.state %}–{% else %}✓{% endif %}{% endif %}</span>
+      <span class="o36-sw">{{ s.word }}<span class="px-sr">{% if s.state == 'now' %} (current stage){% elif 'done' in s.state %} (reached){% else %} (not yet){% endif %}</span></span>
+      <span class="o36-sd">{% if s.date %}{{ s.date|date:"F j, Y" }}{% elif s.planned_for %}Planned for {% if s.day_known %}{{ s.planned_for|date:"F j, Y" }}{% else %}{{ s.planned_for|date:"F Y" }}{% endif %}{% elif s.state == 'next' %}Not yet{% endif %}</span>
+      {% if s.detail %}<span class="o36-sx">{{ s.detail }}</span>{% endif %}
+    </li>{% endfor %}
+  </ol>
+
+  {% if c.attempts|length > 1 %}<div class="o36-attempts"><span class="px-label">{% if c.kind == 'grant' %}Every submission of this proposal{% else %}Every attempt at this paper{% endif %}</span>
+    <ol>{% for a in c.attempts %}<li class="{% if a.obj.pk == c.obj.pk %}this{% endif %} s-{{ a.status }}"><b>{{ a.label }}</b> {{ a.word }}</li>{% endfor %}</ol></div>{% endif %}
+
+  <div class="o36-people">
+    <span class="px-label">CNAP people involved</span>
+    <ul>{% for r in c.people %}<li><span class="o36-pn">{{ r.person }}</span> <span class="px-note">{{ r.role }}{% if r.lead %} · entered it{% endif %}</span>
+      {% if window.0 and not r.lead %}<form method="post" action="{% url 'portal:outcome_people' c.kind c.obj.pk %}">{% csrf_token %}<input type="hidden" name="person" value="{{ r.person.pk }}"><button class="px-link quietlink" name="action" value="remove" title="Take this person off the item. They will no longer see it.">Remove</button></form>{% endif %}</li>{% endfor %}</ul>
+    {% if window.0 %}<details class="px-more o36-addp"><summary title="Add a co-investigator, co-author, or other CNAP person involved. They can see and update this item, and they get an email when it changes.">Add a CNAP person involved</summary>
+      <form method="post" action="{% url 'portal:outcome_people' c.kind c.obj.pk %}" class="o36-addform">{% csrf_token %}<input type="hidden" name="action" value="add">
+        <label><span class="px-label">Person</span><select name="person" required><option value="">Please choose…</option>{% for p in roster %}{% if p.pk not in c.ids %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label>
+        {% if c.kind == 'grant' %}<label><span class="px-label">Role</span><select name="role" data-role>{% for v, l in role_choices %}<option value="{{ v }}" {% if v == 'co_i' %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></label>
+        <label data-other-sel-box hidden><span class="px-label">Please describe the role</span><input type="text" name="role_other" maxlength="200" placeholder="For example: Significant contributor"></label>{% endif %}
+        <button class="px-btn small" title="Add this person. We email them right away.">Add</button>
+      </form>
+      <p class="px-note">The person can then see and update this item.<br>Everyone involved gets an email when someone changes it.</p>
+    </details>{% endif %}
+  </div>
+</article>

@@ -19,6 +19,7 @@ SCREENS = {
     "form:progress_pilot": "proto/progress_form.html",  # Screen 21 (this form only)
     "dashboard": "proto/dashboard.html",  # Screen 53
     "results:mentee_survey": "proto/report.html",  # Screen 90 (this form only)
+    "outcomes": "proto/outcomes.html",  # Screen 36, progress tracks (prototype screen 5)
 }
 
 

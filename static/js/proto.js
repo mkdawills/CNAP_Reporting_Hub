@@ -149,3 +149,13 @@ document.addEventListener("click", function (e) {
   main.querySelectorAll("details.r90-partroll").forEach(function (d) { d.open = open; });
   if (open) main.querySelectorAll("details.px-roll").forEach(function (d) { d.open = true; });
 });
+
+/* Prototype screen 5: the role box opens only when "Other" is chosen (MW: every Other opens a text box). */
+(function () {
+  function sync(sel) {
+    var box = sel.closest("form").querySelector("[data-other-sel-box]");
+    if (box) box.hidden = sel.value !== "other";
+  }
+  document.querySelectorAll("select[data-role]").forEach(sync);
+  document.addEventListener("change", function (e) { if (e.target.matches && e.target.matches("select[data-role]")) sync(e.target); });
+})();

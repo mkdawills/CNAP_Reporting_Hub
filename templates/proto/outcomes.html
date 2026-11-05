@@ -1,0 +1,98 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Publications, talks, and grants · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Prototype screen 5 (MW 2026-11-05): each paper and proposal as a progress track, with the CNAP people involved. #}
+{# Same view, data, forms, and permissions as portal/outcomes.html; people links use the existing tables. #}
+<div class="o36">
+  <div class="px-top">
+  <div class="px-top-main">
+  <header class="px-mast">
+    <p class="px-eyebrow">My work</p>
+    <div class="px-mast-row">
+      <h1 class="px-title">{% if acting_for_other %}Publications, talks, and grants for {{ owner }}{% else %}Publications, talks, and grants{% endif %}</h1>
+      {% if owners|length > 1 %}<form method="get" class="o36-for"><label><span class="px-label">Entering for</span>
+        <select name="for" onchange="this.form.submit()" title="Choose whose records to show. You can enter for people who asked you to.">{% for o in owners %}<option value="{{ o.pk }}" {% if o == owner %}selected{% endif %}>{% if o == request.user.person %}Myself{% else %}{{ o }}{% endif %}</option>{% endfor %}</select></label>
+        <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>{% endif %}
+    </div>
+    <ul class="px-facts">
+      <li><span class="px-label">In progress</span><span class="v">{{ open_cards|length }}</span></li>
+      <li><span class="px-label">Papers finished</span><span class="v">{{ done_pubs|length }}</span></li>
+      <li><span class="px-label">Proposals decided</span><span class="v">{{ done_grants|length }}</span></li>
+      <li><span class="px-label">Talks and posters</span><span class="v">{{ presentations|length }}</span></li>
+    </ul>
+  </header>
+  {% if not window.0 %}<div class="px-callout warn" role="status"><p><strong>Adding and updating opens again on {{ window.1|date:"l, F j" }}.</strong><br>The Center is finishing this period’s report.<br>Your records are safe, and you can read them below.</p></div>
+  {% elif period %}<div class="px-callout{% if st.done %} ok{% endif %}" role="status"><p>{% if st.done %}<strong>You’re all caught up for {{ period.name }}.</strong><br>Thank you.{% else %}<strong>{{ period.name }}: {% if st.n_review %}{{ st.n_review }} item{{ st.n_review|pluralize }} to review{% if st.n_ask %} and {% endif %}{% endif %}{% if st.n_ask %}{{ st.n_ask }} question{{ st.n_ask|pluralize }} to answer{% endif %}.</strong>{% if st.n_review %}<br>Items to review are marked below.<br>If nothing has changed, please choose “No change.”<br>If something has changed, please choose “Update progress.”{% endif %}{% endif %}</p></div>{% endif %}
+  {% if window.0 %}<div class="o36-add"><span class="px-label">Add</span>
+    <a class="px-btn small quiet" href="{% url 'portal:outcome_new' 'pub' %}?for={{ owner.pk }}" title="Record a paper you plan to submit, have submitted, or have published.">A paper</a>
+    <a class="px-btn small quiet" href="{% url 'portal:outcome_new' 'grant' %}?for={{ owner.pk }}" title="Record a grant proposal you plan to submit or have submitted.">A grant proposal</a>
+    <a class="px-btn small quiet" href="{% url 'portal:presentation_new' %}?for={{ owner.pk }}" title="Record a talk or poster after it has taken place.">A talk or poster</a></div>{% endif %}
+  </div>
+  <nav class="px-onpage" aria-label="On this page">
+    <p class="px-label">On this page</p>
+    <ol>
+      <li><a href="#o36-open" data-onpage>In progress</a></li>
+      <li><a href="#o36-pubs" data-onpage>Finished papers</a></li>
+      <li><a href="#o36-grants" data-onpage>Decided proposals</a></li>
+      <li><a href="#o36-talks" data-onpage>Talks and posters</a></li>
+      {% if not acting_for_other %}<li><a href="#o36-who" data-onpage>Who can enter for you</a></li>{% endif %}
+    </ol>
+  </nav>
+  </div>
+
+  <div class="px-rolls" data-rollgroup>
+    <div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section below at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section below up to its heading.">Collapse all</button></div>
+
+    {# ---------------------------------------------------------------- in progress #}
+    <details class="px-roll" id="o36-open" open>
+      <summary title="Papers and proposals still planned or submitted. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h12"/><path d="M12 7l5 5-5 5"/><circle cx="20" cy="12" r="1.4"/></svg>In progress</h2><span class="px-roll-meta"><b>{{ open_cards|length }}</b> planned or submitted{% if st.n_review %} · <b>{{ st.n_review }}</b> to review{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        {% if st.ask_pubs or st.ask_grants %}<div class="o36-asks">
+          {% if st.ask_pubs %}<form method="post" action="{% url 'portal:outcome_plans' 'pubs' %}" class="o36-ask">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><p>Do you plan to submit any papers?</p><div class="o36-askacts"><button class="px-btn small" name="answer" value="yes">Yes, add one</button><button class="px-btn small quiet" name="answer" value="no">No, not right now</button></div></form>{% endif %}
+          {% if st.ask_grants %}<form method="post" action="{% url 'portal:outcome_plans' 'grants' %}" class="o36-ask">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><p>Do you plan to submit any grant proposals?</p><div class="o36-askacts"><button class="px-btn small" name="answer" value="yes">Yes, add one</button><button class="px-btn small quiet" name="answer" value="no">No, not right now</button></div></form>{% endif %}
+        </div>{% endif %}
+        {% for c in open_cards %}{% include "proto/_track_card.html" %}{% empty %}<p class="px-note">Nothing is planned or submitted right now.</p>{% endfor %}
+      </div>
+    </details>
+
+    {# ---------------------------------------------------------------- finished papers #}
+    <details class="px-roll" id="o36-pubs">
+      <summary title="Papers that were published or declined. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg>Finished papers</h2><span class="px-roll-meta"><b>{{ done_pubs|length }}</b> published or declined</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">{% for c in done_pubs %}{% include "proto/_track_card.html" %}{% empty %}<p class="px-note">No finished papers yet.</p>{% endfor %}</div>
+    </details>
+
+    {# ---------------------------------------------------------------- decided proposals #}
+    <details class="px-roll" id="o36-grants">
+      <summary title="Proposals that were funded or not funded. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/></svg>Decided proposals</h2><span class="px-roll-meta"><b>{{ done_grants|length }}</b> funded or not funded</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">{% for c in done_grants %}{% include "proto/_track_card.html" %}{% empty %}<p class="px-note">No decided proposals yet.</p>{% endfor %}</div>
+    </details>
+
+    {# ---------------------------------------------------------------- talks #}
+    <details class="px-roll" id="o36-talks">
+      <summary title="Talks and posters you have given. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg>Talks and posters</h2><span class="px-roll-meta"><b>{{ presentations|length }}</b> recorded</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <ul class="o36-talks">{% for t in presentations %}<li><div><p class="o36-ttl">{{ t.title }}</p><p class="px-note">{{ t.get_presentation_type_display }}{% if t.event %} · {{ t.event }}{% endif %}{% if t.presented_on %} · {{ t.presented_on|date:"F j, Y" }}{% endif %}</p></div>
+          <span class="px-note">{% if t.cnap_cited %}Acknowledges CNAP{% elif t.cnap_cited is False %}No CNAP acknowledgment{% endif %}</span>
+          {% if window.0 %}<a class="px-btn small quiet" href="{% url 'portal:presentation_edit' t.pk %}?for={{ owner.pk }}" title="Change this talk or poster’s details.">Edit</a>{% endif %}</li>
+        {% empty %}<li class="px-note">No talks or posters recorded yet.</li>{% endfor %}</ul>
+        <p class="px-note">Please add a talk or poster only after it has taken place.<br>NeuroSync presentations don’t count here.</p>
+      </div>
+    </details>
+
+    {# ---------------------------------------------------------------- delegates #}
+    {% if not acting_for_other %}
+    <details class="px-roll" id="o36-who">
+      <summary title="People you have asked to keep these records for you. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>Who can enter for you</h2><span class="px-roll-meta"><b>{{ delegates|length }}</b> {% if delegates|length == 1 %}person{% else %}people{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <p class="px-note">You can let someone, such as a student in your lab, keep these records for you.<br>Those people see and change only your papers, proposals, and talks, never your surveys.</p>
+        <ul class="o36-dels">{% for d in delegates %}<li><span>{{ d.delegate }}</span><form method="post" action="{% url 'portal:outcome_delegate_end' d.pk %}">{% csrf_token %}<button class="px-btn small quiet" title="Stop letting this person enter for you.">Remove</button></form></li>{% empty %}<li class="px-note">No one has been added yet.</li>{% endfor %}</ul>
+        <form method="post" action="{% url 'portal:outcome_delegate_add' %}" class="o36-addform">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}">
+          <label><span class="px-label">Add a person</span><select name="person" required><option value="">Please choose…</option>{% for p in roster %}{% if p != owner %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label>
+          <button class="px-btn small" title="Let this person keep your records.">Add</button></form>
+      </div>
+    </details>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}
