@@ -762,3 +762,19 @@ body.proto .px-top { display: block; }
 }
 @media (max-width: 1180px) { body.proto .px-onpage .p21-collapse { display: none; } body.proto .px-onpage-layout { display: block; } body.proto .px-onpage-layout > .px-onpage { margin-bottom: var(--px-5); } }
 @media (prefers-reduced-motion: reduce) { body.proto .px-onpage-layout { transition: none; } }
+/* A dividing line between "On this page" and the page content (MW 2026-11-05). */
+@media (min-width: 1181px) {
+  body.proto .px-onpage-layout { position: relative; gap: 72px; }
+  body.proto .px-onpage-layout::before { content: ""; position: absolute; top: 0; bottom: 0; left: calc(210px + 36px); width: 1px; background: var(--px-line-strong); }
+  body.proto .px-onpage-layout.navclosed::before { left: calc(64px + 36px); }
+}
+@media (min-width: 981px) {
+  body.proto .p21-layout { position: relative; }
+  body.proto .p21-layout::before { content: ""; position: absolute; top: 0; bottom: 0; left: calc(232px + var(--px-7) / 2); width: 1px; background: var(--px-line-strong); }
+  body.proto .p21-layout.navclosed::before { left: calc(64px + var(--px-7) / 2); }
+}
+/* Section lists in gray; purple only on hover and for the section being read (MW 2026-11-05). */
+body.proto .px-onpage a, body.proto .p21-nav a { color: var(--px-ink-2); }
+body.proto .px-onpage ol ol a { color: var(--px-muted); }
+body.proto .px-onpage a:hover, body.proto .p21-nav a:hover { color: var(--px-brand-ink); }
+body.proto .px-onpage a.on, body.proto .p21-nav a.on { color: var(--px-brand-ink); }
