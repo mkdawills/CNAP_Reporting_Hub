@@ -52,8 +52,11 @@
   </section>
 
   {# ---------------------------------------------------------------- next actions #}
-  <section class="px-section d53-next" aria-labelledby="d53-next-h">
-    <div class="px-section-head"><h2 class="px-h2" id="d53-next-h">What needs your attention</h2></div>
+  <div class="px-rolls" data-rollgroup>
+  <div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section below at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section below up to its heading.">Collapse all</button></div>
+  <details class="px-roll d53-next" id="d53-next">
+    <summary title="Things to act on this period, built from the numbers above."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-next-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>What needs your attention</h2><span class="px-roll-meta">{% if is_open and open_n %}<b>{{ open_n }}</b> form{{ open_n|pluralize }} not finished{% if exempt_n %} · <b>{{ exempt_n }}</b> exemption{{ exempt_n|pluralize }}{% endif %}{% else %}Nothing urgent{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+    <div class="px-roll-body">
     <ol class="d53-actions">
       {% if is_open and open_n %}<li><div><p class="d53-a-t">{{ open_n }} form{{ open_n|pluralize }} not finished{% if dleft < 0 %}, past the due date{% endif %}</p><p class="px-note">The automatic reminder emails cover most people. A personal note from you often works better late in the period.</p></div>
         <a class="px-btn small quiet" href="?period={{ p.short_label }}&who=not_started#list">See who hasn’t started</a></li>{% endif %}
@@ -65,11 +68,15 @@
         <form method="post" action="{% url 'manage:generate_assignments' p.pk %}">{% csrf_token %}<button class="px-btn small quiet" type="submit">Assign forms</button></form></li>{% endif %}
       {% if not is_open and not open_n %}<li><div><p class="d53-a-t">Nothing needs attention right now.</p></div></li>{% endif %}
     </ol>
-  </section>
+    </div>
+  </details>
 
   {# ---------------------------------------------------------------- by form #}
-  <section class="px-section" aria-labelledby="d53-forms-h">
-    <div class="px-section-head"><h2 class="px-h2" id="d53-forms-h">Completion by form</h2><p class="px-note">Click a number to see exactly who it covers.</p></div>
+  {% with low=form_rows|dictsort:"pct"|first %}
+  <details class="px-roll" id="d53-forms">
+    <summary title="Each form in this period: how many people received it, and how far they have come."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-forms-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V13M9 20V8M14 20v-5M19 20V4"/></svg>Completion by form</h2><span class="px-roll-meta"><b>{{ form_rows|length }}</b> form{{ form_rows|length|pluralize }}{% if low %} · lowest: {{ low.fd.name }}, <b>{{ low.pct }}%</b>{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+    <div class="px-roll-body">
+    <p class="px-note d53-rollnote">Click a number to see exactly who it covers.</p>
     <div class="px-surface d53-tablewrap"><table class="px-table d53-forms" title="Each form in this period: how many people received it, and how far they have come.">
       <thead><tr><th scope="col">Form</th><th scope="col" class="num">Assigned</th><th scope="col" class="num">Finished</th><th scope="col" class="num">Opted out</th><th scope="col">Completion</th></tr></thead>
       <tbody>{% for r in form_rows %}<tr>
@@ -80,11 +87,15 @@
         <td><div class="d53-cell"><div class="px-meter"><span class="m-ok" style="width: {{ r.pct }}%"></span></div><span class="d53-cellpct">{{ r.pct }}%</span></div></td>
       </tr>{% endfor %}</tbody>
     </table></div>
-  </section>
+    </div>
+  </details>
+  {% endwith %}
 
   {# ---------------------------------------------------------------- people #}
-  <section class="px-section" id="list" aria-labelledby="d53-people-h">
-    <div class="px-section-head"><h2 class="px-h2" id="d53-people-h">People and their forms</h2>{% if hidden_names %}<p class="px-note">Core, NeuroSync, and Team Science surveys show as counts only, so no one’s name is tied to those surveys.</p>{% endif %}</div>
+  <details class="px-roll" id="list"{% if f_form or f_status or f_who %} open{% endif %}>
+    <summary title="Every assignment in this period, one row per person per form, with filters and actions."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-people-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>People and their forms</h2><span class="px-roll-meta"><b>{{ rows_n }}</b> assignment{{ rows_n|pluralize }}{% if f_form or f_status or f_who %} · filtered{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+    <div class="px-roll-body">
+    {% if hidden_names %}<p class="px-note d53-rollnote">Core, NeuroSync, and Team Science surveys show as counts only, so no one’s name is tied to those surveys.</p>{% endif %}
     {% if named_forms %}
     <form method="get" class="d53-filters px-surface"><input type="hidden" name="period" value="{{ p.short_label }}">
       <label><span class="px-label">Form</span><select name="form"><option value="">All forms</option>{% for f in named_forms %}<option value="{{ f.code }}" {% if f.code == f_form %}selected{% endif %}>{{ f.name }}</option>{% endfor %}</select></label>
@@ -107,7 +118,9 @@
       </tr>{% empty %}<tr><td colspan="4"><div class="px-empty">No forms match these filters.</div></td></tr>{% endfor %}</tbody>
     </table></div>
     {% endif %}
-  </section>
+    </div>
+  </details>
+  </div>
   {% endwith %}{% endwith %}{% endwith %}
 {% endif %}
 </div>

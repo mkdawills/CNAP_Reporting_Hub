@@ -6,5 +6,5 @@
     <p class="t3-sub">{% if cp_check.prev_file %}<a href="{% url 'portal:download' cp_check.prev_file.pk %}">Your most recent Current and Pending (PDF)</a> · {% endif %}<a href="https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form" target="_blank" rel="noopener">NIH’s instructions (opens in a new tab)</a></p>
   </div>
   <div class="t3-state"><span class="px-status" data-s="not_started">Not answered</span><span class="t3-time">About 1 min</span></div>
-  <div class="t3-acts"><a class="px-btn small" href="{% url 'portal:cp_check' cp_check.pk %}">Answer</a></div>
+  <div class="t3-acts"><span class="t3-slot"><a class="px-btn small" href="{% url 'portal:cp_check' cp_check.pk %}" title="One question: has your Current and Pending (Other) Support changed?">Answer</a></span><span class="t3-slot"></span><span class="t3-slot"></span></div>
 </li>

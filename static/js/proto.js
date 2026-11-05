@@ -80,3 +80,28 @@
   group();
   table.addEventListener("click", function () { setTimeout(group, 0); });
 })();
+
+/* Roll-ups (MW 2026-11-05): Show all / Collapse all for each group of rolled-up sections, and a
+   link to anything inside a rolled-up section opens that section first. */
+(function () {
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("[data-roll]");
+    if (!b) return;
+    var group = b.closest("[data-rollgroup]");
+    if (!group) return;
+    group.querySelectorAll(":scope details.px-roll").forEach(function (d) {
+      if (d.parentElement.closest("details.px-roll") && group.contains(d.parentElement.closest("details.px-roll"))) return;
+      d.open = b.dataset.roll === "open";
+    });
+  });
+  function reveal(id) {
+    var t = id && document.getElementById(id);
+    for (var d = t && t.closest("details"); d; d = d.parentElement.closest("details")) d.open = true;
+    if (t) t.scrollIntoView();
+  }
+  if (location.hash) reveal(decodeURIComponent(location.hash.slice(1)));
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a && a.getAttribute("href").length > 1) reveal(a.getAttribute("href").slice(1));
+  });
+})();

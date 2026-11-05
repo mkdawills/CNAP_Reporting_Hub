@@ -1,7 +1,14 @@
 {% load cnap %}{# Prototype result sections (Screen 90). Every number comes from the same report data. #}
 {% for t in tables %}
-{% if not t.skip_main %}<section class="r90-sec" aria-labelledby="r90-t{{ t.no }}">
-  <header class="r90-sechead"><p class="px-label">Table {{ t.no }} · {{ t.title }}</p><h3 class="px-h2" id="r90-t{{ t.no }}">{{ t.sec_name }}</h3></header>
+<details class="px-roll r90-sec" id="r90-sec{{ t.no }}">
+  <summary title="Click to see how answers were spread and the full item-by-item table.">
+    <span class="px-roll-t"><span class="px-label">Table {% if t.skip_main %}{{ t.lon.no }}{% else %}{{ t.no }}{% endif %} · {% if t.skip_main %}Year-by-year averages{% else %}{{ t.title }}{% endif %}</span>
+      <h3 class="px-h2" id="r90-t{{ t.no }}">{% if t.skip_main %}{{ t.lon_title }}{% else %}{{ t.sec_name }}{% endif %}</h3>
+      {% if not t.skip_main and t.glance %}<span class="px-roll-figs r90-rollfigs"><span><b>{{ t.grand_mean|floatformat:1 }}</b>average of {{ t.scale|length }} ({{ t.glance.word }})</span><span><b class="pos">{{ t.glance.top_pct }}%</b>{{ t.glance.top_label|lower }}</span><span><b class="neg">{{ t.glance.bot_pct }}%</b>{{ t.glance.bot_label|lower }}</span><span>{{ t.rows|length }} item{{ t.rows|length|pluralize }}</span></span>{% endif %}
+    </span><span class="px-roll-cue" aria-hidden="true"></span>
+  </summary>
+  <div class="px-roll-body">
+{% if not t.skip_main %}
   {% with g=t.glance %}{% if g %}
   <div class="r90-glance">
     <div class="r90-fig"><span class="px-label">Average rating</span><span class="px-num">{{ t.grand_mean|floatformat:1 }}<small> of {{ t.scale|length }}</small></span><span class="r90-word">{{ g.word }}</span></div>
@@ -55,10 +62,10 @@
 </table></div>
 </div>
   {% if t.left_out %}<p class="px-note">{{ t.left_out }} item{{ t.left_out|pluralize }} aren’t shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"that item,those items" }}. This keeps anyone’s answers from being worked out.</p>{% endif %}
-</section>{% endif %}
+{% endif %}
 {% if t.lon and t.lon.periods|length > 1 %}
-<section class="r90-sec r90-lon" aria-labelledby="r90-lon{{ t.lon.no }}">
-  <header class="r90-sechead"><p class="px-label">Table {{ t.lon.no }} · {% with first=t.lon.periods|first last=t.lon.periods|last %}{{ first.short_label }} to {{ last.short_label }} averages{% endwith %}</p><h3 class="px-h2" id="r90-lon{{ t.lon.no }}">{{ t.lon_title }}</h3></header>
+<div class="r90-lon">
+  <p class="px-label r90-lonlabel">Table {{ t.lon.no }} · {% with first=t.lon.periods|first last=t.lon.periods|last %}{{ first.short_label }} to {{ last.short_label }} averages{% endwith %}</p><h4 class="px-h3" id="r90-lon{{ t.lon.no }}">Year by year: {{ t.lon_title }}</h4>
   {% with tr=t.lon.trend %}{% if tr %}
 <div class="trend">
   <figure class="trend-fig">
@@ -93,6 +100,8 @@
 </table></div>
 <p class="small muted mt">{{ "Shading: red is below this table’s middle value, blue is above it; the deeper the color, the further from the middle."|stack }}{% if t.lon.has_sd %} {{ "SDs exist only where the source report gave them."|stack }}{% endif %}</p>
 </details>
-</section>
+</div>
 {% endif %}
+  </div>
+</details>
 {% endfor %}

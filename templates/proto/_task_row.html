@@ -16,15 +16,15 @@
     {% else %}<span class="px-status" data-s="not_started">Not started</span>{% endif %}
     <span class="t3-time">{{ r.time }}</span>
   </div>
-  <div class="t3-acts">
+  <div class="t3-acts">{# three fixed slots, so every button lines up from row to row #}
     {% if r.is_open and r.preview_only %}
-      <a class="px-btn small" href="{% url 'portal:preview' r.a.pk %}">Preview</a>
+      <span class="t3-slot"><a class="px-btn small" href="{% url 'portal:preview' r.a.pk %}" title="Read this form before it opens.">Preview</a></span><span class="t3-slot"></span><span class="t3-slot"></span>
     {% elif r.is_open %}
-      <a class="px-btn small" href="{% url 'portal:form' r.a.pk %}" aria-label="{% if r.a.status == 'in_progress' %}Continue{% else %}Start{% endif %} {{ r.name }}">{% if r.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a>
-      <a class="px-link" href="{% url 'portal:preview' r.a.pk %}" aria-label="Preview {{ r.name }}">Preview</a>
-      {% if r.can_opt_out %}<form method="post" action="{% url 'portal:opt_out' r.a.pk %}">{% csrf_token %}<button class="px-link quietlink" type="submit" title="{{ r.opt_out_note }}" aria-label="Opt out of {{ r.name }}">Opt out</button></form>{% endif %}
+      <span class="t3-slot"><a class="px-btn small" href="{% url 'portal:form' r.a.pk %}" title="{% if r.a.status == 'in_progress' %}Pick up where you left off. Your answers are saved.{% else %}Open this form and begin answering.{% endif %}" aria-label="{% if r.a.status == 'in_progress' %}Continue{% else %}Start{% endif %} {{ r.name }}">{% if r.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a></span>
+      <span class="t3-slot"><a class="px-link" href="{% url 'portal:preview' r.a.pk %}" title="Read every question without answering." aria-label="Preview {{ r.name }}">Preview</a></span>
+      <span class="t3-slot">{% if r.can_opt_out %}<form method="post" action="{% url 'portal:opt_out' r.a.pk %}">{% csrf_token %}<button class="px-link quietlink" type="submit" title="{{ r.opt_out_note }}" aria-label="Opt out of {{ r.name }}">Opt out</button></form>{% endif %}</span>
     {% else %}
-      <a class="px-btn small quiet" href="{% url 'portal:form' r.a.pk %}" aria-label="View {{ r.name }}">View</a>
+      <span class="t3-slot"><a class="px-btn small quiet" href="{% url 'portal:form' r.a.pk %}" title="Read what you sent." aria-label="View {{ r.name }}">View</a></span><span class="t3-slot"></span><span class="t3-slot"></span>
     {% endif %}
   </div>
 </li>

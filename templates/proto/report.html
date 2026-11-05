@@ -35,7 +35,7 @@
   {# ======================================================== 1. combined results #}
   <section class="px-section" aria-labelledby="r90-combined-h">
     <div class="px-section-head"><h2 class="px-h2 r90-part" id="r90-combined-h"><span>1</span>Combined results</h2></div>
-    <div class="r90-secs">{% include "proto/_report_tables.html" with show_codes=True %}</div>
+    <div class="r90-secs px-rolls" data-rollgroup>{% if tables|length > 1 %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section in this part at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section in this part up to its heading.">Collapse all</button></div>{% endif %}{% include "proto/_report_tables.html" with show_codes=True %}</div>
     {% if is_report and not tables %}<p class="px-note">Narrative report. Please read each submission from the list in “Identifiable information.”</p>{% endif %}
   </section>
 
@@ -54,11 +54,12 @@
       {% elif themes %}<ul class="r90-themelist">{% for line in themes.splitlines %}{% if line.strip %}<li>{{ line }}</li>{% endif %}{% endfor %}</ul>
       {% else %}<p class="px-note">{% if snapshot %}No themes written yet.{% else %}Themes are written once results are generated.{% endif %}</p>{% endif %}
     </div>
-    <div class="r90-verbatims">
+    <div class="r90-verbatims px-rolls" data-rollgroup>
       {% if show_verbatims %}
-        {% for v in verbatims %}<details class="r90-vq" open><summary><span class="px-h3">{{ v.prompt }}</span><span class="px-label">{{ v.answers|length }} answer{{ v.answers|length|pluralize }}</span></summary>
+        {% if verbatims|length > 1 %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section in this part at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section in this part up to its heading.">Collapse all</button></div>{% endif %}
+        {% for v in verbatims %}<details class="px-roll r90-vq"><summary title="Click to read every written answer to this question, without names."><span class="px-roll-t"><span class="px-h3">{{ v.prompt }}</span><span class="px-roll-meta"><b>{{ v.answers|length }}</b> written answer{{ v.answers|length|pluralize }}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="px-roll-body">
           {% if v.answers %}<ul class="r90-quotes">{% for t in v.answers %}<li><blockquote>{{ t }}</blockquote></li>{% endfor %}</ul>{% else %}<p class="px-note">No responses.</p>{% endif %}
-        </details>{% endfor %}
+        </div></details>{% endfor %}
       {% elif deid_blocked %}<p class="px-note">Written answers aren’t shown because fewer than 5 people completed this survey. The combined results above still apply.</p>
       {% else %}<p class="px-note">Written answers are visible only to the evaluator and the Center Director and Associate Director.</p>{% endif %}
     </div>
@@ -77,23 +78,27 @@
   {% if who or rows or deid_blocked %}
   <section class="px-section r90-ident" aria-labelledby="r90-ident-h">
     <div class="px-section-head"><h2 class="px-h2 r90-part" id="r90-ident-h"><span>3</span>Identifiable information</h2><p class="px-note">Names and individual responses. Please don’t share them outside the evaluation team.</p></div>
+    <div class="px-rolls" data-rollgroup>
+    {% if who and rows %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section in this part at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section in this part up to its heading.">Collapse all</button></div>{% endif %}
     {% if who %}
-    <details class="r90-who"><summary><span class="px-h3">Who received and answered this survey</span><span class="px-label">Names</span></summary>
+    <details class="px-roll r90-who"><summary title="Names of everyone who received, answered, or has not finished this survey."><span class="px-roll-t"><span class="px-h3">Who received and answered this survey</span><span class="px-roll-meta">Names · <b>{{ who.received|length }}</b> received, <b>{{ who.responded|length }}</b> responded</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="px-roll-body">
       <dl class="r90-wholists">
         <div><dt>Received the survey ({{ who.received|length }})</dt><dd>{{ who.received|join:", " }}</dd></div>
         <div><dt>Responded ({{ who.responded|length }})</dt><dd>{{ who.responded|join:", "|default:"No one yet" }}</dd></div>
         {% if opted_out %}<div><dt>Answered every item ({{ who.full|length }})</dt><dd>{{ who.full|join:", "|default:"No one" }}</dd></div><div><dt>{{ optout_name|default:"Opted out"|capfirst }} ({{ who.opted|length }})</dt><dd>{{ who.opted|join:", "|default:"No one" }}</dd></div>{% endif %}
         {% if who.waiting %}<div><dt>Not finished yet ({{ who.waiting|length }})</dt><dd>{{ who.waiting|join:", " }}</dd></div>{% endif %}
       </dl>
-    </details>
+    </div></details>
     {% endif %}
     {% if rows %}
-    <details class="r90-who"><summary><span class="px-h3">Individual responses{% if mode == 'deidentified' %}, de-identified{% endif %}</span><span class="px-label">{{ rows|length }} response{{ rows|length|pluralize }}</span></summary>
+    <details class="px-roll r90-who"><summary title="One row per response, so you can open any individual answer."><span class="px-roll-t"><span class="px-h3">Individual responses{% if mode == 'deidentified' %}, de-identified{% endif %}</span><span class="px-roll-meta"><b>{{ rows|length }}</b> response{{ rows|length|pluralize }}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="px-roll-body">
       <table class="px-table r90-rows" title="One row per response, so you can open any individual answer."><thead><tr><th scope="col">{% if mode == 'deidentified' %}Respondent{% else %}Person{% endif %}</th><th scope="col">Project or core</th><th scope="col">How it was completed</th><th scope="col"><span class="px-sr">Open</span></th></tr></thead>
         <tbody>{% for r in rows %}<tr><th scope="row">{{ r.label }}</th><td>{{ r.ctx }}</td><td>{% if r.a.status == 'completed_opt_out' %}Opted out{% else %}Answered{% endif %}</td><td class="r90-open"><a class="px-btn small quiet" href="{% url 'manage:response' r.a.pk %}">Read</a></td></tr>{% endfor %}</tbody></table>
-    </details>
+    </div></details>
     {% elif deid_blocked %}<p class="px-note">Individual responses aren’t shown because fewer than 5 people completed this survey.</p>{% endif %}
+    </div>
   </section>
   {% endif %}
 </div>
 {% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}

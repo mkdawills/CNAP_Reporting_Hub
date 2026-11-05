@@ -31,6 +31,8 @@
     {# ------------------------------------------------ section navigator #}
     <nav class="p21-nav" aria-label="Sections of this report">
       <p class="px-label">In this report</p>
+      <p class="p21-key" title="These circles show how much of each section you have answered. They are not choices.">
+        <span><span class="p21-dot" aria-hidden="true"></span>Not answered yet</span><span><span class="p21-dot some" aria-hidden="true"></span>Some answered</span><span><span class="p21-dot all" aria-hidden="true"></span>All answered</span></p>
       <ol>
         {% if intro %}<li><a href="#p21-start" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>What to upload</span></a></li>{% endif %}
         {% for sv in sections %}{% if sv.visible %}<li><a href="#sec-{{ sv.s.code }}" data-nav="{{ sv.s.code }}"><span class="p21-dot" aria-hidden="true"></span><span>{{ sv.s.title|default:"Questions" }}</span><span class="p21-navstate px-sr"></span></a></li>{% endif %}{% endfor %}
@@ -51,16 +53,17 @@
       {% if editable %}
       <section class="p21-finish" id="p21-finish" aria-labelledby="p21-finish-h">
         <h2 class="px-h2" id="p21-finish-h">Review and submit</h2>
-        <dl class="p21-choices">
-          <div><dt>Save draft</dt><dd>Keeps your work, including any file you chose, without sending the report. You can come back any time before the period closes.</dd></div>
-          <div><dt>Submit report</dt><dd>Sends your report to the Center. Every required answer must be complete first.</dd></div>
-        </dl>
+        <p class="px-note">Please choose one. Both buttons are also in the bar at the bottom of the screen.</p>
+        <ul class="p21-choices">
+          <li><button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate title="Saves your work without sending the report.">Save draft</button><p>Keeps your work, including any file you chose, without sending the report.<br>You can come back any time before the period closes.</p></li>
+          <li><button class="px-btn" type="submit" name="action" value="submit" title="Sends your report to the Center.">Submit report</button><p>Sends your report to the Center.<br>Every required answer must be complete first.</p></li>
+        </ul>
       </section>
       <div class="p21-bar" role="region" aria-label="Save or submit">
         <span class="p21-savestate" id="savestate" role="status" aria-live="polite">Answers save as you type.</span>
         <div class="p21-bar-acts">
-          <button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate>Save draft</button>
-          <button class="px-btn" type="submit" name="action" value="submit" id="submitbtn">Submit report</button>
+          <button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate title="Saves your work without sending the report.">Save draft</button>
+          <button class="px-btn" type="submit" name="action" value="submit" id="submitbtn" title="Sends your report to the Center.">Submit report</button>
         </div>
       </div>
       {% endif %}
