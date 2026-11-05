@@ -618,3 +618,7 @@ body.proto .d53-actions li > form .px-btn, body.proto .d53-actions li > a.px-btn
 @media (max-width: 700px) { body.proto .d53-actions li { grid-template-columns: 1fr; } body.proto .d53-actions li > a.px-btn, body.proto .d53-actions li > form { width: 220px; max-width: 100%; } }
 /* Under a rolled-up heading with an icon, the contents start under the title, not the icon (MW 2026-11-05). */
 body.proto details.px-roll:has(.px-roll-h) > .px-roll-body { padding-left: 32px; }
+/* Buttons hug their words; they still share one left edge (MW 2026-11-05). */
+body.proto .d53-actions li > a.px-btn, body.proto .d53-actions li > form { width: auto; justify-self: start; }
+body.proto .d53-actions li > form .px-btn, body.proto .d53-actions li > a.px-btn { width: auto; justify-content: center; }
+body.proto .t3-slot .px-btn { width: auto; }
