@@ -7,12 +7,16 @@ from apps.people.models import Core, Person, Project, RelationshipType
 
 
 class PersonForm(forms.ModelForm):
-    email = forms.EmailField(required=False, help_text="Their main email. Sign-in links go here.")
+    email = forms.EmailField(required=False, help_text="The person’s main email. Sign-in links go here.")
 
     class Meta:
         model = Person
         fields = ["first_name", "last_name", "institution", "department", "position_title", "notes"]
-        widgets = {"notes": forms.Textarea(attrs={"rows": 3})}
+        widgets = {
+            "notes": forms.Textarea(attrs={"rows": 3}),
+            "department": forms.TextInput(attrs={"placeholder": "For example: Psychological Sciences"}),
+            "position_title": forms.TextInput(attrs={"placeholder": "For example: Assistant Professor"}),
+        }
         help_texts = {
             "institution": "Leave as Kansas State University for K-State people. Anyone else signs in by emailed link."
         }
@@ -39,6 +43,8 @@ class PersonEditForm(forms.ModelForm):
         ]
         widgets = {
             "notes": forms.Textarea(attrs={"rows": 3}),
+            "department": forms.TextInput(attrs={"placeholder": "For example: Psychological Sciences"}),
+            "position_title": forms.TextInput(attrs={"placeholder": "For example: Assistant Professor"}),
             "senior_key": forms.Select(
                 choices=[
                     ("unknown", "Automatic (PD/PI and RP Leaders)"),

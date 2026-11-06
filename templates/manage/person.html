@@ -8,7 +8,7 @@
   </div>
   <div class="rosterbox {% if on_roster %}on{% endif %}">
     <span class="rb-chip">{% if on_roster %}On the CNAP roster{% else %}Not on the CNAP roster{% endif %}</span>
-    <span class="small muted">{% if on_roster %}They receive the all-member surveys.{% else %}They receive only what their relationships call for.{% endif %}</span>
+    <span class="small muted">{% if on_roster %}This person receives the all-member surveys.{% else %}This person receives only what this person’s relationships call for.{% endif %}</span>
     {% if can_manage %}<form method="post" action="{% url 'manage:person_roster' p.pk %}">{% csrf_token %}
       {% if on_roster %}<input type="hidden" name="action" value="remove"><button class="btn small ghost" type="submit" data-confirm="Take {{ p }} off the CNAP roster? The all-member surveys stop from the next reporting period.">Remove from roster</button>
       {% else %}<button class="btn small" type="submit">Add to roster</button>{% endif %}</form>{% endif %}
@@ -35,8 +35,8 @@
       </form>{% endif %}
     </div>
     {% if can_manage %}
-    <details class="panel">
-      <summary><strong>Edit details</strong></summary>
+    <details class="panel{% if request.proto_active %} pa-details{% endif %}">
+      <summary>{% if request.proto_active %}<h2 class="sectionhead">Name, institution, and position</h2><p class="rollsum">{{ p.institution|default:"No institution" }}{% if p.department %}, {{ p.department }}{% endif %}{% if p.position_title %}, {{ p.position_title }}{% endif %}</p>{% else %}<strong>Edit details</strong>{% endif %}</summary>
       <form method="post" action="{% url 'manage:person_edit' p.pk %}" class="mt">{% csrf_token %}
         {% for field in edit_form %}<div class="field"><label>{{ field.label }}{{ field }}</label></div>{% endfor %}
         <div class="actions"><button class="btn" type="submit">Save</button></div>

@@ -1438,3 +1438,94 @@ body.proto .d53-tl { margin: calc(-1 * var(--px-3)) 0 var(--px-5); }
 /* Review before launch: the order switch belongs to the groups below it, under their own heading. */
 body.proto.pa .pa-page .pa-groupshead + .lorder { margin-top: var(--px-3) !important; padding-top: 0 !important; border-top: 0 !important; }
 body.proto.pa .pa-page .pa-groupshead h2 { margin-bottom: var(--px-2); }
+
+/* Review before launch, redesigned (MW 2026-11-06). Four numbered steps on the approved results-page pattern. */
+body.proto .lch .lch-flagn { color: var(--px-warn); font-weight: 600; }
+body.proto .lch .lch-lede { margin: 0 0 var(--px-4); max-width: var(--px-measure); font-size: var(--px-fs-sm); line-height: 1.6; color: var(--px-ink-2); }
+body.proto .lch .lch-lede b { color: var(--px-ink); }
+body.proto .lch .lch-warnline { color: var(--px-warn); }
+/* Step 1: each flag is one stacked row: the word, the sentence, then where to fix it. */
+body.proto .lch .lch-flags { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--px-line); }
+body.proto .lch .lch-flags li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px var(--px-4); align-items: baseline; padding: var(--px-4) 0; border-bottom: 1px solid var(--px-line); }
+body.proto .lch .lch-flag { grid-row: span 2; padding: 2px 10px; border-radius: 999px; background: var(--px-warn-tint); color: var(--px-warn); font: 600 var(--px-fs-xs)/1.5 var(--px-sans); white-space: nowrap; }
+body.proto .lch .lch-flags p { margin: 0; color: var(--px-ink); font-size: var(--px-fs-sm); line-height: 1.55; }
+body.proto .lch .lch-flags .px-link { font-size: var(--px-fs-sm); justify-self: start; }
+/* Step 2: the totals table, with a total row. */
+body.proto .lch .lch-totals { max-width: 760px; }
+body.proto .lch .lch-totals tfoot th, body.proto .lch .lch-totals tfoot td { font-weight: 600; color: var(--px-ink); border-top: 1px solid var(--px-line-strong); }
+/* Step 3: the order switch and a short key, then the groups. */
+body.proto .lch .lch-tools { display: grid; gap: var(--px-3); margin: 0 0 var(--px-4); }
+body.proto .lch .lorder { display: flex; flex-wrap: wrap; align-items: center; gap: var(--px-2) var(--px-3); background: none; border: 0; padding: 0; }
+body.proto .lch .lorder .px-label { margin-right: var(--px-2); }
+body.proto .lch .lorder .fchipbtn { font: 500 var(--px-fs-sm)/1 var(--px-sans); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--px-line-strong); background: var(--px-surface); color: var(--px-ink-2); cursor: pointer; }
+body.proto .lch .lorder .fchipbtn.on { background: var(--px-brand-tint); border-color: var(--px-brand); color: var(--px-brand-ink); }
+body.proto .lch .lch-key { margin: 0; font-size: var(--px-fs-sm); color: var(--px-muted); line-height: 1.6; }
+body.proto .lch .lch-key span { display: inline-block; padding: 0 8px; border-radius: 6px; font-weight: 600; font-size: var(--px-fs-xs); }
+body.proto .lch .lch-k-std { background: var(--px-surface); border: 1px solid var(--px-line-strong); color: var(--px-ink-2); }
+body.proto .lch .lch-k-role { background: var(--px-brand-tint); color: var(--px-brand-ink); }
+body.proto .lch .lch-group .px-roll-meta { max-width: var(--px-measure); }
+/* One person per row: name and count on the left, forms on the right; stacked on phones. */
+body.proto .lch .lch-people { list-style: none; margin: 0; padding: 0; }
+body.proto .lch .lch-person { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: var(--px-2) var(--px-5); padding: var(--px-4) 0; border-top: 1px solid var(--px-line); }
+body.proto .lch .lch-person:first-child { border-top: 0; padding-top: 0; }
+body.proto .lch .lch-who { display: grid; gap: 2px; align-content: start; min-width: 0; }
+body.proto .lch .lch-who > a { font-weight: 600; font-size: var(--px-fs-sm); }
+body.proto .lch .lch-n { font-size: var(--px-fs-xs); color: var(--px-muted); }
+body.proto .lch .lch-sub { font-size: var(--px-fs-xs); color: var(--px-muted); line-height: 1.45; }
+body.proto .lch .lch-add { font-size: var(--px-fs-xs); padding: 0; background: none; border: 0; text-align: left; }
+body.proto .lch .chips.aligned { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; margin: 0; }
+body.proto .lch .chipcell:empty { min-height: 32px; border: 1px dashed var(--px-line); border-radius: 8px; }
+body.proto .lch .chips.aligned .fchip { display: block; padding: 7px 10px; border-radius: 8px; background: var(--px-surface); border: 1px solid var(--px-line-strong); color: var(--px-ink-2); font: 500 var(--px-fs-xs)/1.35 var(--px-sans); white-space: normal; }
+body.proto .lch .chips.aligned .fchip.lch-role { background: var(--px-brand-tint); border-color: color-mix(in srgb, var(--px-brand) 30%, var(--px-line)); color: var(--px-brand-ink); font-weight: 600; }
+body.proto .lch .chips.aligned .fchip .why, body.proto .lch .chips.aligned .fchip .ctx { display: block; margin-top: 2px; font-weight: 400; font-size: .7rem; color: var(--px-ink-2); opacity: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body.proto .lch .lch-skips { grid-column: 2; margin: var(--px-2) 0 0; font-size: var(--px-fs-xs); color: var(--px-muted); }
+body.proto .lch .lch-skips b { color: var(--px-ink-2); font-weight: 600; }
+/* Step 4: the one dark action on the page. */
+body.proto .lch .lch-final { padding: var(--px-5) 0; }
+body.proto .lch .lch-go { margin-top: var(--px-2); }
+@media (max-width: 760px) {
+  body.proto .lch .lch-person { grid-template-columns: minmax(0, 1fr); }
+  body.proto .lch .lch-skips { grid-column: 1; }
+  body.proto .lch .chips.aligned { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.proto .lch .lch-flags li { grid-template-columns: minmax(0, 1fr); }
+  body.proto .lch .lch-flag { grid-row: auto; justify-self: start; }
+}
+/* Step 3 as a grid (MW 2026-11-06): one row per person, one narrow column per form, so every person reads on one
+   line. Shared forms sit on the left; differences gather at the bottom right, marked in amber. */
+body.proto .lch .lch-wrap { overflow-x: auto; }
+body.proto .lch table.lch-matrix { border-collapse: separate; border-spacing: 0; width: auto; min-width: 100%; font-size: var(--px-fs-sm); }
+body.proto .lch .lch-matrix th, body.proto .lch .lch-matrix td { border: 0; border-bottom: 1px solid var(--px-line); padding: 0; background: none; }
+body.proto .lch .lch-matrix thead th { vertical-align: bottom; border-bottom: 1px solid var(--px-line-strong); }
+body.proto .lch .lch-pcol { text-align: left; padding: 0 var(--px-4) var(--px-2) 0 !important; font: 500 var(--px-fs-xs)/1.3 var(--px-sans); color: var(--px-muted); }
+body.proto .lch .lch-fcol { width: 34px; min-width: 34px; height: 150px; position: relative; }
+body.proto .lch .lch-fcol span { position: absolute; left: 50%; bottom: 8px; transform-origin: 0 100%; transform: translateX(4px) rotate(-60deg); white-space: nowrap; font: 500 var(--px-fs-xs)/1 var(--px-sans); color: var(--px-ink-2); }
+body.proto .lch .lch-matrix th.lch-who { display: table-cell; text-align: left; vertical-align: top; padding: 10px var(--px-4) 10px 0 !important; width: 260px; min-width: 200px; font-weight: 400; }
+body.proto .lch .lch-matrix th.lch-who > * { display: block; }
+body.proto .lch .lch-matrix td.lch-c { text-align: center; vertical-align: middle; height: 40px; border-left: 1px solid color-mix(in srgb, var(--px-line) 60%, transparent); }
+body.proto .lch .lch-matrix td.lch-c.diff { background: color-mix(in srgb, var(--px-warn-tint) 85%, transparent); }
+body.proto .lch .lch-dot { display: inline-block; width: 12px; height: 12px; border-radius: 999px; background: var(--px-ink-2); vertical-align: middle; }
+body.proto .lch .lch-dot.role { background: var(--px-brand); box-shadow: 0 0 0 3px var(--px-brand-tint); }
+body.proto .lch .lch-key .lch-dot { width: 10px; height: 10px; margin: 0 6px 0 var(--px-3); padding: 0; }
+body.proto .lch .lch-key .lch-dot:first-child { margin-left: 0; }
+body.proto .lch .lch-key .lch-dot.diff { background: var(--px-warn-tint); border: 1px solid color-mix(in srgb, var(--px-warn) 40%, transparent); border-radius: 3px; }
+body.proto .lch .lch-x { display: block; font-size: 10px; color: var(--px-brand-ink); line-height: 1; margin-top: 2px; }
+body.proto .lch .lch-matrix tbody tr:hover td, body.proto .lch .lch-matrix tbody tr:hover th { background: color-mix(in srgb, var(--px-brand) 4%, transparent); }
+body.proto .lch .lch-matrix tbody tr:hover td.diff { background: var(--px-warn-tint); }
+/* Form names read upward in each column, so no name is cut off at the right edge. */
+body.proto .lch .lch-fcol { height: 168px; padding: 0 0 var(--px-2) !important; text-align: center; }
+body.proto .lch .lch-fcol span { position: static; display: inline-block; transform: rotate(180deg); writing-mode: vertical-rl; white-space: nowrap; max-height: 160px; overflow: hidden; text-overflow: ellipsis; font: 500 var(--px-fs-xs)/1.2 var(--px-sans); color: var(--px-ink-2); text-align: left; }
+body.proto .lch .lch-matrix td.lch-c, body.proto .lch .lch-fcol { width: 36px; min-width: 36px; }
+body.proto .lch table.lch-matrix { min-width: 0; }
+body.proto .lch .lch-fcol span { display: block; margin: 0 auto; }
+body.proto .lch .lch-matrix thead th { vertical-align: bottom !important; }
+body.proto .lch .lch-fcol span { position: absolute; left: calc(50% + 7px); bottom: 8px; writing-mode: horizontal-tb; transform-origin: 0 100%; transform: rotate(-90deg); display: block; margin: 0; line-height: 14px; max-width: 156px; max-height: none; }
+/* The person's details section reads like every other section: serif title, a count line, Show or Hide. */
+body.proto.pa .pa-page details.pa-details > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--px-4); align-items: start; }
+body.proto.pa .pa-page details.pa-details > summary .sectionhead { margin: 0 !important; }
+body.proto.pa .pa-page details.pa-details > summary .rollsum { grid-column: 1; margin: 2px 0 0; }
+body.proto.pa .pa-page details.pa-details > summary .px-roll-cue { grid-column: 2; grid-row: 1; margin-top: 6px; }
+body.proto.pa .pa-page .rollup details.pa-details:first-child { border-top: 0 !important; }
+/* Background sentences under a section heading have the thin gray bar, like every introduction (checklist 33). */
+body.proto.pa .pa-page :is(.sectionhead, h2) + p:is(.small, .muted):not(.rollsum):not(.pa-roll-meta) { padding: 2px 0 2px var(--px-4); border-left: 2px solid var(--px-line-strong); max-width: var(--px-measure); }
+body.proto.pa .pa-page details.pa-details > summary { display: grid !important; row-gap: 2px; }
+body.proto.pa .pa-page details.pa-details > summary { padding-bottom: var(--px-4); }

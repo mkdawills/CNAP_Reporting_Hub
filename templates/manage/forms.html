@@ -4,6 +4,6 @@
 <div class="head"><div><h1>Forms{% why "A read-only reference copy of every form the Hub can send, so you can answer wording questions without opening a respondent’s account." %}</h1><p>{{ "Every form the Hub can send, exactly as respondents see it. Please click a form’s name to read every question."|stack }}</p></div></div>
 <div class="panel scroll"><table title="Every form the Hub can send, with its kind, length, and who receives it."><thead><tr><th>Form</th><th>Kind</th><th class="num">Questions</th><th>Takes about</th></tr></thead><tbody>
 {% for r in rows %}<tr><td><a href="{% url 'manage:form_detail' r.fd.code %}"><strong>{{ r.fd.name }}</strong></a></td>
-  <td class="small">{{ r.fd.get_category_display }}</td><td class="num">{{ r.n_questions }}</td><td class="small">{{ r.minutes }} min</td></tr>{% endfor %}
+  <td class="small">{{ r.fd.get_category_display|cut:" (category A)"|cut:" (category B)" }}</td><td class="num">{{ r.n_questions }}</td><td class="small">{{ r.minutes }} min</td></tr>{% endfor %}
 </tbody></table></div>
 {% endblock %}

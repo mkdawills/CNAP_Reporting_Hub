@@ -387,9 +387,12 @@ def launch(request, pk):
         for k, t, n in GROUPS
         if aligned[k]["rows"]
     ]
+    for g in groups:  # the other groups a person is in, for the redesign's "Also in" line (display only)
+        for r in g["rows"]:
+            r["also_other"] = [t for t in r.get("also", []) if t != g["title"]]
     return render(
         request,
-        "manage/launch.html",
+        prototype.template(request, "launch", "manage/launch.html"),
         {
             "p": p,
             "groups": groups,

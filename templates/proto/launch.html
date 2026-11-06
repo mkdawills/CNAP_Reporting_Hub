@@ -1,0 +1,151 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Review before launch · {{ platform_name }}{% endblock %}
+{% block content %}
+{% comment %}Review before launch, redesigned (MW 2026-11-06: "needs a lot of work in terms of clarity and visual hierarchy").
+Same view, same data, same launch form and Add to roster forms as manage/launch.html. Four numbered steps:
+check the flags, check the totals, check each person, then approve.{% endcomment %}
+<div class="lch">
+  <a class="px-link p21-back" href="{% url 'manage:periods' %}">Back to reporting periods</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Reporting periods · {{ p.name }}</p>
+    <h1 class="px-title">Review before launch</h1>
+    <p class="p21-purpose">Who will receive which forms when {{ p.name }} opens. Nothing is sent until you approve.</p>
+    <ul class="px-facts" aria-label="This launch at a glance">
+      <li><span class="px-label">Status</span><span class="v">{% if draft %}Not launched yet{% else %}Already open{% endif %}</span></li>
+      <li><span class="px-label">Opens</span><span class="v">{{ p.opens_at|date:"F j, Y" }}</span></li>
+      <li><span class="px-label">Due</span><span class="v">{{ p.due_at|date:"F j, Y" }}</span></li>
+      <li><span class="px-label">People</span><span class="v">{{ people_n }}</span></li>
+      <li><span class="px-label">Forms</span><span class="v">{{ forms_n }}</span></li>
+      <li><span class="px-label">To check</span><span class="v">{% if warnings %}<span class="lch-flagn">{{ warnings|length }}</span>{% else %}None{% endif %}</span></li>
+    </ul>
+  </header>
+
+  <div class="px-page px-onpage-layout">
+  <nav class="px-onpage" aria-label="On this page">
+    <div class="p21-navtop"><p class="px-label">On this page</p><button type="button" class="p21-collapse" data-navtoggle aria-expanded="true" title="Hide this list to give the page more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
+    <ol>
+      <li><a href="#lch-1" data-onpage><span class="px-onpage-n">1</span>Check before launching</a></li>
+      <li><a href="#lch-2" data-onpage><span class="px-onpage-n">2</span>What this launch will send</a></li>
+      <li><a href="#lch-3" data-onpage><span class="px-onpage-n">3</span>Who receives which forms</a>
+        <ol>{% for g in groups %}<li><a href="#lch-g-{{ g.key }}" data-onpage>{{ g.title }}</a></li>{% endfor %}</ol></li>
+      {% if draft %}<li><a href="#lch-4" data-onpage><span class="px-onpage-n">4</span>Approve and open</a></li>{% endif %}
+    </ol>
+  </nav>
+  <div class="px-onpage-main r90">
+    <div class="px-rollbar foldall taskfold r90-pagebar"><button type="button" data-pageroll="open" title="Opens every step and every group on this page.">Show all</button><button type="button" data-pageroll="close" title="Rolls the page up to its numbered steps.">Collapse all</button></div>
+
+    {# 1 ---------------------------------------------------------------- flags #}
+    <section class="px-section" id="lch-1" aria-labelledby="lch-1-h">
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-1-h"><span>1</span>Check before launching</h2><p class="px-note">{% if warnings %}<b>{{ warnings|length }}</b> thing{{ warnings|length|pluralize }} to fix or confirm. This list updates as you fix them.{% else %}Nothing to fix.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="r90-partbody">
+        {% if warnings %}<ul class="lch-flags">{% for w in warnings %}<li><span class="lch-flag">To check</span><p>{{ w.text }}</p><a class="px-link" href="{{ w.url }}" title="Opens the page where this can be fixed. Come back here afterward; this list updates.">{% if '/projects/' in w.url %}Open the project{% else %}Open the person’s page{% endif %}</a></li>{% endfor %}</ul>
+        {% else %}<div class="px-callout ok" role="status"><p><strong>No problems found.</strong><br>Every project has its people, and everyone on the roster has a role and an email.</p></div>{% endif %}
+      </div></details>
+    </section>
+
+    {# 2 ---------------------------------------------------------------- totals #}
+    <section class="px-section" id="lch-2" aria-labelledby="lch-2-h">
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-2-h"><span>2</span>What this launch will send</h2><p class="px-note"><b>{{ forms_n }}</b> forms to <b>{{ people_n }}</b> people, across <b>{{ totals|length }}</b> kinds of form.</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="r90-partbody">
+        <p class="lch-lede">Each row is one form, with the number of people who will receive it.<br>If a number looks wrong, please check the groups in step 3.</p>
+        <div class="px-tablewrap"><table class="px-table lch-totals" title="Each form this launch sends, and how many people receive it.">
+          <thead><tr><th scope="col">Form</th><th scope="col" class="num">People who receive it</th></tr></thead>
+          <tbody>{% for fd, n in totals %}<tr><th scope="row">{{ fd.name }}</th><td class="num">{{ n }}</td></tr>{% endfor %}</tbody>
+          <tfoot><tr><th scope="row">All forms</th><td class="num">{{ forms_n }}</td></tr></tfoot>
+        </table></div>
+      </div></details>
+    </section>
+
+    {# 3 ---------------------------------------------------------------- people #}
+    <section class="px-section" id="lch-3" aria-labelledby="lch-3-h">
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-3-h"><span>3</span>Who receives which forms</h2><p class="px-note">One group per kind of CNAP member, one row per person.</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="r90-partbody">
+        <div class="lch-tools">
+          <div class="lorder" role="group" aria-label="How each group is arranged">
+            <span class="px-label">Arrange each group</span>
+            <button type="button" class="fchipbtn on" aria-pressed="true" data-lorder="like" title="Forms most people share sit on the left, and people whose forms match sit at the top. Differences gather at the bottom right.">Like forms together</button>
+            <button type="button" class="fchipbtn" aria-pressed="false" data-lorder="fixed" title="Forms stay in the usual order and people are listed by name.">Usual order</button>
+          </div>
+          <p class="lch-key"><span class="lch-dot" aria-hidden="true"></span>Receives the form, as everyone on the roster does. <span class="lch-dot role" aria-hidden="true"></span>Receives the form because of the person’s own role (point to it for the reason). <span class="lch-dot diff" aria-hidden="true"></span>Differs from most of the group.</p>
+        </div>
+        <div class="r90-secs px-rolls" data-rollgroup>
+        {% for g in groups %}
+        <details class="px-roll lch-group" id="lch-g-{{ g.key }}"{% if forloop.first or warnings %} open{% endif %}>
+          <summary title="Click to see everyone in this group and the forms each person receives."><span class="px-roll-t"><span class="px-label">{{ g.rows|length }} {% if g.rows|length == 1 %}person{% else %}people{% endif %}</span><h3 class="px-h2">{{ g.title }}</h3><span class="px-roll-meta">{{ g.note|stack }}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+          <div class="px-roll-body">
+            <div class="px-tablewrap lch-wrap"><table class="lch-matrix" title="{{ g.title }}: one row per person, one column per form.">
+              <thead><tr><th scope="col" class="lch-pcol">Person</th>{% for label in g.order %}<th scope="col" class="lch-fcol" data-slot="{{ forloop.counter0 }}"><span>{{ label }}</span></th>{% endfor %}</tr></thead>
+              <tbody>{% for r in g.rows %}<tr data-name="{{ r.person.last_name }} {{ r.person.first_name }}">
+                <th scope="row" class="lch-who">
+                  <a href="{% url 'manage:person' r.person.pk %}" title="Opens {{ r.person }}’s page, to change a role or an email.">{{ r.person }}</a>
+                  <span class="lch-n">{{ r.chips|length }} form{{ r.chips|length|pluralize }}</span>
+                  {% if r.external %}<span class="lch-sub">Outside K-State: {{ r.person.institution }}. {% if r.on_roster %}On the roster.{% else %}Not on the roster.{% endif %}</span>{% endif %}
+                  {% if r.also_other %}<span class="lch-sub">Also in: {{ r.also_other|join:", " }}</span>{% endif %}
+                  {% if r.skips %}<span class="lch-sub"><b>Not sent:</b> {% for s in r.skips %}{{ s }}{% if not forloop.last %}; {% endif %}{% endfor %}.</span>{% endif %}
+                  {% if can_manage and r.external and not r.on_roster %}<form method="post" action="{% url 'manage:roster_from_launch' p.pk r.person.pk %}">{% csrf_token %}<button class="px-link lch-add" type="submit" data-confirm="Put {{ r.person }} on the CNAP roster? The all-member surveys then go to this person too.">Add to roster</button></form>{% endif %}
+                </th>
+                {% for cell in r.cells %}<td data-slot="{{ forloop.counter0 }}" class="lch-c{% if cell %} on{% endif %}">{% if cell %}{% with c=cell.0 %}<span class="lch-dot{% if c.why != 'Everyone on the roster' %} role{% endif %}" title="{{ c.label }}. Why: {% for x in cell %}{{ x.why }}{% if x.ctx %} ({{ x.ctx }}){% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}"></span>{% if cell|length > 1 %}<span class="lch-x">{{ cell|length }}</span>{% endif %}{% endwith %}<span class="px-sr">Receives {{ cell.0.label }}</span>{% else %}<span class="px-sr">Does not receive</span>{% endif %}</td>{% endfor %}
+              </tr>{% endfor %}</tbody>
+            </table></div>
+          </div>
+        </details>
+        {% endfor %}
+        </div>
+      </div></details>
+    </section>
+
+    {# 4 ---------------------------------------------------------------- approve #}
+    {% if draft %}<section class="px-section" id="lch-4" aria-labelledby="lch-4-h">
+      <div class="r90-parthead lch-final"><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-4-h"><span>4</span>Approve and open</h2></div></div>
+      <div class="r90-partbody">
+        <p class="lch-lede">Approving assigns <b>{{ forms_n }}</b> forms to <b>{{ people_n }}</b> people and opens {{ p.name }} for preview.<br>People can read their forms right away.<br>Answers open, and the opening email goes out, on {{ p.opens_at|date:"F j, Y" }}.</p>
+        {% if warnings %}<p class="lch-lede lch-warnline">{{ warnings|length }} thing{{ warnings|length|pluralize }} in step 1 {% if warnings|length == 1 %}is{% else %}are{% endif %} still open. You can launch anyway, but please check {% if warnings|length == 1 %}it{% else %}them{% endif %} first.</p>{% endif %}
+        {% if can_manage %}<form method="post" action="{% url 'manage:launch_go' p.pk %}" class="lch-go">{% csrf_token %}<button class="px-btn" type="submit" data-confirm="Open {{ p.name }} and send each person a list of forms?" data-yes="Yes, approve and open {{ p.name }}" title="Assigns every form listed above and opens {{ p.name }} for preview.">Approve and open {{ p.name }}</button></form>
+        {% else %}<p class="px-note">View only. Only the evaluator can launch a period.</p>{% endif %}
+      </div>
+    </section>{% endif %}
+  </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>
+<script>
+/* Arrange each group (MW 2026-11-06): "Like forms together" puts the forms most people share on the left and the
+   people whose forms match at the top, so differences gather at the bottom right. "Usual order" keeps the forms in
+   their usual order and lists people by name. Only the display order changes. */
+(function () {
+  function arrange(mode) {
+    document.querySelectorAll("table.lch-matrix").forEach(function (t) {
+      var body = t.tBodies[0], rows = Array.from(body.rows), head = t.tHead.rows[0];
+      var slots = Array.from(head.querySelectorAll("th[data-slot]")).map(function (h) { return h.dataset.slot; });
+      var count = {};
+      slots.forEach(function (s) { count[s] = rows.filter(function (r) { return r.querySelector('td[data-slot="' + s + '"]').classList.contains("on"); }).length; });
+      var half = rows.length / 2;
+      var order = slots.slice().sort(function (a, b) { return mode === "like" ? (count[b] - count[a]) || (a - b) : a - b; });
+      [head].concat(rows).forEach(function (r) { order.forEach(function (s) { r.appendChild(r.querySelector('[data-slot="' + s + '"]')); }); });
+      rows.forEach(function (r) {
+        var diff = 0, last = -1;
+        order.forEach(function (s, i) {
+          var c = r.querySelector('td[data-slot="' + s + '"]'), on = c.classList.contains("on"), usual = count[s] > half;
+          var d = on !== usual && rows.length > 2; c.classList.toggle("diff", d);
+          if (d) { diff++; last = i; }
+        });
+        r.dataset.diff = diff; r.dataset.last = last;
+      });
+      rows.sort(function (a, b) {
+        if (mode === "like") { var d = a.dataset.diff - b.dataset.diff || a.dataset.last - b.dataset.last; if (d) return d; }
+        return a.dataset.name.localeCompare(b.dataset.name);
+      }).forEach(function (r) { body.appendChild(r); });
+    });
+  }
+  document.querySelectorAll("[data-lorder]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll("[data-lorder]").forEach(function (x) { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", String(x === b)); });
+      arrange(b.dataset.lorder);
+    });
+  });
+  arrange("like");
+  /* The grid's columns aren't sortable: sorting a column would undo "Like forms together". */
+  document.addEventListener("DOMContentLoaded", function () { setTimeout(function () { document.querySelectorAll(".lch-matrix th").forEach(function (h) { h.classList.remove("sorth", "asc", "desc"); }); }, 0); });
+})();
+</script>{% endblock %}

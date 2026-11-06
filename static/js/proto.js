@@ -424,3 +424,13 @@ document.addEventListener("click", function (e) {
     card.querySelectorAll(":scope > p.small").forEach(function (p) { if (p.querySelector("a")) { p.classList.add("pa-cardlinks"); head.after(p); } });
   });
 })();
+
+/* One person's page (MW 2026-11-06): the person's own details ("Name, institution, and position") is the first
+   section, so it's clear what it edits. Only its place on the page changes. */
+(function () {
+  if (!document.body.classList.contains("pa")) return;
+  var d = document.querySelector(".pa-page details.pa-details"), roll = document.querySelector(".pa-page .grid2.rollup");
+  if (!d || !roll) return;
+  function place() { var first = roll.querySelector(".panel.rollsec"); if (first) first.parentNode.insertBefore(d, first); }
+  document.addEventListener("DOMContentLoaded", function () { setTimeout(place, 0); });
+})();
