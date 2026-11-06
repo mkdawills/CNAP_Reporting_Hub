@@ -1619,3 +1619,10 @@ body.proto.pa .pa-page .pcard ol.life { margin-bottom: var(--px-2); }
 body.proto.pa .pa-page .pcard .head p.small { margin: 0; line-height: 1.6; }
 body.proto.pa .pa-page .pcard .head p.small .sgap { height: 8px; }
 body.proto.pa .pa-page .pcard .head .whatsnext { margin-top: 8px !important; }
+/* The step line starts on the same left edge as the words around it: the first circle lines up with the text. */
+body.proto.pa ol.life { margin-left: 0; padding-left: 0; }
+body.proto.pa ol.life li { padding-left: 0 !important; padding-right: 8px; }
+body.proto.pa ol.life li::before { left: 0 !important; }
+body.proto.pa ol.life li:not(:last-child)::after { left: 34px !important; right: 4px; }
+@media (max-width: 760px) { body.proto.pa ol.life li, body.proto.pa ol.life li + li { padding-left: 38px !important; } }
+body.proto.pa .pa-page .pcard .head { align-items: stretch; } body.proto.pa .pa-page .pcard .head > div:first-child { width: 100%; }
