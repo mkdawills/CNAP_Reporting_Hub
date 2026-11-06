@@ -1379,3 +1379,13 @@ body.proto.pa .pa-page .rollup > section + section, body.proto.pa .pa-page .roll
 body.proto.pa .pa-page .rollup section > .sectionhead { margin-top: 0 !important; }
 /* MW 2026-11-06: buttons belong to what they act on, so no line above a row of buttons; lines only divide sections. */
 body.proto.pa .pa-page .actions, body.proto.pa .pa-page .pcard .actions, body.proto.pa .pa-page .pcard .fieldrow, body.proto.pa .pa-page form > .fieldrow:last-child { border-top: 0; padding-top: 0; margin-top: var(--px-4); }
+/* Division (MW 2026-11-06): a darker line starts each new item on a page (a period, a section of Administration home);
+   inside an item there are no lines, only space, so each item reads as one block. */
+body.proto.pa .pa-page > .panel + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + * { border-top-color: color-mix(in srgb, var(--px-ink) 30%, var(--px-surface)); margin-top: var(--px-7); padding-top: var(--px-7); }
+body.proto.pa .pa-page > .px-dlfoot { border-top-color: var(--px-line); }
+body.proto.pa .pa-page ol.life { border-top: 0; border-bottom: 0; padding-top: var(--px-3); padding-bottom: 0; margin: var(--px-4) 0 var(--px-5); }
+body.proto.pa .pa-page .lifedates { margin-bottom: 0; }
+body.proto.pa .pa-page .pcard .head { margin-bottom: 0; }
+body.proto.pa .pa-page .pcard .head .whatsnext { margin-top: var(--px-3); }
+body.proto.pa .pa-page .pa-cardlinks { margin: var(--px-4) 0 0; color: var(--px-muted); }
+body.proto.pa .pa-page > .panel + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + *:not(.px-dlfoot) { border-top-color: color-mix(in srgb, var(--px-ink) 30%, var(--px-surface)) !important; }

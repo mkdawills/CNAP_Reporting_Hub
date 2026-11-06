@@ -410,3 +410,16 @@ document.addEventListener("click", function (e) {
   }, true);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup); else setup();
 })();
+
+/* Reporting periods (MW 2026-11-06, "more mental clarity regarding division"): each period reads top to bottom as
+   its name, where it stands on the step line, its dates, the next step with its button, then its quiet links. */
+(function () {
+  if (!document.body.classList.contains("pa")) return;
+  document.querySelectorAll(".pcard").forEach(function (card) {
+    var head = card.querySelector(":scope > .head"), life = card.querySelector(":scope > ol.life");
+    if (!head || !life) return;
+    var h2 = head.querySelector("h2");
+    if (h2) h2.after(life);
+    card.querySelectorAll(":scope > p.small").forEach(function (p) { if (p.querySelector("a")) { p.classList.add("pa-cardlinks"); head.after(p); } });
+  });
+})();
