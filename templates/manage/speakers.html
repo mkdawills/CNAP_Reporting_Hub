@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}NeuroSync speakers · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>NeuroSync speakers{% why "List each NeuroSync talk here and the speaker automatically gets the Speaker Survey when their talk ends. Their answers help improve the series and feed the Center’s reporting on NeuroSync." %}</h1><p>{{ "List each talk with the time it ends. The speaker gets the NeuroSync Speaker Survey by email as soon as the talk is over. Speakers from outside K-State get a personal sign-in link."|stack }}</p></div></div>
+<div class="head"><div><h1>NeuroSync speakers{% why "List each NeuroSync talk here and the speaker automatically gets the Speaker Survey when their talk ends. Their answers help improve the series and feed the Center’s reporting on NeuroSync." %}</h1><p>{{ "List each talk with the time the talk ends. The speaker gets the NeuroSync Speaker Survey by email as soon as the talk is over. Speakers from outside K-State get a personal sign-in link."|stack }}</p></div></div>
 {% if not open_period %}<div class="panel"><p class="small"><span class="gap">No reporting period is open for answers right now.</span><br>Surveys wait until one opens. You can still add talks.</p></div>{% endif %}
 {% if can_manage %}<div class="panel" style="max-width:760px">
   <h2 class="sectionhead">Add a talk</h2>
@@ -20,15 +20,26 @@
     <div class="actions"><button class="btn" type="submit">Add the talk</button></div>
   </form>
 </div>
-<div class="panel" style="max-width:760px">
+{% if request.proto_active %}<div class="panel"><details class="sheetup sheetup-c">
+  <summary><svg class="sheetup-ic" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9h17M3.5 14.5h17M9 3.5v17"/></svg><span class="sheetup-q">Prefer to use Excel versus hand-entering each talk?</span><span class="sheetup-more" aria-hidden="true"></span></summary>
+  <div class="sheetup-body">
+  <p class="small">{{ "You can upload an Excel sheet instead of adding talks one at a time. Please download the template, fill in one row per talk, and upload it here. Speakers already in the Hub are matched by email. New speakers are created from each row."|stack }}</p>
+  <form method="post" action="{% url 'manage:speaker_upload' %}" enctype="multipart/form-data" class="fieldrow sheetup-row">{% csrf_token %}
+    <a class="btn small ghost" href="{% url 'manage:speaker_template' %}" download>Download the Excel template</a>
+    <input type="file" name="sheet" accept=".xlsx" aria-label="Your filled-in Excel sheet of talks">
+    <button class="btn small" type="submit">Add the talks from my sheet</button>
+  </form>
+  </div>
+</details>
+{% else %}<div class="panel" style="max-width:760px">
   <h2 class="sectionhead">Or upload a whole semester at once</h2>
-  <p class="small">{{ "You can upload an Excel sheet instead of adding talks one at a time. Please download the template, fill in one row per talk, and upload it here. Speakers already in the Hub are matched by email. New speakers are created from their row."|stack }}</p>
+  <p class="small">{{ "You can upload an Excel sheet instead of adding talks one at a time. Please download the template, fill in one row per talk, and upload it here. Speakers already in the Hub are matched by email. New speakers are created from each row."|stack }}</p>
   <form method="post" action="{% url 'manage:speaker_upload' %}" enctype="multipart/form-data" class="fieldrow">{% csrf_token %}
     <a class="btn small ghost" href="{% url 'manage:speaker_template' %}" download>Download the Excel template</a>
     <input type="file" name="sheet" accept=".xlsx" aria-label="Your filled-in Excel sheet of talks">
     <button class="btn small" type="submit">Add the talks from my sheet</button>
   </form>
-</div>{% endif %}
+{% endif %}</div>{% endif %}
 <div class="panel">
   <h2 class="sectionhead">Coming up ({{ upcoming|length }})</h2>
   {% if upcoming %}<div class="scroll"><table title="Talks that have not finished yet. Each speaker’s survey goes out when the talk ends."><thead><tr><th>Speaker</th><th>Talk</th><th>Ends</th><th>Survey</th><th></th></tr></thead><tbody>

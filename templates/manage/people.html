@@ -2,7 +2,7 @@
 {% block title %}People · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>People{% why "Everyone the Center works with lives here. A person’s relationships (project leader, mentor, core director, and so on) decide exactly which forms they receive each period, and how they appear in RPPR tables such as D.1." %}</h1><p>{{ "Everyone the Center works with. CNAP relationships decide which forms a person receives. CNAP relationships never grant access to administrator screens. The roster is the Center’s list of current CNAP members. People on the roster receive the all-member surveys. People off the roster, such as an external mentor, receive only the forms their relationships call for."|stack }}</p></div>
+  <div><h1>People{% why "Everyone the Center works with lives here. A person’s relationships (project leader, mentor, core director, and so on) decide exactly which forms they receive each period, and how they appear in RPPR tables such as D.1." %}</h1><p>{{ "Everyone the Center works with. CNAP relationships decide which forms a person receives. CNAP relationships never grant access to administrator screens. The roster is the Center’s list of current CNAP members. People on the roster receive the all-member surveys. People off the roster, such as an external mentor, receive only the forms each person’s relationships call for."|stack }}</p></div>
   {% if can_manage %}<div><a class="btn" href="{% url 'manage:person_new' %}">Add a person</a></div>{% endif %}
 </div>
 <div class="panel">

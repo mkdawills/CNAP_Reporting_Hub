@@ -13,6 +13,7 @@
     <div class="px-mast-row">
       <h1 class="px-title">{{ fd.name }}</h1>
     </div>
+    <p class="p21-purpose">{% if is_report and not tables %}Every {{ noun }} submitted for {{ period.name }}, ready to read.{% elif not period.assignments.exists %}The {{ noun }}’s average ratings for {{ period.name }}, imported from the site-visit reports.{% else %}The combined {{ noun }} answers for {{ period.name }}: average ratings, how they compare with past years, and what people wrote.{% endif %}</p>
     <ul class="px-facts">
       <li><span class="px-label">Results</span><span class="v">{% if snapshot %}{{ snapshot.get_status_display }}{% if snapshot.provenance == 'aggregate_import' %} (imported prior-year averages){% endif %}{% elif period.status == 'open' %}Live: the period is still open{% else %}Not yet generated{% endif %}</span></li>
       {% if period.assignments.exists %}

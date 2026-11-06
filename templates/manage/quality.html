@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Data checks · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Data checks{% why "Automatic checks for gaps that would hurt later reporting. Each row links to the page where you can fix it, and a check you have judged acceptable can be dismissed with a note." %}</h1><p>{{ "Problems that would stop forms reaching the right people, or skew results. Fix them from the linked pages, or dismiss one with a reason."|stack }}</p></div></div>
+<div class="head"><div><h1>Data checks{% why "Automatic checks for gaps that would hurt later reporting. Each row links to the page where you can fix it, and a check you have judged acceptable can be dismissed with a note." %}</h1><p>{{ "Problems that would stop forms reaching the right people, or skew results. Please fix each problem from the linked pages, or dismiss a problem with a reason."|stack }}</p></div></div>
 {% for c in checks %}
 <details class="panel lgroup" {% if c.rows %}open{% endif %}><summary title="{{ c.why }}"><span>{{ c.title }}</span>{% if c.rows %}<span class="rchip warn">{{ c.rows|length }} to look at</span>{% else %}<span class="rchip okchip">All clear</span>{% endif %}</summary>
   <p class="small muted mt">{{ c.note|stack }}</p>

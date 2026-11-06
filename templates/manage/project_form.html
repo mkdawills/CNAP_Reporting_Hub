@@ -2,7 +2,7 @@
 {% block title %}{% if new %}Add a project{% else %}{{ project.title }}{% endif %} · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>{% if new %}Add a project{% else %}{{ project.title }}{% endif %}</h1>
-{% if new %}<p>{{ "Add the project first. Then give its leader and mentors their relationships from their people pages."|stack }}</p>{% endif %}</div></div>
+{% if new %}<p>{{ "Add the project first. Then add the project leader and mentors from each person’s page."|stack }}</p>{% else %}<p>{{ "The project’s details, and the people on the project."|stack }}</p>{% endif %}</div></div>
 <div class="grid2">
   <div class="panel">
     <form method="post">{% csrf_token %}

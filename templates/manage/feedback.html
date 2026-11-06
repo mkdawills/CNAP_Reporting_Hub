@@ -2,7 +2,7 @@
 {% block title %}Page feedback · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>Page feedback {% why "Every note people send with the Feedback button at the bottom right of every page. Why: the people using the Hub notice what is unclear, slow, or delightful long before anyone else does. Use it to decide what to improve next." %}</h1>
-  <p>{{ "Notes from everyone who uses the Hub, newest first. Each one names the page it was sent from. Please mark a note done once it has been addressed."|stack }}</p></div></div>
+  <p>{{ "Notes from everyone who uses the Hub, newest first. Each note names the page the note was sent from. Please mark a note done once it has been addressed."|stack }}</p></div></div>
 <div class="panel factsbox"><p class="factsbox-h">At a glance</p><p class="facts2"><span class="rchip"><b>{{ rows|length }}</b>&nbsp;note{{ rows|length|pluralize }}</span> <span class="rchip warn"><b>{{ open_n }}</b>&nbsp;still open</span></p></div>
 <div class="panel">
   {% if rows %}<div class="scroll"><table title="Every note sent with the Feedback button, with the page it came from and whether it has been addressed.">

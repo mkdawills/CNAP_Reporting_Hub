@@ -1191,3 +1191,100 @@ body.proto .px-page .rbd-step + .rbd-step, body.proto .px-page .r33-cores, body.
 body.proto .px-page .rbd-form, body.proto .rbd-form.px-page { max-width: none; }
 body.proto .px-page .px-dlfoot { margin-bottom: 0; }
 @media (max-width: 760px) { body.proto .px-page { padding: var(--px-4); } }
+/* Administration content on one white page (Batch 3): the panels inside become sections divided by lines,
+   as on the results pages; panels that carry a color keep it. */
+body.proto.pa .pa-page { margin-top: var(--px-5); }
+body.proto.pa .pa-page .panel:not(.panel .panel) { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0; margin: 0; }
+body.proto.pa .pa-page .panel:not(.panel .panel) + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + * { margin-top: var(--px-6); padding-top: var(--px-6); border-top: 1px solid var(--px-line); }
+body.proto.pa .pa-page > :first-child { margin-top: 0 !important; padding-top: 0 !important; border-top: 0 !important; }
+body.proto.pa .pa-page .rollup > .panel + .panel { margin-top: var(--px-6); padding-top: var(--px-6); border-top: 1px solid var(--px-line); }
+
+/* Batch 3, second pass (MW 2026-11-06, checklist A, B, F, H, I): administration pages match the approved screens. */
+body.proto.pa main .head:not(.panel .head) > div:first-child::before { content: attr(data-eyebrow); }
+body.proto.pa main .head:not(.panel .head) > div:first-child > p.pa-purpose { margin: var(--px-3) 0 0; padding: 0; border-left: 0; max-width: var(--px-measure); font-size: var(--px-fs-md); line-height: 1.55; color: var(--px-ink-2); }
+body.proto.pa .pa-intro { margin: 0 0 var(--px-5); padding: 2px 0 2px var(--px-4); border-left: 2px solid var(--px-line-strong); max-width: var(--px-measure); }
+body.proto.pa .pa-intro p { margin: 0; color: var(--px-ink-2); font-size: var(--px-fs-sm); line-height: 1.6; }
+body.proto.pa .pa-intro p + p { margin-top: .45em; }
+body.proto.pa .pa-actions { display: flex; flex-wrap: wrap; gap: var(--px-3); justify-content: flex-start; align-items: center; margin: 0 0 var(--px-6); }
+body.proto.pa .pa-actions > div { display: contents; }
+/* Section blocks inside the white page: title, words, then buttons on the left; no extra line under the block. */
+body.proto.pa .pa-page .head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--px-3); border-bottom: 0; padding-bottom: 0; margin-bottom: var(--px-4); }
+body.proto.pa .pa-page .head::after { display: none; }
+body.proto.pa .pa-page .head > div { width: auto; }
+/* Status words inside a serif heading stay in the sans, like the dashboard's status. */
+body.proto.pa main :is(h1, h2, h3) :is(.pchip, .chip, .rchip) { font: 600 var(--px-fs-xs)/1.2 var(--px-sans); letter-spacing: .01em; }
+/* The year band: white with a thin outline; the session names carry the meaning. */
+body.proto.pa .yb-seg { background: var(--px-surface); border: 1px solid var(--px-line); }
+body.proto.pa .yb-seg .yb-name { color: var(--px-ink); font-weight: 600; }
+/* Home figures: the dashboard's style, white with a thin outline and serif numbers. */
+body.proto.pa .stattile { background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r); }
+body.proto.pa .stattile .stat { font: 500 2rem/1.1 var(--px-serif); color: var(--px-ink); letter-spacing: -.01em; }
+body.proto.pa .stattile .statlab { color: var(--px-muted); font-size: var(--px-fs-sm); }
+body.proto.pa .stattile.good, body.proto.pa .stattile.warn { border-color: var(--px-line); }
+body.proto.pa .stattile.good .stat { color: var(--px-ok); }
+body.proto.pa .stattile.warn .stat { color: var(--px-warn); }
+body.proto.pa .stattile:hover { border-color: var(--px-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--px-brand) 12%, transparent); }
+/* Numbers are centered in tables (checklist 64). */
+body.proto.pa main :is(td, th).num { text-align: center; }
+/* A step line that ends a section doesn't draw a second line under the section's own divider. */
+body.proto.pa .pa-page .panel > ol.life:last-child { border-bottom: 0; padding-bottom: 0; margin-bottom: 0; }
+/* Administration pages, continued (checklist B, E, F, H, P, Q). */
+body.proto.pa .pa-page .tabs { background: none; margin: 0 0 var(--px-5); padding: 0; border-radius: 0; }
+body.proto.pa .pa-page .tabs + .pa-tablinks { margin: calc(-1 * var(--px-3)) 0 var(--px-5); font-size: var(--px-fs-sm); }
+body.proto.pa .pa-page > .tabs:first-child + * { margin-top: 0; }
+/* Boxes inside the white page become plain sections (no box inside a box). */
+body.proto.pa .pa-page .checkcards { display: block; margin: 0 0 var(--px-6); }
+body.proto.pa .pa-page .checkcard { border: 0; border-radius: 0; padding: 0; background: none; box-shadow: none; }
+body.proto.pa .pa-page .factsbox { padding: 0; }
+/* Filter chips: the chosen one is light with purple words, so the one main action stays the only dark purple. */
+body.proto.pa main a.fchipbtn, body.proto.pa main button.fchipbtn { color: var(--px-brand-ink); text-decoration: none; background: var(--px-surface); border-color: var(--px-line-strong); }
+body.proto.pa main .fchipbtn.on { background: var(--px-brand-tint); border-color: var(--px-brand); color: var(--px-brand-ink); }
+/* Show all and Collapse all: quiet words on the right, as on the dashboard. */
+body.proto.pa .foldall { display: flex; justify-content: flex-end; gap: var(--px-4); margin: 0 0 var(--px-2); }
+body.proto.pa .foldall .linkbtn { background: none; border: 0; padding: 4px 2px; border-radius: 4px; font: 500 var(--px-fs-sm)/1.4 var(--px-sans); color: var(--px-brand); box-shadow: none; cursor: pointer; }
+body.proto.pa .foldall .linkbtn:hover { color: var(--px-brand-ink); text-decoration: underline; text-underline-offset: 3px; }
+/* Rolled-up sections: title on the left, Show or Hide with an arrow on the right. */
+body.proto.pa details.pa-roll > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--px-4); cursor: pointer; }
+body.proto.pa details.pa-roll > summary::-webkit-details-marker { display: none; }
+body.proto.pa details.pa-roll > summary::marker { content: ""; }
+body.proto.pa details.pa-roll > summary :is(h2, h3) { margin: 0; }
+body.proto.pa .rollcaret:not(.gcaret) { display: none; }
+body.proto.pa .rollhead { display: flex; align-items: center; justify-content: space-between; gap: var(--px-4); cursor: pointer; }
+body.proto.pa section[data-open="1"] > .rollhead .px-roll-cue::before, body.proto.pa section[data-open="1"] .rollhead .px-roll-cue::before { content: "Hide"; }
+body.proto.pa section[data-open="1"] .rollhead .px-roll-cue::after { transform: translateY(2px) rotate(-135deg); }
+body.proto.pa .rollhead:hover .px-roll-cue, body.proto.pa details.pa-roll > summary:hover .px-roll-cue { text-decoration: underline; text-underline-offset: 3px; }
+/* Labels in sentence case, never all capitals. */
+body.proto.pa main :is(.factsbox-h, .tsum-k, .teyebrow, .rj-k, .rnum) { text-transform: none; letter-spacing: .01em; font-weight: 500; }
+/* Fields: every kind of box looks the same; checkboxes sit on the left; the file button matches the light buttons. */
+body.proto.pa main :is(input[type="datetime-local"], input[type="time"], input[type="tel"], input[type="password"]) { border: 1px solid var(--px-line-strong); border-radius: var(--px-r-sm); background: var(--px-surface); color: var(--px-ink); font: 400 var(--px-fs-sm)/1.4 var(--px-sans); padding: 8px 10px; }
+body.proto.pa main input[type="checkbox"], body.proto.pa main input[type="radio"] { accent-color: var(--px-brand); justify-self: start; align-self: start; margin-left: 0; width: auto; }
+body.proto.pa main input[type="file"] { font: 400 var(--px-fs-sm)/1.4 var(--px-sans); color: var(--px-muted); }
+body.proto.pa main input[type="file"]::file-selector-button { margin-right: 10px; padding: 7px 14px; border: 1px solid var(--px-line-strong); border-radius: var(--px-r-sm); background: var(--px-surface); color: var(--px-ink); font: 600 var(--px-fs-xs)/1 var(--px-sans); cursor: pointer; }
+body.proto.pa main input[type="file"]::file-selector-button:hover { border-color: var(--px-brand); color: var(--px-brand-ink); }
+/* Roll-up headings: the help mark stays beside the title; Show or Hide sits at the far right. */
+body.proto.pa details.pa-roll > summary, body.proto.pa .rollhead { justify-content: flex-start; }
+body.proto.pa details.pa-roll > summary > .px-roll-cue, body.proto.pa .rollhead > .px-roll-cue { margin-left: auto; padding-left: var(--px-4); }
+body.proto.pa .pa-page details.pa-roll + details.pa-roll { margin-top: var(--px-4); padding-top: var(--px-4); border-top: 1px solid var(--px-line); }
+/* The RPPR heading block is a plain section of the white page, not a box inside it. */
+body.proto.pa .pa-page .rhero { border: 0; border-radius: 0; padding: 0 0 var(--px-5); background: none; box-shadow: none; border-bottom: 1px solid var(--px-line); margin-bottom: var(--px-5); }
+/* Phones (checklist L): the step line stacks one step per line; tabs wrap inside the white page. */
+@media (max-width: 760px) {
+  body.proto.pa ol.life { grid-template-columns: 1fr; gap: 10px; }
+  body.proto.pa ol.life li, body.proto.pa ol.life li + li { padding: 3px 0 0 38px; min-height: 28px; border-left: 0; }
+  body.proto.pa ol.life li::before { left: 0; }
+  body.proto.pa ol.life li::after { display: none; }
+  body.proto.pa .pa-page .tabs { flex-wrap: wrap; row-gap: 2px; column-gap: var(--px-4); }
+}
+/* Show or Hide always sits at the far right, even where a heading shares its row with figures. */
+body.proto.pa .rollhead { flex: 1 1 100%; width: 100%; box-sizing: border-box; }
+body.proto.pa .rhead > div:first-child { flex: 1 1 auto; min-width: 0; }
+body.proto.pa .rppr .rsec { margin-top: var(--px-5); padding-top: var(--px-5); }
+body.proto.pa .rchip.warn { background: var(--px-warn-tint); color: var(--px-warn); border-color: color-mix(in srgb, var(--px-warn) 30%, var(--px-line)); }
+body.proto.pa .rchip.okchip { background: var(--px-ok-tint); color: var(--px-ok); border-color: color-mix(in srgb, var(--px-ok) 30%, var(--px-line)); }
+/* Grouped lists (data checks, review before launch): serif titles like every section, the count beside the title, Show or Hide on the right. */
+body.proto.pa .pa-page details.lgroup > summary { border-bottom: 0; padding-bottom: 0; align-items: center; }
+body.proto.pa .pa-page details.lgroup > summary > span:first-child { font: 500 var(--px-fs-lg)/1.3 var(--px-serif); color: var(--px-ink); }
+body.proto.pa .pa-page details.lgroup > summary > span + span:not(.px-roll-cue) { border-left: 0; padding-left: 0; }
+body.proto.pa .pa-page details.lgroup[open] > summary { margin-bottom: var(--px-3); }
+body.proto.pa .pa-page details.lgroup > summary > .px-roll-cue { border-left: 0; padding-left: var(--px-4); font-size: var(--px-fs-sm); color: var(--px-brand); }
+body.proto.pa .pa-page details.lgroup > summary > .rchip { padding: 3px 10px; border: 1px solid; font-size: var(--px-fs-xs); }

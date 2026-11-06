@@ -82,8 +82,10 @@ def test_on_only_the_redesigned_screens_change(client, demo):
     r = client.get(f"/manage/results/{demo.short_label}/ts_admin_core/")
     assert "proto/report.html" in _templates(r)
     assert "proto/results.html" in _templates(client.get(f"/manage/results/?period={demo.short_label}"))
-    # pages outside the four never load prototype styles
-    assert PROTO_CSS not in client.get("/manage/").content.decode()
+    # Batch 3 (MW 2026-11-06): administration pages take the shared design layer, and only the layer:
+    # the same template renders, with the prototype class on the page.
+    r = client.get("/manage/")
+    assert "manage/home.html" in _templates(r) and 'class="proto pa"' in r.content.decode()
 
 
 @override_settings(UI_PROTOTYPE=True)

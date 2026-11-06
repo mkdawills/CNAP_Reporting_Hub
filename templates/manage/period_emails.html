@@ -1,10 +1,10 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Emails · {{ p.name }} · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>{{ p.name }}: emails</h1><p>{{ "Each person gets their own list of forms and the due date. People who sign in by emailed link get a personal link; K-State people sign in with their eID."|stack }}</p></div></div>
+<div class="head"><div><h1>{{ p.name }}: emails</h1><p>{{ "Each person gets a personal list of forms and the due date. People who sign in by emailed link get a personal link; K-State people sign in with a K-State eID."|stack }}</p></div></div>
 <div class="panel">
   <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you: an opening email, reminders every 4 days, then daily past-due notes. Pause it if the Center needs quiet, for example during a campus emergency." %}</h2>
-  <p class="small">{{ "The Hub sends three kinds of email for this period, each on its own schedule."|stack }}</p>
+  <p class="small">{{ "The Hub sends three kinds of email for this period, each on a separate schedule."|stack }}</p>
   <ul class="small" style="margin:6px 0 10px;padding-left:18px">
     <li><strong>The “your forms are open” email.</strong> It goes to everyone with forms on opening day, {{ sched.opens|date:"l, F j" }}.<br>The opening email lists that person’s forms and the due date.</li>
     <li><strong>The reminder email.</strong> It goes every 4 days, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}.<br>The reminder email lists only what that person still has left.</li>

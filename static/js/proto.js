@@ -271,3 +271,88 @@ document.addEventListener("click", function (e) {
   ys.forEach(function (y) { y.addEventListener("change", function () { if (all) all.checked = Array.prototype.every.call(ys, function (x) { return x.checked; }); }); });
   f.addEventListener("submit", function () { if (all && all.checked) ys.forEach(function (y) { y.disabled = true; }); });
 })();
+
+/* Administration pages (Batch 3, MW 2026-11-06; checklist B, E, J). Runs after the page's own
+   roll-up scripts. It only moves and labels existing links and sections; every link keeps its address.
+   - Tabs sit at the top of the white page, as on Center results.
+   - Every file download moves into one Download menu at the bottom, with Excel beside CSV.
+   - Every rolled-up section says Show or Hide with an arrow, as on the approved screens. */
+(function () {
+  if (!document.body.classList.contains("pa")) return;
+  function run() {
+    var page = document.querySelector(".pa-page");
+    if (!page) return;
+    // Tabs first.
+    var tabs = page.querySelector(".tabs");
+    if (tabs && !tabs.closest("details")) {
+      var keep = tabs.querySelectorAll("a.tabdl:not(.tabdl2)");
+      page.insertBefore(tabs, page.firstChild);
+      if (keep.length) {
+        var line = document.createElement("p"); line.className = "pa-tablinks";
+        keep.forEach(function (a) { line.appendChild(a); });
+        tabs.after(line);
+      }
+    }
+    // Downloads to the bottom menu.
+    var NAMES = { pubs: "Publications list", publications: "Publications list", grants: "Grant proposals list", talks: "Presentations list",
+      presentations: "Presentations list", counts: "Counts", c1: "RPPR C.1: publications", table1: "RPPR Tables 1A and 1B",
+      table2: "RPPR Table 2", d1: "RPPR D.1: participants", nihdocs: "NIH documents, every file", teams: "Research teams",
+      sitevisit: "Site-visit tables and item lists" };
+    var rows = [];
+    Array.prototype.forEach.call(page.querySelectorAll("a[href]"), function (a) {
+      var t = a.textContent.trim();
+      if (!/^Download\b/.test(t) || !/\((CSV|zip)\)$/i.test(t) || a.closest("form, .sheetup, .px-dl")) return;
+      var href = a.getAttribute("href"), m = href.match(/\/outcomes\/export\/([\w-]+)\//), kind = m && m[1];
+      var label = (kind && NAMES[kind]) || t.replace(/^Download\s+/, "").replace(/\s*\((CSV|zip)\)$/i, "");
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+      var fmts = [];
+      if (/\(zip\)$/i.test(t)) fmts.push(["Zip", href]);
+      else {
+        var xl = (m || /\/results\/.+\/export\//.test(href)) ? href + (href.indexOf("?") > -1 ? "&" : "?") + "format=xlsx" : null;
+        if (xl) fmts.push(["Excel", xl]);
+        fmts.push(["CSV", href]);
+      }
+      rows.push([label, fmts, a.title || ""]);
+      var host = a.parentElement; a.remove();
+      if (host && host !== page && !host.textContent.replace(/[\s·]/g, "") && !host.querySelector("a, button, input, select")) host.remove();
+    });
+    if (rows.length) {
+      var ic = '<svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 15.5h12"/></svg>';
+      var cue = '<svg class="px-dl-cue" viewBox="0 0 20 20" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l5-5 5 5"/></svg>';
+      var foot = document.createElement("div"); foot.className = "px-dlfoot";
+      var html = '<details class="px-dl"><summary title="Every download on this page, each with its formats.">' + ic + "<span>Download</span>" + cue + '</summary><div class="px-dl-menu" role="group" aria-label="Downloads">';
+      rows.forEach(function (r) {
+        html += '<div class="px-dl-row"><span></span><span>' + r[1].map(function (f) { return '<a class="px-link" href="' + f[1].replace(/"/g, "&quot;") + '"></a>'; }).join(" ") + "</span></div>";
+      });
+      foot.innerHTML = html + "</div></details>";
+      Array.prototype.forEach.call(foot.querySelectorAll(".px-dl-row"), function (row, i) {
+        row.firstChild.textContent = rows[i][0];
+        Array.prototype.forEach.call(row.querySelectorAll("a"), function (a, j) {
+          var f = rows[i][1][j]; a.textContent = f[0];
+          a.title = "Downloads " + rows[i][0].charAt(0).toLowerCase() + rows[i][0].slice(1) + (f[0] === "Excel" ? " as an Excel workbook." : f[0] === "CSV" ? " as a CSV file that opens in Excel." : " as one zip file.");
+        });
+      });
+      page.appendChild(foot);
+    }
+    // Show or Hide on every rolled-up section.
+    Array.prototype.forEach.call(page.querySelectorAll("details > summary"), function (s) {
+      if (!(s.querySelector("h2, h3, .sectionhead") || s.parentElement.classList.contains("lgroup")) || s.querySelector(".px-roll-cue")) return;
+      s.parentElement.classList.add("pa-roll");
+      var c = document.createElement("span"); c.className = "px-roll-cue"; c.setAttribute("aria-hidden", "true"); s.appendChild(c);
+    });
+    Array.prototype.forEach.call(page.querySelectorAll(".rollhead"), function (h) {
+      if (h.querySelector(".px-roll-cue")) return;
+      var c = document.createElement("span"); c.className = "px-roll-cue"; c.setAttribute("aria-hidden", "true"); h.appendChild(c);
+    });
+    // One Show all and Collapse all per page (checklist 38): later copies drive every section on the page instead of repeating.
+    var bars = page.querySelectorAll(".foldall:not(.taskfold)");
+    if (bars.length > 1) {
+      var first = bars[0], rest = Array.prototype.slice.call(bars, 1);
+      var btns = first.querySelectorAll("button");
+      btns[0].addEventListener("click", function () { rest.forEach(function (b) { b.querySelectorAll("button")[0].click(); }); });
+      btns[1].addEventListener("click", function () { rest.forEach(function (b) { b.querySelectorAll("button")[1].click(); }); });
+      rest.forEach(function (b) { b.hidden = true; });
+    }
+  }
+  document.addEventListener("DOMContentLoaded", function () { setTimeout(run, 0); });
+})();

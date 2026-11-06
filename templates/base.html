@@ -55,6 +55,49 @@
     {% if is_view_only_admin and request.resolver_match.namespace == 'manage' %}<div class="banner">View only. You can open every screen; changes are made by the evaluator.</div>{% endif %}
     {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m|stack }}{% else %}{{ m|stack }}{% endif %}</li>{% endfor %}</ul>{% endif %}
     {% block content %}{% endblock %}
+    {% if request.proto_admin and not request.proto_own %}<script>
+    /* Batch 3 (MW 2026-11-06): every administration page follows the approved screens (3, 21, 53, 90).
+       The title panel holds the context line, the title, and one sentence of purpose; any further
+       sentences become the introduction (gray bar) at the top of one white page, followed by the
+       title block's buttons, on the left. Only one button per page stays dark purple (checklist 50).
+       Runs before the page first appears. It only moves elements, so every form, button, and link,
+       and every word, is unchanged. */
+    (function () {
+      var main = document.getElementById("main"); if (!main) return;
+      var head = Array.prototype.find.call(main.querySelectorAll(".head"), function (h) { return !h.closest(".panel"); });
+      if (!head) return;
+      var box = head.firstElementChild, h1 = head.querySelector("h1");
+      var title = h1 && h1.firstChild ? h1.firstChild.textContent.trim() : "";
+      if (box) box.setAttribute("data-eyebrow", title === "Administration" ? "Home" : "Administration");
+      var intro = document.createElement("div"); intro.className = "pa-intro";
+      var ps = box ? Array.prototype.filter.call(box.children, function (x) { return x.tagName === "P"; }) : [];
+      ps.forEach(function (p, i) {
+        if (i === 0) {
+          p.classList.add("pa-purpose");
+          var k = p.innerHTML.search(/<br\s*\/?>/i);
+          if (k > -1) {
+            var rest = p.innerHTML.slice(k).replace(/^<br\s*\/?>/i, "");
+            p.innerHTML = p.innerHTML.slice(0, k);
+            var q = document.createElement("p"); q.innerHTML = rest; intro.appendChild(q);
+          }
+        } else { intro.appendChild(p); }
+      });
+      var acts = Array.prototype.slice.call(head.children, 1);
+      var parent = head.parentNode, items = [], n = head.nextSibling;
+      while (n) { items.push(n); n = n.nextSibling; }
+      var page = document.createElement("div"); page.className = "px-page pa-page";
+      if (intro.children.length) page.appendChild(intro);
+      var bar = null;
+      if (acts.length) { bar = document.createElement("div"); bar.className = "pa-actions"; acts.forEach(function (x) { bar.appendChild(x); }); page.appendChild(bar); }
+      items.forEach(function (x) { page.appendChild(x); });
+      if (!page.querySelector("*:not(script):not(style)")) return;
+      parent.insertBefore(page, head.nextSibling);
+      var dark = function (b) { return !b.matches(".ghost, .danger, .linkbtn") && !b.closest("details"); };
+      var inPage = Array.prototype.filter.call(page.querySelectorAll(".btn"), function (b) { return dark(b) && !(bar && bar.contains(b)); });
+      var inBar = bar ? Array.prototype.filter.call(bar.querySelectorAll(".btn"), dark) : [];
+      inPage.concat(inBar).slice(1).forEach(function (b) { b.classList.add("ghost", "pa-light"); });
+    })();
+    </script>{% endif %}
   </main>
 </div>
 {% if request.proto_screen %}<style>.protoswitch{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;background:#17141f;color:#fff;font:600 12px/1 "IBM Plex Sans",system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.18)}.protoswitch span{padding:0 10px;opacity:.7}.protoswitch a{padding:7px 12px;border-radius:999px;color:#fff;text-decoration:none}.protoswitch a[aria-current]{background:#fff;color:#17141f}.protoswitch a:focus-visible{outline:2px solid #c9adf5;outline-offset:2px}</style><div class="protoswitch" role="group" aria-label="Design preview"><span>Design preview</span><a href="{% url 'ui_switch' 'before' %}?next={{ request.get_full_path|urlencode }}"{% if not request.proto_active %} aria-current="true"{% endif %}>Current</a><a href="{% url 'ui_switch' 'after' %}?next={{ request.get_full_path|urlencode }}"{% if request.proto_active %} aria-current="true"{% endif %}>Prototype</a></div>{% endif %}

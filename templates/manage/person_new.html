@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Add a person · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Add a person {% why "A person only receives forms once they have a role (a relationship) or join the roster. Adding them here just puts them in the Hub’s address book." %}</h1><p>{{ "Add their name and main email. You’ll give them CNAP relationships on the next screen."|stack }}</p></div></div>
+<div class="head"><div><h1>Add a person {% why "A person only receives forms once they have a role (a relationship) or join the roster. Adding them here just puts them in the Hub’s address book." %}</h1><p>{{ "Add the person’s name and main email. You’ll add the person’s CNAP relationships on the next screen."|stack }}</p></div></div>
 <div class="panel" style="max-width:640px">
   <form method="post">{% csrf_token %}
     {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
