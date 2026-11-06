@@ -23,7 +23,7 @@
     <p class="p21-purpose">Who has finished which forms this period, and who still needs a reminder.</p>
     <ul class="px-facts">
       <li><span class="px-label">Status</span><span class="v"><span class="px-status" data-s="{% if p.status == 'open' %}in_progress{% elif p.status == 'finalized' %}submitted{% else %}not_started{% endif %}">{{ p.get_status_display }}</span></span></li>
-      <li><span class="px-label">Period covers</span><span class="v">{{ p|span }}</span></li>
+      <li><span class="px-label">Reports on work from</span><span class="v">{{ p|span }}</span></li>
       <li><span class="px-label">Forms opened</span><span class="v">{{ p.opens_at|date:"F j, Y" }}</span></li>
       <li><span class="px-label">Forms due</span><span class="v">{{ p.due_at|date:"F j, Y" }}{% if is_open %}{% if dleft > 1 %} · {{ dleft }} days left{% elif dleft == 1 %} · Tomorrow{% elif dleft == 0 %} · Today{% else %} · Past due{% endif %}{% endif %}</span></li>
       {% if p.closes_at %}<li><span class="px-label">Period closes</span><span class="v">{{ p.closes_at|date:"F j, Y" }}</span></li>{% endif %}

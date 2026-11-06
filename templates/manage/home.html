@@ -5,7 +5,7 @@
 {% if current %}
 <div class="panel">
   <h2 class="sectionhead">{{ current.name }} is open{% why "The open period is the one collecting answers right now. The seven steps run from review-before-launch to finalized results. The people buckets tell you who is finished, who is partway, and who needs a reminder." %}</h2>
-  <p class="small muted lifedates">This session runs {{ current|span }}.<br>Forms opened {{ current.opens_at|date:"F j" }} and are due {{ current.due_at|date:"F j" }}.{% if current.closes_at %}<br>The session closes {{ current.closes_at|date:"F j" }}.{% endif %}</p>
+  <p class="small muted lifedates">Reports on work from {{ current|span }}.<br>Forms opened {{ current.opens_at|date:"F j" }} and are due {{ current.due_at|date:"F j" }}.{% if current.closes_at %}<br>The session closes {{ current.closes_at|date:"F j" }}.{% endif %}</p>
   {% include "manage/_lifecycle.html" %}
   {% include "proto/_timeline.html" with tl=timeline %}
   <div class="statrow">

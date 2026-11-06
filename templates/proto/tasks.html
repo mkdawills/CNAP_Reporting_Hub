@@ -20,7 +20,7 @@
     <p class="px-eyebrow">{{ period.name }}</p>
     <h1 class="px-title">{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
     <ul class="px-facts" aria-label="This reporting period">
-      <li><span class="px-label">Period covers</span><span class="v">{{ period|span }}</span></li>
+      <li><span class="px-label">Reports on work from</span><span class="v">{{ period|span }}</span></li>
       {% if todo %}{% with d=period.due_at|days_until %}<li><span class="px-label">Forms due</span><span class="v">{{ period.due_at|date:"l, F j" }}{% if d > 1 %} · {{ d }} days left{% elif d == 1 %} · Tomorrow{% elif d == 0 %} · Today{% else %} · Past due{% endif %}</span></li>{% endwith %}{% endif %}
       {% if todo %}<li><span class="px-label">Time left to finish</span><span class="v">About {{ minutes_left }} minute{{ minutes_left|pluralize }}</span></li>{% endif %}
     </ul>

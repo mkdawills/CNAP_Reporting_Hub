@@ -19,7 +19,7 @@
 <div class="panel pcard {{ r.stage }}">
   <div class="head" style="margin-bottom:10px"><div>
     <h2>{{ r.p.name }}{% if r.stage == 'open' %} <span class="pchip on">Open now</span>{% elif r.stage == 'draft' %} <span class="pchip">Coming up</span>{% else %} <span class="pchip">Wrapping up</span>{% endif %}</h2>
-    <p class="small">This period covers {{ r.p|span }}.<br>Forms open {{ r.p.opens_at|date:"F j" }} and are due {{ r.p.due_at|date:"F j, Y" }}.</p>
+    <p class="small">Reports on work from {{ r.p|span }}.<br>Forms open {{ r.p.opens_at|date:"F j" }} and are due {{ r.p.due_at|date:"F j, Y" }}.</p>
     <p class="small whatsnext">{% if r.stage == 'draft' %}Next step: please review what every respondent receives, and then launch.{% elif r.stage == 'open' %}Forms are open. After the due date, close the period.{% elif r.stage == 'closed' %}Next step: generate results.{% elif r.stage == 'generated' %}Next step: review the results, then mark them reviewed.{% elif r.stage == 'reviewed' %}Next step: finalize to make the results official.{% endif %}</p>
   </div>
     <div>{% if r.stage == 'draft' %}<a class="btn" href="{% url 'manage:launch' r.p.pk %}">Review before launch</a>
