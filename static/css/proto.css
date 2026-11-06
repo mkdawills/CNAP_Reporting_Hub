@@ -1529,3 +1529,7 @@ body.proto.pa .pa-page .rollup details.pa-details:first-child { border-top: 0 !i
 body.proto.pa .pa-page :is(.sectionhead, h2) + p:is(.small, .muted):not(.rollsum):not(.pa-roll-meta) { padding: 2px 0 2px var(--px-4); border-left: 2px solid var(--px-line-strong); max-width: var(--px-measure); }
 body.proto.pa .pa-page details.pa-details > summary { display: grid !important; row-gap: 2px; }
 body.proto.pa .pa-page details.pa-details > summary { padding-bottom: var(--px-4); }
+/* A quiet tool line (the Excel option) belongs to the section above it: no divider between them. */
+body.proto.pa .pa-page > .panel:has(> details.sheetup) { border-top: 0 !important; margin-top: var(--px-4) !important; padding-top: 0 !important; }
+/* A table's last row has no line of its own, so the darker divider below it is the only line (no double lines). */
+body.proto.pa .pa-page table tbody tr:last-child > :is(td, th) { border-bottom: 0; }
