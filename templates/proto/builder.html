@@ -1,0 +1,82 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Build a download · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Build a download (MW 2026-11-06): one Excel workbook, tailored. Same access rules as the screens. #}
+<div class="rbd">
+  <a class="px-link p21-back" href="{% url 'manage:results' %}">Back to the results</a>
+  <header class="px-mast">
+    <p class="px-eyebrow">Results</p>
+    <h1 class="px-title">Build a download</h1>
+    <p class="r65-purpose">{{ "Choose any combination of reporting periods, forms, and grant years. The Hub puts everything in one Excel workbook, with a contents sheet."|stack }}</p>
+  </header>
+
+  <form method="get" class="rbd-form" id="rbd">
+    <input type="hidden" name="go" value="1">
+
+    <section class="px-section rbd-step" aria-labelledby="rbd-1">
+      <h2 class="px-h2 r90-part" id="rbd-1"><span>1</span>Reporting periods</h2>
+      <p class="px-note">Please tick whole years, single periods, or any mix.</p>
+      <div class="rbd-years">
+        {% for gy, ps in years %}<fieldset class="rbd-year"><legend><label><input type="checkbox" data-year-all="{{ gy }}"> Year {{ gy }}{% if gy == now %} (this year){% endif %}</label></legend>
+          {% for p in ps %}<label><input type="checkbox" name="periods" value="{{ p.short_label }}" data-year="{{ gy }}" {% if p.short_label == pre_period %}checked{% endif %}> {{ p.name }}{% if p.status == 'open' %} (open: live results){% endif %}</label>{% endfor %}
+        </fieldset>{% endfor %}
+      </div>
+    </section>
+
+    <section class="px-section rbd-step" aria-labelledby="rbd-2">
+      <h2 class="px-h2 r90-part" id="rbd-2"><span>2</span>Forms</h2>
+      <fieldset class="rbd-parts"><legend class="px-label">For each form, include</legend>
+        <label><input type="checkbox" name="parts" value="answers" checked> Every answer, one row per respondent</label>
+        <label><input type="checkbox" name="parts" value="tables"> The results tables (means and counts)</label>
+      </fieldset>
+      <div class="rbd-quick"><button type="button" class="px-link" data-tick="forms" data-on="1">Tick every form</button><button type="button" class="px-link" data-tick="forms" data-on="0">Clear</button></div>
+      <div class="rbd-forms">
+        {% for f in forms %}<label class="{% if not f.mode %}off{% endif %}"><input type="checkbox" name="forms" value="{{ f.fd.code }}" {% if not f.mode %}disabled{% endif %} {% if f.fd.code == pre_form %}checked{% endif %}><span>{{ f.fd.name }}<small>{% if f.locked %}Confidential: no access{% elif not f.mode %}Combined results only{% elif f.mode == 'identified' %}With names{% else %}Without names{% endif %}</small></span></label>{% endfor %}
+      </div>
+    </section>
+
+    <section class="px-section rbd-step" aria-labelledby="rbd-3">
+      <h2 class="px-h2 r90-part" id="rbd-3"><span>3</span>Papers, talks, and grants</h2>
+      <div class="rbd-row">
+        <fieldset><legend class="px-label">Include</legend>
+          {% for k, name in kinds %}<label><input type="checkbox" name="products" value="{{ k }}"> {{ name }}</label>{% endfor %}
+        </fieldset>
+        <fieldset><legend class="px-label">Grant years</legend>
+          {% for gy, ps in years %}<label><input type="checkbox" name="years" value="{{ gy }}"> Year {{ gy }}</label>{% endfor %}
+        </fieldset>
+      </div>
+    </section>
+
+    <section class="px-section rbd-step" aria-labelledby="rbd-4">
+      <h2 class="px-h2 r90-part" id="rbd-4"><span>4</span>Narrow it down (optional)</h2>
+      <div class="rbd-row">
+        <label class="rbd-sel"><span class="px-label">Core</span><select name="core"><option value="">Every core</option>{% for c in cores %}<option value="{{ c.pk }}">{{ c.name }}</option>{% endfor %}</select></label>
+        <label class="rbd-sel"><span class="px-label">Project</span><select name="project"><option value="">Every project</option>{% for p in projects %}<option value="{{ p.pk }}">{{ p.title }}</option>{% endfor %}</select></label>
+      </div>
+      <p class="px-note">{{ "Narrowing applies to papers, talks, and grants, and to forms you see with names. Forms you see without names are never narrowed, because a smaller group could point to one person."|stack }}</p>
+    </section>
+
+    <div class="rbd-go">
+      <button class="px-btn" type="submit" title="Builds one Excel workbook with everything you chose.">Download the workbook (Excel)</button>
+      <p class="px-note">{{ "Each sheet follows the same access rules as the screens. Anything your access doesn’t include is listed on the contents sheet as not included."|stack }}</p>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>
+<script>
+/* Build a download: a year's box ticks its periods; quick links tick or clear every form. */
+(function () {
+  var f = document.getElementById("rbd");
+  if (!f) return;
+  f.querySelectorAll("[data-year-all]").forEach(function (y) {
+    var kids = f.querySelectorAll('[data-year="' + y.dataset.yearAll + '"]');
+    var sync = function () { var on = Array.prototype.filter.call(kids, function (k) { return k.checked; }).length; y.checked = on === kids.length; y.indeterminate = on > 0 && on < kids.length; };
+    y.addEventListener("change", function () { kids.forEach(function (k) { k.checked = y.checked; }); });
+    kids.forEach(function (k) { k.addEventListener("change", sync); }); sync();
+  });
+  f.querySelectorAll("[data-tick]").forEach(function (b) {
+    b.addEventListener("click", function () { f.querySelectorAll('input[name="' + b.dataset.tick + '"]:not(:disabled)').forEach(function (x) { x.checked = b.dataset.on === "1"; }); });
+  });
+})();
+</script>{% endblock %}

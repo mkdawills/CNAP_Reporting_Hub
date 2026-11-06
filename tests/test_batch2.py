@@ -339,3 +339,35 @@ def test_names_on_hover_only_where_names_are_allowed(client, demo):
     client.force_login(User.objects.get(username="hbailey"))
     html = client.get(url).content.decode()
     assert 'class="px-names"' not in html and "data-names" not in html
+
+
+# ------------------------------------------------------------------ Build a download (MW 2026-11-06)
+@override_settings(UI_PROTOTYPE=True)
+def test_build_a_download_keeps_every_privacy_rule(client, demo):
+    from apps.common.enums import COMPLETE_STATUSES
+
+    a = Assignment.objects.filter(reporting_period=demo, form_definition__code="bn_core_survey", project__isnull=False).select_related("project").first()
+    proj = a.project if a else Assignment.objects.filter(project__isnull=False).first().project
+    q = (f"/manage/results/build/?go=1&periods={demo.short_label}&forms=bn_core_survey&forms=mentee_survey"
+         f"&parts=answers&parts=tables&products=papers&products=talks&products=grants&years=10&project={proj.pk}")
+    done = Assignment.objects.filter(reporting_period=demo, form_definition__code="bn_core_survey", status__in=COMPLETE_STATUSES).select_related("person")
+    # the Director: core survey without names and never narrowed by project
+    client.force_login(User.objects.get(username="hbailey"))
+    wb = _xlsx(client.get(q))
+    bn = _all_text(type("W", (), {"worksheets": [wb.worksheets[1]]})())
+    for x in done:
+        assert x.person.last_name not in bn
+    assert "Not narrowed by core or project" in bn
+    # the evaluator: narrowed to the project, with names
+    client.force_login(User.objects.get(username="mwills"))
+    wb = _xlsx(client.get(q))
+    assert "Narrowed to project" in _all_text(wb)
+    # respondents can't build downloads
+    client.force_login(User.objects.get(username="okafor"))
+    assert client.get(q).status_code in (302, 403)
+    assert client.get("/manage/results/build/").status_code in (302, 403)
+
+
+def test_build_a_download_is_off_with_the_switch_off(client, demo):
+    client.force_login(User.objects.get(username="mwills"))
+    assert client.get("/manage/results/build/").status_code == 404

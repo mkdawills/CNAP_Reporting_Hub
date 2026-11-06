@@ -84,6 +84,7 @@ urlpatterns = [
     path("assignments/<int:pk>/action/", periods.assignment_action, name="assignment_action"),
     # results
     path("results/", results.results, name="results"),
+    path("results/build/", results.export_builder, name="export_builder"),
     path("results/<str:label>/<slug:code>/", results.form_report, name="form_report"),
     path("results/<str:label>/<slug:code>/themes/", results.save_themes, name="save_themes"),
     path("results/<str:label>/<slug:code>/export/", results.export_report, name="export_report"),

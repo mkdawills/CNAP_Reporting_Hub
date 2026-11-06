@@ -187,7 +187,7 @@ def _value(q, a, opts, named=True):
     return link.file.original_filename if named else "File uploaded"
 
 
-def form_answers(user, fd, period):
+def form_answers(user, fd, period, *, core=None, project=None):
     """Rows of every completed response this reader may see, or PermissionDenied.
 
     Returns {"mode", "columns": [(code, prompt)], "rows": [[...]], "repeats": {title: (header, rows)},
@@ -201,6 +201,8 @@ def form_answers(user, fd, period):
         .select_related("person", "project", "core", "form_version")
         .prefetch_related("responses")
     )
+    if (core or project) and mode == IDENTIFIED:  # narrowing only where names are already shown
+        done = [a for a in done if (not project or a.project_id == project.pk) and (not core or a.core_id == core.pk)]
     if mode == DEIDENTIFIED and not deidentified_rows_allowed(fd, period):
         return {"mode": mode, "columns": [], "rows": [], "repeats": {}, "blocked": "Individual responses aren’t included because fewer than 5 people completed this form"}
     if mode == IDENTIFIED:

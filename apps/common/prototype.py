@@ -29,6 +29,7 @@ SCREENS = {
     "results_list": "proto/results.html",  # screen 65
     "response": "proto/progress_form.html",  # screen 66: one response, read-only, in the form design
     "center_results": "proto/center_results.html",  # screens 32 and 33
+    "builder": "proto/builder.html",  # Build a download (MW 2026-11-06)
 }
 
 

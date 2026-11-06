@@ -1069,3 +1069,29 @@ body.proto .px-names:hover::after, body.proto .px-names:focus-visible::after { o
 /* The privacy note sits at the bottom, above the Download menu (MW 2026-11-06). */
 body.proto .r90-privacy-foot { margin: var(--px-7) 0 0; }
 body.proto .r90-privacy-foot + .px-dlfoot { margin-top: var(--px-4); }
+/* Build a download (MW 2026-11-06) */
+body.proto .rbd-form { display: grid; gap: var(--px-6); max-width: 60rem; }
+body.proto .rbd-step { padding: var(--px-5); background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r); }
+body.proto .rbd-step .px-h2 { display: flex; align-items: center; gap: var(--px-3); margin: 0 0 var(--px-2); }
+body.proto .rbd-form fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; }
+body.proto .rbd-form label { display: flex; align-items: flex-start; gap: 8px; font-size: var(--px-fs-sm); color: var(--px-ink); cursor: pointer; }
+body.proto .rbd-form input[type="checkbox"] { margin-top: 3px; accent-color: var(--px-brand); }
+body.proto .rbd-years { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: var(--px-4); margin-top: var(--px-3); }
+body.proto .rbd-year { padding: var(--px-3) var(--px-4) !important; border: 1px solid var(--px-line) !important; border-radius: var(--px-r-sm); }
+body.proto .rbd-year legend { padding: 0 4px; font-weight: 600; }
+body.proto .rbd-parts { margin: var(--px-3) 0 var(--px-4) !important; }
+body.proto .rbd-quick { display: flex; gap: var(--px-4); margin: 0 0 var(--px-3); font-size: var(--px-fs-sm); }
+body.proto .rbd-quick button { background: none; border: 0; padding: 0; cursor: pointer; }
+body.proto .rbd-forms { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 8px var(--px-5); }
+body.proto .rbd-forms label span { display: flex; flex-direction: column; }
+body.proto .rbd-forms small { color: var(--px-muted); font-size: var(--px-fs-xs); }
+body.proto .rbd-forms label.off { color: var(--px-muted); cursor: not-allowed; }
+body.proto .rbd-row { display: flex; flex-wrap: wrap; gap: var(--px-6); margin: var(--px-3) 0; }
+body.proto .rbd-sel { flex-direction: column !important; gap: 4px !important; }
+body.proto .rbd-sel select { min-width: 16rem; max-width: 100%; padding: 8px 12px; border: 1px solid var(--px-line-strong); border-radius: var(--px-r-sm); background: var(--px-surface); color: var(--px-ink); font: 500 var(--px-fs-sm)/1.3 var(--px-sans); }
+body.proto .rbd-go { display: grid; gap: var(--px-2); justify-items: start; }
+@media (max-width: 760px) { body.proto .rbd-sel select { min-width: 0; width: 100%; } body.proto .rbd-sel { width: 100%; } }
+/* Build a download: forms stack in one column (Design Rules: stack lists); steps sit closer together. */
+body.proto .rbd-forms { grid-template-columns: 1fr; gap: 8px; }
+body.proto .rbd-form > .px-section { margin: 0; }
+body.proto .rbd-form { gap: var(--px-5); }

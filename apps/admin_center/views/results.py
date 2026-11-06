@@ -391,5 +391,37 @@ def print_form_all(request, label, code):
     return documents.file_response(docs, f"{fd.name}, {p.name}", f"{fd.name} {label} all", fmt)
 
 
+@admin_view
+def export_builder(request):
+    """Build a download (MW 2026-11-06): any combination of periods, grant years, forms, products, a core,
+    and a project, in one Excel workbook. Same access rules as the screens, form by form and period by period."""
+    from django.conf import settings
+    from django.http import Http404
+
+    from apps.reporting.services import builder
+
+    if not getattr(settings, "UI_PROTOTYPE", False):
+        raise Http404
+    if request.GET.get("go"):
+        choice = builder.parse(request.user, request.GET)
+
+        def tables_csv(p, fd):
+            try:
+                r = export_report(request, p.short_label, fd.code)
+            except PermissionDenied:
+                return None
+            return r.content.decode("utf-8-sig") if r.status_code == 200 else None
+
+        record_event(request.user, AuditLog.Action.EXPORT, "custom:" + ",".join(p.short_label for p in choice["periods"]) + ";" + ",".join(f.code for f in choice["forms"]))
+        return builder.build(request.user, choice, tables_csv=tables_csv)
+    ctx = builder.options(request.user)
+    from apps.outcomes.rppr import current_year
+
+    ctx["now"] = current_year()
+    ctx["pre_period"] = request.GET.get("period", "")
+    ctx["pre_form"] = request.GET.get("form", "")
+    return render(request, prototype.template(request, "builder", "proto/builder.html"), ctx)
+
+
 def _unused():
     return FormCategory
