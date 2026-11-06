@@ -39,9 +39,9 @@ def _period_from(request):
 
 STAGE_HELP = {
     "draft": "Step 1, review before launch: you check who will receive which forms. Nothing is sent until you approve. Click to open the launch checklist.",
-    "preview": "Step 2, open for preview: everyone can read their forms ahead of time, but answers are not saved yet. Click to see the period’s dashboard.",
+    "preview": "Step 2, open for preview: everyone can read their forms ahead of time, but answers are not saved yet. Click to see the reporting session’s dashboard.",
     "open": "Step 3, open: forms are collecting answers, and the automatic emails and reminders are running. Click to see who has finished.",
-    "closed": "Step 4, closed: no more answers come in, so the numbers stop moving. Click to see the period.",
+    "closed": "Step 4, closed: no more answers come in, so the numbers stop moving. Click to see the reporting session.",
     "generated": "Step 5, results generated: the Hub builds every report and freezes a snapshot of the numbers. Click to open the results.",
     "reviewed": "Step 6, reviewed: you read the results and write the themes from what people wrote. Click to open the results.",
     "finalized": "Step 7, finalized: the results are official and ready for the RPPR and the External Advisory Committee. Click to open the results.",
@@ -98,9 +98,9 @@ class PeriodForm(forms.ModelForm):
             "grant_year",
             "sequence",
             "start_date",
-            "end_date",
             "opens_at",
             "due_at",
+            "end_date",
             "notes",
         ]
         widgets = {
@@ -111,9 +111,19 @@ class PeriodForm(forms.ModelForm):
             "notes": forms.Textarea(attrs={"rows": 2}),
         }
         labels = {
-            "opens_at": "Opens",
-            "due_at": "Due",
+            "start_date": "Collects data from",
+            "opens_at": "Forms open",
+            "due_at": "Forms due",
+            "end_date": "Collects data until",
             "sequence": "Sequence (1 = Fall, surveyed in November; 2 = RPPR/Spring, surveyed in March)",
+        }
+        help_texts = {
+            "name": "Make every effort to use consistent reporting session name conventions. Earlier names are listed with this form.",
+            "short_label": "For example: Y11 Fall.",
+            "grant_year": "The Center’s grant year. For example: 11.",
+            "sequence": "",
+            "opens_at": "When respondents can begin answering their forms, in Central Time.",
+            "due_at": "In Central Time. Reminder emails go out every 4 days until this date, then past-due emails every day.",
         }
 
 
@@ -159,10 +169,12 @@ def period_new(request):
         p.save()
         record_event(request.user, AuditLog.Action.CREATE, p)
         messages.success(
-            request, f"{p.short_label} created. Review who will receive forms before you launch the period."
+            request, f"{p.short_label} created. Review who will receive forms before you launch the reporting session."
         )
         return redirect("manage:launch", p.pk)
-    return render(request, "manage/period_new.html", {"form": form})
+    # Earlier names, newest first, shown beside the form so a new name follows the pattern (MW 2026-11-06). Display only.
+    earlier = ReportingPeriod.objects.order_by("-display_order")
+    return render(request, "manage/period_new.html", {"form": form, "earlier": earlier})
 
 
 @manage_action
@@ -560,7 +572,7 @@ def assignment_action(request, pk):
 def generate_assignments(request, pk):
     p = get_object_or_404(ReportingPeriod, pk=pk)
     if p.status != PeriodStatus.OPEN:
-        messages.error(request, "Assignments can be generated only while the period is open.")
+        messages.error(request, "Assignments can be generated only while the reporting session is open.")
     else:
         result = asg.generate(p, request.user)
         messages.success(
@@ -604,8 +616,17 @@ def period_emails(request, pk):
             "can_send": p.accepting_responses,
             "sched": emails.schedule_preview(p),
             "today_kind": emails.scheduled_kind(p),
+            "etl": _email_timeline(request, p),
         },
     )
+
+
+def _email_timeline(request, period):
+    """The automatic emails on a dated timeline (MW 2026-11-06), from the same read-only timeline: each email date, the due date, and today."""
+    tl = _timeline(request, period)
+    if not tl:
+        return None
+    return {"events": [e for e in tl["events"] if e["kind"] in ("email", "zone", "due", "now")], "now": tl["now"]}
 
 
 @manage_action

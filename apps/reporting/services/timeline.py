@@ -35,12 +35,12 @@ def period_timeline(period, today=None):
     def add(day, label, detail="", kind="step", tone=""):
         ev.append({"date": day, "label": label, "detail": detail, "kind": kind, "tone": tone})
 
-    add(launched, "Launched, open for preview", "Forms were assigned, and people could read them." if launched else "Forms are assigned when you launch the period.")
+    add(launched, "Launched, open for preview", "Forms were assigned, and people could read them." if launched else "Forms are assigned when you launch the reporting session.")
     open_n = sum(n for (k, d), n in sent.items() if k == PeriodEmail.Kind.OPEN and d == opens)
-    add(opens, "Opens for answers", f"Opening email sent to {_people(open_n)}." if opens and opens <= today and open_n else "The opening email goes to everyone with forms.", "email")
+    add(opens, "Opens for answers", f"The “your reporting session is open” email went to {_people(open_n)}." if opens and opens <= today and open_n else "The “your reporting session is open” email goes to everyone with forms.", "email")
     for (k, d), n in sorted(sent.items(), key=lambda x: x[0][1]):
         if k == PeriodEmail.Kind.OPEN and d != opens:
-            add(d, "Opening email, for people added later", f"Sent to {_people(n)}.", "email")
+            add(d, "“Your reporting session is open,” for people added later", f"Sent to {_people(n)}.", "email")
 
     # Every reminder date the schedule plans, plus any reminder sent by hand on another day.
     plan = []
@@ -65,11 +65,11 @@ def period_timeline(period, today=None):
             add(d, "Past-due email", f"Sent to {_people(n)} not yet finished.", "email", "warn")
     if due and not closed:
         start = max(due + timedelta(days=1), today if today > due else due + timedelta(days=1))
-        until = f"until {end:%B %-d}" if end else "until you close the period"
+        until = f"until {end:%B %-d}" if end else "until you close the reporting session"
         add(start, "Past-due emails every day" if not paused else "Past-due emails (paused)",
             f"To everyone not yet finished, {until}.", "zone", "warn")
 
-    add(closed or closes_plan, "Closed" if closed else "Closes", "Respondents can no longer change their forms." if closed else "Planned closing date; you close the period on Reporting periods.")
+    add(closed or closes_plan, "Closed" if closed else "Closes", "Respondents can no longer change their forms." if closed else "Planned closing date; you close the reporting session on Reporting sessions.")
     snaps = list(period.snapshots.order_by("generated_at"))
     if snaps:
         add(_d(snaps[0].generated_at), "Results generated", f"Version {snaps[0].version_no}.")
@@ -88,12 +88,12 @@ def period_timeline(period, today=None):
     elif opens and today < opens:
         now = f"Open for preview. Answers open in {(opens - today).days} day{'s' if (opens - today).days != 1 else ''}."
     elif closed:
-        now = "The period is closed."
+        now = "The reporting session is closed."
     elif due and today <= due:
         left = (due - today).days
-        now = f"Reminder period: {left} day{'s' if left != 1 else ''} until the due date." if left else "Due today."
+        now = f"Reminder emails: {left} day{'s' if left != 1 else ''} until the due date." if left else "Due today."
     else:
-        now = "Past due: past-due emails go out every day until you close the period."
+        now = "Past due: past-due emails go out every day until you close the reporting session."
     if paused and not closed:
         now += " Automatic emails are paused."
     marker = {"date": today, "label": f"Today, {today:%B %-d}", "detail": now, "kind": "now", "tone": "warn" if now.startswith("Past due") else "", "state": "now"}

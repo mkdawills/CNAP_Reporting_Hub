@@ -22,7 +22,7 @@
       <li><span class="px-label">Talks and posters</span><span class="v">{{ presentations|length }}</span></li>
     </ul>
   </header>
-  {% if not window.0 %}<div class="px-callout warn" role="status"><p><strong>Adding and updating opens again on {{ window.1|date:"l, F j" }}.</strong><br>The Center is finishing this period’s report.<br>Your records are safe, and you can read them below.</p></div>
+  {% if not window.0 %}<div class="px-callout warn" role="status"><p><strong>Adding and updating opens again on {{ window.1|date:"l, F j" }}.</strong><br>The Center is finishing this reporting session’s report.<br>Your records are safe, and you can read them below.</p></div>
   {% elif period %}<div class="px-callout{% if st.done %} ok{% endif %}" role="status"><p>{% if st.done %}<strong>You’re all caught up for {{ period.name }}.</strong><br>Thank you.{% else %}<strong>{{ period.name }}: {% if st.n_review %}{{ st.n_review }} item{{ st.n_review|pluralize }} to review{% if st.n_ask %} and {% endif %}{% endif %}{% if st.n_ask %}{{ st.n_ask }} question{{ st.n_ask|pluralize }} to answer{% endif %}.</strong>{% if st.n_review %}<br>Items to review are marked below.<br>If nothing has changed, please choose “No change.”<br>If something has changed, please choose “Update progress.”{% endif %}{% endif %}</p></div>{% endif %}
   {% if window.0 %}<div class="o36-add"><span class="px-label">Add</span>
     <a class="px-btn small quiet" href="{% url 'portal:outcome_new' 'pub' %}?for={{ owner.pk }}" title="Record a paper you plan to submit, have submitted, or have published.">A paper</a>

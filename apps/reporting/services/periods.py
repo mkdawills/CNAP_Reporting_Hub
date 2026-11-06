@@ -52,7 +52,7 @@ def stage(period):
 @transaction.atomic
 def launch(actor, period):
     if period.status != PeriodStatus.DRAFT:
-        raise PeriodError("Only a period under review can be launched.")
+        raise PeriodError("Only a reporting session under review can be launched.")
     result = assignments.generate(period, actor)
     period.status = PeriodStatus.OPEN
     period.save(update_fields=["status", "updated_at"])
@@ -68,7 +68,7 @@ def launch(actor, period):
 @transaction.atomic
 def close(actor, period):
     if period.status != PeriodStatus.OPEN:
-        raise PeriodError("Only an open period can be closed.")
+        raise PeriodError("Only an open reporting session can be closed.")
     period.status = PeriodStatus.CLOSED
     period.closed_at = timezone.now()
     period.save(update_fields=["status", "closed_at", "updated_at"])
@@ -79,7 +79,7 @@ def close(actor, period):
 def reopen(actor, period, reason=""):
     if period.status != PeriodStatus.CLOSED or period.snapshots.exists():
         raise PeriodError(
-            "A period can be reopened only while closed and before results are generated."
+            "A reporting session can be reopened only while closed and before results are generated."
         )
     period.status = PeriodStatus.OPEN
     period.closed_at = None

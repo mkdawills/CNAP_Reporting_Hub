@@ -102,7 +102,7 @@ def _answer_text(view, *, named):
 def response_blocks(ctx, *, named, label=None):
     """One completed form, built from the same page data the screen uses (presenters.form_page)."""
     a, fd = ctx["a"], ctx["fd"]
-    meta = [("CNAP reporting period", a.reporting_period.name)]
+    meta = [("CNAP reporting session", a.reporting_period.name)]
     if named:
         meta.insert(0, ("Response from", a.person.full_name))
         if ctx.get("context_line"):

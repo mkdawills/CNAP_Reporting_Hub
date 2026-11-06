@@ -6,7 +6,7 @@
 {% if not period %}
   <header class="px-mast">
     <p class="px-eyebrow">My tasks</p>
-    <h1 class="px-title">No reporting period is open right now.</h1>
+    <h1 class="px-title">No reporting session is open right now.</h1>
     <p class="px-lede">We’ll email you when the next one opens.</p>
   </header>
   {% if cp_check %}<section class="px-section"><div class="px-section-head"><h2 class="px-h2">To do</h2></div>
@@ -19,8 +19,8 @@
   <header class="px-mast t3-mast">
     <p class="px-eyebrow">{{ period.name }}</p>
     <h1 class="px-title">{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
-    <ul class="px-facts" aria-label="This reporting period">
-      <li><span class="px-label">Reports on work from</span><span class="v">{{ period|span }}</span></li>
+    <ul class="px-facts" aria-label="This reporting session">
+      <li><span class="px-label">Collects data from</span><span class="v">{{ period|span }}</span></li>
       {% if todo %}{% with d=period.due_at|days_until %}<li><span class="px-label">Forms due</span><span class="v">{{ period.due_at|date:"l, F j" }}{% if d > 1 %} · {{ d }} days left{% elif d == 1 %} · Tomorrow{% elif d == 0 %} · Today{% else %} · Past due{% endif %}</span></li>{% endwith %}{% endif %}
       {% if todo %}<li><span class="px-label">Time left to finish</span><span class="v">About {{ minutes_left }} minute{{ minutes_left|pluralize }}</span></li>{% endif %}
     </ul>
@@ -39,7 +39,7 @@
   <section class="t3-top" aria-label="Reporting progress and your next form">
     <div class="t3-progress">
       <h2 class="px-h2">Reporting progress</h2>
-      <p class="px-note t3-progress-sub">{{ total }} form{{ total|pluralize }} for you this period.</p>
+      <p class="px-note t3-progress-sub">{{ total }} form{{ total|pluralize }} for you this reporting session.</p>
       <div class="px-meter t3-meter" role="img" aria-label="{{ submitted }} submitted, {{ opted }} opted out, {{ todo }} still to do, out of {{ total }}.">
         <span class="m-ok" style="width: {{ submitted|pct:total }}%"></span><span class="m-opt" style="width: {{ opted|pct:total }}%"></span>
       </div>
@@ -57,7 +57,7 @@
       <span class="px-btn t3-next-btn">{% if first_up.a.status == 'in_progress' %}Continue{% else %}Start{% endif %}<svg class="t3-arrow" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11M11 5.5 15.5 10 11 14.5"/></svg></span>
     </a>
     {% elif not todo and not cp_check %}
-    <div class="t3-next done"><span class="px-label">All set</span><span class="t3-next-name">You’re all set for {{ period.short_label }}.</span><span class="t3-next-time">Everything you sent feeds the Center’s Research Performance Progress Report (RPPR) to NIH. We’ll email you when the next reporting period opens.</span></div>
+    <div class="t3-next done"><span class="px-label">All set</span><span class="t3-next-name">You’re all set for {{ period.short_label }}.</span><span class="t3-next-time">Everything you sent feeds the Center’s Research Performance Progress Report (RPPR) to NIH. We’ll email you when the next reporting session opens.</span></div>
     {% endif %}
   </section>
   {% endwith %}{% endwith %}
@@ -97,7 +97,7 @@
             <li class="t3-row"><div class="t3-main"><p class="t3-name">{% if i.self %}Review your publications, talks, and grants{% else %}Review publications, talks, and grants for {{ i.owner }}{% endif %}</p>
               <p class="t3-sub">{% if i.n_review %}{{ i.n_review }} product{{ i.n_review|pluralize }} to review{% if i.n_ask %} and {% endif %}{% endif %}{% if i.n_ask %}{{ i.n_ask }} question{{ i.n_ask|pluralize }} to answer{% endif %}.</p></div>
               <div class="t3-state"><span class="px-status" data-s="not_started">Not started</span><span class="t3-time">About {{ outcome.minutes }} min</span></div>
-              <div class="t3-acts">{% if period.in_preview %}<span class="px-note t3-slotwide">This opens when the period starts.</span>{% else %}<span class="t3-slot"><a class="px-btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}" title="Review your papers, presentations, and grant proposals.">Start</a></span><span class="t3-slot"></span><span class="t3-slot"></span>{% endif %}</div></li>
+              <div class="t3-acts">{% if period.in_preview %}<span class="px-note t3-slotwide">This opens when the reporting session starts.</span>{% else %}<span class="t3-slot"><a class="px-btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}" title="Review your papers, presentations, and grant proposals.">Start</a></span><span class="t3-slot"></span><span class="t3-slot"></span>{% endif %}</div></li>
           {% endif %}{% endfor %}</ul>
         </div>
         {% endif %}
@@ -107,10 +107,10 @@
 
     {% if done or outcome.done %}
     <details class="px-roll" id="t3-done">
-      <summary title="Forms you have submitted or opted out of this period. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg>Finished</h2><span class="px-roll-meta"><b>{{ done_count }}</b> form{{ done_count|pluralize }} submitted or opted out</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <summary title="Forms you have submitted or opted out of this reporting session. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg>Finished</h2><span class="px-roll-meta"><b>{{ done_count }}</b> form{{ done_count|pluralize }} submitted or opted out</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="px-roll-body">
         <ul class="t3-list px-surface">{% for r in done %}{% include "proto/_task_row.html" %}{% endfor %}
-          {% if outcome.done %}<li class="t3-row"><div class="t3-main"><p class="t3-name">Publications, talks, and grants</p><p class="t3-sub">Up to date for this period.</p></div><div class="t3-state"><span class="px-status" data-s="submitted">Up to date</span></div><div class="t3-acts"><span class="t3-slot"><a class="px-btn small quiet" href="{% url 'portal:outcomes' %}" title="See what you entered.">View</a></span><span class="t3-slot"></span><span class="t3-slot"></span></div></li>{% endif %}
+          {% if outcome.done %}<li class="t3-row"><div class="t3-main"><p class="t3-name">Publications, talks, and grants</p><p class="t3-sub">Up to date for this reporting session.</p></div><div class="t3-state"><span class="px-status" data-s="submitted">Up to date</span></div><div class="t3-acts"><span class="t3-slot"><a class="px-btn small quiet" href="{% url 'portal:outcomes' %}" title="See what you entered.">View</a></span><span class="t3-slot"></span><span class="t3-slot"></span></div></li>{% endif %}
         </ul>
       </div>
     </details>
@@ -128,7 +128,7 @@
 
     {% if docs %}
     <details class="px-roll" id="t3-docs">
-      <summary title="Guides and templates for this reporting period. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Helpful documents</h2><span class="px-roll-meta"><b>{{ docs|length }}</b> document{{ docs|length|pluralize }}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <summary title="Guides and templates for this reporting session. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Helpful documents</h2><span class="px-roll-meta"><b>{{ docs|length }}</b> document{{ docs|length|pluralize }}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="px-roll-body"><ul class="t3-docs">{% for d in docs %}<li><a href="{% if d.file %}{% url 'portal:helpful_doc' d.pk %}{% else %}{{ d.url }}{% endif %}">{{ d.title }}</a>{% if d.note %} <span class="px-note">{{ d.note }}</span>{% endif %}</li>{% endfor %}</ul></div>
     </details>
     {% endif %}

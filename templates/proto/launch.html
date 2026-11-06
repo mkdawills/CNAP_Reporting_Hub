@@ -5,11 +5,11 @@
 Same view, same data, same launch form and Add to roster forms as manage/launch.html. Four numbered steps:
 check the flags, check the totals, check each person, then approve.{% endcomment %}
 <div class="lch">
-  <a class="px-link p21-back" href="{% url 'manage:periods' %}">Back to reporting periods</a>
+  <a class="px-link p21-back" href="{% url 'manage:periods' %}">Back to reporting sessions</a>
   <header class="px-mast p21-mast">
-    <p class="px-eyebrow">Reporting periods · {{ p.name }}</p>
+    <p class="px-eyebrow">Reporting sessions · {{ p.name }}</p>
     <h1 class="px-title">Review before launch</h1>
-    <p class="p21-purpose">Who will receive which forms when {{ p.name }} opens. Nothing is sent until you approve.</p>
+    <p class="p21-purpose lch-purpose"><span>Who will receive the evaluation forms and surveys when the {{ p.name }} reporting session opens.</span> <span>Nothing is sent until you approve.</span></p>
     <ul class="px-facts" aria-label="This launch at a glance">
       <li><span class="px-label">Status</span><span class="v">{% if draft %}Not launched yet{% else %}Already open{% endif %}</span></li>
       <li><span class="px-label">Opens</span><span class="v">{{ p.opens_at|date:"F j, Y" }}</span></li>
@@ -47,7 +47,7 @@ check the flags, check the totals, check each person, then approve.{% endcomment
     <section class="px-section" id="lch-2" aria-labelledby="lch-2-h">
       <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-2-h"><span>2</span>What this launch will send</h2><p class="px-note"><b>{{ forms_n }}</b> forms to <b>{{ people_n }}</b> people, across <b>{{ totals|length }}</b> kinds of form.</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="r90-partbody">
-        <p class="lch-lede">Each row is one form, with the number of people who will receive it.<br>If a number looks wrong, please check the groups in step 3.</p>
+        <p class="lch-lede">Each row is one form, with the number of people who will receive it.<br>If a number looks wrong, check the groups in step 3.</p>
         <div class="px-tablewrap"><table class="px-table lch-totals" title="Each form this launch sends, and how many people receive it.">
           <thead><tr><th scope="col">Form</th><th scope="col" class="num">People who receive it</th></tr></thead>
           <tbody>{% for fd, n in totals %}<tr><th scope="row">{{ fd.name }}</th><td class="num">{{ n }}</td></tr>{% endfor %}</tbody>
@@ -66,12 +66,16 @@ check the flags, check the totals, check each person, then approve.{% endcomment
             <button type="button" class="fchipbtn on" aria-pressed="true" data-lorder="like" title="Forms most people share sit on the left, and people whose forms match sit at the top. Differences gather at the bottom right.">Like forms together</button>
             <button type="button" class="fchipbtn" aria-pressed="false" data-lorder="fixed" title="Forms stay in the usual order and people are listed by name.">Usual order</button>
           </div>
-          <p class="lch-key"><span class="lch-dot" aria-hidden="true"></span>Receives the form, as everyone on the roster does. <span class="lch-dot role" aria-hidden="true"></span>Receives the form because of the person’s own role (point to it for the reason). <span class="lch-dot diff" aria-hidden="true"></span>Differs from most of the group.</p>
+          <dl class="lch-key2" aria-label="What the marks in each grid mean">
+            <div><dt><span class="lch-dot" aria-hidden="true"></span><span class="sr">Dark dot</span></dt><dd>The person receives this form because everyone on the roster receives it.</dd></div>
+            <div><dt><span class="lch-dot role" aria-hidden="true"></span><span class="sr">Purple dot</span></dt><dd>The person receives this form because of the person’s own role. Point to the dot to see the role.</dd></div>
+            <div><dt><span class="lch-dot diff" aria-hidden="true"></span><span class="sr">Amber square</span></dt><dd>A shaded square differs from most of the group.<br>The person receives a form most others don’t, or doesn’t receive one most others do.</dd></div>
+          </dl>
         </div>
         <div class="r90-secs px-rolls" data-rollgroup>
         {% for g in groups %}
         <details class="px-roll lch-group" id="lch-g-{{ g.key }}"{% if forloop.first or warnings %} open{% endif %}>
-          <summary title="Click to see everyone in this group and the forms each person receives."><span class="px-roll-t"><span class="px-label">{{ g.rows|length }} {% if g.rows|length == 1 %}person{% else %}people{% endif %}</span><h3 class="px-h2">{{ g.title }}</h3><span class="px-roll-meta">{{ g.note|stack }}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+          <summary title="Click to see everyone in this group and the forms each person receives."><span class="px-roll-t"><span class="px-label">Group {{ forloop.counter }}, {{ g.rows|length }} {% if g.rows|length == 1 %}person{% else %}people{% endif %}</span><h3 class="px-h2">{{ g.title }}</h3><span class="px-roll-meta">{{ g.note|stack }}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
           <div class="px-roll-body">
             <div class="px-tablewrap lch-wrap"><table class="lch-matrix" title="{{ g.title }}: one row per person, one column per form.">
               <thead><tr><th scope="col" class="lch-pcol">Person</th>{% for label in g.order %}<th scope="col" class="lch-fcol" data-slot="{{ forloop.counter0 }}"><span>{{ label }}</span></th>{% endfor %}</tr></thead>
@@ -98,10 +102,10 @@ check the flags, check the totals, check each person, then approve.{% endcomment
     {% if draft %}<section class="px-section" id="lch-4" aria-labelledby="lch-4-h">
       <div class="r90-parthead lch-final"><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-4-h"><span>4</span>Approve and open</h2></div></div>
       <div class="r90-partbody">
-        <p class="lch-lede">Approving assigns <b>{{ forms_n }}</b> forms to <b>{{ people_n }}</b> people and opens {{ p.name }} for preview.<br>People can read their forms right away.<br>Answers open, and the opening email goes out, on {{ p.opens_at|date:"F j, Y" }}.</p>
-        {% if warnings %}<p class="lch-lede lch-warnline">{{ warnings|length }} thing{{ warnings|length|pluralize }} in step 1 {% if warnings|length == 1 %}is{% else %}are{% endif %} still open. You can launch anyway, but please check {% if warnings|length == 1 %}it{% else %}them{% endif %} first.</p>{% endif %}
+        <p class="lch-lede">Approving assigns <b>{{ forms_n }}</b> forms to <b>{{ people_n }}</b> people and opens {{ p.name }} for preview.<br>People can read their forms right away.<br>Answers open, and the “your reporting session is open” email goes out, on {{ p.opens_at|date:"F j, Y" }}.</p>
+        {% if warnings %}<p class="lch-lede lch-warnline">{{ warnings|length }} thing{{ warnings|length|pluralize }} in step 1 {% if warnings|length == 1 %}is{% else %}are{% endif %} still open. You can launch anyway, but check {% if warnings|length == 1 %}it{% else %}them{% endif %} first.</p>{% endif %}
         {% if can_manage %}<form method="post" action="{% url 'manage:launch_go' p.pk %}" class="lch-go">{% csrf_token %}<button class="px-btn" type="submit" data-confirm="Open {{ p.name }} and send each person a list of forms?" data-yes="Yes, approve and open {{ p.name }}" title="Assigns every form listed above and opens {{ p.name }} for preview.">Approve and open {{ p.name }}</button></form>
-        {% else %}<p class="px-note">View only. Only the evaluator can launch a period.</p>{% endif %}
+        {% else %}<p class="px-note">View only. Only the evaluator can launch a reporting session.</p>{% endif %}
       </div>
     </section>{% endif %}
   </div>

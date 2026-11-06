@@ -3,12 +3,12 @@
 {% block content %}
 <div class="head"><div><h1>Review before launch{% why "Nothing goes out until you approve this page. This page shows exactly who will receive which forms, so a missing mentor or a misassigned survey gets caught before anyone is emailed." %}</h1>
   <p>{{ p.name }}{% if draft %} · opens {{ p.opens_at|date:"M j, Y" }}{% else %} · already open{% endif %}</p>
-  <p>{{ "Nothing is sent until you approve the launch. Please review what every respondent receives, fix anything flagged, and then launch."|stack }}</p></div></div>
+  <p>{{ "Nothing is sent until you approve the launch. Review what every respondent receives, fix anything flagged, and then launch."|stack }}</p></div></div>
 {% if warnings %}<div class="panel warnbox"><h2 class="sectionhead">Check before launching ({{ warnings|length }})</h2>
   <ul>{% for w in warnings %}<li><a href="{{ w.url }}">{{ w.text }}</a></li>{% endfor %}</ul>
   <p class="small muted">{{ "Fix these from the linked pages. This list updates as you do."|stack }}</p></div>
 {% else %}<div class="okmsg">No problems found.</div>{% endif %}
-<div class="panel scroll"><h2 class="sectionhead">What this launch will send{% why "A quick total of the workload this period creates. If a number looks wrong, check the groups below before approving." %}</h2>
+<div class="panel scroll"><h2 class="sectionhead">What this launch will send{% why "A quick total of the workload this reporting session creates. If a number looks wrong, check the groups below before approving." %}</h2>
   <p class="small muted">This launch sends {{ people_n }} people a combined {{ forms_n }} forms.<br>Each row below is one form, with the number of people who will receive it.</p>
   <table title="What this launch will send: each form and how many people receive it."><thead><tr><th>Form</th><th class="num">People who receive it</th></tr></thead><tbody>{% for fd, n in totals %}<tr><td>{{ fd.name }}</td><td class="num">{{ n }}</td></tr>{% endfor %}</tbody></table></div>
 {% if request.proto_active %}<div class="panel pa-groupshead"><h2 class="sectionhead">Who receives which forms</h2><p class="small muted">One group per kind of CNAP member, with one row per person.</p></div>{% endif %}
@@ -57,5 +57,5 @@
 })();
 </script>
 {% if draft %}{% if can_manage %}<form method="post" action="{% url 'manage:launch_go' p.pk %}" class="actions">{% csrf_token %}<button class="btn" type="submit" onclick="return confirm('Open {{ p.name }} and send each person a list of forms?')">Approve and open {{ p.short_label }}</button></form>
-{% else %}<p class="small muted">View only. Only the evaluator can launch a period.</p>{% endif %}{% endif %}
+{% else %}<p class="small muted">View only. Only the evaluator can launch a reporting session.</p>{% endif %}{% endif %}
 {% endblock %}

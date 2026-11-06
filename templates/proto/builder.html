@@ -7,15 +7,15 @@
   <header class="px-mast p21-mast">
     <p class="px-eyebrow">Results</p>
     <h1 class="px-title">Build a download</h1>
-    <p class="r65-purpose">{{ "Choose any combination of reporting periods, forms, and grant years. The Hub puts everything in one Excel workbook, with a contents sheet."|stack }}</p>
+    <p class="r65-purpose">{{ "Choose any combination of reporting sessions, forms, and grant years. The Hub puts everything in one Excel workbook, with a contents sheet."|stack }}</p>
   </header>
 
   <form method="get" class="rbd-form px-page" id="rbd">
     <input type="hidden" name="go" value="1">
 
     <section class="px-section rbd-step" aria-labelledby="rbd-1">
-      <h2 class="px-h2 r90-part" id="rbd-1"><span>1</span>Reporting periods</h2>
-      <p class="px-note">Please tick whole years, single periods, or any mix.</p>
+      <h2 class="px-h2 r90-part" id="rbd-1"><span>1</span>Reporting sessions</h2>
+      <p class="px-note">Please tick whole years, single reporting sessions, or any mix.</p>
       <div class="rbd-years">
         {% for gy, ps in years %}<fieldset class="rbd-year"><legend><label><input type="checkbox" data-year-all="{{ gy }}"> Year {{ gy }}{% if gy == now %} (this year){% endif %}</label></legend>
           {% for p in ps %}<label><input type="checkbox" name="periods" value="{{ p.short_label }}" data-year="{{ gy }}" {% if p.short_label == pre_period %}checked{% endif %}> {{ p.name }}{% if p.status == 'open' %} (open: live results){% endif %}</label>{% endfor %}

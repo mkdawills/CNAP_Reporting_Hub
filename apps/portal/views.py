@@ -238,7 +238,7 @@ def form(request, pk):
                 return redirect(f"{reverse('portal:tasks')}?done={a.pk}")
         elif action == "save" and not errors:
             messages.success(
-                request, "Draft saved. You can come back to it any time before the period closes."
+                request, "Draft saved. You can come back to it any time before the reporting session closes."
             )
             return redirect("portal:form", pk)
         elif not errors and row_action:

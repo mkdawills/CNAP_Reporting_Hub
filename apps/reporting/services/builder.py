@@ -134,7 +134,7 @@ def build(user, choice, *, tables_csv=None):
             header, rows, notes = None, [], []
             for p in choice["periods"]:
                 if not p.assignments.exists():
-                    notes.append(f"{p.name}: this period predates the Reporting Hub, so there are only imported averages, no individual responses.")
+                    notes.append(f"{p.name}: this reporting session predates the Reporting Hub, so there are only imported averages, no individual responses.")
                     continue
                 data = exports.form_answers(user, fd, p, core=core if apply_filter else None, project=project if apply_filter else None)
                 if data["blocked"]:
@@ -142,14 +142,14 @@ def build(user, choice, *, tables_csv=None):
                     continue
                 if not data["rows"] and not data["columns"]:
                     continue
-                h = ["CNAP reporting period"] + data["lead"] + [pr for _, pr in data["columns"]]
+                h = ["CNAP reporting session"] + data["lead"] + [pr for _, pr in data["columns"]]
                 if header is None:
                     header = h
                 rows += [[p.name] + r for r in data["rows"]] if h == header else [[p.name] + r for r in data["rows"]]
             ws = wb.create_sheet()
             ws.title = exports._safe_title(fd.name, used)
             sheet_notes = [
-                "With names." if mode == IDENTIFIED else "Without names. Respondents are numbered within each period only, so a number can’t be followed from one period to another.",
+                "With names." if mode == IDENTIFIED else "Without names. Respondents are numbered within each reporting session only, so a number can’t be followed from one reporting session to another.",
                 "Rating questions show the number chosen (for example, 4 for Good).",
             ]
             if (core or project) and mode == IDENTIFIED:
@@ -157,7 +157,7 @@ def build(user, choice, *, tables_csv=None):
             elif core or project:
                 sheet_notes.append("Not narrowed by core or project: on a form you see without names, a narrower group could point to one person.")
             sheet_notes += notes
-            exports.write_sheet(ws, fd.name, header or ["Note"], rows if header else [["No completed responses in the periods you chose."]], notes=sheet_notes, widths=[18, 24])
+            exports.write_sheet(ws, fd.name, header or ["Note"], rows if header else [["No completed responses in the reporting sessions you chose."]], notes=sheet_notes, widths=[18, 24])
             lines.append([fd.name, f"Sheet “{ws.title}”: {len(rows)} response{'s' if len(rows) != 1 else ''}" + ("" if not notes else ", with notes") + "."])
         if "tables" in choice["parts"] and tables_csv and choice["periods"]:
             ws = wb.create_sheet()
@@ -174,7 +174,7 @@ def build(user, choice, *, tables_csv=None):
                         ws.cell(row=r + c.row - 1, column=c.column, value=c.value)._style = c._style
                 r += part.max_row + 2
                 wb.remove(part)
-            lines.append([f"{fd.name}: results tables", f"Sheet “{ws.title}”: one block per period."])
+            lines.append([f"{fd.name}: results tables", f"Sheet “{ws.title}”: one block per reporting session."])
 
     if choice["kinds"] and choice["years"]:
         for kind, name in PRODUCT_KINDS:
@@ -188,7 +188,7 @@ def build(user, choice, *, tables_csv=None):
             lines.append([name, f"Sheet “{ws.title}”: {len(rows)} entr{'ies' if len(rows) != 1 else 'y'}."])
 
     picked = [
-        "Periods: " + (", ".join(p.name for p in choice["periods"]) or "none"),
+        "Reporting sessions: " + (", ".join(p.name for p in choice["periods"]) or "none"),
         "Grant years for products: " + (", ".join(f"Year {y}" for y in choice["years"]) or "none"),
         f"Narrowed to {narrow}." if narrow else "Not narrowed by core or project.",
         f"Downloaded {timezone.localdate():%B %-d, %Y} by {user.get_full_name() or user.get_username()}. Each sheet follows the same access rules as the screens.",

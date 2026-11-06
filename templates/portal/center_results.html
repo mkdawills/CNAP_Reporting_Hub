@@ -1,9 +1,9 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Center results · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head reshero"><div class="reshero-main"><svg class="reshero-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><div><h1>{% if view == "products" %}Center Research Outcomes{% else %}Center results{% endif %}</h1><p>{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}Combined results from finalized reporting periods.{% endif %}</p>{% if view != "products" %}<p class="privchip" title="Results show only combined numbers and themes. No one’s individual answers, and no names, ever appear here."><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Individual answers are never shown.</p>{% endif %}</div></div>
+<div class="head reshero"><div class="reshero-main"><svg class="reshero-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><div><h1>{% if view == "products" %}Center Research Outcomes{% else %}Center results{% endif %}</h1><p>{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}Combined results from finalized reporting sessions.{% endif %}</p>{% if view != "products" %}<p class="privchip" title="Results show only combined numbers and themes. No one’s individual answers, and no names, ever appear here."><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Individual answers are never shown.</p>{% endif %}</div></div>
 {% if view == "products" %}{% if years|length > 1 %}<form method="get"><input type="hidden" name="view" value="products"><label class="small muted">Budget year <select name="year" onchange="this.form.submit()">{% for y in years %}<option value="{{ y }}" {% if y == prod.gy %}selected{% endif %}>Year {{ y }}{% if y == now %} (this year){% endif %}</option>{% endfor %}</select></label></form>{% endif %}
-{% elif periods|length > 1 %}<form method="get"><label class="small muted">Reporting period <select name="period" onchange="this.form.submit()">{% for p in periods %}<option value="{{ p.short_label }}" {% if p == selected %}selected{% endif %}>{{ p.short_label }}</option>{% endfor %}</select></label></form>{% endif %}</div>
+{% elif periods|length > 1 %}<form method="get"><label class="small muted">Reporting session <select name="period" onchange="this.form.submit()">{% for p in periods %}<option value="{{ p.short_label }}" {% if p == selected %}selected{% endif %}>{{ p.short_label }}</option>{% endfor %}</select></label></form>{% endif %}</div>
 <nav class="tabs segtabs" aria-label="Center results"><a href="{% url 'portal:center_results' %}" class="{% if view != 'products' %}on{% endif %}"{% if view != 'products' %} aria-current="page"{% endif %} title="What everyone’s survey answers showed, combined, with no individual answers. Why: so members see what the Center learned and what it is acting on. Click to see the latest survey results.">Survey results</a><a href="{% url 'portal:center_results' %}?view=products" class="{% if view == 'products' %}on{% endif %}"{% if view == 'products' %} aria-current="page"{% endif %} title="The Center’s publications, presentations, grant proposals, and grant awards, counted by budget year. Why: to show what CNAP members produced together. Click to see the totals.">Research Outputs</a></nav>
 {% if view == "products" %}
   <section class="o33" aria-labelledby="o33-h">
@@ -44,7 +44,7 @@
   </div>
   {% endif %}
 {% elif not selected %}
-  <div class="panel"><p class="muted">{{ "No results yet. Results appear here once a reporting period’s results are finalized."|stack }}</p></div>
+  <div class="panel"><p class="muted">{{ "No results yet. Results appear here once a reporting session’s results are finalized."|stack }}</p></div>
 {% else %}
   <div class="restools"><div><p class="restools-k">Showing results for</p><h2>{{ selected.name }}</h2></div><button type="button" class="btn small ghost" data-expand-all aria-expanded="false">Open every item-by-item table</button></div>
   <div class="rollup" data-start="closed">
@@ -55,7 +55,7 @@
     {% else %}<p class="facts2"><b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered all the survey items.</p>{% endif %}
     {% include "manage/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd %}
   </div>
-  {% empty %}<div class="panel"><p class="muted">There are no survey results for this period.</p></div>{% endfor %}
+  {% empty %}<div class="panel"><p class="muted">There are no survey results for this reporting session.</p></div>{% endfor %}
   </div>
 {% endif %}
 {% endblock %}

@@ -78,7 +78,7 @@ def test_send_by_hand_and_the_form_shows_the_talk(client, center):
         client.force_login(u)
         page = client.get(f"/tasks/{t.assignment_id}/").content.decode()
         assert "Hippocampal maps" in page and "Please answer by" in page
-        assert "This reporting period runs" not in page
+        assert "This reporting session runs" not in page
 
 
 def test_old_talks_are_not_sent_late(center):

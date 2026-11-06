@@ -14,6 +14,8 @@ body.proto {
   --px-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --px-fs-xs: .75rem; --px-fs-sm: .8125rem; --px-fs-base: .9375rem; --px-fs-md: 1.0625rem;
   --px-fs-lg: 1.375rem; --px-fs-xl: 1.875rem; --px-fs-2xl: 2.5rem; --px-fs-num: 2.75rem;
+  --px-sec: 48px; /* space from a section's line to the next section's title (MW 2026-11-06) */
+  --px-sub: 24px; /* space from a light line to a sub-section's title inside the same section (MW 2026-11-06) */
   /* color: calm neutrals, K-State purple for action, status colors always paired with words */
   --px-canvas: #f7f7f8; --px-surface: #ffffff; --px-sunken: #f2f2f4;
   --px-ink: #17151d; --px-ink-2: #3d3a46; --px-muted: #6a6775; --px-faint: #76737f;
@@ -1187,7 +1189,7 @@ body.proto.pa main .head:not(.panel .head)::after {
 body.proto .px-page { background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); box-shadow: var(--px-shadow); padding: var(--px-6); }
 body.proto .px-page > .px-section, body.proto .px-page .rbd-step, body.proto .px-page .r33-cores, body.proto .px-page .r33-cta { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0; margin: 0; }
 body.proto .px-page > * + * { margin-top: var(--px-6); }
-body.proto .px-page .rbd-step + .rbd-step, body.proto .px-page .r33-cores, body.proto .px-page .r33-cta, body.proto .px-page .r33-lists, body.proto .px-page .rbd-go { padding-top: var(--px-6); border-top: 1px solid var(--px-line); }
+body.proto .px-page .rbd-step + .rbd-step, body.proto .px-page .r33-cores, body.proto .px-page .r33-cta, body.proto .px-page .r33-lists, body.proto .px-page .rbd-go { padding-top: var(--px-sec); border-top: 1px solid var(--px-line); }
 body.proto .px-page .rbd-form, body.proto .rbd-form.px-page { max-width: none; }
 body.proto .px-page .px-dlfoot { margin-bottom: 0; }
 @media (max-width: 760px) { body.proto .px-page { padding: var(--px-4); } }
@@ -1195,9 +1197,9 @@ body.proto .px-page .px-dlfoot { margin-bottom: 0; }
    as on the results pages; panels that carry a color keep it. */
 body.proto.pa .pa-page { margin-top: var(--px-5); }
 body.proto.pa .pa-page .panel:not(.panel .panel) { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0; margin: 0; }
-body.proto.pa .pa-page .panel:not(.panel .panel) + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + * { margin-top: var(--px-6); padding-top: var(--px-6); border-top: 1px solid var(--px-line); }
+body.proto.pa .pa-page .panel:not(.panel .panel) + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + * { margin-top: var(--px-6); padding-top: var(--px-sec); border-top: 1px solid var(--px-line); }
 body.proto.pa .pa-page > :first-child { margin-top: 0 !important; padding-top: 0 !important; border-top: 0 !important; }
-body.proto.pa .pa-page .rollup > .panel + .panel { margin-top: var(--px-6); padding-top: var(--px-6); border-top: 1px solid var(--px-line); }
+body.proto.pa .pa-page .rollup > .panel + .panel { margin-top: var(--px-6); padding-top: var(--px-sec); border-top: 1px solid var(--px-line); }
 
 /* Batch 3, second pass (MW 2026-11-06, checklist A, B, F, H, I): administration pages match the approved screens. */
 body.proto.pa main .head:not(.panel .head) > div:first-child::before { content: attr(data-eyebrow); }
@@ -1526,7 +1528,8 @@ body.proto.pa .pa-page details.pa-details > summary .rollsum { grid-column: 1; m
 body.proto.pa .pa-page details.pa-details > summary .px-roll-cue { grid-column: 2; grid-row: 1; margin-top: 6px; }
 body.proto.pa .pa-page .rollup details.pa-details:first-child { border-top: 0 !important; }
 /* Background sentences under a section heading have the thin gray bar, like every introduction (checklist 33). */
-body.proto.pa .pa-page :is(.sectionhead, h2) + p:is(.small, .muted):not(.rollsum):not(.pa-roll-meta) { padding: 2px 0 2px var(--px-4); border-left: 2px solid var(--px-line-strong); max-width: var(--px-measure); }
+/* The gray bar marks only the page introduction (MW 2026-11-06). A sentence under a section title is plain section text: the body size and color, no bar. */
+body.proto.pa .pa-page :is(.sectionhead, h2) + p:is(.small, .muted):not(.rollsum):not(.pa-roll-meta) { padding: 0; border-left: 0; max-width: var(--px-measure); font-size: var(--px-fs-base); line-height: 1.6; color: var(--px-ink-2); }
 body.proto.pa .pa-page details.pa-details > summary { display: grid !important; row-gap: 2px; }
 body.proto.pa .pa-page details.pa-details > summary { padding-bottom: var(--px-4); }
 /* A quiet tool line (the Excel option) belongs to the section above it: no divider between them. */
@@ -1551,7 +1554,7 @@ body.proto.pa .pa-fnav ol { list-style: none; margin: var(--px-3) 0 0; padding: 
 body.proto.pa .pa-fnav a { display: flex; gap: var(--px-3); align-items: center; padding: 6px 0; color: var(--px-muted) !important; text-decoration: none !important; font-size: var(--px-fs-sm); }
 body.proto.pa .pa-fnav a:hover { color: var(--px-brand-ink) !important; }
 body.proto.pa form.aform { max-width: none !important; margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; }
-body.proto.pa form.aform .pa-fsec { position: relative; padding: var(--px-6) 0 var(--px-5) calc(26px + var(--px-3)); border-top: 1px solid var(--px-divide); scroll-margin-top: var(--px-5); }
+body.proto.pa form.aform .pa-fsec { position: relative; padding: var(--px-sec) 0 var(--px-5) calc(26px + var(--px-3)); border-top: 1px solid var(--px-divide); scroll-margin-top: var(--px-5); }
 body.proto.pa form.aform .pa-fsec:first-of-type { border-top: 0; padding-top: 0; }
 body.proto.pa form.aform .pa-fsec > h3.fgroup { margin: 0 0 var(--px-5); font: 500 var(--px-fs-lg)/1.3 var(--px-serif); color: var(--px-ink); text-transform: none; letter-spacing: 0; position: relative; }
 body.proto.pa form.aform .pa-fsec > h3.fgroup::before { content: attr(data-n); position: absolute; left: calc(-1 * (26px + var(--px-3))); top: 1px; width: 26px; height: 26px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--px-brand) 35%, var(--px-line)); color: var(--px-brand); font: 500 var(--px-fs-sm)/24px var(--px-sans); text-align: center; box-sizing: border-box; }
@@ -1580,16 +1583,16 @@ body.proto.pa .pa-page details.ackbox > summary { font: 500 var(--px-fs-sm)/1.4 
 
 /* MW 2026-11-06: the white space goes above a title, not under it. A title sits close to what it introduces:
    32 pixels between the line and the title, 12 pixels between the title and its content. Open or closed. */
-body.proto .r90 .px-section details.r90-partroll > summary.px-section-head { padding: var(--px-6) var(--px-3) var(--px-3) !important; }
+body.proto .r90 .px-section details.r90-partroll > summary.px-section-head { padding: var(--px-sec) var(--px-3) var(--px-3) !important; }
 body.proto .r90 .r90-partbody > :first-child, body.proto .r90 .r90-partbody > .r90-secs > :first-child:not(.px-rollbar) { margin-top: 0; }
-body.proto .r90 details.r90-sec > summary, body.proto .r90 .r90-partbody details.px-roll > summary, body.proto .px-rolls:not(.r90-partbody .px-rolls) > details.px-roll > summary { padding: var(--px-6) var(--px-3) var(--px-3) !important; }
+body.proto .r90 details.r90-sec > summary, body.proto .r90 .r90-partbody details.px-roll > summary, body.proto .px-rolls:not(.r90-partbody .px-rolls) > details.px-roll > summary { padding: var(--px-sub) var(--px-3) var(--px-3) !important; }
 body.proto .r90 details.r90-sec > .px-roll-body, body.proto details.px-roll > .px-roll-body { padding-top: var(--px-2); }
-body.proto .r90 details.r90-sec > summary .px-roll-cue, body.proto .r90 .r90-partbody details.px-roll > summary .px-roll-cue { margin-top: calc(var(--px-6) - var(--px-5) + 14px); }
+body.proto .r90 details.r90-sec > summary .px-roll-cue, body.proto .r90 .r90-partbody details.px-roll > summary .px-roll-cue { margin-top: calc(var(--px-sub) - var(--px-5) + 14px); }
 body.proto .lch .lch-tools { margin-top: var(--px-2); }
 /* Administration pages: the same rule. */
-body.proto.pa .pa-page > .panel + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + *:not(.px-dlfoot) { margin-top: var(--px-6) !important; padding-top: var(--px-6) !important; }
+body.proto.pa .pa-page > .panel + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + *:not(.px-dlfoot) { margin-top: var(--px-6) !important; padding-top: var(--px-sec) !important; }
 body.proto.pa .pa-page .sectionhead, body.proto.pa .pa-page .panel > h2:first-child { margin-top: 0; margin-bottom: var(--px-3); }
-body.proto.pa .pa-page details.pa-roll > summary, body.proto.pa .pa-page .rollhead, body.proto.pa .pa-page > details.panel > summary, body.proto.pa .pa-page details.pa-details > summary { padding: var(--px-6) 0 var(--px-3) !important; }
+body.proto.pa .pa-page details.pa-roll > summary, body.proto.pa .pa-page .rollhead, body.proto.pa .pa-page > details.panel > summary, body.proto.pa .pa-page details.pa-details > summary { padding: var(--px-sec) 0 var(--px-3) !important; }
 body.proto.pa .pa-page > details.panel[open] > summary { padding-bottom: var(--px-3) !important; }
 body.proto.pa .rollsum, body.proto.pa .pa-roll-meta { margin-top: calc(-1 * var(--px-2)); margin-bottom: var(--px-3); }
 body.proto.pa .pa-page .rollup .panel.rollsec[data-open="0"] .rollsum { margin-bottom: var(--px-3); }
@@ -1599,7 +1602,7 @@ body.proto.pa form.aform .pa-fsec > h3.fgroup { margin-bottom: var(--px-3); }
 body.proto :is(.px-onpage, .p21-nav) .p21-navtop { padding-right: var(--px-5); box-sizing: border-box; }
 /* A line sits close to the content above it; the larger space comes after the line, above the next title. */
 body.proto.pa .pa-page > .panel + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + *:not(.px-dlfoot) { margin-top: var(--px-4) !important; padding-top: var(--px-2) !important; }
-body.proto.pa .pa-page > .panel:not(details) + .panel:not(details), body.proto.pa .pa-page > .panel + section, body.proto.pa .pa-page > * + .panel:not(details) { padding-top: var(--px-6) !important; }
+body.proto.pa .pa-page > .panel:not(details) + .panel:not(details), body.proto.pa .pa-page > .panel + section, body.proto.pa .pa-page > * + .panel:not(details) { padding-top: var(--px-sec) !important; }
 body.proto.pa .pa-page .rollup .rollhead { padding: var(--px-6) 0 var(--px-1, 4px) !important; margin: 0 !important; }
 body.proto.pa .pa-page .rollup .rollsum { margin: 0 0 var(--px-3) !important; }
 /* Results sections: the section's content starts right under its heading. */
@@ -1610,7 +1613,7 @@ body.proto.pa .pa-page > details.panel + details.panel { margin-top: 0 !importan
 body.proto.pa .pa-page .rollup .rollhead { padding-bottom: var(--px-3) !important; }
 body.proto.pa .pa-page .rollup .rollsum { margin: calc(-1 * var(--px-2)) 0 var(--px-3) !important; }
 /* A section that is a bare heading on the page (not a box) starts the same way: a darker line, then space, then the title. */
-body.proto.pa .pa-page > h2.sectionhead:not(:first-child) { margin-top: var(--px-4) !important; padding-top: var(--px-6) !important; border-top: 1px solid var(--px-divide) !important; }
+body.proto.pa .pa-page > h2.sectionhead:not(:first-child) { margin-top: var(--px-4) !important; padding-top: var(--px-sec) !important; border-top: 1px solid var(--px-divide) !important; }
 body.proto.pa .pa-page > h2.sectionhead + * { margin-top: 0 !important; }
 body.proto.pa .pa-page > .tabs { margin-top: var(--px-3) !important; }
 /* A period's sentences are evenly spaced, and the timeline line sits the same distance above them as the step line does. */
@@ -1626,3 +1629,131 @@ body.proto.pa ol.life li::before { left: 0 !important; }
 body.proto.pa ol.life li:not(:last-child)::after { left: 34px !important; right: 4px; }
 @media (max-width: 760px) { body.proto.pa ol.life li, body.proto.pa ol.life li + li { padding-left: 38px !important; } }
 body.proto.pa .pa-page .pcard .head { align-items: stretch; } body.proto.pa .pa-page .pcard .head > div:first-child { width: 100%; }
+
+/* NeuroSync talks (MW 2026-11-06): "Coming up" and "Past talks" share one set of column widths, so columns line up from table to table. */
+body.proto .spk-tbl { table-layout: fixed; width: 100%; min-width: 760px; }
+body.proto .spk-tbl col.c-spk { width: 20%; }
+body.proto .spk-tbl col.c-when { width: 17%; }
+body.proto .spk-tbl col.c-srv { width: 20%; }
+body.proto .spk-tbl col.c-act { width: 190px; }
+body.proto .spk-tbl td:last-child .btn { white-space: nowrap; }
+body.proto .spk-tbl td, body.proto .spk-tbl th { overflow-wrap: anywhere; }
+
+/* Roster import upload (MW 2026-11-06): one clear field, then the columns as a short key, then the privacy note.
+   Field label at body size and weight 600; help in the small muted size directly under it; the input below the help. */
+body.proto .ri-up form { display: flex; flex-direction: column; gap: var(--px-5, 24px); max-width: 640px; }
+body.proto .ri-field { display: flex; flex-direction: column; gap: 4px; }
+body.proto .ri-label { font-weight: 600; font-size: 1rem; color: var(--px-ink, inherit); }
+body.proto .ri-help { margin: 0 0 8px; font-size: .875rem; color: var(--px-muted, #6f6879); }
+body.proto .ri-cols { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+body.proto .ri-cols > div { display: grid; grid-template-columns: 170px 1fr; gap: 4px 16px; }
+body.proto .ri-cols dt { font-weight: 600; font-size: .875rem; }
+body.proto .ri-cols dd { margin: 0; font-size: .875rem; }
+@media (max-width: 560px) { body.proto .ri-cols > div { grid-template-columns: 1fr; } }
+body.proto .ri-privacy { margin: 0; }
+body.proto .ri-up .actions { margin-top: 0; }
+
+/* Data checks (MW 2026-11-06: "sporadic spacing and headers"). One rhythm for every check, open or closed:
+   darker line, 24px, title row (serif title, status, Show or Hide), 12px, the note, 16px, the flagged records, 24px, next line.
+   Flagged records are a plain list, not a table with a header: the record's name on the left at body size, Dismiss at one fixed spot on the right. */
+body.proto.pa .pa-page details.qc[open] > summary { padding-bottom: var(--px-3) !important; }
+body.proto.pa .pa-page details.qc .qc-body { display: flex; flex-direction: column; gap: var(--px-4); padding-bottom: var(--px-3); }
+body.proto.pa .pa-page details.qc[open] { padding-bottom: 0 !important; margin-bottom: 0 !important; }
+body.proto.pa .pa-page details.qc[open] > :last-child { margin-bottom: 0; }
+body.proto.pa .qc-note { margin: 0; max-width: 68ch; font-size: var(--px-fs-sm); line-height: 1.55; color: var(--px-ink-2); }
+body.proto.pa .qc-none { margin: 0; font-size: var(--px-fs-sm); color: var(--px-muted); }
+body.proto.pa .qc-list { list-style: none; margin: 0; padding: 0; }
+body.proto.pa .qc-list > li { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: var(--px-4); align-items: center;
+  padding: var(--px-3) 0; border-top: 1px solid var(--px-line); font-size: var(--px-fs-base); line-height: 1.45; }
+body.proto.pa .qc-list > li > a { overflow-wrap: anywhere; }
+body.proto.pa .qc-dis { justify-self: end; }
+body.proto.pa .qc-dis > summary { list-style: none; }
+body.proto.pa .qc-dis > summary::-webkit-details-marker { display: none; }
+body.proto.pa .qc-list > li:has(.qc-dis[open]) { padding-bottom: calc(var(--px-3) + 92px); }
+body.proto.pa .qc-dis[open] > .qc-form { position: absolute; left: 0; right: 0; bottom: var(--px-3); display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--px-3); }
+body.proto.pa .qc-why { display: flex; flex-direction: column; gap: 6px; flex: 1 1 320px; max-width: 520px; font-size: var(--px-fs-sm); font-weight: 600; }
+body.proto.pa .qc-why input { font-weight: 400; }
+
+/* Period dashboard figures (MW 2026-11-06: "the lack of alignment here is a problem").
+   The four figures share rows: every label starts on one line, and every number sits on one line,
+   even when a label wraps to two lines in a narrow tile. Each label's color key lines up with the label's first line. */
+body.proto .d53-figs { grid-auto-rows: auto; }
+body.proto .d53-figs { grid-template-rows: auto auto 1fr; }
+body.proto .d53-figs > div { grid-row: span 3; grid-template-rows: subgrid; row-gap: 8px; }
+body.proto .d53-figs > div > dd { align-self: start; }
+body.proto .d53-figs .px-key { align-items: flex-start; }
+body.proto .d53-figs .px-key i { flex: none; margin-top: .3em; }
+
+/* Step line spans the full width (MW 2026-11-06): the last step ends on the right edge, so the six gaps share all the room. */
+@media (min-width: 761px) {
+  body.proto.pa ol.life { width: 100%; grid-template-columns: repeat(6, minmax(0, 1fr)) max-content; }
+  body.proto.pa ol.life li:last-child { padding-right: 0; }
+}
+
+/* Add a reporting session (MW 2026-11-06: "easily see prior names"): the earlier sessions sit beside the form, newest first. */
+body.proto.pa .pn-grid { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr); gap: var(--px-7); align-items: start; }
+body.proto.pa .pn-earlier { position: sticky; top: var(--px-5); padding-left: var(--px-5); border-left: 1px solid var(--px-line); }
+body.proto.pa .pn-earlier-h { margin: 0 0 var(--px-2); font: 600 var(--px-fs-base)/1.4 var(--px-sans); color: var(--px-ink); }
+body.proto.pa .pn-earlier-note { margin: 0 0 var(--px-3); font-size: var(--px-fs-sm); color: var(--px-ink-2); }
+body.proto.pa .pn-earlier-scroll { max-height: 520px; overflow: auto; }
+body.proto.pa .pn-earlier-t { width: 100%; font-size: var(--px-fs-sm); }
+body.proto.pa .pn-earlier-t :is(th, td) { padding: 8px 12px 8px 0; border-left: 0 !important; text-align: left; vertical-align: top; }
+body.proto.pa .pn-earlier-t thead th { position: sticky; top: 0; background: var(--px-surface); }
+@media (max-width: 960px) { body.proto.pa .pn-grid { grid-template-columns: 1fr; gap: var(--px-6); } body.proto.pa .pn-earlier { position: static; padding-left: 0; border-left: 0; } }
+body.proto.pa .pn-earlier-t td:not(:last-child) { white-space: nowrap; }
+body.proto.pa .pn-grid .field > label { display: block; margin-bottom: 6px; }
+body.proto.pa .pn-grid .pn-help { margin: 0 0 8px; font-size: var(--px-fs-sm); color: var(--px-ink-2); line-height: 1.5; }
+body.proto.pa .pn-grid .field > :is(input, select, textarea) { width: 100%; box-sizing: border-box; }
+
+/* Reporting session emails (MW 2026-11-06: "hierarchy spacing is bad here").
+   Each section: title, 12px, one lead sentence, 24px, the content, 24px, the button. One text size for sentences; the schedule is a table. */
+body.proto.pa .em-auto, body.proto.pa .em-hand { display: flex; flex-direction: column; gap: var(--px-5); }
+body.proto.pa .em-auto > .sectionhead, body.proto.pa .em-hand > .sectionhead { margin: 0 0 calc(var(--px-3) - var(--px-5)) !important; }
+body.proto.pa .em-lead { margin: 0 !important; padding: 0 !important; border: 0 !important; font-size: var(--px-fs-base); line-height: 1.6; color: var(--px-ink-2); max-width: var(--px-measure); }
+body.proto.pa .em-sched { width: 100%; table-layout: fixed; }
+body.proto.pa .em-sched col, body.proto.pa .em-sched th:first-child { width: 24%; }
+body.proto.pa .em-sched tbody th { font-weight: 600; text-align: left; color: var(--px-ink); }
+body.proto.pa .em-sched :is(th, td) { vertical-align: top; }
+body.proto.pa .em-rules { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: var(--px-fs-base); color: var(--px-ink-2); }
+body.proto.pa .em-today { margin: 0; display: flex; gap: var(--px-3); align-items: baseline; font-size: var(--px-fs-base); }
+body.proto.pa .em-today span { color: var(--px-ink-2); }
+body.proto.pa .em-auto .actions, body.proto.pa .em-hand .actions { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+body.proto.pa .em-tabs { margin: 0 !important; }
+body.proto.pa .em-pick { display: flex; flex-direction: column; gap: var(--px-3); }
+body.proto.pa .em-pick .actions { margin-top: var(--px-2) !important; }
+body.proto.pa .em-count { margin: 0; font-size: var(--px-fs-md); line-height: 1.5; }
+body.proto.pa .em-note { margin: 0; font-size: var(--px-fs-sm); color: var(--px-ink-2); }
+body.proto.pa .em-rolls { border-top: 1px solid var(--px-line); }
+body.proto.pa .pa-page details.em-roll { border-bottom: 1px solid var(--px-line); }
+body.proto.pa .pa-page details.em-roll > summary { padding: var(--px-4) 0 !important; margin: 0 !important; display: flex; align-items: center; justify-content: space-between; cursor: pointer; list-style: none; border: 0; }
+body.proto.pa .pa-page details.em-roll > summary::-webkit-details-marker { display: none; }
+body.proto.pa .pa-page details.em-roll > summary h3 { margin: 0; font: 600 var(--px-fs-base)/1.4 var(--px-sans); color: var(--px-ink); }
+body.proto.pa .pa-page details.em-roll[open] > :last-child { margin-bottom: var(--px-4); }
+body.proto.pa .em-skip { margin: 0 0 var(--px-4); padding-left: 18px; font-size: var(--px-fs-sm); }
+body.proto.pa .em-text { margin: 0 0 var(--px-3); padding: var(--px-4) var(--px-5); white-space: pre-wrap; font: 400 var(--px-fs-sm)/1.65 var(--px-sans); color: var(--px-ink); background: var(--px-sunken); border-radius: var(--px-r); max-width: 72ch; }
+/* Review before launch: the purpose stays on one line on wide screens (MW 2026-11-06). */
+body.proto .lch-purpose { max-width: none !important; }
+body.proto .lch-purpose > span { display: block; }
+@media (min-width: 1340px) { body.proto .lch-purpose { white-space: nowrap; } body.proto .lch-purpose > span { display: inline; } }
+/* "Arrange each group" is a label, not a button (MW 2026-11-06): plain words, no pill. */
+body.proto .lch .lorder > .px-label { background: none !important; border: 0 !important; border-radius: 0 !important; padding: 0 !important; box-shadow: none !important;
+  font: 600 var(--px-fs-sm)/1.4 var(--px-sans); letter-spacing: 0; text-transform: none; color: var(--px-ink); }
+/* The grid's key (MW 2026-11-06: "we can be more clear here"): one mark per line, the mark in a fixed column, one sentence beside it. */
+body.proto .lch .lch-key2 { margin: 0; display: grid; gap: 8px; font-size: var(--px-fs-sm); color: var(--px-ink-2); line-height: 1.5; }
+body.proto .lch .lch-key2 > div { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: start; }
+body.proto .lch .lch-key2 dt { display: flex; align-items: center; height: 1.5em; }
+body.proto .lch .lch-key2 dd { margin: 0; }
+body.proto .lch .lch-key2 .lch-dot { width: 10px; height: 10px; margin: 0; }
+body.proto .lch .lch-key2 .lch-dot.diff { width: 12px; height: 12px; background: var(--px-warn-tint); border: 1px solid color-mix(in srgb, var(--px-warn) 40%, transparent); border-radius: 3px; }
+body.proto .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Review before launch (MW 2026-11-06): a group is one level below a numbered step, so its name is sans, semibold, and smaller than the step's serif title. */
+body.proto .lch details.lch-group > summary h3.px-h2 { font: 600 var(--px-fs-md)/1.35 var(--px-sans) !important; letter-spacing: 0; color: var(--px-ink); }
+
+/* Inside one section, the Show all pill sits quietly above its groups: no line of its own (MW 2026-11-06: "we don't need massive gaps inside the same sections"). */
+body.proto .r90-partbody > .px-rolls > .foldall, body.proto .r90-partbody .foldall { border-top: 0 !important; padding-top: 0 !important; margin: 0 0 var(--px-2) !important; }
+body.proto .lch .lch-tools { margin: 0 0 var(--px-5) !important; gap: var(--px-4); }
+body.proto .lch .lch-tools .lorder { margin: 0 !important; }
+/* Step 4 on Review before launch has no roll-up, so it takes the same spacing as steps 1 to 3 by hand: 48px from the line to the title, 12px from the title to its first sentence. */
+body.proto .lch #lch-4 > .lch-final { padding: var(--px-sec) 0 var(--px-3) !important; margin: 0 !important; }
+body.proto .lch #lch-4 > .r90-partbody { margin-top: 0 !important; padding-top: 0 !important; }
+body.proto .lch #lch-4 > .r90-partbody > .lch-lede:first-child { margin-top: 0 !important; }

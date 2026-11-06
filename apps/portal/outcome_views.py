@@ -52,7 +52,7 @@ def entry_open(view):
             messages.info(
                 request,
                 f"Publications, talks, and grants open again on {reopens:%A, %B %-d}, "
-                "once the Center has finished this period’s report.",
+                "once the Center has finished this reporting session’s report.",
             )
             return redirect("portal:outcomes")
         return view(request, *args, **kwargs)

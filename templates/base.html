@@ -22,18 +22,18 @@
     <nav aria-label="Main"{% if request.proto_active %} id="px-sidenav"{% endif %}>
       {% if has_cnap_roles %}
         <div class="navhead">My work</div>
-        <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %} title="Your to-do list for the current reporting period: every form CNAP is asking you to fill in, with how long each takes and its due date. Your answers feed the Center’s NIH progress report. Click to start or continue a form.">My tasks</a>
-        <a href="{% url 'portal:history' %}" {% nav_current 'history' %} title="Everything you have submitted, grouped by reporting period, so you can look back at what you said. Click to open any past form.">My history</a>
+        <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %} title="Your to-do list for the current reporting session: every form CNAP is asking you to fill in, with how long each takes and its due date. Your answers feed the Center’s NIH progress report. Click to start or continue a form.">My tasks</a>
+        <a href="{% url 'portal:history' %}" {% nav_current 'history' %} title="Everything you have submitted, grouped by reporting session, so you can look back at what you said. Click to open any past form.">My history</a>
         {% if keeps_outcomes %}<a href="{% url 'portal:outcomes' %}" {% nav_current 'outcomes' 'outcome_new' 'outcome_update' 'presentation_new' 'presentation_edit' %} title="Your papers, talks, and grant proposals, from planned to published or awarded. CNAP reports them to NIH every year, so keeping them current saves you a scramble at report time. Click to add or update one.">Publications, talks, and grants</a>{% endif %}
         <a href="{% url 'portal:center_results' %}" {% nav_current 'center_results' %} title="What the Center learned from everyone’s answers: combined survey results and products, with no one’s individual answers shown. Click to see the latest results.">Center results</a>
         <a href="{% url 'portal:profile' %}" {% nav_current 'profile' %} title="Your details for NIH reporting: department, eRA Commons ID, ORCID iD, and effort, plus your roles and documents on file. Click to check or update them.">Profile</a>
       {% endif %}
       {% if can_view_admin %}
         <div class="navhead">Administration</div>
-        <a href="{% url 'manage:home' %}" {% nav_current 'home' %} title="Where every reporting period stands, and what needs your attention today: completion, waiting reviews, and data checks. Click to see the overview.">Home</a>
-        {% url 'manage:periods' as u_periods %}{% if u_periods %}<a href="{{ u_periods }}" {% nav_current 'periods' 'period' 'period_new' 'launch' %} title="Each survey session (Fall, RPPR/Spring, site visit): its dates, its steps from review to finalized, and its emails. Why: a period decides who gets which forms and when. Click to create, launch, close, or finalize one.">Reporting periods</a>{% endif %}
-        {% url 'manage:dashboard' as u_dash %}{% if u_dash %}<a href="{{ u_dash }}" {% nav_current 'dashboard' %} title="The open period, person by person and form by form: who has finished, who is partway, and who has not started. Why: so you can nudge the right people before the due date. Click to see the counts and the full list.">Period dashboard</a>{% endif %}
-        {% url 'manage:results' as u_res %}{% if u_res %}<a href="{{ u_res }}" {% nav_current 'results' 'form_results' 'response' %} title="Each form’s combined results for a reporting period, with year-by-year trends since Year 6, laid out like the site-visit reports. Why: these are the numbers the External Advisory Committee and NIH see. Click to pick a period and open a report.">Results</a>{% endif %}
+        <a href="{% url 'manage:home' %}" {% nav_current 'home' %} title="Where every reporting session stands, and what needs your attention today: completion, waiting reviews, and data checks. Click to see the overview.">Home</a>
+        {% url 'manage:periods' as u_periods %}{% if u_periods %}<a href="{{ u_periods }}" {% nav_current 'periods' 'period' 'period_new' 'launch' %} title="Each survey session (Fall, RPPR/Spring, site visit): its dates, its steps from review to finalized, and its emails. Why: a reporting session decides who gets which forms and when. Click to create, launch, close, or finalize one.">Reporting sessions</a>{% endif %}
+        {% url 'manage:dashboard' as u_dash %}{% if u_dash %}<a href="{{ u_dash }}" {% nav_current 'dashboard' %} title="The open reporting session, person by person and form by form: who has finished, who is partway, and who has not started. Why: so you can nudge the right people before the due date. Click to see the counts and the full list.">Reporting session dashboard</a>{% endif %}
+        {% url 'manage:results' as u_res %}{% if u_res %}<a href="{{ u_res }}" {% nav_current 'results' 'form_results' 'response' %} title="Each form’s combined results for a reporting session, with year-by-year trends since Year 6, laid out like the site-visit reports. Why: these are the numbers the External Advisory Committee and NIH see. Click to pick a reporting session and open a report.">Results</a>{% endif %}
         {% url 'manage:longitudinal' as u_long %}{% if u_long %}<a href="{{ u_long }}" {% nav_current 'longitudinal' 'snapshot' %} title="Every form’s averages across all years, side by side, for spotting long-term trends. Click to compare years.">Year over year</a>{% endif %}
         <a href="{% url 'manage:people' %}" {% nav_current 'people' 'person' 'person_new' %} title="Everyone the Center works with, and the roles that decide which forms each person receives. Why: correct roles mean the right forms reach the right people, and correct IDs feed RPPR D.1. Click to find, add, or edit a person.">People</a>
         <a href="{% url 'manage:speakers' %}" {% nav_current 'speakers' %} title="The NeuroSync talk schedule. Each speaker receives the Speaker Survey automatically when their talk ends. Click to add talks, one at a time or a whole semester from Excel.">NeuroSync speakers</a>
@@ -134,7 +134,7 @@
   dlg.querySelector(".fbk-send").addEventListener("click", function () {
     var f = dlg.querySelector("form"), topic = f.querySelector('input[name="topic"]:checked');
     var comment = f.comment.value.trim();
-    if (!topic || !comment) { msg.textContent = "Please choose what it is about and write a few words."; return; }
+    if (!topic || !comment) { msg.textContent = "Choose what it is about and write a few words."; return; }
     var body = new URLSearchParams();
     body.set("topic", topic.value);
     body.set("comment", comment);
@@ -148,9 +148,9 @@
       .then(function (res) { return res.json(); })
       .then(function (d) {
         if (d.ok) { msg.textContent = "Thank you! Your note is on its way."; f.reset(); setTimeout(function () { dlg.close(); }, 1400); }
-        else msg.textContent = d.error || "That did not send. Please try again.";
+        else msg.textContent = d.error || "That did not send. Try again.";
       })
-      .catch(function () { msg.textContent = "That did not send. Please try again."; });
+      .catch(function () { msg.textContent = "That did not send. Try again."; });
   });
 })();
 </script>

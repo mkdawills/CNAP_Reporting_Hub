@@ -427,7 +427,7 @@ class PublicationForm(forms.ModelForm):
         }
         help_texts = {
             "author_display_text": (
-                "Please list every author, in order, exactly as they appear on the paper. "
+                "List every author, in order, exactly as they appear on the paper. "
                 "For example: Okafor A, Kim H, Moreau C."
             )
         }
@@ -451,7 +451,7 @@ class GrantForm(forms.ModelForm):
         empty_label="No, this is a new proposal",
         label="Is this a resubmission of an earlier proposal?",
         help_text=(
-            "If it is, please choose the earlier round. "
+            "If it is, choose the earlier round. "
             "You can then fill this form in from it, or start fresh. "
             "Either way, the new record is grouped with the earlier one as its next round (A1, A2, and so on)."
         ),
@@ -497,21 +497,21 @@ class GrantForm(forms.ModelForm):
         }
         help_texts = {
             "exclude_from_table1": (
-                "Please tick this in two cases only. "
+                "Tick this in two cases only. "
                 "First, the parent COBRE award itself (P20GM113109) or a supplement to it. "
                 "Second, a grant held by core staff that is not related to the core\u2019s IDeA-supported work. "
                 "For example, a core technician\u2019s own research grant on an unrelated topic is left out, "
                 "while an equipment grant for the core counts. "
                 "This follows the FY27 COBRE guidance for Table 1: \u201cWhen reporting funding for Core staff, report only if related to IDeA support. For example, equipment grants.\u201d "
-                "When unsure, please leave it unticked; the Table 1 list can be checked on the RPPR tab before it goes in."
+                "When unsure, leave it unticked; the Table 1 list can be checked on the RPPR tab before it goes in."
             ),
             "cnap_portion": (
-                "If the CNAP investigator is the sole PI, please leave this blank: "
+                "If the CNAP investigator is the sole PI, leave this blank: "
                 "the full award counts in RPPR Table 1. "
                 "If the CNAP investigator is an MPI, Co-PI, collaborator, or subawardee, "
-                "please enter only their portion of the award. "
+                "enter only that investigator’s portion of the award. "
                 "For example: on a $1,200,000 award where the CNAP investigator's subaward "
-                "is $250,000, please enter 250000."
+                "is $250,000, enter 250000."
             )
         }
 
@@ -581,7 +581,7 @@ def publication_edit(request, pk=None):
                 post["pubmed_url"] = found["url"]
             messages.info(
                 request,
-                "Filled in from PubMed. Please check the title, journal, date, and authors before saving.",
+                "Filled in from PubMed. Check the title, journal, date, and authors before saving.",
             )
     form = PublicationForm(
         post,
@@ -1635,7 +1635,7 @@ def grant_resubmit(request, pk):
     record_event(request.user, AuditLog.Action.CREATE, new, new={"resubmission_of": g.pk})
     messages.success(
         request,
-        f"Round {new.version_label} is ready, copied from {g.version_label}. Please update anything that changed.",
+        f"Round {new.version_label} is ready, copied from {g.version_label}. Update anything that changed.",
     )
     return redirect("manage:grant_edit", pk=new.pk)
 
@@ -1655,7 +1655,7 @@ def table1_exclude(request, pk):
         return redirect(back)
     reason = request.POST.get("reason", "").strip()
     if not reason:
-        messages.error(request, "Please give a short reason for leaving it out of Table 1.")
+        messages.error(request, "Give a short reason for leaving it out of Table 1.")
         return redirect(back)
     g.exclude_from_table1 = True
     g.table1_exclusion_reason = reason[:1000]

@@ -1,6 +1,6 @@
 {# The full timeline under a period's step line (MW 2026-11-06): one quiet line that opens to every exact date. #}
 {% if tl %}<details class="px-tl">
-  <summary title="Every date for this period: launch, opening, each reminder email, the due date, past-due emails, closing, and results."><span class="px-tl-q">Show the full timeline</span><span class="px-tl-now">{{ tl.now }}</span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+  <summary title="Every date for this reporting session: launch, opening, each reminder email, the due date, past-due emails, closing, and results."><span class="px-tl-q">{{ tl_label|default:"Show the full timeline" }}</span><span class="px-tl-now">{{ tl.now }}</span><span class="px-roll-cue" aria-hidden="true"></span></summary>
   <ol class="px-tl-list">
     {% for e in tl.events %}<li class="px-tl-{{ e.state }}{% if e.tone %} px-tl-{{ e.tone }}{% endif %} px-tl-k-{{ e.kind }}">
       <time datetime="{{ e.date|date:'Y-m-d' }}">{{ e.date|date:"M j" }}</time>

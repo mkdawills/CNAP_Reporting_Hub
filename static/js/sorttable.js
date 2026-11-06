@@ -2,7 +2,7 @@
 // One listener for the whole page, so tables drawn later (such as a flipped table) sort too.
 (function () {
   function mark(root) {
-    (root || document).querySelectorAll("table thead th").forEach(function (th) {
+    (root || document).querySelectorAll("table:not(.nosort) thead th").forEach(function (th) {
       if (th.textContent.trim()) th.classList.add("sorth");
     });
   }

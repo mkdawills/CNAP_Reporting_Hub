@@ -113,9 +113,9 @@ def task_list(person, period, mine, just_done=None):
         n_opt = sum(1 for r in g if r["can_opt_out"])
         if n_opt:  # say what Opt out is for right where the button is (MW 2026-10-27)
             sub += (
-                " Please opt out of any you didn’t use in the last reporting period."
+                " Please opt out of any you didn’t use in the last reporting session."
                 if n_opt > 1
-                else " Please opt out if you didn’t use it in the last reporting period."
+                else " Please opt out if you didn’t use it in the last reporting session."
             )
         groups.append(
             {

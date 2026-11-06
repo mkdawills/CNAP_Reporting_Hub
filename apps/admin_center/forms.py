@@ -18,7 +18,7 @@ class PersonForm(forms.ModelForm):
             "position_title": forms.TextInput(attrs={"placeholder": "For example: Assistant Professor"}),
         }
         help_texts = {
-            "institution": "Leave as Kansas State University for K-State people. Anyone else signs in by emailed link."
+            "institution": "Leave as Kansas State University for K-State members. Anyone else signs in by emailed link."
         }
 
 
@@ -112,5 +112,5 @@ class ProjectForm(forms.ModelForm):
 
 class RosterUploadForm(forms.Form):
     file = forms.FileField(
-        help_text="A .csv or .xlsx with columns for first name, last name and email."
+        help_text="A .csv or .xlsx with columns for first name, last name, and email."
     )

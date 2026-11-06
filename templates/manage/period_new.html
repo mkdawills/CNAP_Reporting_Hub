@@ -1,10 +1,23 @@
 {% extends "base.html" %}{% load cnap %}
-{% block title %}Add a period · {{ platform_name }}{% endblock %}
+{% block title %}Add a reporting session · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Add a reporting period {% why "A reporting period is one survey session: Fall (surveyed in November), RPPR/Spring (surveyed in March), or a site-visit round. Creating one does not send anything; forms go out at launch." %}</h1><p>{{ "Nothing is sent when you add a period. You’ll review what every respondent receives before launch."|stack }}</p></div></div>
-<div class="panel" style="max-width:720px"><form method="post">{% csrf_token %}
+<div class="head"><div><h1>Add a reporting session {% why "A reporting session is one survey session: Fall (surveyed in November), RPPR/Spring (surveyed in March), or a site-visit round. Creating one does not send anything; forms go out at launch." %}</h1><p>{{ "Nothing is sent when you add a reporting session. You’ll review what every respondent receives before launch."|stack }}</p></div></div>
+{% if request.proto_active %}<div class="panel pn-wrap"><div class="pn-grid">
+  <form method="post">{% csrf_token %}
+  {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+  {% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{% if field.help_text %}<p class="help pn-help">{{ field.help_text|stack }}</p>{% endif %}{{ field }}{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>{% endfor %}
+  <div class="actions"><button class="btn" type="submit">Add reporting session</button><a href="{% url 'manage:periods' %}">Cancel</a></div>
+</form>
+  {% if earlier %}<aside class="pn-earlier" aria-labelledby="pn-earlier-h">
+    <h2 class="pn-earlier-h" id="pn-earlier-h">Earlier reporting sessions</h2>
+    <p class="pn-earlier-note">Use the same pattern for the new name and short label.</p>
+    <div class="pn-earlier-scroll"><table class="pn-earlier-t nosort"><thead><tr><th scope="col">Name</th><th scope="col">Short label</th><th scope="col">Collects data from</th></tr></thead><tbody>
+    {% for e in earlier %}<tr><td>{{ e.name }}</td><td>{{ e.short_label }}</td><td>{{ e|span }}</td></tr>{% endfor %}
+    </tbody></table></div>
+  </aside>{% endif %}
+</div></div>{% else %}<div class="panel" style="max-width:720px"><form method="post">{% csrf_token %}
   {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
   {% for field in form %}<div class="field"><label>{{ field.label }}{{ field }}</label>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>{% endfor %}
-  <div class="actions"><button class="btn" type="submit">Add period</button><a href="{% url 'manage:periods' %}">Cancel</a></div>
-</form></div>
+  <div class="actions"><button class="btn" type="submit">Add reporting session</button><a href="{% url 'manage:periods' %}">Cancel</a></div>
+</form></div>{% endif %}
 {% endblock %}

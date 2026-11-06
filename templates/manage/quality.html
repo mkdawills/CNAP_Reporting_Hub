@@ -1,13 +1,23 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Data checks · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Data checks{% why "Automatic checks for gaps that would hurt later reporting. Each row links to the page where you can fix it, and a check you have judged acceptable can be dismissed with a note." %}</h1><p>{{ "Problems that would stop forms reaching the right people, or skew results. Please fix each problem from the linked pages, or dismiss a problem with a reason."|stack }}</p></div></div>
-{% for c in checks %}
+<div class="head"><div><h1>Data checks{% why "Automatic checks for gaps that would hurt later reporting. Each row links to the page where you can fix it, and a check you have judged acceptable can be dismissed with a note." %}</h1><p>{{ "Problems that would stop forms reaching the right people, or skew results. Fix each problem from the linked pages, or dismiss a problem with a reason."|stack }}</p></div></div>
+{% if request.proto_active %}{% for c in checks %}
+<details class="panel lgroup qc" {% if c.rows %}open{% endif %}><summary title="{{ c.why }}"><span>{{ c.title }}</span>{% if c.rows %}<span class="rchip warn">{{ c.rows|length }} to look at</span>{% else %}<span class="rchip okchip">All clear</span>{% endif %}</summary>
+  <div class="qc-body">
+    <p class="qc-note">{{ c.note|stack }}</p>
+    {% if c.rows %}<ul class="qc-list" aria-label="Records this check flagged">{% for rtype, rid, label, url in c.rows %}
+      <li><a href="{{ url }}">{{ label }}</a>
+      {% if can_manage %}<details class="qc-dis"><summary class="btn small ghost">Dismiss</summary><form method="post" action="{% url 'manage:quality_dismiss' %}" class="qc-form">{% csrf_token %}<input type="hidden" name="check" value="{{ c.code }}"><input type="hidden" name="record_type" value="{{ rtype }}"><input type="hidden" name="record_id" value="{{ rid }}"><label class="qc-why">Why this record is fine<input type="text" name="reason" required></label><button class="btn small" type="submit">Dismiss this record</button></form></details>{% endif %}</li>{% endfor %}
+    </ul>{% else %}<p class="qc-none">Nothing to fix: no records match this check right now.</p>{% endif %}
+  </div>
+</details>
+{% endfor %}{% else %}{% for c in checks %}
 <details class="panel lgroup" {% if c.rows %}open{% endif %}><summary title="{{ c.why }}"><span>{{ c.title }}</span>{% if c.rows %}<span class="rchip warn">{{ c.rows|length }} to look at</span>{% else %}<span class="rchip okchip">All clear</span>{% endif %}</summary>
   <p class="small muted mt">{{ c.note|stack }}</p>
   {% if c.rows %}<div class="scroll"><table title="Each record this check flagged, with the button to fix or dismiss it."><thead><tr><th>What to look at</th>{% if can_manage %}<th></th>{% endif %}</tr></thead><tbody>{% for rtype, rid, label, url in c.rows %}<tr><td><a href="{{ url }}">{{ label }}</a></td>
     {% if can_manage %}<td class="nowrap"><details><summary class="btn small ghost">Dismiss</summary><form method="post" action="{% url 'manage:quality_dismiss' %}" class="fieldrow mt">{% csrf_token %}<input type="hidden" name="check" value="{{ c.code }}"><input type="hidden" name="record_type" value="{{ rtype }}"><input type="hidden" name="record_id" value="{{ rid }}"><input type="text" name="reason" placeholder="Why this is fine" required><button class="btn small" type="submit">Dismiss</button></form></details></td>{% endif %}</tr>{% endfor %}</tbody></table></div>
   {% else %}<p class="small muted">Nothing to fix: no records match this check right now.</p>{% endif %}
 </details>
-{% endfor %}
+{% endfor %}{% endif %}
 {% endblock %}

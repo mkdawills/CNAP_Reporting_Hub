@@ -18,11 +18,11 @@
           </div>
         </details></form>{% endif %}
       {% elif periods|length > 1 %}<form method="get" class="r65-period">
-        <label for="r32-period" class="px-label">CNAP reporting period</label>
-        <select id="r32-period" name="period" onchange="this.form.submit()" title="Choose a reporting period. The page reloads with that period’s results.">{% for p in periods %}<option value="{{ p.short_label }}" {% if p == selected %}selected{% endif %}>{{ p.short_label }}</option>{% endfor %}</select>
+        <label for="r32-period" class="px-label">CNAP reporting session</label>
+        <select id="r32-period" name="period" onchange="this.form.submit()" title="Choose a reporting session. The page reloads with that reporting session’s results.">{% for p in periods %}<option value="{{ p.short_label }}" {% if p == selected %}selected{% endif %}>{{ p.short_label }}</option>{% endfor %}</select>
         <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>{% endif %}
     </div>
-    <p class="r65-purpose">{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}What the Center learned from everyone’s answers, combined, for each finalized reporting period.{% endif %}</p>
+    <p class="r65-purpose">{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}What the Center learned from everyone’s answers, combined, for each finalized reporting session.{% endif %}</p>
     {% if view != "products" %}<p class="r32-priv" title="Results show only combined numbers. No one’s individual answers, and no names, ever appear here."><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Individual answers and names are never shown.</p>{% endif %}
   </header>
 
@@ -86,7 +86,7 @@
   </div>
 
 {% elif not selected %}
-  <div class="px-callout r65-note" role="note"><p>{{ "No results yet. Results appear here once a reporting period’s results are finalized."|stack }}</p></div>
+  <div class="px-callout r65-note" role="note"><p>{{ "No results yet. Results appear here once a reporting session’s results are finalized."|stack }}</p></div>
 {% else %}
   <div class="px-onpage-layout">
   <nav class="px-onpage" aria-label="On this page">
@@ -105,7 +105,7 @@
         {% with pfx="r32f"|add:c.fd.code %}{% include "proto/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd pfx=pfx %}{% endwith %}
       </div></div></details>
     </section>
-    {% empty %}<div class="px-callout r65-note" role="note"><p>There are no survey results for this period.</p></div>{% endfor %}
+    {% empty %}<div class="px-callout r65-note" role="note"><p>There are no survey results for this reporting session.</p></div>{% endfor %}
   </div>
   </div>
 {% endif %}

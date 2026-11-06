@@ -323,7 +323,7 @@ def export_everything(request, label):
         ws = wb.create_sheet()
         ws.title = _safe_title(name, used)
         write_csv_sheet(ws, csv_rows(csv_resp.content.decode("utf-8-sig")), title=f"{name}: every entry in the Hub")
-        lines.append([name, f"Sheet “{ws.title}”: every entry in the Hub, not only this period."])
+        lines.append([name, f"Sheet “{ws.title}”: every entry in the Hub, not only this reporting session."])
     write_sheet(
         contents,
         f"Everything for {p.name}",
@@ -385,7 +385,7 @@ def print_form_all(request, label, code):
         raise PermissionDenied("Fewer than 5 people completed this survey.")
     named = mode == IDENTIFIED
     ordered = sorted(done, key=lambda a: (a.person.last_name, a.person.first_name)) if named else respondent_label_order(done, fd, p)
-    cover = [("title", fd.name), ("meta", [("CNAP reporting period", p.name), ("Completed forms", len(ordered)), ("Names", "Shown" if named else "Not shown. Respondents are numbered as on the results page.")])]
+    cover = [("title", fd.name), ("meta", [("CNAP reporting session", p.name), ("Completed forms", len(ordered)), ("Names", "Shown" if named else "Not shown. Respondents are numbered as on the results page.")])]
     docs = [cover] + [documents.response_blocks(presenters.form_page(request, a, editable=False), named=named, label=f"Respondent {i}") for i, a in enumerate(ordered, 1)]
     record_event(request.user, AuditLog.Action.EXPORT, f"print:all:{label}:{code}")
     return documents.file_response(docs, f"{fd.name}, {p.name}", f"{fd.name} {label} all", fmt)

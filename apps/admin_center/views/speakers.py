@@ -185,12 +185,12 @@ def talk_upload(request):
 
     up = request.FILES.get("sheet")
     if not up or not up.name.lower().endswith((".xlsx", ".xlsm")):
-        messages.error(request, "Please upload the filled-in Excel template (.xlsx).")
+        messages.error(request, "Upload the filled-in Excel template (.xlsx).")
         return redirect("manage:speakers")
     try:
         ws = load_workbook(up, read_only=True, data_only=True).worksheets[0]
     except Exception:  # noqa: BLE001 - any unreadable workbook
-        messages.error(request, "That Excel file couldn’t be opened. Please use the template.")
+        messages.error(request, "That Excel file couldn’t be opened. Use the template.")
         return redirect("manage:speakers")
     it = ws.iter_rows(values_only=True)
     header = [str(h or "").strip().lower() for h in (next(it, None) or ())]
@@ -215,7 +215,7 @@ def talk_upload(request):
     if idx["last"] is None or idx["title"] is None or idx["day"] is None:
         messages.error(
             request,
-            "The first row doesn’t match the template’s column names. Please download the template and copy your list into it.",
+            "The first row doesn’t match the template’s column names. Download the template and copy your list into it.",
         )
         return redirect("manage:speakers")
     made, problems = 0, []

@@ -9,7 +9,7 @@
     {% if window.0 %}<div class="o36-acts">
       {% if c.open %}
         <a class="px-btn small" href="{% url 'portal:outcome_update' c.kind c.obj.pk %}?for={{ owner.pk }}" title="Record the next step, such as submitted, published, funded, or not funded.">Update progress</a>
-        {% if c.review %}<form method="post" action="{% url 'portal:outcome_confirm' c.kind c.obj.pk %}">{% csrf_token %}<button class="px-btn small quiet" title="Nothing has changed since the last reporting period.">No change</button></form>{% endif %}
+        {% if c.review %}<form method="post" action="{% url 'portal:outcome_confirm' c.kind c.obj.pk %}">{% csrf_token %}<button class="px-btn small quiet" title="Nothing has changed since the last reporting session.">No change</button></form>{% endif %}
         <a class="px-link" href="{% url 'portal:outcome_update' c.kind c.obj.pk %}?to={{ c.obj.status }}&amp;for={{ owner.pk }}" title="Fix or add details without changing the stage.">Edit details</a>
       {% else %}
         {% if c.obj.status == 'not_funded' or c.obj.status == 'declined' %}{% with last=c.attempts|last %}{% if last.obj.pk == c.obj.pk %}<a class="px-btn small" href="{% url 'portal:outcome_update' c.kind c.obj.pk %}?to={{ c.obj.status }}&amp;for={{ owner.pk }}" title="Answer Yes to “Do you plan to resubmit?” and the next attempt starts, already filled in.">Plan a resubmission</a>{% endif %}{% endwith %}{% endif %}

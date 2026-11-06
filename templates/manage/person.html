@@ -10,7 +10,7 @@
     <span class="rb-chip">{% if on_roster %}On the CNAP roster{% else %}Not on the CNAP roster{% endif %}</span>
     <span class="small muted">{% if on_roster %}This person receives the all-member surveys.{% else %}This person receives only what this person’s relationships call for.{% endif %}</span>
     {% if can_manage %}<form method="post" action="{% url 'manage:person_roster' p.pk %}">{% csrf_token %}
-      {% if on_roster %}<input type="hidden" name="action" value="remove"><button class="btn small ghost" type="submit" data-confirm="Take {{ p }} off the CNAP roster? The all-member surveys stop from the next reporting period.">Remove from roster</button>
+      {% if on_roster %}<input type="hidden" name="action" value="remove"><button class="btn small ghost" type="submit" data-confirm="Take {{ p }} off the CNAP roster? The all-member surveys stop from the next reporting session.">Remove from roster</button>
       {% else %}<button class="btn small" type="submit">Add to roster</button>{% endif %}</form>{% endif %}
   </div>
 </div>
@@ -53,7 +53,7 @@
         {% if docs.orcid_new and can_manage %}<p>ORCID iD in their documents: <strong>{{ docs.orcid }}</strong> <form method="post" action="{% url 'manage:person_apply_docs' p.pk %}" style="display:inline">{% csrf_token %}<input type="hidden" name="orcid" value="{{ docs.orcid }}"><button class="btn small ghost">Use it</button></form></p>{% elif docs.orcid_differs %}<p class="gap">The ORCID iD in their documents ({{ docs.orcid }}) differs from the one on file.</p>{% endif %}
         {% if docs.cp %}{% if docs.spans %}<p>Their Current and Pending (Other) Support lists their CNAP (P20GM113109) effort year by year:</p>
         <ul class="small" style="margin:4px 0 8px;padding-left:18px">{% for x in docs.spans %}<li>{{ x.year }}: {{ x.months }} person month{{ x.months|pluralize }} ({{ x.label }})</li>{% endfor %}</ul>
-        {% if docs.estimate is not None %}<p>CNAP’s budget year runs June 1 to May 31, so it crosses two of those calendar years.<br>Spreading each calendar year’s months evenly, their SciENcv numbers work out to about <strong>{{ docs.estimate }} person months in Year {{ docs.gy }}</strong> (June {{ docs.gy|add:2016 }} – May {{ docs.gy|add:2017 }}){% if docs.estimate_prev is not None %}, and {{ docs.estimate_prev }} in Year {{ docs.gy|add:-1 }}{% endif %}.<br>Please use that as a cross-check on the months entered below.<br>The SciENcv form doesn’t split calendar, academic, and summer months, so only the total can be checked.</p>{% endif %}
+        {% if docs.estimate is not None %}<p>CNAP’s budget year runs June 1 to May 31, so it crosses two of those calendar years.<br>Spreading each calendar year’s months evenly, their SciENcv numbers work out to about <strong>{{ docs.estimate }} person months in Year {{ docs.gy }}</strong> (June {{ docs.gy|add:2016 }} – May {{ docs.gy|add:2017 }}){% if docs.estimate_prev is not None %}, and {{ docs.estimate_prev }} in Year {{ docs.gy|add:-1 }}{% endif %}.<br>Use that as a cross-check on the months entered below.<br>The SciENcv form doesn’t split calendar, academic, and summer months, so only the total can be checked.</p>{% endif %}
         {% elif docs.cp.info.cnap_months %}<p>Their Current and Pending lists CNAP (P20GM113109) at {% for y, m in docs.cp.info.cnap_months %}{{ m }} person months in {{ y }}{% if not forloop.last %}, {% endif %}{% endfor %}.<br>The project’s start and end months didn’t match those years, so they aren’t matched to budget years; check them by hand.</p>{% elif docs.cp.info.form_ok %}<p class="gap">Their Current and Pending doesn’t list the CNAP award (P20GM113109).</p>{% endif %}{% endif %}
       </div>{% endif %}
       <p>Degree(s): {% if p.degrees %}<strong>{{ p.degrees }}</strong>{% else %}<span class="muted">none on file</span>{% endif %}{% if p.foreign_org %} · Foreign organization: <strong>{{ p.foreign_org }}</strong>{% if p.foreign_country %}, {{ p.foreign_country }}{% endif %}{% endif %}</p>
@@ -111,7 +111,7 @@
           <label>Which core is it for? <span class="muted">(only for core relationships, such as Core Director or Core User)</span>{{ rel_form.core }}</label>
           <label>What date does this relationship start?{{ rel_form.start }}</label>
         </div>
-        <p class="small muted mt">{{ "Some relationships belong to the whole Center rather than one project or core, for example General CNAP Member, Student/Trainee (center-level), and Event Participant. For those, please leave the project and core boxes blank."|stack }}</p>
+        <p class="small muted mt">{{ "Some relationships belong to the whole Center rather than one project or core, for example General CNAP Member, Student/Trainee (center-level), and Event Participant. For those, leave the project and core boxes blank."|stack }}</p>
         <div class="actions"><button class="btn" type="submit">Add relationship</button></div>
       </form>
     </div>{% endif %}
@@ -141,7 +141,7 @@
         </form></details>{% endif %}
     </div>
     <div class="panel rollsec scroll"><h2 class="sectionhead">Recent forms</h2><p class="rollsum"><b>{{ assignments|length }}</b> form{{ assignments|length|pluralize }}</p>
-      <table title="The forms this person has been asked to fill in recently, and where each stands."><thead><tr><th>Period</th><th>Form</th><th>Status</th></tr></thead><tbody>{% for a in assignments %}<tr><td>{{ a.reporting_period.short_label }}</td><td>{{ a.form_definition.name }}{% if a.project %} · {{ a.project.title }}{% elif a.core and a.context_kind == 'core' %} · {{ a.core.code }} Core{% endif %}</td><td>{% status_chip a.status %}</td></tr>{% endfor %}</tbody></table>
+      <table title="The forms this person has been asked to fill in recently, and where each stands."><thead><tr><th>Reporting session</th><th>Form</th><th>Status</th></tr></thead><tbody>{% for a in assignments %}<tr><td>{{ a.reporting_period.short_label }}</td><td>{{ a.form_definition.name }}{% if a.project %} · {{ a.project.title }}{% elif a.core and a.context_kind == 'core' %} · {{ a.core.code }} Core{% endif %}</td><td>{% status_chip a.status %}</td></tr>{% endfor %}</tbody></table>
     </div>{% endif %}
   </div>
 </div>

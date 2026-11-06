@@ -164,10 +164,10 @@ def photo_set(request):
     up = request.FILES.get("image")
     alt = request.POST.get("alt_text", "").strip()
     if not up or not alt:
-        messages.error(request, "Please choose a photo and describe it in a few words for screen readers.")
+        messages.error(request, "Choose a photo and describe it in a few words for screen readers.")
         return redirect("manage:home")
     if Path(up.name).suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp") or up.size > 8 * 1024 * 1024:
-        messages.error(request, "Please upload a JPG, PNG, or WebP image under 8 MB.")
+        messages.error(request, "Upload a JPG, PNG, or WebP image under 8 MB.")
         return redirect("manage:home")
     SitePhoto.objects.filter(is_active=True).update(is_active=False)
     ph = SitePhoto.objects.create(

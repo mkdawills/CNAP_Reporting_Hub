@@ -3,14 +3,29 @@
 {% block content %}
 <div class="head"><div><h1>Roster import{% why "A fast way to add many people at once from a spreadsheet, for example at the start of a year. Each row becomes a person, and you review everything before it is saved." %}</h1><p>{{ "Upload the CNAP member list. You’ll review every row before anything changes."|stack }}</p></div></div>
 {% if can_manage %}
-<div class="panel" style="max-width:640px">
+{% if request.proto_active %}<div class="panel ri-up">
+  <h2 class="sectionhead">Upload a list</h2>
+  <form method="post" enctype="multipart/form-data" action="{% url 'manage:roster_upload' %}">{% csrf_token %}
+    <div class="ri-field">
+      <label class="ri-label" for="{{ form.file.id_for_label }}">Roster file</label>
+      <p class="ri-help">A .csv or .xlsx file, with one row per person.</p>
+      {{ form.file }}
+    </div>
+    <dl class="ri-cols">
+      <div><dt>Required columns</dt><dd>First name, last name, and email.</dd></div>
+      <div><dt>Optional columns</dt><dd>Institution, department, and position.</dd></div>
+    </dl>
+    <p class="px-callout warn ri-privacy">Use real member data only once the Reporting Hub is on K-State hosting.</p>
+    <div class="actions"><button class="btn" type="submit">Upload and review</button></div>
+  </form>
+</div>{% else %}<div class="panel" style="max-width:640px">
   <h2 class="sectionhead">Upload a list</h2>
   <form method="post" enctype="multipart/form-data" action="{% url 'manage:roster_upload' %}">{% csrf_token %}
     <div class="field"><label>File{{ form.file }}</label><div class="help">{{ form.file.help_text|stack }}</div></div>
     <p class="small muted">{{ "Optional columns: institution, department, position. Only use real member data once the Reporting Hub is on K-State hosting."|stack }}</p>
     <div class="actions"><button class="btn" type="submit">Upload and review</button></div>
   </form>
-</div>{% endif %}
+</div>{% endif %}{% endif %}
 <div class="panel scroll">
   <h2 class="sectionhead">Past imports</h2>
   <table title="Every roster file ever uploaded, so each semester’s import has a record."><thead><tr><th>Uploaded</th><th>File</th><th>Status</th><th>By</th></tr></thead><tbody>

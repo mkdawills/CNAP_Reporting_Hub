@@ -1,9 +1,9 @@
 {% extends "base.html" %}{% load cnap %}
-{% block title %}Period dashboard · {{ platform_name }}{% endblock %}
+{% block title %}Reporting session dashboard · {{ platform_name }}{% endblock %}
 {% block content %}
-{% if not p %}<div class="head"><div><h1>Period dashboard{% why "This page tracks one period while it is open: how each form is doing and who still owes what. Use it to decide when to send reminders and when the period is ready to close." %}</h1><p>No reporting periods yet.</p></div></div>{% else %}
-<div class="head"><div><h1>Period dashboard</h1><p>{{ "Who has completed what, and who still needs a reminder."|stack }}</p></div>
-  <form method="get"><label class="small muted">Reporting period <select name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}</option>{% endfor %}</select></label></form></div>
+{% if not p %}<div class="head"><div><h1>Reporting session dashboard{% why "This page tracks one reporting session while it is open: how each form is doing and who still owes what. Use it to decide when to send reminders and when the reporting session is ready to close." %}</h1><p>No reporting sessions yet.</p></div></div>{% else %}
+<div class="head"><div><h1>Reporting session dashboard</h1><p>{{ "Who has completed what, and who still needs a reminder."|stack }}</p></div>
+  <form method="get"><label class="small muted">Reporting session <select name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}</option>{% endfor %}</select></label></form></div>
 <div class="panel">
   <h2 class="sectionhead">{{ p.name }}</h2>
   {% include "manage/_lifecycle.html" %}
@@ -11,11 +11,11 @@
   {% if can_manage and is_open %}<form method="post" action="{% url 'manage:generate_assignments' p.pk %}" class="actions">{% csrf_token %}<button class="btn small ghost" type="submit">Assign forms from current relationships</button><span class="small muted">{{ "Safe to run again. Existing forms are never duplicated or removed."|stack }}</span></form>{% endif %}
 </div>
 <div class="panel scroll"><h2 class="sectionhead">Completion by form{% why "Each row is one form. Click a count to see exactly who it covers, or the form’s name to read its questions. Low completion here tells you which form needs attention before the RPPR is written." %}</h2>
-  <table title="Each form in this period: how many people received it, and how far they have come."><thead><tr><th>Form</th><th class="num">Assigned</th><th class="num">Done</th><th class="num">Opted out</th><th></th></tr></thead><tbody>
+  <table title="Each form in this reporting session: how many people received it, and how far they have come."><thead><tr><th>Form</th><th class="num">Assigned</th><th class="num">Done</th><th class="num">Opted out</th><th></th></tr></thead><tbody>
   {% for r in form_rows %}<tr><td><a href="{% url 'manage:form_detail' r.fd.code %}" title="Read this form's questions">{{ r.fd.name }}</a></td><td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}#list">{{ r.assigned }}</a></td><td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}&status=complete#list">{{ r.done }}</a></td><td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}&status=completed_opt_out#list">{{ r.optout }}</a></td><td><div class="bar"><span style="width:{{ r.pct }}%"></span></div></td></tr>{% endfor %}
   </tbody></table></div>
 <div class="panel">
-  <h2 class="sectionhead">Who still needs a reminder{% why "These people still have forms to finish. The automatic reminder emails cover most of this, but a personal note from you often works better late in the period." %}</h2>
+  <h2 class="sectionhead">Who still needs a reminder{% why "These people still have forms to finish. The automatic reminder emails cover most of this, but a personal note from you often works better late in the reporting session." %}</h2>
   {% if hidden_names %}<p class="small muted">{{ "Core, NeuroSync, and Team Science surveys show as counts only, so no one’s name is tied to those surveys."|stack }}</p>{% endif %}
   {% if named_forms %}
   <a id="list"></a>
@@ -24,7 +24,7 @@
     <label>Status<select name="status"><option value="">Any</option><option value="not_started" {% if f_status == 'not_started' %}selected{% endif %}>Not started</option><option value="in_progress" {% if f_status == 'in_progress' %}selected{% endif %}>In progress</option><option value="complete" {% if f_status == 'complete' %}selected{% endif %}>Complete</option><option value="completed_opt_out" {% if f_status == 'completed_opt_out' %}selected{% endif %}>Opted out</option><option value="exempt" {% if f_status == 'exempt' %}selected{% endif %}>Exempt</option></select></label>
     <label title="Narrow the list to people by how far they have come with all their forms.">People<select name="who"><option value="">Anyone</option><option value="finished" {% if f_who == 'finished' %}selected{% endif %}>Finished everything</option><option value="partway" {% if f_who == 'partway' %}selected{% endif %}>Partway through</option><option value="not_started" {% if f_who == 'not_started' %}selected{% endif %}>Not started anything</option></select></label>
     <button class="btn ghost" type="submit">Filter</button></form>
-  <div class="scroll"><table title="Every assignment in this period, one row per person per form, with its status."><thead><tr><th>Person</th><th>Form</th><th>Status</th>{% if can_manage %}<th></th>{% endif %}</tr></thead><tbody>
+  <div class="scroll"><table title="Every assignment in this reporting session, one row per person per form, with its status."><thead><tr><th>Person</th><th>Form</th><th>Status</th>{% if can_manage %}<th></th>{% endif %}</tr></thead><tbody>
   {% for a in rows %}<tr><td><a href="{% url 'manage:person' a.person_id %}">{{ a.person }}</a></td><td>{{ a.form_definition.name }}{% if a.project %}<div class="small muted">{{ a.project.title }}</div>{% elif a.core and a.context_kind == 'core' %}<div class="small muted">{{ a.core.name }}</div>{% endif %}</td><td>{% status_chip a.status %}{% if a.exempt_reason %}<div class="small muted">{{ a.exempt_reason }}</div>{% endif %}</td>
     {% if can_manage %}<td class="nowrap">{% if is_open %}<form method="post" action="{% url 'manage:assignment_action' a.pk %}" class="inline">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
       {% if a.status == 'not_started' or a.status == 'in_progress' %}<details style="display:inline-block"><summary class="btn small ghost">Exempt</summary><input type="text" name="reason" placeholder="Reason (required)" required> <button class="btn small" name="action" value="exempt">Save</button></details>{% endif %}

@@ -1,35 +1,43 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Emails · {{ p.name }} · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>{{ p.name }}: emails</h1><p>{{ "Each person gets a personal list of forms and the due date. People who sign in by emailed link get a personal link; K-State people sign in with a K-State eID."|stack }}</p></div></div>
-<div class="panel">
-  <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you: an opening email, reminders every 4 days, then daily past-due notes. Pause it if the Center needs quiet, for example during a campus emergency." %}</h2>
-  <p class="small">{{ "The Hub sends three kinds of email for this period, each on a separate schedule."|stack }}</p>
-  <ul class="small" style="margin:6px 0 10px;padding-left:18px">
-    <li><strong>The “your forms are open” email.</strong> It goes to everyone with forms on opening day, {{ sched.opens|date:"l, F j" }}.<br>The opening email lists that person’s forms and the due date.</li>
-    <li><strong>The reminder email.</strong> It goes every 4 days, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}.<br>The reminder email lists only what that person still has left.</li>
-    <li><strong>The past-due email.</strong> It goes every day from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the period closes on {{ sched.closes|date:"F j" }}{% else %} until you close the period{% endif %}.<br>The overdue email says the forms were due and can still be turned in.</li>
+<div class="head"><div><h1>{{ p.name }}: emails</h1><p>{{ "Each person gets a personal list of forms and the due date. People who sign in by emailed link get a personal link; K-State members sign in with a K-State eID."|stack }}</p></div></div>
+{% if request.proto_active %}<div class="panel em-auto">
+  <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you: the “your reporting session is open” email, reminders every 4 days, then daily past-due notes. Pause it if the Center needs quiet, for example during a campus emergency." %}</h2>
+  <p class="em-lead">The Hub sends three emails for this reporting session, each on its own schedule.</p>
+  <div class="scroll"><table class="em-sched nosort"><thead><tr><th scope="col">Email</th><th scope="col">When it goes</th><th scope="col">What it says</th></tr></thead><tbody>
+    <tr><th scope="row">“Your reporting session is open”</th><td>Once, on opening day, {{ sched.opens|date:"l, F j" }}</td><td>The person’s forms and the due date</td></tr>
+    <tr><th scope="row">The reminder</th><td>Every 4 days, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}</td><td>Only the forms the person still has left</td></tr>
+    <tr><th scope="row">The past-due email</th><td>Every day from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the reporting session closes on {{ sched.closes|date:"F j" }}{% else %} until you close the reporting session{% endif %}</td><td>The forms were due and can still be turned in</td></tr>
+  </tbody></table></div>
+  {% include "proto/_timeline.html" with tl=etl tl_label="Show every automatic email on a timeline" %}
+  <ul class="em-rules">
+    <li>Only people with forms still to do get the reminder and the past-due email.</li>
+    <li>No one gets more than one email in a day.</li>
+    <li>Anyone added during the reporting session gets the “your reporting session is open” email first.</li>
   </ul>
-  <p class="small muted">Only people with forms still “to do” get the reminder and past-due emails, and no one gets more than one email in a day.<br>Anyone added during the period gets the “your forms are open” email first.{% if today_kind %}<br>Today’s scheduled email is the {% if today_kind == 'open' %}“your forms are open” email{% elif today_kind == 'reminder' %}reminder email{% else %}past-due email{% endif %}.{% endif %}</p>
-  {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_auto' p.pk %}">{% csrf_token %}<input type="hidden" name="on" value="{% if p.auto_emails %}0{% else %}1{% endif %}"><button class="btn small ghost" type="submit">{% if p.auto_emails %}Pause automatic emails{% else %}Turn automatic emails on{% endif %}</button></form>{% endif %}
+  {% if today_kind %}<p class="em-today"><span>Today’s scheduled email</span><b>{% if today_kind == 'open' %}“Your reporting session is open”{% elif today_kind == 'reminder' %}The reminder{% else %}The past-due email{% endif %}</b></p>{% endif %}
+  {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_auto' p.pk %}">{% csrf_token %}<input type="hidden" name="on" value="{% if p.auto_emails %}0{% else %}1{% endif %}"><div class="actions"><button class="btn small ghost" type="submit">{% if p.auto_emails %}Pause automatic emails{% else %}Turn automatic emails on{% endif %}</button></div></form>{% endif %}
 </div>
-<h2 class="sectionhead" style="margin-top:28px">Send one of these emails by hand</h2>
-<p class="small muted">{{ "You don’t have to wait for the schedule. Pick one of the three emails below, see exactly who would get it, and send it now."|stack }}</p>
-<div class="tabs" role="tablist"><a href="?kind=open" class="{% if kind == 'open' %}on{% endif %}" title="The first email of the period: it tells each person their forms are open, lists them, and gives their sign-in link. The opening email goes out on opening day. Click to see who it would reach and to send it by hand.">“Your forms are open”</a><a href="?kind=reminder" class="{% if kind == 'reminder' %}on{% endif %}" title="The reminder: it goes every four days until the due date, only to people with forms still open. Why: steady reminders lift completion without anyone chasing by hand. Click to see who it would reach and to send it by hand.">The reminder</a><a href="?kind=overdue" class="{% if kind == 'overdue' %}on{% endif %}" title="The past-due email: it goes daily after the due date to anyone with forms still open, until the period closes. Click to see who it would reach and to send it by hand.">The past-due email</a></div>
-<div class="panel">
-  {% if history %}<p class="small muted">Sent so far: {% for h in history %}{{ h.n }} {% if h.kind == 'open' %}“your forms are open” email{{ h.n|pluralize }}{% elif h.kind == 'reminder' %}reminder email{{ h.n|pluralize }}{% else %}past-due email{{ h.n|pluralize }}{% endif %}{% if not forloop.last %} · {% endif %}{% endfor %}</p>{% endif %}
-  <p><strong>{{ to_send|length }}</strong> {{ to_send|length|pluralize:"person,people" }} will get {% if kind == 'open' %}the “your forms are open” email, listing their forms and the due date{% elif kind == 'reminder' %}the reminder email, listing only what they still have left{% else %}the past-due email, saying their forms were due and can still be turned in{% endif %}.{% if skipped %} {{ skipped|length }} won’t (listed below).{% endif %}</p>
-  {% if kind == 'reminder' %}<p class="small muted">Nobody gets a reminder within 4 days of their last email.</p>{% elif kind == 'overdue' %}<p class="small muted">Nobody gets more than one email a day.</p>{% endif %}
-  {% if can_manage %}{% if can_send %}{% if to_send %}<form method="post" action="{% url 'manage:period_emails_send' p.pk %}" onsubmit="return confirm('Send {{ to_send|length }} email{{ to_send|length|pluralize }} now?')">{% csrf_token %}<input type="hidden" name="kind" value="{{ kind }}"><div class="actions"><button class="btn" type="submit">Send {{ to_send|length }} email{{ to_send|length|pluralize }}</button></div></form>{% endif %}
-  {% else %}<p class="small"><span class="gap">Emails can be sent only while the period is open for answers.</span></p>{% endif %}{% endif %}
-  <details class="mt"{% if to_send|length < 15 %} open{% endif %}><summary class="small">Who gets it ({{ to_send|length }})</summary>
-    <div class="scroll"><table title="Who this email would go to right now, and who would be skipped, with the reason."><thead><tr><th>Name</th><th>Email</th><th class="num">Forms</th><th>Signs in with</th></tr></thead><tbody>
-    {% for r in to_send %}<tr><td>{{ r.person }}</td><td class="small">{{ r.email }}</td><td class="num small" title="{{ r.forms|join:'; ' }}">{{ r.forms|length }}</td><td class="small">{% if r.with_link %}Personal link{% else %}K-State eID{% endif %}</td></tr>{% endfor %}
-    </tbody></table></div></details>
-  {% if skipped %}<details class="mt"><summary class="small">Not emailed ({{ skipped|length }})</summary><ul class="small">{% for r in skipped %}<li>{{ r.person }}: {{ r.skip }}</li>{% endfor %}</ul></details>{% endif %}
-</div>
-<details class="panel"><summary class="small"><strong>What the email says</strong></summary>
-  <pre class="small" style="white-space:pre-wrap;font-family:inherit">{% if kind == 'open' %}Subject: CNAP Reporting Hub: your {{ p.name }} forms are open
+<div class="panel em-hand">
+  <h2 class="sectionhead">Send one of these emails by hand</h2>
+  <p class="em-lead">You don’t have to wait for the schedule.<br>Pick one of the three emails, see exactly who would get it, and send it now.</p>
+  <div class="tabs em-tabs" role="tablist"><a href="?kind=open" class="{% if kind == 'open' %}on{% endif %}" title="The first email of the reporting session: it tells each person their forms are open, lists them, and gives their sign-in link.">“Your reporting session is open”</a><a href="?kind=reminder" class="{% if kind == 'reminder' %}on{% endif %}" title="The reminder: it goes every four days until the due date, only to people with forms still open.">The reminder</a><a href="?kind=overdue" class="{% if kind == 'overdue' %}on{% endif %}" title="The past-due email: it goes daily after the due date to anyone with forms still open, until the reporting session closes.">The past-due email</a></div>
+  <div class="em-pick">
+    <p class="em-count"><strong>{{ to_send|length }}</strong> {{ to_send|length|pluralize:"person,people" }} will get {% if kind == 'open' %}the “your reporting session is open” email{% elif kind == 'reminder' %}the reminder{% else %}the past-due email{% endif %}.{% if skipped %}<br>{{ skipped|length }} {{ skipped|length|pluralize:"person,people" }} won’t; the reasons are listed below.{% endif %}</p>
+    {% if kind == 'reminder' %}<p class="em-note">No one gets a reminder within 4 days of the person’s last email.</p>{% elif kind == 'overdue' %}<p class="em-note">No one gets more than one email a day.</p>{% endif %}
+    {% if history %}<p class="em-note">Sent so far: {% for h in history %}{{ h.n }} {% if h.kind == 'open' %}“your reporting session is open” email{{ h.n|pluralize }}{% elif h.kind == 'reminder' %}reminder{{ h.n|pluralize }}{% else %}past-due email{{ h.n|pluralize }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}.</p>{% endif %}
+    {% if can_manage %}{% if can_send %}{% if to_send %}<form method="post" action="{% url 'manage:period_emails_send' p.pk %}" data-confirm="Send {{ to_send|length }} email{{ to_send|length|pluralize }} now?" data-yes="Yes, send {{ to_send|length }} email{{ to_send|length|pluralize }}">{% csrf_token %}<input type="hidden" name="kind" value="{{ kind }}"><div class="actions"><button class="btn" type="submit">Send {{ to_send|length }} email{{ to_send|length|pluralize }}</button></div></form>{% endif %}
+    {% else %}<p class="em-note"><span class="gap">Emails can be sent only while the reporting session is open for answers.</span></p>{% endif %}{% endif %}
+  </div>
+  <div class="em-rolls">
+    <details class="em-roll"><summary><h3>Who gets it ({{ to_send|length }})</h3></summary>
+      <div class="scroll"><table title="Who this email would go to right now."><thead><tr><th>Name</th><th>Email</th><th class="num">Forms</th><th>Signs in with</th></tr></thead><tbody>
+      {% for r in to_send %}<tr><td>{{ r.person }}</td><td>{{ r.email }}</td><td class="num" title="{{ r.forms|join:'; ' }}">{{ r.forms|length }}</td><td>{% if r.with_link %}Personal link{% else %}K-State eID{% endif %}</td></tr>{% endfor %}
+      </tbody></table></div></details>
+    {% if skipped %}<details class="em-roll"><summary><h3>Not emailed ({{ skipped|length }})</h3></summary><ul class="em-skip">{% for r in skipped %}<li>{{ r.person }}: {{ r.skip }}</li>{% endfor %}</ul></details>{% endif %}
+    <details class="em-roll"><summary><h3>What the email says</h3></summary>
+      <pre class="em-text">{% if kind == 'open' %}Subject: CNAP Reporting Hub: your {{ p.name }} reporting session is open
 
 Hello [first name],
 
@@ -37,7 +45,7 @@ The {{ p.name }} CNAP reporting session is open. Please complete these [N] forms
 - [each form, with its project or core]
 
 Open your forms:
-[personal sign-in link, or the site address for K-State people]
+[personal sign-in link, or the site address for K-State members]
 
 This link signs you in. The link works once and expires in 7 days. You can get a new one any time at [site]/accounts/link/
 
@@ -52,7 +60,69 @@ A reminder that your {{ p.name }} CNAP forms are due [due date]. Still to do:
 - [each form not yet done]
 
 Open your forms:
-[personal sign-in link, or the site address for K-State people]
+[personal sign-in link, or the site address for K-State members]
+
+Anything you've started is saved.
+
+Thank you,
+The CNAP evaluation team{% endif %}{% if kind == 'overdue' %}
+
+(After the due date, the reminder begins: “Your {{ p.name }} CNAP forms were due [due date], and the session is still open, so there’s still time.”){% endif %}</pre>
+      <p class="em-note">The wording is a draft for your review.</p>
+    </details>
+  </div>
+</div>
+{% else %}<div class="panel">
+  <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you: an opening email, reminders every 4 days, then daily past-due notes. Pause it if the Center needs quiet, for example during a campus emergency." %}</h2>
+  <p class="small">{{ "The Hub sends three kinds of email for this reporting session, each on a separate schedule."|stack }}</p>
+  <ul class="small" style="margin:6px 0 10px;padding-left:18px">
+    <li><strong>The “your reporting session is open” email.</strong> It goes to everyone with forms on opening day, {{ sched.opens|date:"l, F j" }}.<br>The opening email lists that person’s forms and the due date.</li>
+    <li><strong>The reminder email.</strong> It goes every 4 days, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}.<br>The reminder email lists only what that person still has left.</li>
+    <li><strong>The past-due email.</strong> It goes every day from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the reporting session closes on {{ sched.closes|date:"F j" }}{% else %} until you close the reporting session{% endif %}.<br>The overdue email says the forms were due and can still be turned in.</li>
+  </ul>
+  <p class="small muted">Only people with forms still “to do” get the reminder and past-due emails, and no one gets more than one email in a day.<br>Anyone added during the reporting session gets the “your reporting session is open” email first.{% if today_kind %}<br>Today’s scheduled email is the {% if today_kind == 'open' %}“your reporting session is open” email{% elif today_kind == 'reminder' %}reminder email{% else %}past-due email{% endif %}.{% endif %}</p>
+  {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_auto' p.pk %}">{% csrf_token %}<input type="hidden" name="on" value="{% if p.auto_emails %}0{% else %}1{% endif %}"><button class="btn small ghost" type="submit">{% if p.auto_emails %}Pause automatic emails{% else %}Turn automatic emails on{% endif %}</button></form>{% endif %}
+</div>
+<h2 class="sectionhead" style="margin-top:28px">Send one of these emails by hand</h2>
+<p class="small muted">{{ "You don’t have to wait for the schedule. Pick one of the three emails below, see exactly who would get it, and send it now."|stack }}</p>
+<div class="tabs" role="tablist"><a href="?kind=open" class="{% if kind == 'open' %}on{% endif %}" title="The first email of the reporting session: it tells each person their forms are open, lists them, and gives their sign-in link. The opening email goes out on opening day. Click to see who it would reach and to send it by hand.">“Your reporting session is open”</a><a href="?kind=reminder" class="{% if kind == 'reminder' %}on{% endif %}" title="The reminder: it goes every four days until the due date, only to people with forms still open. Why: steady reminders lift completion without anyone chasing by hand. Click to see who it would reach and to send it by hand.">The reminder</a><a href="?kind=overdue" class="{% if kind == 'overdue' %}on{% endif %}" title="The past-due email: it goes daily after the due date to anyone with forms still open, until the reporting session closes. Click to see who it would reach and to send it by hand.">The past-due email</a></div>
+<div class="panel">
+  {% if history %}<p class="small muted">Sent so far: {% for h in history %}{{ h.n }} {% if h.kind == 'open' %}“your reporting session is open” email{{ h.n|pluralize }}{% elif h.kind == 'reminder' %}reminder email{{ h.n|pluralize }}{% else %}past-due email{{ h.n|pluralize }}{% endif %}{% if not forloop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+  <p><strong>{{ to_send|length }}</strong> {{ to_send|length|pluralize:"person,people" }} will get {% if kind == 'open' %}the “your reporting session is open” email, listing their forms and the due date{% elif kind == 'reminder' %}the reminder email, listing only what they still have left{% else %}the past-due email, saying their forms were due and can still be turned in{% endif %}.{% if skipped %} {{ skipped|length }} won’t (listed below).{% endif %}</p>
+  {% if kind == 'reminder' %}<p class="small muted">Nobody gets a reminder within 4 days of their last email.</p>{% elif kind == 'overdue' %}<p class="small muted">Nobody gets more than one email a day.</p>{% endif %}
+  {% if can_manage %}{% if can_send %}{% if to_send %}<form method="post" action="{% url 'manage:period_emails_send' p.pk %}" onsubmit="return confirm('Send {{ to_send|length }} email{{ to_send|length|pluralize }} now?')">{% csrf_token %}<input type="hidden" name="kind" value="{{ kind }}"><div class="actions"><button class="btn" type="submit">Send {{ to_send|length }} email{{ to_send|length|pluralize }}</button></div></form>{% endif %}
+  {% else %}<p class="small"><span class="gap">Emails can be sent only while the reporting session is open for answers.</span></p>{% endif %}{% endif %}
+  <details class="mt"{% if to_send|length < 15 %} open{% endif %}><summary class="small">Who gets it ({{ to_send|length }})</summary>
+    <div class="scroll"><table title="Who this email would go to right now, and who would be skipped, with the reason."><thead><tr><th>Name</th><th>Email</th><th class="num">Forms</th><th>Signs in with</th></tr></thead><tbody>
+    {% for r in to_send %}<tr><td>{{ r.person }}</td><td class="small">{{ r.email }}</td><td class="num small" title="{{ r.forms|join:'; ' }}">{{ r.forms|length }}</td><td class="small">{% if r.with_link %}Personal link{% else %}K-State eID{% endif %}</td></tr>{% endfor %}
+    </tbody></table></div></details>
+  {% if skipped %}<details class="mt"><summary class="small">Not emailed ({{ skipped|length }})</summary><ul class="small">{% for r in skipped %}<li>{{ r.person }}: {{ r.skip }}</li>{% endfor %}</ul></details>{% endif %}
+</div>
+<details class="panel"><summary class="small"><strong>What the email says</strong></summary>
+  <pre class="small" style="white-space:pre-wrap;font-family:inherit">{% if kind == 'open' %}Subject: CNAP Reporting Hub: your {{ p.name }} reporting session is open
+
+Hello [first name],
+
+The {{ p.name }} CNAP reporting session is open. Please complete these [N] forms by [due date]:
+- [each form, with its project or core]
+
+Open your forms:
+[personal sign-in link, or the site address for K-State members]
+
+This link signs you in. The link works once and expires in 7 days. You can get a new one any time at [site]/accounts/link/
+
+Your answers are saved as you go, so you can finish across several sittings. Surveys you don't use have a one-click opt-out.
+
+Thank you,
+The CNAP evaluation team{% else %}Subject: Reminder: your {{ p.name }} CNAP forms are due [date]
+
+Hello [first name],
+
+A reminder that your {{ p.name }} CNAP forms are due [due date]. Still to do:
+- [each form not yet done]
+
+Open your forms:
+[personal sign-in link, or the site address for K-State members]
 
 Anything you've started is saved.
 
@@ -62,4 +132,5 @@ The CNAP evaluation team{% endif %}{% if kind == 'overdue' %}
 (After the due date, the reminder begins: “Your {{ p.name }} CNAP forms were due [due date], and the session is still open, so there’s still time.”){% endif %}</pre>
   <p class="small muted">{{ "Wording is a draft for your review."|stack }}</p>
 </details>
+{% endif %}
 {% endblock %}

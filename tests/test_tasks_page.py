@@ -42,7 +42,7 @@ def test_page_wording(client, okafor):
     client.force_login(okafor)
     html = client.get("/tasks/").content.decode()
     assert "Opt out*" not in html and "footnote" not in html
-    assert "in the last reporting period." in html  # said in the section, next to the button
+    assert "in the last reporting session." in html  # said in the section, next to the button
     assert "You have 1 forms here" not in html
     assert "What’s this?" in html and "▸" not in html
     assert "take about" in html or "takes about" in html or "You’ve finished all" in html

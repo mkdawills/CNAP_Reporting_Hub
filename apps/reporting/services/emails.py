@@ -98,7 +98,7 @@ def plan(period, kind):
 def send(period, kind, actor=None, dry_run=False):
     """Send the emails plan() says to send. Returns (sent, skipped) counts."""
     if not period.accepting_responses:
-        raise EmailError("Emails can be sent only while the period is open for answers.")
+        raise EmailError("Emails can be sent only while the reporting session is open for answers.")
     rows = plan(period, kind)
     due = timezone.localtime(period.due_at)
     n = 0
@@ -125,7 +125,7 @@ def send(period, kind, actor=None, dry_run=False):
             },
         )
         subject = {
-            "open": f"CNAP Reporting Hub: your {period.name} forms are open",
+            "open": f"CNAP Reporting Hub: your {period.name} reporting session is open",
             "reminder": f"Reminder: your {period.name} CNAP forms are due {due:%B} {due.day}",
             "overdue": f"Your {period.name} CNAP forms were due {due:%B} {due.day}",
         }[kind]

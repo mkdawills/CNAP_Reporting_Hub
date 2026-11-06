@@ -1,10 +1,10 @@
 {% extends "base.html" %}{% load cnap static %}
-{% block title %}Period dashboard · {{ platform_name }}{% endblock %}
+{% block title %}Reporting session dashboard · {{ platform_name }}{% endblock %}
 {% block content %}
 {# Screen 53 prototype. Same view, same numbers, same actions and confirmations as manage/dashboard.html. #}
 <div class="d53">
 {% if not p %}
-  <header class="px-mast p21-mast"><p class="px-eyebrow">Period dashboard</p><h1 class="px-title">No reporting periods yet.</h1></header>
+  <header class="px-mast p21-mast"><p class="px-eyebrow">Reporting session dashboard</p><h1 class="px-title">No reporting sessions yet.</h1></header>
 {% else %}
   {% with opted=form_rows|sum_key:"optout" %}{% with submitted=done|minus:opted open_n=total|minus:done %}{% with dleft=p.due_at|days_until %}
   {# ---------------------------------------------------------------- masthead #}
@@ -13,27 +13,27 @@
   <header class="px-mast p21-mast d53-mast">
     <div class="px-mast-row">
       <div>
-        <p class="px-eyebrow">Period dashboard</p>
+        <p class="px-eyebrow">Reporting session dashboard</p>
         <h1 class="px-title">{{ p.name }}</h1>
       </div>
-      <form method="get" class="d53-pick"><label class="px-label" for="d53-period">CNAP reporting period</label>
+      <form method="get" class="d53-pick"><label class="px-label" for="d53-period">CNAP reporting session</label>
         <select id="d53-period" name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}</option>{% endfor %}</select>
         <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>
     </div>
-    <p class="p21-purpose">Who has finished which forms this period, and who still needs a reminder.</p>
+    <p class="p21-purpose">Who has finished which forms this reporting session, and who still needs a reminder.</p>
     <ul class="px-facts">
       <li><span class="px-label">Status</span><span class="v"><span class="px-status" data-s="{% if p.status == 'open' %}in_progress{% elif p.status == 'finalized' %}submitted{% else %}not_started{% endif %}">{{ p.get_status_display }}</span></span></li>
-      <li><span class="px-label">Reports on work from</span><span class="v">{{ p|span }}</span></li>
+      <li><span class="px-label">Collects data from</span><span class="v">{{ p|span }}</span></li>
       <li><span class="px-label">Forms opened</span><span class="v">{{ p.opens_at|date:"F j, Y" }}</span></li>
       <li><span class="px-label">Forms due</span><span class="v">{{ p.due_at|date:"F j, Y" }}{% if is_open %}{% if dleft > 1 %} · {{ dleft }} days left{% elif dleft == 1 %} · Tomorrow{% elif dleft == 0 %} · Today{% else %} · Past due{% endif %}{% endif %}</span></li>
-      {% if p.closes_at %}<li><span class="px-label">Period closes</span><span class="v">{{ p.closes_at|date:"F j, Y" }}</span></li>{% endif %}
+      {% if p.closes_at %}<li><span class="px-label">Session closes</span><span class="v">{{ p.closes_at|date:"F j, Y" }}</span></li>{% endif %}
     </ul>
   </header>
   </div>
   </div>
 
   {# ---------------------------------------------------------------- lifecycle #}
-  <nav class="d53-life" aria-label="Where this period is in its seven steps">
+  <nav class="d53-life" aria-label="Where this reporting session is in its seven steps">
     <ol>{% for s in steps %}<li class="{{ s.state }}" title="{{ s.help }}"><span class="n" aria-hidden="true">{% if s.state == 'done' %}✓{% else %}{{ s.n }}{% endif %}</span><span class="l">{% if s.url %}<a href="{{ s.url }}">{{ s.label }}</a>{% else %}{{ s.label }}{% endif %}</span><span class="px-sr">{% if s.state == 'done' %} (done){% elif s.state == 'now' %} (current step){% endif %}</span></li>{% endfor %}</ol>
   </nav>
   <div class="d53-tl">{% include "proto/_timeline.html" with tl=timeline %}</div>
@@ -72,14 +72,14 @@
   <div class="px-rolls" data-rollgroup>
   <div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section below at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section below up to its heading.">Collapse all</button></div>
   <details class="px-roll d53-next" id="d53-next">
-    <summary title="Things to act on this period, built from the numbers above."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-next-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>What needs your attention</h2><span class="px-roll-meta">{% if is_open and open_n %}<b>{{ open_n }}</b> form{{ open_n|pluralize }} not finished{% if exempt_n %} · <b>{{ exempt_n }}</b> exemption{{ exempt_n|pluralize }}{% endif %}{% else %}Nothing urgent{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+    <summary title="Things to act on this reporting session, built from the numbers above."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-next-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>What needs your attention</h2><span class="px-roll-meta">{% if is_open and open_n %}<b>{{ open_n }}</b> form{{ open_n|pluralize }} not finished{% if exempt_n %} · <b>{{ exempt_n }}</b> exemption{{ exempt_n|pluralize }}{% endif %}{% else %}Nothing urgent{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
     <div class="px-roll-body">
     <ol class="d53-actions">
-      {% if is_open and open_n %}<li><div><p class="d53-a-t">{{ open_n }} form{{ open_n|pluralize }} not finished{% if dleft < 0 %}, past the due date{% endif %}</p><p class="px-note">The automatic reminder emails cover most people. A personal note from you often works better late in the period.</p></div>
+      {% if is_open and open_n %}<li><div><p class="d53-a-t">{{ open_n }} form{{ open_n|pluralize }} not finished{% if dleft < 0 %}, past the due date{% endif %}</p><p class="px-note">The automatic reminder emails cover most people. A personal note from you often works better late in the reporting session.</p></div>
         <a class="px-btn small quiet" href="?period={{ p.short_label }}&who=not_started#list">See who hasn’t started</a></li>{% endif %}
       {% with low=form_rows|dictsort:"pct"|first %}{% if low and low.pct < 100 %}<li><div><p class="d53-a-t">Lowest completion: {{ low.fd.name }}, {{ low.pct }}%</p><p class="px-note">{{ low.done }} of {{ low.assigned }} finished. Low completion on one form is worth a look before the RPPR is written.</p></div>
         <a class="px-btn small quiet" href="?period={{ p.short_label }}&form={{ low.fd.code }}#list">See this form’s list</a></li>{% endif %}{% endwith %}
-      {% if exempt_n %}<li><div><p class="d53-a-t">{{ exempt_n }} exemption{{ exempt_n|pluralize }} on record</p><p class="px-note">Each exemption has a reason. Please check them before the period closes.</p></div>
+      {% if exempt_n %}<li><div><p class="d53-a-t">{{ exempt_n }} exemption{{ exempt_n|pluralize }} on record</p><p class="px-note">Each exemption has a reason. Check them before the reporting session closes.</p></div>
         <a class="px-btn small quiet" href="?period={{ p.short_label }}&status=exempt#list">Review exemptions</a></li>{% endif %}
       {% if can_manage and is_open %}<li><div><p class="d53-a-t">Assign forms from current relationships</p><p class="px-note">Use this after you add or change someone’s roles. Safe to run again: existing forms are never duplicated or removed.</p></div>
         <form method="post" action="{% url 'manage:generate_assignments' p.pk %}">{% csrf_token %}<button class="px-btn small quiet" type="submit">Assign forms</button></form></li>{% endif %}
@@ -91,10 +91,10 @@
   {# ---------------------------------------------------------------- by form #}
   {% with low=form_rows|dictsort:"pct"|first %}
   <details class="px-roll" id="d53-forms">
-    <summary title="Each form in this period: how many people received it, and how far they have come."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-forms-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V13M9 20V8M14 20v-5M19 20V4"/></svg>Completion by form</h2><span class="px-roll-meta"><b>{{ form_rows|length }}</b> form{{ form_rows|length|pluralize }}{% if low %} · lowest: {{ low.fd.name }}, <b>{{ low.pct }}%</b>{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+    <summary title="Each form in this reporting session: how many people received it, and how far they have come."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-forms-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V13M9 20V8M14 20v-5M19 20V4"/></svg>Completion by form</h2><span class="px-roll-meta"><b>{{ form_rows|length }}</b> form{{ form_rows|length|pluralize }}{% if low %} · lowest: {{ low.fd.name }}, <b>{{ low.pct }}%</b>{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
     <div class="px-roll-body">
     <p class="px-note d53-rollnote">Click a number to see exactly who it covers.</p>
-    <div class="px-surface d53-tablewrap"><table class="px-table d53-forms" title="Each form in this period: how many people received it, and how far they have come.">
+    <div class="px-surface d53-tablewrap"><table class="px-table d53-forms" title="Each form in this reporting session: how many people received it, and how far they have come.">
       <thead><tr><th scope="col">Form</th><th scope="col" class="num">Assigned</th><th scope="col" class="num">Finished</th><th scope="col" class="num">Opted out</th><th scope="col">Completion</th></tr></thead>
       <tbody>{% for r in form_rows %}<tr>
         <th scope="row"><a href="{% url 'manage:form_detail' r.fd.code %}" title="Read this form’s questions">{{ r.fd.name }}</a></th>
@@ -110,7 +110,7 @@
 
   {# ---------------------------------------------------------------- people #}
   <details class="px-roll" id="list"{% if f_form or f_status or f_who %} open{% endif %}>
-    <summary title="Every assignment in this period, one row per person per form, with filters and actions."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-people-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>People and their forms</h2><span class="px-roll-meta"><b>{{ rows_n }}</b> assignment{{ rows_n|pluralize }}{% if f_form or f_status or f_who %} · filtered{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+    <summary title="Every assignment in this reporting session, one row per person per form, with filters and actions."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="d53-people-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/></svg>People and their forms</h2><span class="px-roll-meta"><b>{{ rows_n }}</b> assignment{{ rows_n|pluralize }}{% if f_form or f_status or f_who %} · filtered{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
     <div class="px-roll-body">
     {% if hidden_names %}<p class="px-note d53-rollnote">Core, NeuroSync, and Team Science surveys show as counts only, so no one’s name is tied to those surveys.</p>{% endif %}
     {% if named_forms %}
@@ -121,8 +121,8 @@
       <button class="px-btn small" type="submit">Apply filters</button>
       {% if f_form or f_status or f_who %}<a class="px-link" href="?period={{ p.short_label }}#list">Clear</a>{% endif %}
     </form>
-    <p class="px-note d53-count" role="status">{{ rows|length }} assignment{{ rows|length|pluralize }}{% if rows_n > 300 %}, showing 300 of {{ rows_n }}. Please filter to narrow the list{% endif %}.</p>
-    <div class="px-surface d53-tablewrap"><table class="px-table d53-people" title="Every assignment in this period, one row per person per form, with its status.">
+    <p class="px-note d53-count" role="status">{{ rows|length }} assignment{{ rows|length|pluralize }}{% if rows_n > 300 %}, showing 300 of {{ rows_n }}. Filter to narrow the list{% endif %}.</p>
+    <div class="px-surface d53-tablewrap"><table class="px-table d53-people" title="Every assignment in this reporting session, one row per person per form, with its status.">
       <thead><tr><th scope="col">Person</th><th scope="col">Form</th><th scope="col">Status</th>{% if can_manage %}<th scope="col"><span class="px-sr">Actions</span></th>{% endif %}</tr></thead>
       <tbody>{% for a in rows %}<tr class="{% ifchanged a.person_id %}d53-first{% else %}d53-same{% endifchanged %}">
         <th scope="row" data-person="{{ a.person_id }}"><a href="{% url 'manage:person' a.person_id %}">{{ a.person }}</a></th>

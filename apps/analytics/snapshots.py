@@ -42,7 +42,7 @@ def official(period):
 @transaction.atomic
 def generate(actor, period, reason=""):
     if period.status not in (PeriodStatus.CLOSED, PeriodStatus.FINALIZED):
-        raise SnapshotError("Close the period before generating results.")
+        raise SnapshotError("Close the reporting session before generating results.")
     prev = latest(period)
     if prev and prev.status in (SnapshotStatus.GENERATED, SnapshotStatus.REVIEWED):
         raise SnapshotError("Finish reviewing the current results first.")

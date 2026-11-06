@@ -13,7 +13,7 @@
 <div class="panel factsbox"><p class="factsbox-h">Who responded</p>
   {% if not tables %}<p class="facts2"><span class="rchip"><b>{{ completion.assigned }}</b>&nbsp;received it</span> <span class="rchip"><b>{{ completion.complete }}</b>&nbsp;complete</span></p>{% endif %}
   {% if tables %}{% if who %}<div class="whochips">
-    <details class="whochip"><summary class="rchip" title="Everyone this form was sent to this period. Click to see their names."><b>{{ completion.assigned }}</b>&nbsp;received the survey ▾</summary><ul>{% for n in who.received %}<li>{{ n }}</li>{% endfor %}</ul></details>
+    <details class="whochip"><summary class="rchip" title="Everyone this form was sent to this reporting session. Click to see their names."><b>{{ completion.assigned }}</b>&nbsp;received the survey ▾</summary><ul>{% for n in who.received %}<li>{{ n }}</li>{% endfor %}</ul></details>
     <details class="whochip"><summary class="rchip" title="Everyone who finished the form, with full answers or the opt-out answer. Click to see their names.">  <b>{{ opened }}</b>&nbsp;responded ▾</summary><ul>{% for n in who.responded %}<li>{{ n }}</li>{% empty %}<li class="muted">No one yet.</li>{% endfor %}</ul></details>
     {% if opted_out %}<details class="whochip"><summary class="rchip" title="Everyone who answered every survey item. Click to see their names."><b>{{ full }}</b>&nbsp;answered all the survey items ▾</summary><ul>{% for n in who.full %}<li>{{ n }}</li>{% endfor %}</ul></details>
     <details class="whochip"><summary class="rchip" title="Everyone who chose the opt-out answer, which completes the survey without its items. Click to see their names."><b>{{ opted_out }}</b>&nbsp;skipped them: {{ optout_name|default:"opted out" }} ▾</summary><ul>{% for n in who.opted %}<li>{{ n }}</li>{% endfor %}</ul></details>{% endif %}
@@ -28,7 +28,7 @@
 </div>
 {% else %}
 <div class="panel">
-  <p>{{ "Prior-year averages imported from the site-visit reports. There are no individual responses for this period. The answer-by-answer bar graphs and headline rings need individual answers, so they appear only for periods run in the Hub; imported years carry each item's average, shown in the trend line and the year-by-year means table below."|stack }}</p>
+  <p>{{ "Prior-year averages imported from the site-visit reports. There are no individual responses for this reporting session. The answer-by-answer bar graphs and headline rings need individual answers, so they appear only for reporting sessions run in the Hub; imported years carry each item's average, shown in the trend line and the year-by-year means table below."|stack }}</p>
   {% include "manage/_report_tables.html" with show_codes=True %}
 </div>
 {% endif %}

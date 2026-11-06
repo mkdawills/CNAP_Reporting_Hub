@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".rollcaret:not(.gcaret)").forEach(function (e) { e.remove(); });
   document.querySelectorAll(".rollhead").forEach(function (e) { e.classList.remove("rollhead"); });
   var groups = new Map();
-  document.querySelectorAll("details:not(.whochip):not(.sowbox):not(.donebox)").forEach(function (d) {
+  document.querySelectorAll("details:not(.whochip):not(.sowbox):not(.donebox):not(.em-roll)").forEach(function (d) {
     if (d.closest("details") !== d && d.parentElement.closest("details")) return; // nested: skip
     var p = d.parentElement;
     if (!groups.has(p)) groups.set(p, []);

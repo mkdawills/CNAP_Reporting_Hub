@@ -605,10 +605,10 @@ def person_doc_add(request, pk):
     excerpt = request.POST.get("excerpt", "").strip()
     up = request.FILES.get("file")
     if not title or not up:
-        messages.error(request, "Please give the document a title and choose a file.")
+        messages.error(request, "Give the document a title and choose a file.")
         return redirect("manage:person", pk=pk)
     if Path(up.name).suffix.lower() not in PERSON_DOC_TYPES or up.size > 20 * 1024 * 1024:
-        messages.error(request, "Please upload a PDF or Word file under 20 MB.")
+        messages.error(request, "Upload a PDF or Word file under 20 MB.")
         return redirect("manage:person", pk=pk)
     digest = hashlib.sha256(up.read()).hexdigest()
     up.seek(0)
