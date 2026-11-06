@@ -83,7 +83,7 @@ def results(request):
             )
     return render(
         request,
-        "manage/results.html",
+        prototype.template(request, "results_list", "manage/results.html"),
         {
             "p": p,
             "periods": periods,
@@ -206,7 +206,7 @@ def response(request, pk):
         a,
         new={"read_by_admin": True, "deidentified": mode == DEIDENTIFIED},
     ) if False else None
-    return render(request, "manage/response.html", ctx)
+    return render(request, prototype.template(request, "response", "manage/response.html"), ctx)
 
 
 @admin_view

@@ -78,9 +78,10 @@ def test_on_only_the_redesigned_screens_change(client, demo):
     assert "proto/report.html" in _templates(
         client.get(f"/manage/results/{demo.short_label}/mentee_survey/")
     )
-    # other results pages keep the original layout
+    # Batch 2 (MW 2026-11-05): every form's results use the Screen 90 design
     r = client.get(f"/manage/results/{demo.short_label}/ts_admin_core/")
-    assert "manage/report.html" in _templates(r) and PROTO_CSS not in r.content.decode()
+    assert "proto/report.html" in _templates(r)
+    assert "proto/results.html" in _templates(client.get(f"/manage/results/?period={demo.short_label}"))
     # pages outside the four never load prototype styles
     assert PROTO_CSS not in client.get("/manage/").content.decode()
 

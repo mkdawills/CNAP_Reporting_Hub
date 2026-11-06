@@ -1,0 +1,91 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{% if view == "products" %}Center Research Outcomes{% else %}Center results{% endif %} · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Screens 32 and 33, Batch 2 (MW 2026-11-05). Same view and data as portal/center_results.html. #}
+<div class="r32">
+  <header class="px-mast">
+    <p class="px-eyebrow">Center results</p>
+    <div class="px-mast-row">
+      <h1 class="px-title">{% if view == "products" %}Center Research Outcomes{% else %}Center results{% endif %}</h1>
+      {% if view == "products" %}{% if years|length > 1 %}<form method="get" class="r65-period"><input type="hidden" name="view" value="products">
+        <label for="r32-year" class="px-label">Grant year</label>
+        <select id="r32-year" name="year" onchange="this.form.submit()" title="Choose a grant year. The page reloads with that year’s totals.">{% for y in years %}<option value="{{ y }}" {% if y == prod.gy %}selected{% endif %}>Year {{ y }}{% if y == now %} (this year){% endif %}</option>{% endfor %}</select>
+        <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>{% endif %}
+      {% elif periods|length > 1 %}<form method="get" class="r65-period">
+        <label for="r32-period" class="px-label">CNAP reporting period</label>
+        <select id="r32-period" name="period" onchange="this.form.submit()" title="Choose a reporting period. The page reloads with that period’s results.">{% for p in periods %}<option value="{{ p.short_label }}" {% if p == selected %}selected{% endif %}>{{ p.short_label }}</option>{% endfor %}</select>
+        <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>{% endif %}
+    </div>
+    <p class="r65-purpose">{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}{{ "Combined results from finalized reporting periods. These results show what the Center learned from everyone’s answers."|stack }}{% endif %}</p>
+    {% if view != "products" %}<p class="r32-priv" title="Results show only combined numbers. No one’s individual answers, and no names, ever appear here."><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Individual answers and names are never shown.</p>{% endif %}
+  </header>
+
+  <nav class="px-seg" aria-label="Center results">
+    <a href="{% url 'portal:center_results' %}"{% if view != 'products' %} class="on" aria-current="page"{% endif %} title="What everyone’s survey answers showed, combined, with no individual answers.">Survey results</a>
+    <a href="{% url 'portal:center_results' %}?view=products"{% if view == 'products' %} class="on" aria-current="page"{% endif %} title="The Center’s publications, presentations, grant proposals, and grant awards, counted by grant year.">Research outputs</a>
+  </nav>
+
+{% if view == "products" %}
+  <section class="made r33" aria-labelledby="r33-h">
+    <h2 class="made-h" id="r33-h">Year {{ prod.gy }} totals</h2>
+    <p class="made-sub">{{ prod.start|date:"F j, Y" }} to {{ prod.end|date:"F j, Y" }}</p>
+    <p class="made-sub">{{ "These numbers count every CNAP member’s work together, not only yours."|stack }}</p>
+    <ul class="made-row">
+      <li>{% if show_detail %}<a class="r33-n" href="#r33-papers" title="See the list of publications this year.">{% else %}<span class="r33-n">{% endif %}<span class="made-n">{{ prod.n_papers }}</span><span class="made-l">publications</span>{% if show_detail %}</a>{% else %}</span>{% endif %}</li>
+      <li>{% if show_detail %}<a class="r33-n" href="#r33-talks" title="See the list of presentations this year.">{% else %}<span class="r33-n">{% endif %}<span class="made-n">{{ prod.n_talks }}</span><span class="made-l">presentations</span>{% if show_detail %}</a>{% else %}</span>{% endif %}</li>
+      <li><span class="r33-n"><span class="made-n">{{ prod.submitted }}</span><span class="made-l">grant proposals submitted</span></span></li>
+      <li>{% if show_detail %}<a class="r33-n" href="#r33-awards" title="See the list of grant awards this year.">{% else %}<span class="r33-n">{% endif %}<span class="made-n">{{ prod.n_awards }}</span><span class="made-l">grant awards received</span>{% if show_detail %}</a>{% else %}</span>{% endif %}</li>
+    </ul>
+    <p class="made-foot">These totals come from what CNAP members enter in the Reporting Hub, so they grow as members add their work.<br>{% if show_detail %}Submitted proposals are counted, not listed, so pending and unfunded proposals stay private.{% else %}Titles, names, and proposal details stay private.{% endif %}</p>
+  </section>
+
+  <aside class="r33-cta">
+    <p><strong>Did you publish, present, or submit a grant this year?</strong><br>Your entries count toward these Center totals.</p>
+    <a class="px-btn" href="{% url 'portal:outcomes' %}" title="Opens Publications, talks, and grants, where you can add a new entry or update one you already have.">Add or update your entries</a>
+  </aside>
+
+  {% if show_detail %}
+  <div class="px-rolls r33-lists" data-rollgroup>
+    <div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens all three lists.">Show all</button><button type="button" data-roll="close" title="Rolls all three lists up to their headings.">Collapse all</button></div>
+    <details class="px-roll" id="r33-papers"><summary title="Click to see every publication this year."><span class="px-roll-t"><span class="px-h3">Publications</span><span class="px-roll-meta"><b>{{ prod.n_papers }}</b> this year</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="px-roll-body">
+      {% if prod.papers %}<ol class="r33-list">{% for p in prod.papers %}<li><span class="r33-main">{% if p.authors %}{{ p.authors }}. {% endif %}{% if p.url %}<a href="{{ p.url }}" rel="noopener">{{ p.title }}</a>{% else %}{{ p.title }}{% endif %}.{% if p.journal %} <span class="r33-src">{{ p.journal }}</span>.{% endif %}</span><span class="r33-date">{{ p.date|date:"M j, Y" }}</span></li>{% endfor %}</ol>
+      {% else %}<p class="px-note">There are no papers published {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}
+    </div></details>
+    <details class="px-roll" id="r33-talks"><summary title="Click to see every presentation this year."><span class="px-roll-t"><span class="px-h3">Presentations</span><span class="px-roll-meta"><b>{{ prod.n_talks }}</b> this year</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="px-roll-body">
+      {% if prod.talks %}<ol class="r33-list">{% for t in prod.talks %}<li><span class="r33-main"><strong>{{ t.title }}</strong><br><span class="r33-src">{{ t.kind }}{% if t.event %} · {{ t.event }}{% endif %}{% if t.who %} · {{ t.who }}{% endif %}</span></span><span class="r33-date">{{ t.date|date:"M j, Y" }}</span></li>{% endfor %}</ol>
+      {% else %}<p class="px-note">There are no talks or posters {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}
+    </div></details>
+    <details class="px-roll" id="r33-awards"><summary title="Click to see every grant award this year."><span class="px-roll-t"><span class="px-h3">Grant awards received</span><span class="px-roll-meta"><b>{{ prod.n_awards }}</b> this year</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="px-roll-body">
+      {% if prod.awards %}<ol class="r33-list">{% for g in prod.awards %}<li><span class="r33-main"><strong>{{ g.title }}</strong><br><span class="r33-src">{% if g.agency %}{{ g.agency }}{% endif %}{% if g.number %} · {{ g.number }}{% endif %}{% if g.pis %} · Principal Investigator: {{ g.pis }}{% endif %}{% if g.start %} · {{ g.start|date:"Y" }}–{% if g.end %}{{ g.end|date:"Y" }}{% endif %}{% endif %}</span></span></li>{% endfor %}</ol>
+      {% else %}<p class="px-note">There are no awards {% if prod.gy == now %}yet this year{% else %}in Year {{ prod.gy }}{% endif %}.</p>{% endif %}
+    </div></details>
+  </div>
+  {% endif %}
+
+{% elif not selected %}
+  <div class="px-callout r65-note" role="note"><p>{{ "No results yet. Results appear here once a reporting period’s results are finalized."|stack }}</p></div>
+{% else %}
+  <div class="px-onpage-layout">
+  <nav class="px-onpage" aria-label="On this page">
+    <div class="p21-navtop"><p class="px-label">On this page</p><button type="button" class="p21-collapse" data-navtoggle aria-expanded="true" title="Hide this list to give the page more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
+    <ol>{% for c in cards %}<li><a href="#r32-f{{ forloop.counter }}" data-onpage><span class="px-onpage-n">{{ forloop.counter }}</span>{{ c.fd.name }}</a></li>{% endfor %}</ol>
+  </nav>
+  <div class="px-onpage-main">
+    <div class="px-rollbar foldall taskfold r90-pagebar"><button type="button" data-pageroll="open" title="Opens every form and every section on this page.">Show all</button><button type="button" data-pageroll="close" title="Rolls the page up to the form names.">Collapse all</button></div>
+    <p class="px-eyebrow r32-showing">Showing results for {{ selected.name }}</p>
+    {% for c in cards %}
+    <section class="px-section" id="r32-f{{ forloop.counter }}" aria-labelledby="r32-h{{ forloop.counter }}">
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this form up to its name, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="r32-h{{ forloop.counter }}"><span>{{ forloop.counter }}</span>{{ c.fd.name }}</h2>
+        <p class="px-note">{% if c.historical %}These averages come from the {{ selected.name }} site-visit report.{% else %}<b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered all the survey items.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="r90-partbody"><div class="r90-secs px-rolls" data-rollgroup>
+        {% if c.tables|length > 1 %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section of this form at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section of this form up to its heading.">Collapse all</button></div>{% endif %}
+        {% with pfx="r32f"|add:c.fd.code %}{% include "proto/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd pfx=pfx %}{% endwith %}
+      </div></div></details>
+    </section>
+    {% empty %}<div class="px-callout r65-note" role="note"><p>There are no survey results for this period.</p></div>{% endfor %}
+  </div>
+  </div>
+{% endif %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Results · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Screen 65, Batch 2 (MW 2026-11-05). Same view and data as manage/results.html. #}
+<div class="r65">
+  <header class="px-mast">
+    <p class="px-eyebrow">Results{% if p %} · {{ p.name }}{% endif %}</p>
+    <div class="px-mast-row">
+      <h1 class="px-title">Results</h1>
+      <form method="get" class="r65-period">
+        <label for="r65-period" class="px-label">CNAP reporting period</label>
+        <select id="r65-period" name="period" onchange="this.form.submit()" title="Choose a reporting period. The page reloads with that period’s forms.">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}{% if pp.status == 'open' %} (open: live, not final){% endif %}</option>{% endfor %}</select>
+        <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript>
+      </form>
+    </div>
+    <p class="r65-purpose">{{ "Each form’s combined results for a reporting period: the average rating for every question, how those averages compare with past years, and everything people wrote. The layout matches the Center’s site-visit reports, so the numbers can be copied straight across."|stack }}</p>
+    {% if p %}{% with done=cards|length %}<ul class="px-facts" aria-label="This period at a glance">
+      <li><span class="px-label">Status</span><span class="v">{% if p.status == 'open' %}Open: live results{% else %}{{ p.get_status_display }}{% endif %}</span></li>
+      <li><span class="px-label">Forms</span><span class="v">{{ done }}</span></li>
+    </ul>{% endwith %}{% endif %}
+  </header>
+
+  {% if p %}
+  {% if p.status == 'open' %}<div class="px-callout r65-note" role="note"><p>{{ p.short_label }} is still open.<br>These results are live, not an official snapshot.</p></div>{% endif %}
+  {% if cards and cards.0.historical %}<div class="px-callout r65-note" role="note"><p>{{ "This period predates the Reporting Hub, so answers were never collected here. Forms marked “Prior-year averages” show the averages imported from the old site-visit workbooks. Forms marked “Nothing on file” have no imported numbers for this period; if you have those numbers, the Center can import them the same way."|stack }}</p></div>{% endif %}
+
+  <section class="px-section r65-list" aria-labelledby="r65-h">
+    <h2 class="px-h2" id="r65-h">Forms in {{ p.short_label }}</h2>
+    <div class="px-tablewrap">
+    <table class="px-table r65-table" title="Every form in this period, with completion and your access to its results.">
+      <thead><tr><th scope="col">Form</th><th scope="col" class="num">Complete</th><th scope="col" class="num">Opted out</th><th scope="col">Your access</th><th scope="col" aria-label="Open"></th></tr></thead>
+      <tbody>
+      {% for c in cards %}<tr>
+        <th scope="row"><span class="r65-name">{{ c.fd.name }}</span>{% if c.fd.confidentiality_class == 'mentoring' %} <span class="r65-lock" title="Confidential mentoring form: opens only for people with confidential mentoring access."><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Confidential</span>{% endif %}</th>
+        <td class="num">{% if c.comp %}{{ c.comp.complete }} of {{ c.comp.assigned }}{% else %}<span class="px-muted" title="Not applicable for this period">—</span>{% endif %}</td>
+        <td class="num">{% if c.comp %}{{ c.comp.opted_out }}{% else %}<span class="px-muted" title="Not applicable for this period">—</span>{% endif %}</td>
+        <td class="r65-access">{% if c.locked %}Confidential: no access{% elif c.no_data %}<span class="px-muted">Nothing on file for this period</span>{% elif c.historical %}Prior-year averages{% elif c.mode == 'identified' %}With names{% elif c.mode == 'deidentified' %}Without names{% else %}Combined results only{% endif %}</td>
+        <td class="r65-open">{% if not c.locked and not c.no_data %}<a class="px-btn small quiet" href="{% url 'manage:form_report' p.short_label c.fd.code %}" title="Open the {{ c.fd.name }} results for {{ p.short_label }}.">Open results</a>{% endif %}</td>
+      </tr>{% empty %}<tr><td colspan="5" class="px-muted">No forms in this period.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </section>
+  {% else %}
+  <div class="px-callout r65-note" role="note"><p>No reporting periods have results yet.</p></div>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}

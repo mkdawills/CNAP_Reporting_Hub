@@ -330,6 +330,7 @@ def history(request):
 
 @login_required
 def center_results(request):
+    from apps.common import prototype
     from apps.outcomes import rppr, snapshot
 
     view = "products" if request.GET.get("view") == "products" else "surveys"
@@ -352,7 +353,7 @@ def center_results(request):
         if not show_detail:
             prod.update(papers=[], talks=[], awards=[])
         ctx.update({"years": years, "prod": prod, "now": now, "show_detail": show_detail})
-        return render(request, "portal/center_results.html", ctx)
+        return render(request, prototype.template(request, "center_results", "portal/center_results.html"), ctx)
     periods = ReportingPeriod.objects.filter(status=PeriodStatus.FINALIZED).order_by(
         "-display_order"
     )
@@ -362,7 +363,7 @@ def center_results(request):
         selected = next((p for p in periods if p.short_label == label), periods[0])
     cards = presenters.center_results(selected) if selected else []
     ctx.update({"periods": periods, "selected": selected, "cards": cards})
-    return render(request, "portal/center_results.html", ctx)
+    return render(request, prototype.template(request, "center_results", "portal/center_results.html"), ctx)
 
 
 LEVELS = [c for c in Person._meta.get_field("trainee_level").choices]
