@@ -125,5 +125,6 @@
 <script src="{% static 'js/headhelp.js' %}" defer></script>
 <script src="{% static 'js/copytext.js' %}" defer></script>
 <script src="{% static 'js/pickfilter.js' %}" defer></script>
+{% if request.proto_admin and not request.proto_own %}<script src="{% static 'js/proto.js' %}" defer></script>{% endif %}
 </body>
 </html>

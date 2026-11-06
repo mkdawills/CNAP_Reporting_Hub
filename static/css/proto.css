@@ -1145,3 +1145,11 @@ body.proto.pa main a:not(.btn):not(.tabs a) { color: var(--px-brand-ink); text-d
 body.proto.pa .head { position: relative; }
 body.proto.pa .head::after { content: ""; position: absolute; left: 0; bottom: -1px; height: 1.5px; width: 28%; pointer-events: none; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--px-brand) 70%, #fff), transparent); opacity: 0; animation: px-glide 1.6s cubic-bezier(.45, .05, .25, 1) .25s 1 both; }
 @media (prefers-reduced-motion: reduce) { body.proto.pa .head::after { animation: none !important; opacity: 0 !important; } }
+/* Administration headers follow the prototype's pattern (MW 2026-11-06): a small "Administration" line with the
+   purple dot above the title, the introduction with a thin gray bar on its left, and buttons on the left below. */
+body.proto.pa main .head:not(.panel .head) { flex-direction: column; align-items: flex-start; gap: var(--px-4); }
+body.proto.pa main .head:not(.panel .head) > div:first-child::before { content: "Administration"; display: block; margin: 0 0 var(--px-3); padding-left: 14px; font: 500 var(--px-fs-sm)/1.3 var(--px-sans); color: var(--px-muted); letter-spacing: .01em; background: radial-gradient(circle at 3px 50%, var(--px-brand) 3px, transparent 3.6px) no-repeat; }
+body.proto.pa main .head:not(.panel .head) > div:first-child > p { margin: 0; padding: 2px 0 2px var(--px-4); border-left: 2px solid var(--px-line-strong); }
+body.proto.pa main .head:not(.panel .head) > div:first-child > h1 + p { margin-top: var(--px-3); }
+body.proto.pa main .head:not(.panel .head) > div:first-child > p + p { padding-top: .45em; }
+body.proto.pa main .head:not(.panel .head) > * + * { margin: 0; }
