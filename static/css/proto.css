@@ -1161,3 +1161,10 @@ body.proto.pa main .head:not(.panel .head) > * + * { margin: 0; }
 @media (max-width: 760px) {
   body.proto .px-onpage-layout > .px-onpage-main { background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); padding: var(--px-4); }
 }
+/* Fewer repeated controls (MW 2026-11-06): one Show all / Collapse all per page; inside a part, the sections'
+   own Show all / Collapse all go, and each section heading shows only its arrow (the words stay for screen
+   readers and in the hover description). Part headings keep "Show" or "Hide" with the arrow. */
+body.proto .r90 .r90-partbody .px-rollbar, body.proto .r32 .r90-partbody .px-rollbar { display: none; }
+body.proto .r90-partbody details.px-roll > summary .px-roll-cue::before { content: none; }
+body.proto .r90-partbody details.px-roll > summary .px-roll-cue { width: 28px; height: 28px; justify-content: center; border-radius: 999px; }
+body.proto .r90-partbody details.px-roll > summary:hover .px-roll-cue { background: var(--px-brand-tint); text-decoration: none; }
