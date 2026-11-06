@@ -7,15 +7,11 @@
 <div class="r90">
   <div class="px-top">
   <div class="px-top-main">
+  <a class="px-link p21-back" href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.short_label }}</a>
   <header class="px-mast">
     <p class="px-eyebrow">Results · {{ period.name }}</p>
     <div class="px-mast-row">
       <h1 class="px-title">{{ fd.name }}</h1>
-      <div class="r90-links">
-        <a class="px-link" href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.short_label }}</a>
-        {% if tables %}<a class="px-btn small quiet" href="{% url 'manage:export_report' period.short_label fd.code %}?format=xlsx" title="The results tables as an Excel workbook: the same numbers as the CSV, formatted.">Download the tables (Excel)</a><a class="px-link" href="{% url 'manage:export_report' period.short_label fd.code %}" title="The results tables as a plain CSV file.">CSV</a>{% endif %}
-        {% if rows or who %}<a class="px-btn small quiet" href="{% url 'manage:export_answers' period.short_label fd.code %}" title="Every completed response, one row per {% if mode == 'deidentified' %}respondent, without names{% else %}person{% endif %}, one column per question.">Download every answer (Excel)</a>{% endif %}
-      </div>
     </div>
     <ul class="px-facts">
       <li><span class="px-label">Results</span><span class="v">{% if snapshot %}{{ snapshot.get_status_display }}{% if snapshot.provenance == 'aggregate_import' %} (imported prior-year averages){% endif %}{% elif period.status == 'open' %}Live: the period is still open{% else %}Not yet generated{% endif %}</span></li>
@@ -25,6 +21,13 @@
       {% if who.waiting %}<li><span class="px-label">Not finished yet</span><span class="v">{{ who.waiting|length }}</span></li>{% endif %}
       {% endif %}
     </ul>
+    {# Downloads (Batch 2, MW 2026-11-05): stacked, one line per thing, each with its formats. #}
+    <dl class="r90-dl" aria-label="Downloads">
+      {% if tables %}<div><dt>Results tables</dt><dd><a class="px-link" href="{% url 'manage:export_report' period.short_label fd.code %}?format=xlsx" title="The results tables as an Excel workbook: the same numbers as the CSV, formatted.">Excel</a><a class="px-link" href="{% url 'manage:export_report' period.short_label fd.code %}" title="The results tables as a plain CSV file.">CSV</a></dd></div>{% endif %}
+      {% if rows or who %}<div><dt>Every answer</dt><dd><a class="px-link" href="{% url 'manage:export_answers' period.short_label fd.code %}" title="Every completed response, one row per {% if mode == 'deidentified' %}respondent, without names{% else %}person{% endif %}, one column per question.">Excel</a></dd></div>
+      <div><dt>Every completed {{ noun }}</dt><dd><a class="px-link" href="{% url 'manage:print_form_all' period.short_label fd.code %}" title="Every completed {{ noun }}, one after another, ready to print{% if mode == 'deidentified' %}, without names{% endif %}.">PDF</a><a class="px-link" href="{% url 'manage:print_form_all' period.short_label fd.code %}?fmt=docx" title="Every completed {{ noun }} as a Word document{% if mode == 'deidentified' %}, without names{% endif %}.">Word</a></dd></div>{% endif %}
+      <div><dt>Blank {{ noun }}</dt><dd><a class="px-link" href="{% url 'manage:print_form_all' period.short_label fd.code %}?blank=1" title="Every question and answer choice, with room to write, ready to print.">PDF</a><a class="px-link" href="{% url 'manage:print_form_all' period.short_label fd.code %}?blank=1&amp;fmt=docx" title="The blank {{ noun }} as a Word document.">Word</a></dd></div>
+    </dl>
   </header>
 
   <div class="r90-privacy px-callout" role="note">

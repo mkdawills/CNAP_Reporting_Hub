@@ -88,6 +88,9 @@
       {% endif %}
     </form>
   </div>
+  {# A copy to keep, quietly at the very bottom (MW 2026-11-05). #}
+  {% if reader %}<p class="p21-foot"><span>Download this response:</span><a href="{% url 'manage:print_response' a.pk %}" title="This response, ready to print.">PDF</a><a href="{% url 'manage:print_response' a.pk %}?fmt=docx" title="This response as a Word document.">Word</a></p>
+  {% elif not preview %}<p class="p21-foot"><span>Download a copy:</span>{% if a.status != 'not_started' %}<a href="{% url 'portal:print_form' a.pk %}" title="Your {{ noun }} with your answers so far, ready to print.">Your answers (PDF)</a><a href="{% url 'portal:print_form' a.pk %}?fmt=docx" title="Your {{ noun }} with your answers so far, as a Word document.">Your answers (Word)</a>{% endif %}<a href="{% url 'portal:print_form' a.pk %}?blank=1" title="Every question with room to write, ready to print.">Blank {{ noun }} (PDF)</a><a href="{% url 'portal:print_form' a.pk %}?blank=1&amp;fmt=docx" title="Every question with room to write, as a Word document.">Blank {{ noun }} (Word)</a></p>{% endif %}
 </div>
 {% endwith %}
 {% endblock %}

@@ -479,3 +479,24 @@ def download(request, file_pk):
         if gate:
             return gate
     return FileResponse(f.storage_key.open("rb"), as_attachment=True, filename=f.original_filename)
+
+
+@login_required
+def print_form(request, pk):
+    """A person's own form as PDF or Word: blank (?blank=1) or as they answered it (MW 2026-11-05).
+    Same access as opening the form, including the code check for confidential mentoring forms."""
+    from apps.reporting.services import documents
+
+    a = _own_assignment(request, pk)
+    gate = presenters.confidential_gate(request, a)
+    if gate:
+        return gate
+    fmt = "docx" if request.GET.get("fmt") == "docx" else "pdf"
+    fd = a.form_definition
+    if request.GET.get("blank"):
+        intro = presenters._intro_for(a, rs.system_answers(a, presenters.FormSchema(a.form_version)))
+        blocks = documents.blank_blocks(a.form_version, intro=intro)
+        return documents.file_response([blocks], fd.name, f"{fd.name} blank", fmt)
+    ctx = presenters.form_page(request, a, editable=False)
+    blocks = documents.response_blocks(ctx, named=True)
+    return documents.file_response([blocks], fd.name, f"{fd.name} {a.reporting_period.short_label}", fmt)

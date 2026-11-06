@@ -336,5 +336,60 @@ def export_everything(request, label):
     return exports.workbook_response(wb, f"CNAP-{label.replace(' ', '-')}-everything.xlsx")
 
 
+@admin_view
+def print_response(request, pk):
+    """One completed form as PDF or Word, with the same access as reading it on screen (MW 2026-11-05)."""
+    from apps.reporting.services import documents
+
+    a = get_object_or_404(Assignment.objects.select_related("form_definition", "form_version", "reporting_period", "person"), pk=pk)
+    mode = response_access(request.user, a)
+    if not mode:
+        raise PermissionDenied
+    if mode == DEIDENTIFIED and not deidentified_rows_allowed(a.form_definition, a.reporting_period):
+        raise PermissionDenied("Fewer than 5 people completed this survey.")
+    ctx = presenters.form_page(request, a, editable=False)
+    named = mode == IDENTIFIED
+    label = None
+    if not named:
+        done = list(Assignment.objects.filter(form_definition=a.form_definition, reporting_period=a.reporting_period, status__in=COMPLETE_STATUSES))
+        order = respondent_label_order(done, a.form_definition, a.reporting_period)
+        label = f"Respondent {next((i for i, x in enumerate(order, 1) if x.pk == a.pk), '')}"
+    fmt = "docx" if request.GET.get("fmt") == "docx" else "pdf"
+    blocks = documents.response_blocks(ctx, named=named, label=label)
+    record_event(request.user, AuditLog.Action.EXPORT, f"print:response:{a.pk}")
+    who = a.person.last_name if named else (label or "response")
+    return documents.file_response([blocks], a.form_definition.name, f"{a.form_definition.name} {a.reporting_period.short_label} {who}", fmt)
+
+
+@admin_view
+def print_form_all(request, label, code):
+    """Every completed form for a period in one document (?blank=1: the blank form), as PDF or Word.
+    Names only where the reader sees names; otherwise numbered as on the results page (MW 2026-11-05)."""
+    from apps.reporting.services import documents
+
+    p = get_object_or_404(ReportingPeriod, short_label=label)
+    fd = get_object_or_404(FormDefinition, code=code)
+    fmt = "docx" if request.GET.get("fmt") == "docx" else "pdf"
+    if request.GET.get("blank"):
+        if fd.confidentiality_class == ConfidentialityClass.MENTORING and not access.can_read_mentoring(request.user):
+            raise PermissionDenied
+        version = fd.versions.order_by("-version_no").first() if hasattr(fd, "versions") else None
+        a0 = Assignment.objects.filter(form_definition=fd, reporting_period=p).select_related("form_version").first()
+        version = a0.form_version if a0 else version
+        return documents.file_response([documents.blank_blocks(version)], fd.name, f"{fd.name} blank", fmt)
+    mode = form_access(request.user, fd)
+    if not mode:
+        raise PermissionDenied("Your access doesn’t include individual responses to this form.")
+    done = list(Assignment.objects.filter(form_definition=fd, reporting_period=p, status__in=COMPLETE_STATUSES).select_related("person", "form_version", "reporting_period", "form_definition"))
+    if mode == DEIDENTIFIED and not deidentified_rows_allowed(fd, p):
+        raise PermissionDenied("Fewer than 5 people completed this survey.")
+    named = mode == IDENTIFIED
+    ordered = sorted(done, key=lambda a: (a.person.last_name, a.person.first_name)) if named else respondent_label_order(done, fd, p)
+    cover = [("title", fd.name), ("meta", [("CNAP reporting period", p.name), ("Completed forms", len(ordered)), ("Names", "Shown" if named else "Not shown. Respondents are numbered as on the results page.")])]
+    docs = [cover] + [documents.response_blocks(presenters.form_page(request, a, editable=False), named=named, label=f"Respondent {i}") for i, a in enumerate(ordered, 1)]
+    record_event(request.user, AuditLog.Action.EXPORT, f"print:all:{label}:{code}")
+    return documents.file_response(docs, f"{fd.name}, {p.name}", f"{fd.name} {label} all", fmt)
+
+
 def _unused():
     return FormCategory

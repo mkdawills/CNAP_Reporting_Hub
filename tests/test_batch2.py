@@ -211,3 +211,73 @@ def test_confidential_answers_download_stays_closed(client, demo):
     assert client.get(f"/manage/results/{demo.short_label}/mentee_survey/answers.xlsx").status_code == 403
     text = _all_text(_xlsx(client.get(f"/manage/results/{demo.short_label}/everything.xlsx")))
     assert "Mentee Survey" in text and "Not included" in text
+
+
+# ------------------------------------------------------------------ Word and PDF copies (MW 2026-11-05)
+def _pdf_text(resp):
+    import io
+
+    from pypdf import PdfReader
+
+    assert resp.status_code == 200 and resp["Content-Type"] == "application/pdf"
+    return "\n".join(p.extract_text() for p in PdfReader(io.BytesIO(resp.content)).pages)
+
+
+def _docx_text(resp):
+    import io
+
+    from docx import Document
+
+    assert resp.status_code == 200 and "wordprocessingml" in resp["Content-Type"]
+    d = Document(io.BytesIO(resp.content))
+    return "\n".join([p.text for p in d.paragraphs] + [c.text for t in d.tables for r in t.rows for c in r.cells])
+
+
+def test_people_print_their_own_forms_and_no_one_elses(client, demo):
+    okafor = User.objects.get(username="okafor")
+    client.force_login(okafor)
+    a = Assignment.objects.filter(person=okafor.person, status="submitted").first()
+    text = _pdf_text(client.get(f"/tasks/{a.pk}/print/"))
+    assert a.form_definition.name.split(" (")[0] in text and okafor.person.full_name in text
+    assert "Version" in _docx_text(client.get(f"/tasks/{a.pk}/print/?blank=1&fmt=docx"))
+    _pdf_text(client.get(f"/tasks/{a.pk}/print/?blank=1"))
+    _docx_text(client.get(f"/tasks/{a.pk}/print/?fmt=docx"))
+    other = Assignment.objects.exclude(person=okafor.person).filter(reporting_period=demo).first()
+    assert client.get(f"/tasks/{other.pk}/print/").status_code in (403, 404)
+
+
+def test_printed_copies_follow_who_may_read_them(client, demo):
+    from apps.common.enums import COMPLETE_STATUSES
+
+    done = Assignment.objects.filter(reporting_period=demo, form_definition__code="bn_core_survey", status__in=COMPLETE_STATUSES).select_related("person", "project")
+    client.force_login(User.objects.get(username="hbailey"))
+    r = client.get(f"/manage/results/{demo.short_label}/bn_core_survey/print/")
+    if done.count() < 5:
+        assert r.status_code == 403
+        return
+    for text in (_pdf_text(r), _docx_text(client.get(f"/manage/results/{demo.short_label}/bn_core_survey/print/?fmt=docx"))):
+        assert "Respondent 1" in text
+        for a in done:
+            assert a.person.last_name not in text and a.person.first_name not in text
+            if a.project_id:
+                assert a.project.title not in text
+    one = done.first()
+    text = _pdf_text(client.get(f"/manage/responses/{one.pk}/print/"))
+    assert one.person.last_name not in text and "Respondent" in text
+    # respondents never print the Center's copies
+    client.force_login(User.objects.get(username="okafor"))
+    assert client.get(f"/manage/results/{demo.short_label}/bn_core_survey/print/").status_code in (302, 403)
+    assert client.get(f"/manage/responses/{one.pk}/print/").status_code in (302, 403)
+
+
+def test_confidential_forms_print_only_with_that_access(client, demo):
+    from apps.accounts.models import ApplicationRole, UserRole
+
+    u = User.objects.create_user(username="sample_admin3", password="Demo-Password-2026", email="sample_admin3@example.org")
+    UserRole.objects.create(user=u, role=ApplicationRole.objects.get(code=ApplicationRole.Code.ADMINISTRATOR))
+    client.force_login(u)
+    assert client.get(f"/manage/results/{demo.short_label}/mentee_survey/print/").status_code == 403
+    assert client.get(f"/manage/results/{demo.short_label}/mentee_survey/print/?blank=1").status_code == 403
+    m = Assignment.objects.filter(reporting_period=demo, form_definition__code="mentee_survey", status="submitted").first()
+    if m:
+        assert client.get(f"/manage/responses/{m.pk}/print/").status_code == 403

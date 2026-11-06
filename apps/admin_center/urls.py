@@ -90,6 +90,8 @@ urlpatterns = [
     path("results/<str:label>/<slug:code>/answers.xlsx", results.export_answers, name="export_answers"),
     path("results/<str:label>/everything.xlsx", results.export_everything, name="export_everything"),
     path("responses/<int:pk>/", results.response, name="response"),
+    path("responses/<int:pk>/print/", results.print_response, name="print_response"),
+    path("results/<str:label>/<slug:code>/print/", results.print_form_all, name="print_form_all"),
     # data checks and audit
     # publications and grants
     path("outcomes/", outcomes.outcomes, name="outcomes"),

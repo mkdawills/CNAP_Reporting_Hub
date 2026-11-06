@@ -9,6 +9,7 @@ urlpatterns = [
     path("tasks/", views.tasks, name="tasks"),
     path("tasks/<int:pk>/", views.form, name="form"),
     path("tasks/<int:pk>/preview/", views.preview, name="preview"),
+    path("tasks/<int:pk>/print/", views.print_form, name="print_form"),
     path("tasks/<int:pk>/autosave/", views.autosave, name="autosave"),
     path("tasks/<int:pk>/sheet/<slug:section>/", views.sheet_template, name="sheet_template"),
     path("tasks/<int:pk>/edit/", views.edit_again, name="edit_again"),
