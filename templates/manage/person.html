@@ -103,7 +103,7 @@
     </div>
     {% if can_manage %}
     <div class="panel rollsec">
-      <h2 class="sectionhead">Add a relationship</h2>
+      <h2 class="sectionhead">Add a relationship</h2>{% if request.proto_active %}<p class="rollsum">A new role on a project, a core, or the whole Center</p>{% endif %}
       <form method="post" action="{% url 'manage:relationship_add' p.pk %}">{% csrf_token %}
         <div class="relstack">
           <label>What is their relationship to CNAP?{{ rel_form.relationship_type }}</label>

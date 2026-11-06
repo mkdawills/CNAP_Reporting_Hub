@@ -1757,3 +1757,23 @@ body.proto .lch .lch-tools .lorder { margin: 0 !important; }
 body.proto .lch #lch-4 > .lch-final { padding: var(--px-sec) 0 var(--px-3) !important; margin: 0 !important; }
 body.proto .lch #lch-4 > .r90-partbody { margin-top: 0 !important; padding-top: 0 !important; }
 body.proto .lch #lch-4 > .r90-partbody > .lch-lede:first-child { margin-top: 0 !important; }
+/* Only the page introduction has a bar on its left (MW 2026-11-06): the Stevens Amendment notes in the forms are plain section text. */
+body.proto.pa .stevens-why { border-left: 0 !important; padding: 0 !important; margin: 0 0 var(--px-4) !important; color: var(--px-ink-2); font-size: var(--px-fs-base); line-height: 1.6; max-width: var(--px-measure); }
+body.proto.pa .stevens-why.small { font-size: var(--px-fs-sm); }
+
+/* Rolled-up sections on a person's page and other roll-up pages (MW 2026-11-06: "spacing isn't consistent").
+   One rhythm for every section, open or closed: line, 48px, serif title, 4px, the count line, 24px, next line.
+   This block is the last word on these spacings; earlier rules for .rollsum and .rollhead are superseded. */
+body.proto.pa .pa-page .panel.rollsec, body.proto.pa .pa-page .rollup .panel.rollsec { padding-bottom: var(--px-5) !important; }
+body.proto.pa .pa-page .panel.rollsec > h2.sectionhead.rollhead { padding: var(--px-sec) 0 0 !important; margin: 0 !important; }
+body.proto.pa .pa-page .panel.rollsec > .rollsum, body.proto.pa .pa-page details.pa-details > summary .rollsum { margin: 4px 0 0 !important; font-size: var(--px-fs-sm) !important; line-height: 1.45 !important; color: var(--px-ink-2) !important; }
+body.proto.pa .pa-page .panel.rollsec > .rollsum + * { margin-top: var(--px-4) !important; }
+body.proto.pa .pa-page .panel.rollsec > :last-child { margin-bottom: 0 !important; }
+body.proto.pa .pa-page details.pa-details > summary { padding: var(--px-sec) 0 var(--px-5) !important; row-gap: 4px !important; }
+body.proto.pa .pa-page details.pa-details > summary .sectionhead { margin: 0 !important; padding: 0 !important; }
+/* Publication and grant forms (MW 2026-11-06): introduction, 24px, the Stevens box, 24px, the line, 48px, section 1 and the "On this form" list on one top edge. */
+body.proto.pa .pa-page > .panel.aform:not(form) { margin-top: 0 !important; padding-top: 0 !important; border-top: 0 !important; margin-bottom: 0 !important; }
+html body.proto.pa .pa-page > div.pa-flayout.pa-flayout.pa-flayout { margin-bottom: 0 !important; margin-top: var(--px-5) !important; padding-top: var(--px-sec) !important; border-top: 1px solid var(--px-divide) !important; }
+body.proto.pa .pa-page .pa-flayout > .pa-fnav { padding-top: 0 !important; top: var(--px-5); }
+body.proto.pa .pa-page .pa-flayout > form.aform { margin: 0 !important; padding-top: 0 !important; border-top: 0 !important; }
+body.proto.pa .pa-page .pa-flayout > form.aform > .pa-fsec:first-of-type { padding-top: 0 !important; border-top: 0 !important; }

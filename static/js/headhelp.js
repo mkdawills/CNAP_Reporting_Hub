@@ -32,7 +32,7 @@
     "Cores Credited": "The CNAP cores this used. Each credit counts toward that core in the Counts tab, the dashboards, and the site-visit tables.",
     "Projects Credited": "The CNAP project this row’s counts are credited to.",
     "Core RRID cited?": "Whether the paper cited each credited core’s Research Resource Identifier (RRID) in its methods, so the core’s use can be traced even without the grant citation.",
-    "Correct it": "Buttons to record, or correct, whether this acknowledges CNAP, without opening the full record.",
+    "Change the answer": "Records whether this acknowledges CNAP, without opening the full record.",
 
     "Proposal title": "The proposal’s title. Click it to open and edit the record.",
     "Proposal": "The proposal’s title.",

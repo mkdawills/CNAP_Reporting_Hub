@@ -2,7 +2,7 @@
 {% block title %}Projects and cores · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head">
-  <div><h1>Projects and cores{% why "Projects and cores are what CNAP reports on. Each project’s leader and mentor, and each core’s director, come from the relationships recorded here, and they drive progress reports, mentor reports, and the Core Usage Report." %}</h1><p>{{ "Who leads and mentors each project, and who directs, staffs, and uses each core. Change people from each person’s page."|stack }}</p></div>
+  <div><h1>Projects and cores{% why "Projects and cores are what CNAP reports on. Each project’s leader and mentor, and each core’s director, come from the relationships recorded here, and they drive progress reports, mentor reports, and the Core Usage Report." %}</h1><p>{{ "Who leads and mentors each project, and who directs, staffs, and uses each core. To edit a member’s core and project associations, edit the member’s profile."|stack }}</p></div>
   {% if can_manage %}<div><a class="btn" href="{% url 'manage:project_new' %}">Add a project</a></div>{% endif %}
 </div>
 <div class="panel scroll">

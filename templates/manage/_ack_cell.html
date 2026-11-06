@@ -1,3 +1,3 @@
 <td class="small nowrap"><span class="ack-l {% if ack is None %}ack-q{% elif ack %}ack-y{% else %}ack-n{% endif %}">{% if ack is None %}Not checked{% elif ack %}Yes{% else %}No{% endif %}</span></td>
 {% if can_edit %}<td class="nowrap"><form method="post" action="{% url 'manage:set_ack' kind o.pk %}" class="ack-f">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
-  {% if ack is not True %}<button class="btn small ghost" name="value" value="yes">Mark Yes</button>{% endif %}{% if ack is not False %}<button class="btn small ghost" name="value" value="no">Mark No</button>{% endif %}</form></td>{% endif %}
+  {% if ack is not True %}<button class="btn small ghost" name="value" value="yes">Yes</button>{% endif %}{% if ack is not False %}<button class="btn small ghost" name="value" value="no">No</button>{% endif %}</form></td>{% endif %}

@@ -451,9 +451,10 @@ class GrantForm(forms.ModelForm):
         empty_label="No, this is a new proposal",
         label="Is this a resubmission of an earlier proposal?",
         help_text=(
-            "If it is, choose the earlier round. "
-            "You can then fill this form in from it, or start fresh. "
-            "Either way, the new record is grouped with the earlier one as its next round (A1, A2, and so on)."
+            "For a first submission, leave “No, this is a new proposal.” "
+            "For a resubmission, choose the earlier submission from the list. "
+            "The Hub then files this record as that proposal’s next round (A1, A2, and so on), "
+            "and offers to copy the earlier round’s details into this form."
         ),
     )
     pi = forms.ModelChoiceField(
