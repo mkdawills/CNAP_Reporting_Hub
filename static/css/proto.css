@@ -1663,7 +1663,7 @@ body.proto.pa .pa-page details.qc[open] > :last-child { margin-bottom: 0; }
 body.proto.pa .qc-note { margin: 0; max-width: 68ch; font-size: var(--px-fs-sm); line-height: 1.55; color: var(--px-ink-2); }
 body.proto.pa .qc-none { margin: 0; font-size: var(--px-fs-sm); color: var(--px-muted); }
 body.proto.pa .qc-list { list-style: none; margin: 0; padding: 0; }
-body.proto.pa .qc-list > li { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: var(--px-4); align-items: center;
+body.proto.pa .qc-list > li { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) max-content 64px; gap: var(--px-4); align-items: center;
   padding: var(--px-3) 0; border-top: 1px solid var(--px-line); font-size: var(--px-fs-base); line-height: 1.45; }
 body.proto.pa .qc-list > li > a { overflow-wrap: anywhere; }
 body.proto.pa .qc-dis { justify-self: end; }
@@ -1780,3 +1780,13 @@ body.proto.pa .pa-page .pa-flayout > form.aform > .pa-fsec:first-of-type { paddi
 /* Checkbox lists (MW 2026-11-06: "boxes next to the name is more clear"): the box sits on the left of each name, on the name's first line. */
 body.proto .checkgrid > label, body.proto form .checkgrid label { display: flex !important; flex-direction: row !important; align-items: flex-start !important; gap: 10px !important; grid-template-columns: none !important; }
 body.proto .checkgrid > label > input[type=checkbox], body.proto .checkgrid label > input[type=radio] { flex: none; width: 16px !important; height: 16px; margin: 2px 0 0 !important; display: inline-block !important; }
+/* Rolled-up section boxes in a row (dashboards, Center pages): every one has the same rhythm, first to last (MW 2026-11-06).
+   The 48px above each title lives in the title row itself, so the box adds no padding; the note after the last box sits 24px under its line. */
+html body.proto.pa .pa-page > details.panel.pa-roll { padding-top: 0 !important; padding-bottom: 0 !important; margin-top: 0 !important; }
+html body.proto.pa .pa-page > details.panel.pa-roll + p { margin-top: 0 !important; padding-top: var(--px-5) !important; border-top: 1px solid var(--px-line) !important; }
+html body.proto.pa .pa-page > details.panel.pa-roll:has(+ p) { border-bottom: 0 !important; }
+/* A closed section ends 24px under its title (or its count line), the same on every page; an open one has 12px before its content. The title never moves. */
+html body.proto.pa .pa-page details.pa-roll:not([open]) > summary { padding-bottom: var(--px-5) !important; }
+/* Data checks (MW 2026-11-06): Dismiss has its own column, just left of the Show and Hide column; the last column stays empty so Show and Hide stand alone. */
+body.proto.pa .qc-list > li > .qc-dis { grid-column: 2; justify-self: start; }
+body.proto.pa .qc-list > li::after { content: ""; grid-column: 3; }
