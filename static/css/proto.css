@@ -1066,3 +1066,6 @@ body.proto .px-names { position: relative; cursor: help; border-bottom: 1px dott
 body.proto .px-names:focus-visible { outline: 2px solid var(--px-brand); outline-offset: 2px; border-radius: 2px; }
 body.proto .px-names::after { content: attr(data-names); position: absolute; left: 0; top: calc(100% + 8px); z-index: 30; min-width: 12rem; max-width: 22rem; max-height: 18rem; overflow: hidden; padding: 10px 12px; white-space: pre-line; background: var(--px-surface); color: var(--px-ink); border: 1px solid var(--px-line-strong); border-radius: var(--px-r-sm); box-shadow: 0 10px 30px rgba(40, 20, 70, .16); font: 400 var(--px-fs-sm)/1.55 var(--px-sans); opacity: 0; visibility: hidden; transition: opacity .12s ease; pointer-events: none; }
 body.proto .px-names:hover::after, body.proto .px-names:focus-visible::after { opacity: 1; visibility: visible; }
+/* The privacy note sits at the bottom, above the Download menu (MW 2026-11-06). */
+body.proto .r90-privacy-foot { margin: var(--px-7) 0 0; }
+body.proto .r90-privacy-foot + .px-dlfoot { margin-top: var(--px-4); }
