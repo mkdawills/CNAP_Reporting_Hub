@@ -51,7 +51,7 @@ _FIELD_GROUPS = {
     "Credit to CNAP": ("resources", "resources_other_text", "projects"),
     "Acknowledging CNAP": ("cnap_cited_tri", "cnap_index_tri", "ack_tri", "cnap_cited", "cnap_acknowledged", "cnap_credited_in_publications", "cnap_in_grant_index"),
     "Foreign components": ("has_foreign_authors", "foreign_component_approved", "has_non_idea_coauthors", "has_foreign_component"),
-    "What happened": ("decision_comments", "discussed_with_program_officer", "program_officer_name", "discussion_date",
+    "Outcome and next steps": ("decision_comments", "discussed_with_program_officer", "program_officer_name", "discussion_date",
                       "feedback_shared_with_cnap", "plans_to_resubmit", "comments", "resubmission_intent"),
 }
 _ITEM_FIELDS = ("title", "journal", "pubmed_url", "author_display_text", "publication_type", "publication_type_other",
@@ -75,7 +75,7 @@ def field_group(name, kind):
     if name in _ITEM_FIELDS:
         return "The presentation" if kind in ("talk", "presentation", "talks") else "The paper"
     if kind == "grant" and name in ("decision_comments",):
-        return "What happened"
+        return "Outcome and next steps"
     for title, names in _FIELD_GROUPS.items():
         if name in names:
             return title
