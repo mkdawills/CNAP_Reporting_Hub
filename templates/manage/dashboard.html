@@ -1,8 +1,8 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Period dashboard · {{ platform_name }}{% endblock %}
 {% block content %}
-{% if not p %}<div class="head"><div><h1>Period dashboard{% why "This page tracks one period while it is open: how each form is doing and who still owes what. Use it to decide when to nudge people and when the period is ready to close." %}</h1><p>No reporting periods yet.</p></div></div>{% else %}
-<div class="head"><div><h1>Period dashboard</h1><p>{{ "Who has completed what, and who still needs a nudge."|stack }}</p></div>
+{% if not p %}<div class="head"><div><h1>Period dashboard{% why "This page tracks one period while it is open: how each form is doing and who still owes what. Use it to decide when to send reminders and when the period is ready to close." %}</h1><p>No reporting periods yet.</p></div></div>{% else %}
+<div class="head"><div><h1>Period dashboard</h1><p>{{ "Who has completed what, and who still needs a reminder."|stack }}</p></div>
   <form method="get"><label class="small muted">Reporting period <select name="period" onchange="this.form.submit()">{% for pp in periods %}<option value="{{ pp.short_label }}" {% if pp == p %}selected{% endif %}>{{ pp.short_label }}</option>{% endfor %}</select></label></form></div>
 <div class="panel">
   <h2 class="sectionhead">{{ p.name }}</h2>
@@ -15,7 +15,7 @@
   {% for r in form_rows %}<tr><td><a href="{% url 'manage:form_detail' r.fd.code %}" title="Read this form's questions">{{ r.fd.name }}</a></td><td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}#list">{{ r.assigned }}</a></td><td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}&status=complete#list">{{ r.done }}</a></td><td class="num"><a href="?period={{ p.short_label }}&form={{ r.fd.code }}&status=completed_opt_out#list">{{ r.optout }}</a></td><td><div class="bar"><span style="width:{{ r.pct }}%"></span></div></td></tr>{% endfor %}
   </tbody></table></div>
 <div class="panel">
-  <h2 class="sectionhead">Who still needs a nudge{% why "These people still have forms to finish. The automatic reminder emails cover most of this, but a personal note from you often works better late in the period." %}</h2>
+  <h2 class="sectionhead">Who still needs a reminder{% why "These people still have forms to finish. The automatic reminder emails cover most of this, but a personal note from you often works better late in the period." %}</h2>
   {% if hidden_names %}<p class="small muted">{{ "Core, NeuroSync, and Team Science surveys show as counts only, so no one’s name is tied to those surveys."|stack }}</p>{% endif %}
   {% if named_forms %}
   <a id="list"></a>

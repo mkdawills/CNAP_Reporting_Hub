@@ -3,7 +3,7 @@
 {% block content %}
 <div class="head"><div><h1>Review before launch{% why "Nothing goes out until you approve this page. This page shows exactly who will receive which forms, so a missing mentor or a misassigned survey gets caught before anyone is emailed." %}</h1>
   <p>{{ p.name }}{% if draft %} · opens {{ p.opens_at|date:"M j, Y" }}{% else %} · already open{% endif %}</p>
-  <p>{{ "Nothing is sent until you approve the launch. Check who receives what, fix anything flagged, then launch."|stack }}</p></div></div>
+  <p>{{ "Nothing is sent until you approve the launch. Please review what every respondent receives, fix anything flagged, and then launch."|stack }}</p></div></div>
 {% if warnings %}<div class="panel warnbox"><h2 class="sectionhead">Check before launching ({{ warnings|length }})</h2>
   <ul>{% for w in warnings %}<li><a href="{{ w.url }}">{{ w.text }}</a></li>{% endfor %}</ul>
   <p class="small muted">{{ "Fix these from the linked pages. This list updates as you do."|stack }}</p></div>
@@ -20,7 +20,7 @@
 {% for g in groups %}
 <details class="panel lgroup" open><summary><span>{{ g.title }}</span><span>{{ g.rows|length }} {% if g.rows|length == 1 %}person{% else %}people{% endif %}</span></summary>
   <p class="small muted mt">{{ g.note|stack }}</p>
-  <table class="ltab" title="Who receives what: one row per person, with every form this launch sends them."><colgroup><col class="ltab-p"><col></colgroup><thead><tr><th>Person</th><th>The forms they receive</th></tr></thead><tbody>{% for r in g.rows %}<tr>
+  <table class="ltab" title="What every respondent receives: one row per person, with every form this launch sends them."><colgroup><col class="ltab-p"><col></colgroup><thead><tr><th>Person</th><th>The forms they receive</th></tr></thead><tbody>{% for r in g.rows %}<tr>
     <td><a href="{% url 'manage:person' r.person.pk %}"><strong>{{ r.person }}</strong></a>
       {% if r.external %}<div class="small muted">External · {{ r.person.institution }} · {% if r.on_roster %}on the roster{% else %}not on the roster{% endif %}</div>{% endif %}
       {% if r.also|length > 1 %}<div class="small muted">Also: {% for t in r.also %}{% if t != g.title %}{{ t }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %}</div>{% endif %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Add a period · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Add a reporting period {% why "A reporting period is one survey session: Fall (surveyed in November), RPPR/Spring (surveyed in March), or a site-visit round. Creating one does not send anything; forms go out at launch." %}</h1><p>{{ "Nothing is sent when you add a period. You’ll review who receives what before the launch."|stack }}</p></div></div>
+<div class="head"><div><h1>Add a reporting period {% why "A reporting period is one survey session: Fall (surveyed in November), RPPR/Spring (surveyed in March), or a site-visit round. Creating one does not send anything; forms go out at launch." %}</h1><p>{{ "Nothing is sent when you add a period. You’ll review what every respondent receives before launch."|stack }}</p></div></div>
 <div class="panel" style="max-width:720px"><form method="post">{% csrf_token %}
   {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
   {% for field in form %}<div class="field"><label>{{ field.label }}{{ field }}</label>{% if field.errors %}<div class="error">{{ field.errors|join:" " }}</div>{% endif %}</div>{% endfor %}

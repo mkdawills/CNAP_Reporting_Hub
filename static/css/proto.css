@@ -1609,3 +1609,7 @@ body.proto .r90 details.r90-sec > .px-roll-body, body.proto details.px-roll > .p
 body.proto.pa .pa-page > details.panel + details.panel { margin-top: 0 !important; }
 body.proto.pa .pa-page .rollup .rollhead { padding-bottom: var(--px-3) !important; }
 body.proto.pa .pa-page .rollup .rollsum { margin: calc(-1 * var(--px-2)) 0 var(--px-3) !important; }
+/* A section that is a bare heading on the page (not a box) starts the same way: a darker line, then space, then the title. */
+body.proto.pa .pa-page > h2.sectionhead:not(:first-child) { margin-top: var(--px-4) !important; padding-top: var(--px-6) !important; border-top: 1px solid var(--px-divide) !important; }
+body.proto.pa .pa-page > h2.sectionhead + * { margin-top: 0 !important; }
+body.proto.pa .pa-page > .tabs { margin-top: var(--px-3) !important; }
