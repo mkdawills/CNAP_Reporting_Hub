@@ -1613,3 +1613,9 @@ body.proto.pa .pa-page .rollup .rollsum { margin: calc(-1 * var(--px-2)) 0 var(-
 body.proto.pa .pa-page > h2.sectionhead:not(:first-child) { margin-top: var(--px-4) !important; padding-top: var(--px-6) !important; border-top: 1px solid var(--px-divide) !important; }
 body.proto.pa .pa-page > h2.sectionhead + * { margin-top: 0 !important; }
 body.proto.pa .pa-page > .tabs { margin-top: var(--px-3) !important; }
+/* A period's sentences are evenly spaced, and the timeline line sits the same distance above them as the step line does. */
+body.proto.pa .pa-page .pcard details.px-tl { margin: 0 0 var(--px-4); }
+body.proto.pa .pa-page .pcard ol.life { margin-bottom: var(--px-2); }
+body.proto.pa .pa-page .pcard .head p.small { margin: 0; line-height: 1.6; }
+body.proto.pa .pa-page .pcard .head p.small .sgap { height: 8px; }
+body.proto.pa .pa-page .pcard .head .whatsnext { margin-top: 8px !important; }
