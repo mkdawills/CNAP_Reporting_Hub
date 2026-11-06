@@ -1797,3 +1797,5 @@ body.proto th.sorth.asc::after, body.proto th.sorth.hashelp.asc::after { content
 body.proto th.sorth.desc::after, body.proto th.sorth.hashelp.desc::after { content: " ↓"; color: var(--px-brand); }
 /* A filter or button row that belongs to the table right under it sits 24px above that table, with no line between (MW 2026-11-06). */
 html body.proto.pa .pa-page > .pa-actions + .panel:not(:has(> h2, > .sectionhead, > details, > .head)) { margin-top: var(--px-5) !important; padding-top: 0 !important; border-top: 0 !important; }
+body.proto.pa .pa-stevens-in { margin: 0 0 var(--px-4); }
+html body.proto.pa .pa-page > .pa-intro + .pa-flayout { margin-top: var(--px-5) !important; }

@@ -504,3 +504,37 @@ document.addEventListener("click", function (e) {
   // 4. Save and Cancel in a bar at the bottom of the screen.
   var act = form.querySelector(":scope > .actions"); if (act) act.classList.add("pa-fbar");
 })();
+
+/* A tab's own introduction is the page introduction for that tab (MW 2026-11-06): it moves to the top of the white page,
+   under the tabs and above the buttons, with the gray bar, like every other page introduction. */
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(function () {
+    var page = document.querySelector("body.proto.pa .pa-page");
+    if (!page) return;
+    page.querySelectorAll("p.tab-intro").forEach(function (p) {
+      if (page.querySelector(":scope > .pa-intro")) return;
+      var d = document.createElement("div"); d.className = "pa-intro"; d.innerHTML = p.innerHTML;
+      var before = page.querySelector(":scope > .pa-actions") || page.querySelector(":scope > .panel");
+      var tabs = page.querySelector(":scope > .tabs");
+      if (before && (!tabs || tabs.compareDocumentPosition(before) & Node.DOCUMENT_POSITION_FOLLOWING)) page.insertBefore(d, before);
+      else if (tabs) tabs.after(d); else page.prepend(d);
+      p.remove();
+    });
+  }, 0);
+});
+
+/* "How to acknowledge CNAP" belongs with the questions it explains (MW 2026-11-06): it moves into the form section about acknowledging CNAP, right under that title. */
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(function () {
+    var page = document.querySelector("body.proto.pa .pa-page");
+    if (!page) return;
+    var box = page.querySelector(":scope > .panel.aform:not(form)");
+    if (!box || box.classList.contains("resubbox")) return;
+    var hs = page.querySelectorAll(".pa-fsec > h3.fgroup");
+    var h = Array.prototype.find.call(hs, function (x) { return /Acknowledg/.test(x.textContent); }) || Array.prototype.find.call(hs, function (x) { return /Credit/.test(x.textContent); });
+    if (!h) return;
+    var wrap = document.createElement("div"); wrap.className = "pa-stevens-in";
+    while (box.firstChild) wrap.appendChild(box.firstChild);
+    h.after(wrap); box.remove();
+  }, 0);
+});
