@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function parts(sec) {
       var head = sec.querySelector(":scope > header, :scope > .sechead, :scope > .rhead") || sec.querySelector("h2, h3");
       return Array.from(sec.children).filter(function (c) {
-        return c !== head && !c.contains(head) && !(c.classList && c.classList.contains("teyebrow"));
+        return c !== head && !c.contains(head) && !(c.classList && (c.classList.contains("teyebrow") || c.classList.contains("rollsum")));
       });
     }
     function set(sec, open) {

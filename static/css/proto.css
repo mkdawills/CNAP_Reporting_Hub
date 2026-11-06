@@ -1367,3 +1367,13 @@ body.proto .px-confirm-row { display: flex; flex-wrap: wrap; gap: var(--px-3); m
 body.proto .px-callout.px-confirm { display: block; border: 0; margin: var(--px-4) 0 var(--px-6); padding: var(--px-5) var(--px-6); }
 body.proto .px-callout.px-confirm p + p { margin-top: .5em; }
 body.proto .px-callout.px-confirm .px-confirm-row { margin-top: var(--px-5); }
+/* Each rolled-up header says what is inside (checklist 37): a short count line under the title, shown open or closed. */
+body.proto.pa .rollsum, body.proto.pa .pa-roll-meta { margin: calc(-1 * var(--px-3)) 0 var(--px-4); font-size: var(--px-fs-sm); line-height: 1.5; color: var(--px-muted); }
+body.proto.pa .rollsum b, body.proto.pa .pa-roll-meta b { color: var(--px-ink); font-weight: 600; }
+body.proto.pa .pa-roll-t { display: grid; gap: 4px; min-width: 0; }
+body.proto.pa .pa-roll-t .pa-roll-meta { margin: 0; }
+/* Fields stack one per line (checklist 53). */
+body.proto.pa .speakgrid { grid-template-columns: minmax(0, 1fr); max-width: 560px; }
+/* Roll-up sections that aren't boxes (site visit, reminders) follow the same rhythm: one light line between sections. */
+body.proto.pa .pa-page .rollup > section + section, body.proto.pa .pa-page .rollup > .rollsec + .rollsec { border-top: 1px solid var(--px-line); }
+body.proto.pa .pa-page .rollup section > .sectionhead { margin-top: 0 !important; }

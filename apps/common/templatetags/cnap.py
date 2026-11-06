@@ -476,3 +476,9 @@ FORM_PURPOSE = {
 @register.filter
 def form_purpose(code):
     return FORM_PURPOSE.get(str(code or ""), "")
+
+
+@register.filter
+def soft_lower(value):
+    """Lower-case a label for use mid-sentence, keeping abbreviations: "Papers citing a core RRID" -> "papers citing a core RRID"."""
+    return " ".join(w if (w.isupper() and len(w) > 1) else w.lower() for w in str(value).split(" "))

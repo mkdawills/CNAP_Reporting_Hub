@@ -149,7 +149,7 @@ def period_new(request):
         p.save()
         record_event(request.user, AuditLog.Action.CREATE, p)
         messages.success(
-            request, f"{p.short_label} created. Review who will receive forms before you launch it."
+            request, f"{p.short_label} created. Review who will receive forms before you launch the period."
         )
         return redirect("manage:launch", p.pk)
     return render(request, "manage/period_new.html", {"form": form})
@@ -172,7 +172,7 @@ def period_action(request, pk):
             snap = snapshots.generate(request.user, p, reason=request.POST.get("reason", ""))
             messages.success(
                 request,
-                f"Results generated (version {snap.version_no}). Review them, then mark them reviewed.",
+                f"Results generated (version {snap.version_no}). Review the results, then mark the results reviewed.",
             )
         elif action == "reviewed":
             snapshots.mark_reviewed(request.user, snapshots.latest(p))
@@ -196,14 +196,14 @@ def period_action(request, pk):
 
 GROUPS = [
     ("member", "General members", "On the roster, with no project, mentoring, or core role."),
-    ("rpl", "Research Project Leaders (RPL)", "Also mentees: they receive the Mentee Survey."),
-    ("ppl", "Pilot Project Leaders (PPL)", "Also mentees: they receive the Mentee Survey."),
+    ("rpl", "Research Project Leaders (RPL)", "Also mentees: each one receives the Mentee Survey."),
+    ("ppl", "Pilot Project Leaders (PPL)", "Also mentees: each one receives the Mentee Survey."),
     (
         "mentor",
         "Mentors",
         "Internal and external. People outside K-State sign in with an emailed link.",
     ),
-    ("director", "Core directors", "Core directors don’t receive the survey about their own core."),
+    ("director", "Core directors", "Core directors don’t receive the survey about the core each one directs."),
     (
         "extcore",
         "External core users",
@@ -333,14 +333,14 @@ def launch(request, pk):
         if not current.filter(relationship_type__code=lead).exists():
             warnings.append(
                 {
-                    "text": f"{pr.title} has no project leader, so no progress report or Mentee Survey will go out for it.",
+                    "text": f"{pr.title} has no project leader, so no progress report or Mentee Survey will go out for this project.",
                     "url": f"/manage/projects/{pr.pk}/",
                 }
             )
         if not current.filter(relationship_type__code=ment).exists():
             warnings.append(
                 {
-                    "text": f"{pr.title} has no mentor recorded, so no mentor report will go out for it.",
+                    "text": f"{pr.title} has no mentor recorded, so no mentor report will go out for this project.",
                     "url": f"/manage/projects/{pr.pk}/",
                 }
             )
@@ -348,7 +348,7 @@ def launch(request, pk):
         if not person.primary_email:
             warnings.append(
                 {
-                    "text": f"{person} has no email on file, so they can’t receive their forms or sign-in link.",
+                    "text": f"{person} has no email on file, so this person can’t receive forms or a sign-in link.",
                     "url": f"/manage/people/{pid}/",
                 }
             )
@@ -362,7 +362,7 @@ def launch(request, pk):
             continue  # an Other Significant Contributor: only the fall NIH documents task, by design
         warnings.append(
             {
-                "text": f"{person} is active but has no current CNAP role, so they won’t receive anything.",
+                "text": f"{person} is active but has no current CNAP role, so this person won’t receive any forms.",
                 "url": f"/manage/people/{person.pk}/",
             }
         )

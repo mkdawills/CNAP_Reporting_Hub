@@ -19,6 +19,7 @@
   <div>
     <div class="panel rollsec">
       <h2 class="sectionhead">Email</h2>
+      <p class="rollsum"><b>{{ emails|length }}</b> address{{ emails|length|pluralize:"es" }}</p>
       {% for e in emails %}
         <div class="fieldrow" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)">
           <span>{{ e.email }}{% if e.is_primary %} <span class="chip st-submitted">Main</span>{% endif %}</span>
@@ -43,6 +44,7 @@
     </details>{% endif %}
     <div class="panel rollsec small">
       <h2 class="sectionhead">NIH reporting (RPPR D.1)</h2>
+      <p class="rollsum">{% if p.era_commons_id %}eRA Commons ID on file{% else %}No eRA Commons ID yet{% endif %}</p>
       <p>eRA Commons ID: {% if p.era_commons_id %}<strong>{{ p.era_commons_id }}</strong>{% else %}<span class="error" style="padding:1px 6px">none on file</span>{% endif %}{% if p.trainee_level %} · {{ p.get_trainee_level_display }}{% endif %}</p>
       <p>ORCID iD: {% if p.orcid %}<strong>{{ p.orcid }}</strong>{% else %}<span class="muted">none on file</span>{% endif %}</p>
       {% if docs %}<div class="rnote small"><p><strong>From their NIH documents</strong>{% if docs.bio %} · biosketch {% if docs.bio.info.certified %}certified {{ docs.bio.info.certified }}{% endif %}{% endif %}{% if docs.cp %} · Current and Pending {% if docs.cp.info.certified %}certified {{ docs.cp.info.certified }}{% endif %}{% endif %}</p>
@@ -67,6 +69,7 @@
     </div>
     <div class="panel rollsec small">
       <h2 class="sectionhead">Sign-in</h2>
+      <p class="rollsum">{% if user_account %}{% if user_account.is_enabled %}Can sign in{% else %}Sign-in turned off{% endif %}{% else %}No sign-in account yet{% endif %}</p>
       {% if user_account %}<p>Account: {{ user_account.username }}{% if not user_account.is_enabled %} <span class="gap">(disabled: can’t sign in)</span>{% endif %}</p>
       {% if can_manage and user_account != request.user %}<form method="post" action="{% url 'manage:person_account' p.pk %}" {% if user_account.is_enabled %}onsubmit="return confirm('Stop {{ p }} from signing in? Their records stay. You can turn sign-in back on any time.')"{% endif %}>{% csrf_token %}
         <input type="hidden" name="enable" value="{% if user_account.is_enabled %}0{% else %}1{% endif %}"><button class="btn small ghost" type="submit">{% if user_account.is_enabled %}Turn off sign-in{% else %}Turn sign-in back on{% endif %}</button></form>{% endif %}
@@ -77,6 +80,7 @@
   <div>
     <div class="panel rollsec">
       <h2 class="sectionhead">Current CNAP relationships</h2>
+      <p class="rollsum"><b>{{ current|length }}</b> current relationship{{ current|length|pluralize }}</p>
       {% for r in current %}
         <div class="fieldrow" style="justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)">
           <div><strong>{{ r.relationship_type.name }}</strong>
@@ -115,7 +119,7 @@
     <details class="panel"><summary><strong>Past relationships ({{ past|length }})</strong></summary>
       {% for r in past %}<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)">{{ r.relationship_type.name }}{% if r.project %} · {{ r.project.title }}{% elif r.core %} · {{ r.core.name }}{% endif %} · {{ r.effective_from|date:"M j, Y" }} to {{ r.effective_to|date:"M j, Y" }}</div>{% endfor %}
     </details>{% endif %}
-    <div class="panel rollsec scroll"><h2 class="sectionhead">Publications, talks, and grants</h2>
+    <div class="panel rollsec scroll"><h2 class="sectionhead">Publications, talks, and grants</h2><p class="rollsum"><b>{{ outcomes.pubs|length }}</b> paper{{ outcomes.pubs|length|pluralize }}, <b>{{ outcomes.talks|length }}</b> talk{{ outcomes.talks|length|pluralize }}, <b>{{ outcomes.grants|length }}</b> proposal{{ outcomes.grants|length|pluralize }}</p>
       {% if outcomes.pubs or outcomes.grants or outcomes.talks %}<table title="Every paper, talk, and proposal credited to this person, with its CNAP acknowledgment status."><thead><tr><th>Kind</th><th>Title</th><th>Status</th></tr></thead><tbody>
         {% for o in outcomes.pubs %}<tr><td class="small muted nowrap">Paper</td><td><a href="{% url 'manage:publication_edit' o.pk %}">{{ o.title }}</a><div class="small muted">{{ o.journal }}{% if o.publication_date %} · {{ o.publication_date|date:"M Y" }}{% endif %} · {{ o.get_status_display }}</div></td><td class="small nowrap">{% if o.cnap_cited is None %}<span class="muted">Not checked</span>{% elif o.cnap_cited %}Acknowledges CNAP{% else %}<span class="error" style="padding:1px 6px">No CNAP acknowledgment</span>{% endif %}</td></tr>{% endfor %}
         {% for o in outcomes.grants %}<tr><td class="small muted nowrap">Grant</td><td><a href="{% url 'manage:grant_edit' o.pk %}">{{ o.project_title }}</a><div class="small muted">{{ o.funding_agency }} {{ o.mechanism }} · {{ o.version_label }} · {{ o.get_status_display }}{% if o.award_total %} · ${{ o.award_total|floatformat:"0g" }}{% endif %}</div></td><td class="small nowrap">{% if o.cnap_acknowledged is None %}<span class="muted">Not checked</span>{% elif o.cnap_acknowledged %}Acknowledges CNAP{% else %}<span class="error" style="padding:1px 6px">No CNAP acknowledgment</span>{% endif %}</td></tr>{% endfor %}
@@ -123,7 +127,7 @@
       </tbody></table>{% else %}<p class="small muted">Nothing recorded yet.</p>{% endif %}
     </div>
     {% if assignments %}
-    <div class="panel rollsec"><h2 class="sectionhead">Documents on file {% why "The person's signed documents, such as their Statement of Work with its Roles, Responsibilities, and Terms. Each one is visible to the person on their profile, and the pasted excerpt reminds them on My tasks of what they committed to." %}</h2>
+    <div class="panel rollsec"><h2 class="sectionhead">Documents on file {% why "The person's signed documents, such as their Statement of Work with its Roles, Responsibilities, and Terms. Each one is visible to the person on their profile, and the pasted excerpt reminds them on My tasks of what they committed to." %}</h2><p class="rollsum"><b>{{ person_docs|length }}</b> document{{ person_docs|length|pluralize }}</p>
       {% if person_docs %}<div class="scroll"><table title="Documents kept on this person's page and visible to them on their profile."><thead><tr><th>Document</th><th>Added</th><th>Excerpt shown to them</th>{% if can_edit %}<th></th>{% endif %}</tr></thead><tbody>
         {% for d in person_docs %}<tr><td><strong>{{ d.title }}</strong><div class="small muted">{{ d.file.original_filename }}</div></td><td class="small">{{ d.created_at|date:"M j, Y" }}</td><td class="small">{% if d.excerpt %}{{ d.excerpt|truncatechars:120 }}{% else %}<span class="muted">None</span>{% endif %}</td>{% if can_edit %}<td class="acts"><form method="post" action="{% url 'manage:person_doc_remove' p.pk d.pk %}" class="inline" onsubmit="return confirm('Remove this document from {{ p.first_name }}\u2019s page?')">{% csrf_token %}<button class="btn small ghost">Remove</button></form></td>{% endif %}</tr>{% endfor %}
       </tbody></table></div>{% else %}<p class="small muted">Nothing on file yet.</p>{% endif %}
@@ -136,7 +140,7 @@
           <div class="fieldrow"><button class="btn">Add the document</button></div>
         </form></details>{% endif %}
     </div>
-    <div class="panel rollsec scroll"><h2 class="sectionhead">Recent forms</h2>
+    <div class="panel rollsec scroll"><h2 class="sectionhead">Recent forms</h2><p class="rollsum"><b>{{ assignments|length }}</b> form{{ assignments|length|pluralize }}</p>
       <table title="The forms this person has been asked to fill in recently, and where each stands."><thead><tr><th>Period</th><th>Form</th><th>Status</th></tr></thead><tbody>{% for a in assignments %}<tr><td>{{ a.reporting_period.short_label }}</td><td>{{ a.form_definition.name }}{% if a.project %} · {{ a.project.title }}{% elif a.core and a.context_kind == 'core' %} · {{ a.core.code }} Core{% endif %}</td><td>{% status_chip a.status %}</td></tr>{% endfor %}</tbody></table>
     </div>{% endif %}
   </div>
