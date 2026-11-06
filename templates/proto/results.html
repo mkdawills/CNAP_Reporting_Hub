@@ -32,9 +32,9 @@
       <tbody>
       {% for c in cards %}<tr>
         <th scope="row"><span class="r65-name">{{ c.fd.name }}</span>{% if c.fd.confidentiality_class == 'mentoring' %} <span class="r65-lock" title="Confidential mentoring form: opens only for people with confidential mentoring access."><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Confidential</span>{% endif %}</th>
-        <td class="num">{% if c.comp %}{{ c.comp.complete }} of {{ c.comp.assigned }}{% else %}<span class="px-muted" title="Not applicable for this period">—</span>{% endif %}</td>
-        <td class="num">{% if c.comp %}{{ c.comp.opted_out }}{% else %}<span class="px-muted" title="Not applicable for this period">—</span>{% endif %}</td>
-        <td class="r65-access">{% if c.locked %}Confidential: no access{% elif c.no_data %}<span class="px-muted">Nothing on file for this period</span>{% elif c.historical %}Prior-year averages{% elif c.mode == 'identified' %}With names{% elif c.mode == 'deidentified' %}Without names{% else %}Combined results only{% endif %}</td>
+        <td class="num" data-label="Complete">{% if c.comp %}{{ c.comp.complete }} of {{ c.comp.assigned }}{% else %}<span class="px-muted" title="Not applicable for this period">—</span>{% endif %}</td>
+        <td class="num" data-label="Opted out">{% if c.comp %}{{ c.comp.opted_out }}{% else %}<span class="px-muted" title="Not applicable for this period">—</span>{% endif %}</td>
+        <td class="r65-access" data-label="Your access">{% if c.locked %}Confidential: no access{% elif c.no_data %}<span class="px-muted">Nothing on file for this period</span>{% elif c.historical %}Prior-year averages{% elif c.mode == 'identified' %}With names{% elif c.mode == 'deidentified' %}Without names{% else %}Combined results only{% endif %}</td>
         <td class="r65-open">{% if not c.locked and not c.no_data %}<a class="px-btn small quiet" href="{% url 'manage:form_report' p.short_label c.fd.code %}" title="Open the {{ c.fd.name }} results for {{ p.short_label }}.">Open results</a>{% endif %}</td>
       </tr>{% empty %}<tr><td colspan="5" class="px-muted">No forms in this period.</td></tr>{% endfor %}
       </tbody>

@@ -578,7 +578,7 @@ body.proto .px-onpage-n { flex: none; display: inline-grid; place-items: center;
   body.proto .px-onpage-layout { grid-template-columns: minmax(0, 1fr); gap: var(--px-5); }
   body.proto .px-onpage { position: static; padding: var(--px-3) var(--px-4); background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r); }
   body.proto .px-onpage ol { border-left: 0; }
-  body.proto .px-onpage > ol > li + li { border-top: 1px solid var(--px-line); }
+  body.proto .px-onpage > ol > li + li { border-top: 0; } /* no lines between items on phones, to match desktop (MW 2026-11-05) */
   body.proto .px-onpage a { border-left: 0; border-radius: var(--px-r-sm); padding: 9px 8px; }
   body.proto .px-onpage ol ol a { padding: 4px 8px 4px 34px; }
   body.proto .px-onpage a.on { background: var(--px-brand-tint); }
@@ -995,3 +995,20 @@ body.proto .r33-date { flex: none; color: var(--px-muted); font-variant-numeric:
   body.proto .r33-list li { flex-direction: column; gap: 2px; }
   body.proto .px-seg { display: flex; } body.proto .px-seg a { flex: 1; text-align: center; padding: 8px 10px; }
 }
+/* Phones (Batch 2): the results list stacks each form as a short block with labeled lines, so the page
+   never scrolls sideways; numbered circles stay round when a long title wraps. */
+body.proto .r90-part span { flex: none; align-self: flex-start; min-width: 26px; }
+@media (max-width: 760px) {
+  body.proto .r65-table, body.proto .r65-table tbody, body.proto .r65-table tr, body.proto .r65-table th, body.proto .r65-table td { display: block; }
+  body.proto .r65-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  body.proto .r65-table tr { padding: var(--px-3) var(--px-4); border-bottom: 1px solid var(--px-line); }
+  body.proto .r65-table tbody tr:last-child { border-bottom: 0; }
+  body.proto .r65-table :is(th, td) { padding: 2px 0; border: 0 !important; text-align: left; white-space: normal; }
+  body.proto .r65-table th[scope="row"] { padding: 0 0 6px; border: 0; }
+  body.proto .r65-table td[data-label] { display: flex; gap: var(--px-3); font-size: var(--px-fs-sm); }
+  body.proto .r65-table td[data-label]::before { content: attr(data-label); flex: 0 0 7.5rem; color: var(--px-muted); font-weight: 400; }
+  body.proto .r65-table td.r65-open { padding-top: var(--px-2); }
+  body.proto .r65-table td.r65-open:empty { display: none; }
+  body.proto .px-tablewrap:has(.r65-table) { overflow: visible; }
+}
+@media (max-width: 760px) { body.proto .r65-table td[data-label], body.proto .r65-table td[data-label]::before { text-align: left !important; justify-content: flex-start; } }
