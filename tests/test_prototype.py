@@ -161,11 +161,15 @@ def test_screen90_separates_identifiable_information(client, demo):
     combined = html.index('id="r90-combined-h"')
     ident = html.index('id="r90-ident-h"')
     assert combined < ident
-    # names appear only after the "Identifiable information" heading
+    # names appear as text only after the "Identifiable information" heading; above it, only inside the
+    # hover cards on the counts (MW 2026-11-06), which hold names and nothing else
+    import re
+
+    visible = re.sub(r'<span class="px-names"[^>]*>', '<span class="px-names">', html)
     okafor = User.objects.get(username="okafor").person
     for name in (okafor.full_name,):
-        if name in html:
-            assert html.index(name) > ident
+        if name in visible:
+            assert visible.index(name) > visible.index('id="r90-ident-h"')
 
 
 @override_settings(UI_PROTOTYPE=True)
