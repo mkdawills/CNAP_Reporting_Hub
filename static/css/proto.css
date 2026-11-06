@@ -1377,3 +1377,5 @@ body.proto.pa .speakgrid { grid-template-columns: minmax(0, 1fr); max-width: 560
 /* Roll-up sections that aren't boxes (site visit, reminders) follow the same rhythm: one light line between sections. */
 body.proto.pa .pa-page .rollup > section + section, body.proto.pa .pa-page .rollup > .rollsec + .rollsec { border-top: 1px solid var(--px-line); }
 body.proto.pa .pa-page .rollup section > .sectionhead { margin-top: 0 !important; }
+/* MW 2026-11-06: buttons belong to what they act on, so no line above a row of buttons; lines only divide sections. */
+body.proto.pa .pa-page .actions, body.proto.pa .pa-page .pcard .actions, body.proto.pa .pa-page .pcard .fieldrow, body.proto.pa .pa-page form > .fieldrow:last-child { border-top: 0; padding-top: 0; margin-top: var(--px-4); }
