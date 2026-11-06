@@ -1777,3 +1777,6 @@ html body.proto.pa .pa-page > div.pa-flayout.pa-flayout.pa-flayout { margin-bott
 body.proto.pa .pa-page .pa-flayout > .pa-fnav { padding-top: 0 !important; top: var(--px-5); }
 body.proto.pa .pa-page .pa-flayout > form.aform { margin: 0 !important; padding-top: 0 !important; border-top: 0 !important; }
 body.proto.pa .pa-page .pa-flayout > form.aform > .pa-fsec:first-of-type { padding-top: 0 !important; border-top: 0 !important; }
+/* Checkbox lists (MW 2026-11-06: "boxes next to the name is more clear"): the box sits on the left of each name, on the name's first line. */
+body.proto .checkgrid > label, body.proto form .checkgrid label { display: flex !important; flex-direction: row !important; align-items: flex-start !important; gap: 10px !important; grid-template-columns: none !important; }
+body.proto .checkgrid > label > input[type=checkbox], body.proto .checkgrid label > input[type=radio] { flex: none; width: 16px !important; height: 16px; margin: 2px 0 0 !important; display: inline-block !important; }
