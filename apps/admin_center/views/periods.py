@@ -48,6 +48,15 @@ STAGE_HELP = {
 }
 
 
+def _timeline(request, period):
+    """The full dated timeline, shown only in the redesign (MW 2026-11-06); read-only."""
+    if not getattr(request, "proto_active", False) or period is None or period.status == PeriodStatus.DRAFT and not period.assignments.exists():
+        return None
+    from apps.reporting.services.timeline import period_timeline
+
+    return period_timeline(period)
+
+
 def lifecycle(period):
     from django.urls import reverse
 
@@ -120,6 +129,7 @@ def periods(request):
             {
                 "p": p,
                 "steps": lifecycle(p),
+                "timeline": _timeline(request, p),
                 "stage": ps.stage(p),
                 "historical": historical,
                 "snapshots": list(p.snapshots.order_by("version_no")),
@@ -494,6 +504,7 @@ def dashboard(request):
             .distinct()
             .order_by("-display_order"),
             "steps": lifecycle(p),
+            "timeline": _timeline(request, p),
             "form_rows": form_rows,
             "rows": rows[:300],
             "rows_n": rows.count(),

@@ -7,6 +7,7 @@
   <h2 class="sectionhead">{{ current.name }} is open{% why "The open period is the one collecting answers right now. The seven steps run from review-before-launch to finalized results. The people buckets tell you who is finished, who is partway, and who needs a nudge." %}</h2>
   <p class="small muted lifedates">This session runs {{ current|span }}.<br>Forms opened {{ current.opens_at|date:"F j" }} and are due {{ current.due_at|date:"F j" }}.{% if current.closes_at %}<br>The session closes {{ current.closes_at|date:"F j" }}.{% endif %}</p>
   {% include "manage/_lifecycle.html" %}
+  {% include "proto/_timeline.html" with tl=timeline %}
   <div class="statrow">
     <a class="stattile" href="{% url 'manage:dashboard' %}?period={{ current.short_label }}#list" title="The share of all forms in this period that are finished, with full answers or the opt-out answer. Click to see every form and its status."><span class="stat">{{ stats.pct }}%</span><span class="statlab">of forms are complete</span></a>
     <a class="stattile" href="{% url 'manage:dashboard' %}?period={{ current.short_label }}&status=complete#list" title="How many forms are finished, out of every form sent this period. Click to see the finished ones."><span class="stat">{{ stats.done }} of {{ stats.total }}</span><span class="statlab">forms are done</span></a>

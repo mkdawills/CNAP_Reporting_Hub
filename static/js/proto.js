@@ -420,6 +420,7 @@ document.addEventListener("click", function (e) {
     if (!head || !life) return;
     var h2 = head.querySelector("h2");
     if (h2) h2.after(life);
+    var tl = card.querySelector(":scope > details.px-tl"); if (tl) life.after(tl);
     card.querySelectorAll(":scope > p.small").forEach(function (p) { if (p.querySelector("a")) { p.classList.add("pa-cardlinks"); head.after(p); } });
   });
 })();

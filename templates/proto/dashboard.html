@@ -36,6 +36,7 @@
   <nav class="d53-life" aria-label="Where this period is in its seven steps">
     <ol>{% for s in steps %}<li class="{{ s.state }}" title="{{ s.help }}"><span class="n" aria-hidden="true">{% if s.state == 'done' %}✓{% else %}{{ s.n }}{% endif %}</span><span class="l">{% if s.url %}<a href="{{ s.url }}">{{ s.label }}</a>{% else %}{{ s.label }}{% endif %}</span><span class="px-sr">{% if s.state == 'done' %} (done){% elif s.state == 'now' %} (current step){% endif %}</span></li>{% endfor %}</ol>
   </nav>
+  <div class="d53-tl">{% include "proto/_timeline.html" with tl=timeline %}</div>
 
   <div class="px-onpage-layout">
   <nav class="px-onpage" aria-label="On this page">

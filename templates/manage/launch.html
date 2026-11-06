@@ -11,8 +11,9 @@
 <div class="panel scroll"><h2 class="sectionhead">What this launch will send{% why "A quick total of the workload this period creates. If a number looks wrong, check the groups below before approving." %}</h2>
   <p class="small muted">This launch sends {{ people_n }} people a combined {{ forms_n }} forms.<br>Each row below is one form, with the number of people who will receive it.</p>
   <table title="What this launch will send: each form and how many people receive it."><thead><tr><th>Form</th><th class="num">People who receive it</th></tr></thead><tbody>{% for fd, n in totals %}<tr><td>{{ fd.name }}</td><td class="num">{{ n }}</td></tr>{% endfor %}</tbody></table></div>
-<div class="lorder" role="group" aria-label="Order of the forms in each row">
-  <span class="small muted">Order of the forms in each row</span>
+{% if request.proto_active %}<div class="panel pa-groupshead"><h2 class="sectionhead">Who receives which forms</h2><p class="small muted">One group per kind of CNAP member, with one row per person.</p></div>{% endif %}
+<div class="lorder" role="group" aria-label="Order of the forms in each person’s row">
+  <span class="small muted">{% if request.proto_active %}Order of the forms in each person’s row, in every group below{% else %}Order of the forms in each row{% endif %}</span>
   <button type="button" class="fchipbtn on" data-lorder="usual" title="Every form keeps the same spot in every row, so the same form always lines up in the same place down the table.">Same spot in every row</button>
   <button type="button" class="fchipbtn" data-lorder="shared" title="Moves the forms most people in a group share to the front and the forms only a few people receive to the end. Read across a row: everything matches until the point where that person starts to differ.">Shared forms first, differences last</button>
 </div>

@@ -1401,3 +1401,40 @@ body.proto .px-page .rbd-step + .rbd-step, body.proto .px-page .r33-cores, body.
 body.proto .r90 .px-section { border-top-color: var(--px-divide); }
 body.proto.pa .pa-page .rollup > section + section, body.proto.pa .pa-page .rollup .panel.rollsec, body.proto.pa .pa-page .rollup details.panel, body.proto.pa .pa-page details.pa-roll ~ details.pa-roll, body.proto.pa .pa-page details.pa-roll + details.pa-roll { border-top-color: var(--px-divide) !important; }
 body.proto.pa .pa-page .rollup > div:first-of-type > .panel.rollsec:first-child { border-top-color: var(--px-line) !important; }
+
+/* The full timeline (MW 2026-11-06): one quiet line under the step line; open, every exact date in order,
+   a rail with a dot for each event, "Today" marked in lavender, and the past-due period marked in amber with words. */
+body.proto details.px-tl { margin: var(--px-2) 0 var(--px-5); }
+body.proto details.px-tl > summary { list-style: none; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px var(--px-4); cursor: pointer; padding: var(--px-2) 0; }
+body.proto details.px-tl > summary::-webkit-details-marker { display: none; }
+body.proto details.px-tl > summary::marker { content: ""; }
+body.proto .px-tl-q { font: 500 var(--px-fs-sm)/1.4 var(--px-sans); color: var(--px-brand); }
+body.proto details.px-tl[open] .px-tl-q { color: var(--px-ink); }
+body.proto .px-tl-now { font-size: var(--px-fs-sm); color: var(--px-muted); }
+body.proto details.px-tl > summary .px-roll-cue { margin-left: auto; }
+body.proto details.px-tl > summary:hover .px-tl-q { text-decoration: underline; text-underline-offset: 3px; }
+body.proto .px-tl-list { list-style: none; margin: var(--px-4) 0 0; padding: 0; max-width: 760px; }
+body.proto .px-tl-list li { display: grid; grid-template-columns: 64px 22px minmax(0, 1fr); align-items: start; position: relative; padding: 0 0 var(--px-4); }
+body.proto .px-tl-list li::before { content: ""; position: absolute; left: calc(64px + 10px); top: 14px; bottom: -2px; width: 1.5px; background: var(--px-line-strong); }
+body.proto .px-tl-list li:last-child::before { display: none; }
+body.proto .px-tl-list time { font: 500 var(--px-fs-sm)/1.5 var(--px-sans); color: var(--px-muted); font-variant-numeric: tabular-nums; }
+body.proto .px-tl-dot { width: 10px; height: 10px; margin: 5px 0 0 6px; border-radius: 999px; background: var(--px-surface); border: 1.5px solid var(--px-line-strong); position: relative; z-index: 1; box-sizing: border-box; }
+body.proto .px-tl-past .px-tl-dot { background: var(--px-brand); border-color: var(--px-brand); }
+body.proto .px-tl-k-due .px-tl-dot { border-color: var(--px-ink); border-width: 2px; }
+body.proto .px-tl-t { display: grid; gap: 2px; font-size: var(--px-fs-sm); line-height: 1.5; color: var(--px-ink-2); }
+body.proto .px-tl-t b { font-weight: 600; color: var(--px-ink); }
+body.proto .px-tl-t span { color: var(--px-muted); }
+body.proto .px-tl-future .px-tl-t b { color: var(--px-ink-2); font-weight: 500; }
+body.proto .px-tl-now .px-tl-t { background: var(--px-brand-tint); border-radius: var(--px-r-sm); padding: 6px 10px; margin: -6px 0 0 -10px; }
+body.proto .px-tl-now .px-tl-dot { width: 14px; height: 14px; margin: 3px 0 0 4px; background: var(--px-brand); border-color: var(--px-surface); box-shadow: 0 0 0 2px var(--px-brand); }
+body.proto .px-tl-now time { color: var(--px-brand-ink); font-weight: 600; }
+body.proto .px-tl-warn .px-tl-t b { color: var(--px-warn); }
+body.proto .px-tl-warn .px-tl-dot { border-color: var(--px-warn); }
+body.proto .px-tl-warn.px-tl-past .px-tl-dot { background: var(--px-warn); }
+body.proto .px-tl-now.px-tl-warn .px-tl-t { background: var(--px-warn-tint); }
+body.proto .px-tl-now.px-tl-warn .px-tl-t b { color: var(--px-ink); }
+@media (max-width: 760px) { body.proto .px-tl-list li { grid-template-columns: 52px 22px minmax(0, 1fr); } body.proto .px-tl-list li::before { left: calc(52px + 10px); } }
+body.proto .d53-tl { margin: calc(-1 * var(--px-3)) 0 var(--px-5); }
+/* Review before launch: the order switch belongs to the groups below it, under their own heading. */
+body.proto.pa .pa-page .pa-groupshead + .lorder { margin-top: var(--px-3) !important; padding-top: 0 !important; border-top: 0 !important; }
+body.proto.pa .pa-page .pa-groupshead h2 { margin-bottom: var(--px-2); }

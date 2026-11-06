@@ -15,7 +15,7 @@ from apps.reporting.services import periods as ps
 
 from .. import quality
 from ..decorators import admin_view, manage_action
-from .periods import lifecycle
+from .periods import _timeline, lifecycle
 
 
 @admin_view
@@ -59,6 +59,7 @@ def home(request):
         {
             "current": current,
             "steps": lifecycle(current) if current else None,
+            "timeline": _timeline(request, current) if current else None,
             "stats": stats,
             "draft": draft,
             "pending": pending,

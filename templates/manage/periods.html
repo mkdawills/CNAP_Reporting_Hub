@@ -30,6 +30,7 @@
         {% elif r.stage == 'reviewed' %}<button class="btn" name="action" value="finalize" data-yes="Yes, make these the official results" onclick="return confirm('Finalize? These become the official results and respondents will see the combined results.')">Finalize</button>{% endif %}
       </form>{% endif %}</div></div>
   {% include "manage/_lifecycle.html" with steps=r.steps %}
+  {% include "proto/_timeline.html" with tl=r.timeline %}
   {% if r.snapshots %}<p class="small muted mt">Results versions: {% for s in r.snapshots %}v{{ s.version_no }} {{ s.get_status_display|lower }}{% if s.regeneration_reason %} (“{{ s.regeneration_reason }}”){% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</p>{% endif %}
   {% if r.stage != 'draft' %}<p class="small"><a href="{% url 'manage:results' %}?period={{ r.p.short_label }}">Results</a> · <a href="{% url 'manage:dashboard' %}?period={{ r.p.short_label }}">Dashboard</a> · <a href="{% url 'manage:period_emails' r.p.pk %}">Emails</a></p>{% endif %}
 </div>
