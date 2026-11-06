@@ -1182,3 +1182,12 @@ body.proto.pa main .head:not(.panel .head)::after {
 }
 @media (max-width: 760px) { body.proto.pa main .head:not(.panel .head) { padding: var(--px-5) var(--px-4); } }
 @media (prefers-reduced-motion: reduce) { body.proto.pa main .head:not(.panel .head)::after { animation: none !important; opacity: 0 !important; } }
+/* One white page for a page's content, as on forms and results (MW 2026-11-06). Boxes inside it lose their
+   own frames and are divided by lines instead, so the page reads as one sheet. */
+body.proto .px-page { background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); box-shadow: var(--px-shadow); padding: var(--px-6); }
+body.proto .px-page > .px-section, body.proto .px-page .rbd-step, body.proto .px-page .r33-cores, body.proto .px-page .r33-cta { background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0; margin: 0; }
+body.proto .px-page > * + * { margin-top: var(--px-6); }
+body.proto .px-page .rbd-step + .rbd-step, body.proto .px-page .r33-cores, body.proto .px-page .r33-cta, body.proto .px-page .r33-lists, body.proto .px-page .rbd-go { padding-top: var(--px-6); border-top: 1px solid var(--px-line); }
+body.proto .px-page .rbd-form, body.proto .rbd-form.px-page { max-width: none; }
+body.proto .px-page .px-dlfoot { margin-bottom: 0; }
+@media (max-width: 760px) { body.proto .px-page { padding: var(--px-4); } }

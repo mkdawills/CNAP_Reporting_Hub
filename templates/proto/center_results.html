@@ -32,6 +32,7 @@
   </nav>
 
 {% if view == "products" %}
+  <div class="px-page">{# one white page for the content (MW 2026-11-06) #}
   <section class="made r33" aria-labelledby="r33-h">
     <h2 class="made-h" id="r33-h">{{ span }} totals</h2>
     <p class="made-sub">{{ prod.start|date:"F j, Y" }} to {{ prod.end|date:"F j, Y" }}</p>
@@ -82,6 +83,7 @@
     </div></details>
   </div>
   {% endif %}
+  </div>
 
 {% elif not selected %}
   <div class="px-callout r65-note" role="note"><p>{{ "No results yet. Results appear here once a reporting period’s results are finalized."|stack }}</p></div>
