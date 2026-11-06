@@ -1790,3 +1790,10 @@ html body.proto.pa .pa-page details.pa-roll:not([open]) > summary { padding-bott
 /* Data checks (MW 2026-11-06): Dismiss has its own column, just left of the Show and Hide column; the last column stays empty so Show and Hide stand alone. */
 body.proto.pa .qc-list > li > .qc-dis { grid-column: 2; justify-self: start; }
 body.proto.pa .qc-list > li::after { content: ""; grid-column: 3; }
+/* Every table sorts by clicking a header; show it (MW 2026-11-06). A header with a help note keeps the sort arrows. */
+body.proto th.sorth, body.proto th.sorth.hashelp { cursor: pointer; }
+body.proto th.sorth::after, body.proto th.sorth.hashelp::after { content: " ↕"; color: var(--px-muted); font-size: .85em; }
+body.proto th.sorth.asc::after, body.proto th.sorth.hashelp.asc::after { content: " ↑"; color: var(--px-brand); }
+body.proto th.sorth.desc::after, body.proto th.sorth.hashelp.desc::after { content: " ↓"; color: var(--px-brand); }
+/* A filter or button row that belongs to the table right under it sits 24px above that table, with no line between (MW 2026-11-06). */
+html body.proto.pa .pa-page > .pa-actions + .panel:not(:has(> h2, > .sectionhead, > details, > .head)) { margin-top: var(--px-5) !important; padding-top: 0 !important; border-top: 0 !important; }

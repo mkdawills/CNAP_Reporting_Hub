@@ -29,7 +29,7 @@
 <div class="panel scroll">
   <h2 class="sectionhead">Past imports</h2>
   <table title="Every roster file ever uploaded, so each semester’s import has a record."><thead><tr><th>Uploaded</th><th>File</th><th>Status</th><th>By</th></tr></thead><tbody>
-  {% for i in imports %}<tr><td class="nowrap"><a href="{% url 'manage:roster_import' i.pk %}">{{ i.created_at|date:"M j, Y g:i a" }} Central Time</a></td><td>{{ i.original_filename }}</td><td>{{ i.get_status_display }}</td><td>{{ i.uploaded_by }}</td></tr>
+  {% for i in imports %}<tr><td class="nowrap"><a href="{% url 'manage:roster_import' i.pk %}">{{ i.created_at|date:"M j, Y g:i A" }} Central Time</a></td><td>{{ i.original_filename }}</td><td>{{ i.get_status_display }}</td><td>{{ i.uploaded_by }}</td></tr>
   {% empty %}<tr><td colspan="4" class="muted">No imports yet.</td></tr>{% endfor %}
   </tbody></table>
 </div>
