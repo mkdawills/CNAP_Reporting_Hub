@@ -1533,3 +1533,13 @@ body.proto.pa .pa-page details.pa-details > summary { padding-bottom: var(--px-4
 body.proto.pa .pa-page > .panel:has(> details.sheetup) { border-top: 0 !important; margin-top: var(--px-4) !important; padding-top: 0 !important; }
 /* A table's last row has no line of its own, so the darker divider below it is the only line (no double lines). */
 body.proto.pa .pa-page table tbody tr:last-child > :is(td, th) { border-bottom: 0; }
+/* Data checks: every list has the same columns, so the Dismiss buttons line up all the way down the page. */
+body.proto.pa .pa-page details.lgroup table { table-layout: fixed; width: 100%; }
+body.proto.pa .pa-page details.lgroup table :is(th, td):last-child:not(:first-child) { width: 150px; }
+body.proto.pa main > .p21-back, body.proto.pa main .p21-back { display: inline-block; margin: 0 0 var(--px-3); font-size: var(--px-fs-sm); }
+/* Rolled-up sections that are their own boxes keep the 20-pixel rhythm, open or closed (checklist 141, 142). */
+body.proto.pa .pa-page > details.panel { margin-top: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+body.proto.pa .pa-page > details.panel > summary { padding: var(--px-5) 0 !important; margin: 0 !important; }
+body.proto.pa .pa-page > details.panel[open] > summary { padding-bottom: var(--px-3) !important; }
+body.proto.pa .pa-page > details.panel[open] > :last-child { margin-bottom: var(--px-5); }
+body.proto.pa .pa-page details.lgroup > summary > .rchip { padding: 3px 10px !important; }

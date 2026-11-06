@@ -15,14 +15,14 @@ CHECKS = [
     (
         "no_email",
         "People with no email address",
-        "They can’t receive their forms, reminders or sign-in links.",
+        "These people can’t receive forms, reminders, or sign-in links.",
     ),
     (
         "project_no_leader",
         "Projects with no leader",
         "No progress report or Mentee Survey goes out for them.",
     ),
-    ("project_no_mentor", "Projects with no mentor", "No mentor report goes out for them."),
+    ("project_no_mentor", "Projects with no mentor", "No mentor report goes out for these projects."),
     (
         "ended_but_open",
         "Forms still open for people who have left the role",
@@ -33,7 +33,7 @@ CHECKS = [
     (
         "director_and_leader",
         "Core directors who are also a project leader",
-        "A core director normally isn’t also an RPL or PPL (MW). Check their roles, or dismiss if it’s right.",
+        "A core director normally isn’t also a Research Project Leader or Pilot Project Leader. Please check this person’s roles, or dismiss the check if the roles are right.",
     ),
     (
         "rrid_not_cited",

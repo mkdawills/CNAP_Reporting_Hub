@@ -434,3 +434,15 @@ document.addEventListener("click", function (e) {
   function place() { var first = roll.querySelector(".panel.rollsec"); if (first) first.parentNode.insertBefore(d, first); }
   document.addEventListener("DOMContentLoaded", function () { setTimeout(place, 0); });
 })();
+
+/* A "Back to ..." link in a page's title block becomes the quiet back link above the title panel (checklist 9). */
+(function () {
+  if (!document.body.classList.contains("pa")) return;
+  var bar = document.querySelector(".pa-page > .pa-actions"), head = document.querySelector("main .head");
+  if (!bar || !head) return;
+  bar.querySelectorAll("a").forEach(function (a) {
+    if (!/^Back to /.test(a.textContent.trim())) return;
+    a.className = "px-link p21-back"; head.parentNode.insertBefore(a, head);
+  });
+  if (!bar.querySelector("a, button, form")) bar.remove();
+})();

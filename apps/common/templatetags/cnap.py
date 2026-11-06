@@ -40,7 +40,7 @@ def _put_terms(text, held):
 
 
 _FIELD_GROUPS = {
-    "Status": ("status", "resubmission_of", "substatus"),
+    "Progress": ("status", "resubmission_of", "substatus"),
     "The funder": ("funding_source_type", "funding_source", "federal_agency", "federal_agency_other", "funding_agency", "opportunity_url", "mechanism"),
     "Dates": ("anticipated_submission_date", "anticipated_day", "submission_date", "anticipated_submission_month",
               "anticipated_publication_date", "publication_date", "award_notice_date", "project_start_date",
