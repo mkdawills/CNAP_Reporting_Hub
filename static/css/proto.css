@@ -1799,3 +1799,9 @@ body.proto th.sorth.desc::after, body.proto th.sorth.hashelp.desc::after { conte
 html body.proto.pa .pa-page > .pa-actions + .panel:not(:has(> h2, > .sectionhead, > details, > .head)) { margin-top: var(--px-5) !important; padding-top: 0 !important; border-top: 0 !important; }
 body.proto.pa .pa-stevens-in { margin: 0 0 var(--px-4); }
 html body.proto.pa .pa-page > .pa-intro + .pa-flayout { margin-top: var(--px-5) !important; }
+/* The first rolled-up section has the same line above it as every section after it (MW 2026-11-06), so the list reads as a set of equal rows under Show all. */
+html body.proto.pa .pa-page .foldall + :is(section, details, .panel, .rollsec) { border-top: 1px solid var(--px-divide) !important; }
+/* After the "to check" summary, the full list is a new section: a line, then 48px (MW 2026-11-06). */
+html body.proto.pa .pa-page > .checkcards + .panel { margin-top: var(--px-6) !important; padding-top: var(--px-sec) !important; border-top: 1px solid var(--px-divide) !important; }
+/* Show all and Collapse all never touch what is above them. */
+html body.proto.pa .pa-page * + .foldall, html body.proto.pa .pa-page .rppr .foldall { margin-top: var(--px-5) !important; }
