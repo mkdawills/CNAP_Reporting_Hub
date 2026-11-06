@@ -140,3 +140,74 @@ def test_confidential_mentoring_results_stay_closed(client, demo):
     assert client.get(f"/manage/results/{demo.short_label}/mentee_survey/").status_code == 403
     html = client.get(f"/manage/results/?period={demo.short_label}").content.decode()
     assert "Confidential: no access" in html
+
+
+# ------------------------------------------------------------------ Excel downloads (MW 2026-11-05)
+def _xlsx(resp):
+    import io
+
+    from openpyxl import load_workbook
+
+    assert resp.status_code == 200 and "spreadsheetml" in resp["Content-Type"]
+    return load_workbook(io.BytesIO(resp.content))
+
+
+def _all_text(wb):
+    return " ".join(str(v) for ws in wb.worksheets for row in ws.iter_rows(values_only=True) for v in row if v is not None)
+
+
+def test_answers_download_follows_who_may_read_them(client, demo):
+    from apps.common.enums import COMPLETE_STATUSES
+
+    url = f"/manage/results/{demo.short_label}/bn_core_survey/answers.xlsx"
+    done = Assignment.objects.filter(reporting_period=demo, form_definition__code="bn_core_survey", status__in=COMPLETE_STATUSES).select_related("person", "project")
+    # the evaluator: with names, one row per completed response
+    client.force_login(User.objects.get(username="mwills"))
+    text = _all_text(_xlsx(client.get(url)))
+    assert all(a.person.last_name in text for a in done)
+    # the Director: numbered respondents, no names, no projects (when at least 5 completed)
+    client.force_login(User.objects.get(username="hbailey"))
+    wb = _xlsx(client.get(url))
+    text = _all_text(wb)
+    if done.count() >= 5:
+        assert "Respondent 1" in text
+    for a in done:
+        assert a.person.last_name not in text and a.person.first_name not in text
+        if a.project_id:
+            assert a.project.title not in text
+    # respondents never download anyone's answers
+    client.force_login(User.objects.get(username="okafor"))
+    assert client.get(url).status_code == 403
+    assert client.get(f"/manage/results/{demo.short_label}/everything.xlsx").status_code in (302, 403)
+
+
+def test_excel_tables_hold_exactly_the_csv_cells(client, demo):
+    import csv
+    import io
+
+    client.force_login(User.objects.get(username="mwills"))
+    for url in [f"/manage/results/{demo.short_label}/bn_core_survey/export/", "/manage/outcomes/export/grants/"]:
+        rows = [r for r in csv.reader(io.StringIO(client.get(url).content.decode("utf-8-sig")))]
+        wb = _xlsx(client.get(url + "?format=xlsx"))
+        got = [[("" if v is None else str(v)) for v in row] for row in wb.active.iter_rows(min_row=3, values_only=True)]
+        norm = lambda r: [c.lstrip("'") for c in r]
+        want = [r + [""] * (max(len(g) for g in got) - len(r)) for r in rows]
+        def canon(c):  # numbers compare as numbers ("1250000.00" in the CSV is 1250000 in Excel)
+            try:
+                return float(c)
+            except ValueError:
+                return c
+
+        strip = lambda t: [[canon(c) for c in norm(r)] for r in t]
+        assert strip([g[: len(w)] for g, w in zip(got, want)]) == strip([w[: len(w)] for w in want])
+
+
+def test_confidential_answers_download_stays_closed(client, demo):
+    from apps.accounts.models import ApplicationRole, UserRole
+
+    u = User.objects.create_user(username="sample_admin2", password="Demo-Password-2026", email="sample_admin2@example.org")
+    UserRole.objects.create(user=u, role=ApplicationRole.objects.get(code=ApplicationRole.Code.ADMINISTRATOR))
+    client.force_login(u)
+    assert client.get(f"/manage/results/{demo.short_label}/mentee_survey/answers.xlsx").status_code == 403
+    text = _all_text(_xlsx(client.get(f"/manage/results/{demo.short_label}/everything.xlsx")))
+    assert "Mentee Survey" in text and "Not included" in text

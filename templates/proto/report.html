@@ -13,7 +13,8 @@
       <h1 class="px-title">{{ fd.name }}</h1>
       <div class="r90-links">
         <a class="px-link" href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.short_label }}</a>
-        {% if tables %}<a class="px-btn small quiet" href="{% url 'manage:export_report' period.short_label fd.code %}">Download the tables (CSV)</a>{% endif %}
+        {% if tables %}<a class="px-btn small quiet" href="{% url 'manage:export_report' period.short_label fd.code %}?format=xlsx" title="The results tables as an Excel workbook: the same numbers as the CSV, formatted.">Download the tables (Excel)</a><a class="px-link" href="{% url 'manage:export_report' period.short_label fd.code %}" title="The results tables as a plain CSV file.">CSV</a>{% endif %}
+        {% if rows or who %}<a class="px-btn small quiet" href="{% url 'manage:export_answers' period.short_label fd.code %}" title="Every completed response, one row per {% if mode == 'deidentified' %}respondent, without names{% else %}person{% endif %}, one column per question.">Download every answer (Excel)</a>{% endif %}
       </div>
     </div>
     <ul class="px-facts">

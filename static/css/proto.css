@@ -1012,3 +1012,4 @@ body.proto .r90-part span { flex: none; align-self: flex-start; min-width: 26px;
   body.proto .px-tablewrap:has(.r65-table) { overflow: visible; }
 }
 @media (max-width: 760px) { body.proto .r65-table td[data-label], body.proto .r65-table td[data-label]::before { text-align: left !important; justify-content: flex-start; } }
+body.proto .r65-dl { margin: 0 0 var(--px-4); }

@@ -26,6 +26,7 @@
 
   <section class="px-section r65-list" aria-labelledby="r65-h">
     <h2 class="px-h2" id="r65-h">Forms in {{ p.short_label }}</h2>
+    {% if not cards.0.historical %}<p class="r65-dl"><a class="px-btn small quiet" href="{% url 'manage:export_everything' p.short_label %}" title="One Excel workbook: a contents sheet, each form’s answers your access includes, and the papers, talks, and grants lists.">Download everything (Excel)</a></p>{% endif %}
     <div class="px-tablewrap">
     <table class="px-table r65-table" title="Every form in this period, with completion and your access to its results.">
       <thead><tr><th scope="col">Form</th><th scope="col" class="num">Complete</th><th scope="col" class="num">Opted out</th><th scope="col">Your access</th><th scope="col" aria-label="Open"></th></tr></thead>

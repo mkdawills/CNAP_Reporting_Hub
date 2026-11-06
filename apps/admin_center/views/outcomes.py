@@ -1463,6 +1463,11 @@ def export(request, kind):
     record_event(request.user, AuditLog.Action.EXPORT, f"outcomes:{kind}")
     resp = HttpResponse("﻿" + buf.getvalue(), content_type="text/csv; charset=utf-8")
     resp["Content-Disposition"] = f'attachment; filename="cnap_{kind}.csv"'
+    if request.GET.get("format") == "xlsx":  # the same cells as the CSV, as a formatted workbook (MW 2026-11-05)
+        from apps.reporting.services.exports import csv_to_xlsx
+
+        names = {"publications": "Papers", "pubs": "Papers", "talks": "Talks and posters", "presentations": "Talks and posters", "grants": "Grant proposals", "c1": "RPPR C.1", "table1": "RPPR Tables 1A and 1B", "table2": "RPPR Table 2", "d1": "RPPR D.1", "teams": "Research teams", "sitevisit": "Site-visit report"}
+        return csv_to_xlsx(resp, f"cnap_{kind}.xlsx", title=names.get(kind, kind.title()))
     return resp
 
 

@@ -87,6 +87,8 @@ urlpatterns = [
     path("results/<str:label>/<slug:code>/", results.form_report, name="form_report"),
     path("results/<str:label>/<slug:code>/themes/", results.save_themes, name="save_themes"),
     path("results/<str:label>/<slug:code>/export/", results.export_report, name="export_report"),
+    path("results/<str:label>/<slug:code>/answers.xlsx", results.export_answers, name="export_answers"),
+    path("results/<str:label>/everything.xlsx", results.export_everything, name="export_everything"),
     path("responses/<int:pk>/", results.response, name="response"),
     # data checks and audit
     # publications and grants

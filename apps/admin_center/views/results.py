@@ -25,6 +25,8 @@ from apps.reporting.access import (
     response_access,
 )
 from apps.reporting.models import Assignment, ReportingPeriod
+from apps.reporting.services import exports
+from django.utils import timezone
 
 from ..decorators import admin_view, manage_action
 
@@ -273,7 +275,65 @@ def export_report(request, label, code):
     record_event(request.user, AuditLog.Action.EXPORT, f"report:{label}:{code}")
     resp = HttpResponse(buf.getvalue(), content_type="text/csv")
     resp["Content-Disposition"] = f'attachment; filename="{code}_{label.replace(" ", "_")}.csv"'
+    if request.GET.get("format") == "xlsx":  # the same cells as the CSV, as a formatted workbook (MW 2026-11-05)
+        return exports.csv_to_xlsx(resp, f'{code}_{label.replace(" ", "_")}.xlsx', title=f"{fd.name}, {p.name}")
     return resp
+
+
+@admin_view
+def export_answers(request, label, code):
+    """Each form's answers for a period, one row per respondent, as an Excel workbook (MW 2026-11-05).
+    Same access as reading the responses on screen."""
+    p = get_object_or_404(ReportingPeriod, short_label=label)
+    fd = get_object_or_404(FormDefinition, code=code)
+    resp = exports.form_answers_workbook(request.user, fd, p)
+    record_event(request.user, AuditLog.Action.EXPORT, f"answers:{label}:{code}")
+    return resp
+
+
+@admin_view
+def export_everything(request, label):
+    """One workbook for a reporting period: a contents sheet, each form's answers this reader may see,
+    and the papers, talks, and grants lists (MW 2026-11-05)."""
+    from openpyxl import Workbook
+
+    from apps.reporting.services.exports import _safe_title, add_form_sheets, csv_rows, write_csv_sheet, write_sheet
+
+    from . import outcomes as outcome_views
+
+    p = get_object_or_404(ReportingPeriod, short_label=label)
+    wb = Workbook()
+    used = {"contents"}
+    contents = wb.active
+    contents.title = "Contents"
+    lines = []
+    forms = FormDefinition.objects.filter(assignments__reporting_period=p).distinct().order_by("sort_order")
+    for fd in forms:
+        if not form_access(request.user, fd):
+            lines.append([fd.name, "Not included: your access doesn’t include individual responses to this form."])
+            continue
+        sheet, note = add_form_sheets(wb, request.user, fd, p, used)
+        lines.append([fd.name, f"Sheet “{sheet}”: {note}."])
+    for kind, name in (("publications", "Papers"), ("talks", "Talks and posters"), ("grants", "Grant proposals")):
+        try:
+            csv_resp = outcome_views.export(request, kind)
+        except PermissionDenied:
+            lines.append([name, "Not included: your access doesn’t include this list."])
+            continue
+        ws = wb.create_sheet()
+        ws.title = _safe_title(name, used)
+        write_csv_sheet(ws, csv_rows(csv_resp.content.decode("utf-8-sig")), title=f"{name}: every entry in the Hub")
+        lines.append([name, f"Sheet “{ws.title}”: every entry in the Hub, not only this period."])
+    write_sheet(
+        contents,
+        f"Everything for {p.name}",
+        ["Part", "Where to find it"],
+        lines,
+        notes=[f"Downloaded {timezone.localdate():%B %-d, %Y} by {request.user.get_full_name() or request.user.get_username()}.", "Each sheet follows the same access rules as the screens: names appear only where your access shows names."],
+        widths=[44, 90],
+    )
+    record_event(request.user, AuditLog.Action.EXPORT, f"everything:{label}")
+    return exports.workbook_response(wb, f"CNAP-{label.replace(' ', '-')}-everything.xlsx")
 
 
 def _unused():
