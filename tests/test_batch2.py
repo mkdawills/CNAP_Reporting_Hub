@@ -281,3 +281,50 @@ def test_confidential_forms_print_only_with_that_access(client, demo):
     m = Assignment.objects.filter(reporting_period=demo, form_definition__code="mentee_survey", status="submitted").first()
     if m:
         assert client.get(f"/manage/responses/{m.pk}/print/").status_code == 403
+
+
+# ------------------------------------------------------------------ Research outputs: years and cores (MW 2026-11-06)
+@override_settings(UI_PROTOTYPE=True)
+def test_research_outputs_for_any_combination_of_years(client, demo):
+    from apps.outcomes import snapshot
+    from apps.outcomes.rppr import current_year
+
+    now = current_year()
+    client.force_login(User.objects.get(username="okafor"))
+    one = client.get(f"/results/?view=products&years={now}").context
+    old = client.get(f"/results/?view=products&year={now}").context  # the older link still works
+    assert one["prod"]["submitted"] == old["prod"]["submitted"] and one["span"] == f"Year {now}"
+    years = list(one["years"])
+    r = client.get("/results/?view=products&years=all").context
+    assert r["chosen"] == sorted(years)
+    # totals for several years equal the sum of each year on its own
+    each = [snapshot.products(y) for y in years]
+    assert r["prod"]["submitted"] == sum(p["submitted"] for p in each)
+    assert r["prod"]["n_papers"] == sum(len(p["papers"]) for p in each)
+    # unknown years are ignored, never an error
+    assert client.get("/results/?view=products&years=1999&years=abc").status_code == 200
+    # respondents still see counts only, never titles
+    html = client.get("/results/?view=products&years=all").content.decode()
+    assert 'id="r33-papers"' not in html and "Which cores the products drew on" in html
+
+
+def test_core_counts_skip_resources_only_planned(demo):
+    from apps.outcomes import snapshot
+    from apps.outcomes.models import GrantSubmission, GrantSubmissionResource
+    from apps.outcomes.rppr import current_year
+    from apps.people.models import Resource
+
+    now = current_year()
+    before = {k["key"]: k for k in snapshot.by_core([now])}
+    g = GrantSubmission.objects.filter(submission_date__isnull=False).exclude(status="planned").first()
+    if g is None:
+        pytest.skip("no submitted proposal in the sample data")
+    admin = Resource.objects.get(code="admin_core")
+    GrantSubmissionResource.objects.create(grant_submission=g, resource=admin, is_anticipated=True)
+    after = {k["key"]: k for k in snapshot.by_core([now])}
+    count = lambda k, code: next((s["n"] for s in k["segments"] if s["code"] == code), 0)
+    assert count(after["proposals"], "admin_core") == count(before["proposals"], "admin_core")
+    # every product is counted at least once; the longest bar is full width
+    for k in after.values():
+        assert k["mentions"] >= k["total"]
+    assert max(k["scale"] for k in after.values()) in (0, 100)

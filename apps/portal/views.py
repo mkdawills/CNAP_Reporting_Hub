@@ -340,13 +340,25 @@ def center_results(request):
         trend = snapshot.by_year(now)
         first = trend["first"] if trend else now
         years = list(range(now, first - 1, -1))
-        try:
-            gy = int(request.GET.get("year", now))
-        except ValueError:
-            gy = now
-        gy = gy if gy in years else now
-        prod = dict(snapshot.products(gy))
+        # Any combination of grant years, or all of them (MW 2026-11-06): ?years=8&years=10 or ?years=all.
+        # The older ?year=10 still works.
+        picked = request.GET.getlist("years")
+        if "all" in picked:
+            chosen = list(years)
+        else:
+            chosen = [int(x) for x in picked + [request.GET.get("year", "")] if str(x).isdigit() and int(x) in years]
+        chosen = sorted(set(chosen)) or [now]
+        gy = chosen[-1]
+        prod = dict(snapshot.products_for(chosen)) if len(chosen) > 1 else dict(snapshot.products(gy))
         prod.update(n_papers=len(prod["papers"]), n_talks=len(prod["talks"]), n_awards=len(prod["awards"]))
+        all_years = len(chosen) == len(years) and len(years) > 1
+        if len(chosen) == 1:
+            span = f"Year {chosen[0]}"
+        elif chosen == list(range(chosen[0], chosen[-1] + 1)):
+            span = f"Years {chosen[0]} to {chosen[-1]}"
+        else:
+            span = "Years " + ", ".join(str(y) for y in chosen[:-1]) + (", and " if len(chosen) > 2 else " and ") + str(chosen[-1])
+        ctx.update({"chosen": chosen, "all_years": all_years, "span": f"All years ({span})" if all_years else span, "by_core": snapshot.by_core(chosen), "core_groups": snapshot.CORE_GROUPS})
         # MW 2026-11-04: respondents see counts only. Titles, people, and funders stay with the
         # evaluator, the Center Director, and the Associate Director (the administrator screens).
         show_detail = access.can_view_admin(request.user)

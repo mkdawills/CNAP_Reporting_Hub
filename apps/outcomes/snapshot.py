@@ -165,3 +165,85 @@ def products(gy=None):
         "awards": out_awards,
         "submitted": submitted,
     }
+
+
+# ------------------------------------------------------------------ several grant years at once (MW 2026-11-06)
+CORE_GROUPS = (
+    ("bn_core", "BN Core", "#5b2a9a"),
+    ("ni_core", "NI Core", "#8f6bc4"),
+    ("cn_core", "CN Core", "#c4b1e2"),
+    ("admin_core", "Administrative Core", "#2f7d6b"),
+    ("other", "Other Center resources", "#9fc9bd"),
+    ("none", "No resource named", "#d3d1da"),
+)
+CORE_CODES = {"bn_core", "ni_core", "cn_core", "admin_core"}
+
+
+def products_for(years):
+    """products() for any set of grant years, merged: lists newest first, counts summed."""
+    years = sorted(set(years))
+    parts = [products(gy) for gy in years]
+    merged = {
+        "years": years,
+        "gy": years[-1] if len(years) == 1 else None,
+        "start": min(p["start"] for p in parts),
+        "end": max(p["end"] for p in parts),
+        "papers": sorted((x for p in parts for x in p["papers"]), key=lambda x: x["date"] or start_of(years), reverse=True),
+        "talks": sorted((x for p in parts for x in p["talks"]), key=lambda x: x["date"] or start_of(years), reverse=True),
+        "awards": [x for p in reversed(parts) for x in p["awards"]],
+        "submitted": sum(p["submitted"] for p in parts),
+    }
+    return merged
+
+
+def start_of(years):
+    return period(min(years))[0]
+
+
+def by_core(years):
+    """How many of each kind of product drew on each core, for the chosen grant years (MW 2026-11-06).
+
+    Counts only, no names. A product that drew on two cores counts once for each, so a bar's
+    segments can add up to more than the number of products; the page says so. Only resources a
+    product actually used count, never ones it only planned to use.
+    """
+    from django.db.models import Q
+
+    years = sorted(set(years))
+    live = {"archived_at__isnull": True}
+    rng = lambda field: Q(**{f"{field}__range": period(years[0])}) if len(years) == 1 else _ranges(field, years)
+    kinds = (
+        ("papers", "Papers published", Publication.objects.filter(rng("publication_date"), status=PublicationStatus.PUBLISHED, **live), True),
+        ("talks", "Talks and posters", Presentation.objects.filter(rng("presented_on"), **live), False),
+        ("proposals", "Proposals submitted", GrantSubmission.objects.filter(rng("submission_date"), **live).exclude(status=GrantStatus.PLANNED), True),
+        ("awards", "Proposals awarded", GrantSubmission.objects.filter(rng("award_notice_date"), status=GrantStatus.AWARDED, **live), True),
+    )
+    out = []
+    for key, label, qs, has_anticipated in kinds:
+        counts = {code: 0 for code, _, _ in CORE_GROUPS}
+        items = list(qs.prefetch_related("resource_links__resource"))
+        for obj in items:
+            links = [x for x in obj.resource_links.all() if not (has_anticipated and x.is_anticipated)]
+            groups = {x.resource.code if x.resource.code in CORE_CODES else "other" for x in links}
+            for g in groups or {"none"}:
+                counts[g] += 1
+        mentions = sum(counts.values())
+        segs = [
+            {"code": code, "label": name, "color": color, "n": counts[code], "w": round(100 * counts[code] / mentions, 2) if mentions else 0}
+            for code, name, color in CORE_GROUPS
+            if counts[code]
+        ]
+        out.append({"key": key, "label": label, "total": len(items), "mentions": mentions, "segments": segs})
+    top = max((k["mentions"] for k in out), default=0)
+    for k in out:  # bars share one scale, so lengths compare across kinds of product
+        k["scale"] = round(100 * k["mentions"] / top, 2) if top else 0
+    return out
+
+
+def _ranges(field, years):
+    from django.db.models import Q
+
+    q = Q()
+    for gy in years:
+        q |= Q(**{f"{field}__range": period(gy)})
+    return q

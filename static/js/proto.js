@@ -261,3 +261,13 @@ document.addEventListener("click", function (e) {
   else gap();
   window.pxGap = gap;
 })();
+
+/* Grant-year picker (MW 2026-11-06): "All years" ticks every year; unticking a year unticks "All years". */
+(function () {
+  var f = document.getElementById("r33-years");
+  if (!f) return;
+  var all = f.querySelector("[data-allyears]"), ys = f.querySelectorAll("[data-year]");
+  if (all) all.addEventListener("change", function () { ys.forEach(function (y) { y.checked = all.checked; }); });
+  ys.forEach(function (y) { y.addEventListener("change", function () { if (all) all.checked = Array.prototype.every.call(ys, function (x) { return x.checked; }); }); });
+  f.addEventListener("submit", function () { if (all && all.checked) ys.forEach(function (y) { y.disabled = true; }); });
+})();
