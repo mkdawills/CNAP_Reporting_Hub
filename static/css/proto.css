@@ -1808,3 +1808,10 @@ html body.proto.pa .pa-page * + .foldall, html body.proto.pa .pa-page .rppr .fol
 /* A reporting session's links sit 12px under its button; the button's form takes its full height so nothing overlaps (MW 2026-11-06). */
 body.proto.pa .pa-page .pcard form.inline { display: block; margin-top: var(--px-3); }
 html body.proto.pa .pa-page .pcard .pa-cardlinks { margin: var(--px-3) 0 0 !important; }
+/* Show all and Collapse all: 24px under whatever is above, and 12px above the first section's line, on every page (MW 2026-11-06). */
+html body.proto.pa .pa-page .foldall, html body.proto .lch .foldall { margin-bottom: var(--px-3) !important; }
+html body.proto.pa .pa-page .foldall + *, html body.proto .lch .foldall + * { margin-top: 0 !important; }
+/* "Acknowledges CNAP?" holds the answer and the buttons that set it, in one column (MW 2026-11-06). */
+body.proto .ack-td { white-space: nowrap; }
+body.proto .ack-td .ack-f { display: flex !important; flex-direction: row !important; gap: 6px; margin-top: 8px; }
+body.proto .ack-td .ack-f .btn { margin: 0 !important; display: inline-flex !important; width: auto !important; }
