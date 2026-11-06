@@ -66,6 +66,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "apps.accounts.middleware.LinkSessionGuard",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "apps.common.prototype.AdminSkin",  # Batch 3: off unless UI_PROTOTYPE is on
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 

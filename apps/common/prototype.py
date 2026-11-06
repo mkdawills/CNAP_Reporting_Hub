@@ -47,6 +47,7 @@ def template(request, key, default):
         request.proto_screen = key  # lets base.html offer the before/after switch
         if enabled(request):
             request.proto_active = True
+            request.proto_own = True  # this page has its own prototype template, so the admin skin stays off
             return SCREENS[key]
     return default
 
@@ -60,3 +61,21 @@ def switch(request, view):
     if not url_has_allowed_host_and_scheme(nxt, allowed_hosts={request.get_host()}):
         nxt = "/"
     return redirect(nxt)
+
+
+class AdminSkin:
+    """Batch 3 (MW 2026-11-06): every administration page takes the prototype look through one shared
+    design layer, with its own template, data, and actions unchanged. Off unless UI_PROTOTYPE is on, and
+    the reviewer can flip any page back to the current design. Pages that already have their own
+    prototype template (the dashboard, results) keep it."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if getattr(settings, "UI_PROTOTYPE", False) and request.path.startswith("/manage/"):
+            request.proto_screen = getattr(request, "proto_screen", None) or "admin"
+            if enabled(request):
+                request.proto_active = True
+                request.proto_admin = True
+        return self.get_response(request)

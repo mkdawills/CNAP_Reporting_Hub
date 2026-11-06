@@ -1095,3 +1095,53 @@ body.proto .rbd-go { display: grid; gap: var(--px-2); justify-items: start; }
 body.proto .rbd-forms { grid-template-columns: 1fr; gap: 8px; }
 body.proto .rbd-form > .px-section { margin: 0; }
 body.proto .rbd-form { gap: var(--px-5); }
+
+/* ===================================================================== Batch 3: the administration design layer
+   (MW 2026-11-06). Every administration page without its own prototype template takes the prototype look
+   here: type, header, panels, tabs, chips, buttons, fields, and tables. Templates, data, and actions are
+   unchanged. Count tables used for the RPPR and site visit keep their layout; only the type changes. */
+body.proto.pa main { background: var(--px-canvas); }
+body.proto.pa main h1 { font: 500 var(--px-fs-2xl)/1.28 var(--px-serif); letter-spacing: -.012em; color: var(--px-ink); text-wrap: balance; }
+body.proto.pa main h2, body.proto.pa main .sectionhead { font: 500 var(--px-fs-lg)/1.3 var(--px-serif); letter-spacing: -.005em; color: var(--px-ink); }
+body.proto.pa main h3 { font: 600 var(--px-fs-md)/1.35 var(--px-sans); color: var(--px-ink); }
+body.proto.pa .head { align-items: flex-end; gap: var(--px-5); margin-bottom: var(--px-6); padding-bottom: var(--px-5); border-bottom: 1px solid var(--px-line); }
+body.proto.pa .head > * + * { border-left: 0; padding-left: 0; }
+body.proto.pa .head p { color: var(--px-ink-2); font-size: var(--px-fs-md); line-height: 1.55; max-width: var(--px-measure); }
+body.proto.pa .panel { background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r); box-shadow: none; padding: var(--px-5); margin-bottom: var(--px-5); }
+body.proto.pa .panel h2.sectionhead, body.proto.pa .sectionhead { margin-bottom: var(--px-3); padding-bottom: 0; border-bottom: 0; }
+body.proto.pa main p, body.proto.pa main li { line-height: 1.6; }
+body.proto.pa .muted, body.proto.pa .small.muted { color: var(--px-muted); }
+/* buttons: the prototype's, left-aligned, hugging their words */
+body.proto.pa .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 0 16px; border: 1px solid var(--px-brand); border-radius: var(--px-r-sm); background: var(--px-brand); color: #fff; font: 600 var(--px-fs-sm)/1 var(--px-sans); text-decoration: none; cursor: pointer; white-space: nowrap; box-shadow: none; transition: background .15s ease, box-shadow .15s ease; }
+body.proto.pa .btn:hover { background: var(--px-brand-ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--px-brand) 18%, transparent); }
+body.proto.pa .btn.ghost { background: var(--px-surface); color: var(--px-ink); border-color: var(--px-line-strong); }
+body.proto.pa .btn.ghost:hover { color: var(--px-brand-ink); border-color: var(--px-brand); background: var(--px-surface); }
+body.proto.pa .btn.small { min-height: 32px; padding: 0 12px; font-size: var(--px-fs-xs); }
+body.proto.pa .btn.danger { background: var(--px-surface); color: var(--px-alert); border-color: color-mix(in srgb, var(--px-alert) 40%, var(--px-line)); }
+body.proto.pa .btn:focus-visible { outline: none; box-shadow: var(--px-focus); }
+body.proto.pa .actions { justify-content: flex-start; }
+/* tabs: a quiet underline, purple for the page you're on */
+body.proto.pa .tabs { gap: var(--px-5); border-bottom: 1px solid var(--px-line); margin-bottom: var(--px-4); }
+body.proto.pa .tabs a { padding: 10px 2px; color: var(--px-muted); font: 500 var(--px-fs-sm)/1.2 var(--px-sans); border-bottom: 2px solid transparent; }
+body.proto.pa .tabs a:hover { color: var(--px-brand-ink); }
+body.proto.pa .tabs a.on { color: var(--px-brand-ink); border-bottom-color: var(--px-brand); }
+/* chips */
+body.proto.pa .chip, body.proto.pa .rchip { border-radius: 999px; font-weight: 500; }
+body.proto.pa .rchip { background: var(--px-sunken); border: 1px solid var(--px-line); color: var(--px-ink-2); }
+/* fields */
+body.proto.pa main :is(input[type="text"], input[type="email"], input[type="number"], input[type="date"], input[type="url"], input[type="search"], input:not([type]), select, textarea) { border: 1px solid var(--px-line-strong); border-radius: var(--px-r-sm); background: var(--px-surface); color: var(--px-ink); font: 400 var(--px-fs-sm)/1.4 var(--px-sans); padding: 8px 10px; }
+body.proto.pa main :is(input, select, textarea):focus-visible { outline: none; border-color: var(--px-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--px-brand) 16%, transparent); }
+body.proto.pa main label { color: var(--px-ink-2); }
+/* tables: lists of people, periods, and records take the prototype type and vertical lines; the RPPR and
+   site-visit count tables keep their layout and get the type only */
+body.proto.pa main table { font-size: var(--px-fs-sm); font-variant-numeric: tabular-nums; }
+body.proto.pa main th { font: 500 var(--px-fs-xs)/1.3 var(--px-sans); color: var(--px-muted); letter-spacing: .02em; border-bottom: 1px solid var(--px-line-strong); }
+body.proto.pa main td { color: var(--px-ink-2); border-bottom: 1px solid var(--px-line); }
+body.proto.pa main :is(th, td) + :is(th, td) { border-left: 1px solid var(--px-line); }
+body.proto.pa main tbody tr:hover td { background: color-mix(in srgb, var(--px-brand) 3%, transparent); }
+body.proto.pa main details > summary { cursor: pointer; }
+body.proto.pa main a:not(.btn):not(.tabs a) { color: var(--px-brand-ink); text-decoration-color: color-mix(in srgb, var(--px-brand) 40%, transparent); text-underline-offset: 3px; }
+/* the arrival light on administration headers too */
+body.proto.pa .head { position: relative; }
+body.proto.pa .head::after { content: ""; position: absolute; left: 0; bottom: -1px; height: 1.5px; width: 28%; pointer-events: none; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--px-brand) 70%, #fff), transparent); opacity: 0; animation: px-glide 1.6s cubic-bezier(.45, .05, .25, 1) .25s 1 both; }
+@media (prefers-reduced-motion: reduce) { body.proto.pa .head::after { animation: none !important; opacity: 0 !important; } }
