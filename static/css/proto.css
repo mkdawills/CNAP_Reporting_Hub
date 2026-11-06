@@ -1168,3 +1168,17 @@ body.proto .r90 .r90-partbody .px-rollbar, body.proto .r32 .r90-partbody .px-rol
 body.proto .r90-partbody details.px-roll > summary .px-roll-cue::before { content: none; }
 body.proto .r90-partbody details.px-roll > summary .px-roll-cue { width: 28px; height: 28px; justify-content: center; border-radius: 999px; }
 body.proto .r90-partbody details.px-roll > summary:hover .px-roll-cue { background: var(--px-brand-tint); text-decoration: none; }
+/* Administration headers sit in the same soft title panel as forms and results (MW 2026-11-06), with the
+   same light that runs once around it when the page opens. */
+body.proto.pa main .head:not(.panel .head) { background: var(--px-panel); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); padding: var(--px-6) var(--px-6) var(--px-5); isolation: isolate; }
+body.proto.pa main .head:not(.panel .head)::after {
+  content: ""; position: absolute; inset: -1px; left: -1px; bottom: -1px; width: auto; height: auto; border-radius: inherit; padding: 2px; pointer-events: none;
+  background: conic-gradient(from var(--px-sweep), transparent 0deg, transparent 290deg,
+    color-mix(in srgb, var(--px-brand) 30%, transparent) 318deg, color-mix(in srgb, var(--px-brand) 85%, #fff) 346deg, #fff 354deg, transparent 360deg);
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--px-brand) 45%, transparent));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0; transform: none; animation: px-sweep 1.9s cubic-bezier(.45, .05, .25, 1) .25s 1 both;
+}
+@media (max-width: 760px) { body.proto.pa main .head:not(.panel .head) { padding: var(--px-5) var(--px-4); } }
+@media (prefers-reduced-motion: reduce) { body.proto.pa main .head:not(.panel .head)::after { animation: none !important; opacity: 0 !important; } }

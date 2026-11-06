@@ -4,13 +4,13 @@
 {# Screen 53 prototype. Same view, same numbers, same actions and confirmations as manage/dashboard.html. #}
 <div class="d53">
 {% if not p %}
-  <header class="px-mast"><p class="px-eyebrow">Period dashboard</p><h1 class="px-title">No reporting periods yet.</h1></header>
+  <header class="px-mast p21-mast"><p class="px-eyebrow">Period dashboard</p><h1 class="px-title">No reporting periods yet.</h1></header>
 {% else %}
   {% with opted=form_rows|sum_key:"optout" %}{% with submitted=done|minus:opted open_n=total|minus:done %}{% with dleft=p.due_at|days_until %}
   {# ---------------------------------------------------------------- masthead #}
   <div class="px-top">
   <div class="px-top-main">
-  <header class="px-mast d53-mast">
+  <header class="px-mast p21-mast d53-mast">
     <div class="px-mast-row">
       <div>
         <p class="px-eyebrow">Period dashboard</p>
