@@ -284,7 +284,7 @@ document.addEventListener("click", function (e) {
     if (!page) return;
     // Tabs first.
     var tabs = page.querySelector(".tabs");
-    if (tabs && !tabs.closest("details")) {
+    if (tabs && !tabs.closest("details") && tabs.querySelector('a[href^="?tab="]')) {  /* only page-level tabs move; tabs that switch one section stay put */
       var keep = tabs.querySelectorAll("a.tabdl:not(.tabdl2)");
       page.insertBefore(tabs, page.firstChild);
       if (keep.length) {
@@ -445,4 +445,62 @@ document.addEventListener("click", function (e) {
     a.className = "px-link p21-back"; head.parentNode.insertBefore(a, head);
   });
   if (!bar.querySelector("a, button, form")) bar.remove();
+})();
+
+/* Publication and grant forms (MW 2026-11-06: "work harder to make the experience much better"), on the approved
+   form design (Screen 21). Every field, name, value, and rule is unchanged; only the presentation changes:
+   - "Where it stands" becomes one row of choices at the top (it still sets the same Status field);
+   - each group of fields becomes a numbered section, listed in "On this form" on the left;
+   - Save and Cancel stay in reach in a bar at the bottom of the screen. */
+(function () {
+  if (!document.body.classList.contains("pa")) return;
+  var form = document.querySelector(".pa-page form.aform");
+  if (!form || !form.querySelector(".fgroup")) return;
+  // 1. Sections.
+  var kids = Array.prototype.slice.call(form.children), sec = null, secs = [];
+  kids.forEach(function (el) {
+    var starts = el.matches("h3.fgroup") || el.matches("h2.sectionhead");
+    if (el.matches(".actions") || el.matches("input[type=hidden]") || el.matches(".error:first-child")) { sec = null; return; }
+    if (starts) {
+      sec = document.createElement("section"); sec.className = "pa-fsec"; form.insertBefore(sec, el);
+      if (el.matches("h2")) { var h = document.createElement("h3"); h.className = "fgroup pa-fixed"; h.textContent = el.textContent.trim() === "Credit" ? "Credit to CNAP" : el.textContent; el.replaceWith(h); el = h; }
+      secs.push(sec);
+    }
+    if (sec) sec.appendChild(el);
+  });
+  // 2. Numbers, and the "On this form" list, kept in step with the sections showing.
+  var layout = document.createElement("div"); layout.className = "pa-flayout";
+  var nav = document.createElement("nav"); nav.className = "pa-fnav"; nav.setAttribute("aria-label", "On this form");
+  nav.innerHTML = '<p class="px-label">On this form</p><ol></ol>';
+  form.parentNode.insertBefore(layout, form); layout.appendChild(nav); layout.appendChild(form);
+  function renumber() {
+    var ol = nav.querySelector("ol"); ol.innerHTML = ""; var n = 0;
+    secs.forEach(function (s, i) {
+      var h = s.querySelector(":scope > h3.fgroup"), show = h && !h.hidden && Array.prototype.some.call(s.querySelectorAll(".field"), function (f) { return !f.hidden; });
+      s.hidden = !show; if (!show) return;
+      n++; s.id = s.id || "pa-fsec-" + i; h.setAttribute("data-n", n);
+      var li = document.createElement("li"); li.innerHTML = '<a href="#' + s.id + '"><span class="px-onpage-n">' + n + "</span></a>";
+      li.querySelector("a").appendChild(document.createTextNode(h.textContent)); ol.appendChild(li);
+    });
+  }
+  // 3. "Where it stands" as one row of choices that sets the same Status field.
+  var sel = form.querySelector('select[name="status"]');
+  if (sel) {
+    var box = sel.closest(".field"), row = document.createElement("div"); row.className = "pa-stage"; row.setAttribute("role", "radiogroup");
+    row.setAttribute("aria-label", "Where it stands");
+    Array.prototype.forEach.call(sel.options, function (o) {
+      if (!o.value) return;
+      var b = document.createElement("button"); b.type = "button"; b.textContent = o.text; b.dataset.v = o.value; b.setAttribute("role", "radio");
+      b.title = "Marks this record as " + o.text.toLowerCase() + ". The form then shows the fields for that stage.";
+      b.addEventListener("click", function () { sel.value = o.value; sel.dispatchEvent(new Event("change", { bubbles: true })); sync(); });
+      row.appendChild(b);
+    });
+    function sync() { row.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-checked", String(b.dataset.v === sel.value)); }); setTimeout(renumber, 10); }
+    sel.addEventListener("change", sync);
+    sel.classList.add("pa-stage-select"); box.appendChild(row); sync();
+  }
+  form.addEventListener("change", function () { setTimeout(renumber, 10); });
+  setTimeout(renumber, 20);
+  // 4. Save and Cancel in a bar at the bottom of the screen.
+  var act = form.querySelector(":scope > .actions"); if (act) act.classList.add("pa-fbar");
 })();
