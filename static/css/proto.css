@@ -1153,3 +1153,11 @@ body.proto.pa main .head:not(.panel .head) > div:first-child > p { margin: 0; pa
 body.proto.pa main .head:not(.panel .head) > div:first-child > h1 + p { margin-top: var(--px-3); }
 body.proto.pa main .head:not(.panel .head) > div:first-child > p + p { padding-top: .45em; }
 body.proto.pa main .head:not(.panel .head) > * + * { margin: 0; }
+/* Pages with "On this page" (results, Center results, the dashboard, progress tracks) share the forms'
+   white page: the list and the content sit together on one white panel (MW 2026-11-06). */
+@media (min-width: 761px) {
+  body.proto .px-onpage-layout { background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); box-shadow: var(--px-shadow); padding: var(--px-6); }
+}
+@media (max-width: 760px) {
+  body.proto .px-onpage-layout > .px-onpage-main { background: var(--px-surface); border: 1px solid var(--px-line); border-radius: var(--px-r-lg); padding: var(--px-4); }
+}
