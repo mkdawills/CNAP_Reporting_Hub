@@ -10,7 +10,7 @@
     <span class="rb-chip">{% if on_roster %}On the CNAP roster{% else %}Not on the CNAP roster{% endif %}</span>
     <span class="small muted">{% if on_roster %}They receive the all-member surveys.{% else %}They receive only what their relationships call for.{% endif %}</span>
     {% if can_manage %}<form method="post" action="{% url 'manage:person_roster' p.pk %}">{% csrf_token %}
-      {% if on_roster %}<input type="hidden" name="action" value="remove"><button class="btn small ghost" type="submit">Remove from roster</button>
+      {% if on_roster %}<input type="hidden" name="action" value="remove"><button class="btn small ghost" type="submit" data-confirm="Take {{ p }} off the CNAP roster? The all-member surveys stop from the next reporting period.">Remove from roster</button>
       {% else %}<button class="btn small" type="submit">Add to roster</button>{% endif %}</form>{% endif %}
   </div>
 </div>
@@ -23,7 +23,7 @@
         <div class="fieldrow" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)">
           <span>{{ e.email }}{% if e.is_primary %} <span class="chip st-submitted">Main</span>{% endif %}</span>
           {% if can_manage %}<span>{% if not e.is_primary %}<form class="inline" method="post" action="{% url 'manage:person_email_primary' p.pk e.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit">Make main</button></form>{% endif %}
-          <form class="inline" method="post" action="{% url 'manage:person_email_remove' p.pk e.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit">Remove</button></form></span>{% endif %}
+          <form class="inline" method="post" action="{% url 'manage:person_email_remove' p.pk e.pk %}">{% csrf_token %}<button class="linkbtn small" type="submit" data-confirm="Remove the email address {{ e.email }}?">Remove</button></form></span>{% endif %}
         </div>
       {% empty %}<p class="error">{{ "No email on file. This person can’t receive sign-in links or reminders."|stack }}</p>{% endfor %}
       {% if can_manage %}

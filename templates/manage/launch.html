@@ -55,6 +55,6 @@
   });
 })();
 </script>
-{% if draft %}{% if can_manage %}<form method="post" action="{% url 'manage:launch_go' p.pk %}" class="actions">{% csrf_token %}<button class="btn" type="submit" onclick="return confirm('Open {{ p.short_label }} and assign everyone their forms?')">Approve and open {{ p.short_label }}</button></form>
+{% if draft %}{% if can_manage %}<form method="post" action="{% url 'manage:launch_go' p.pk %}" class="actions">{% csrf_token %}<button class="btn" type="submit" onclick="return confirm('Open {{ p.name }} and send each person a list of forms?')">Approve and open {{ p.short_label }}</button></form>
 {% else %}<p class="small muted">View only. Only the evaluator can launch a period.</p>{% endif %}{% endif %}
 {% endblock %}

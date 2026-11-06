@@ -356,3 +356,57 @@ document.addEventListener("click", function (e) {
   }
   document.addEventListener("DOMContentLoaded", function () { setTimeout(run, 0); });
 })();
+
+/* Confirm on the page (MW 2026-11-06, checklist 110). Closing a period, finalizing, launching, sending email,
+   and removing something ask first, in a short note under the button, instead of the browser's gray pop-up.
+   The note names what will happen; "Yes, ..." does exactly what the button always did. */
+(function () {
+  function msgOf(code) {
+    var m = /confirm\(\s*'((?:[^'\\]|\\.)*)'\s*\)/.exec(code || "");
+    if (!m) return null;
+    try { return JSON.parse('"' + m[1].replace(/\\'/g, "'").replace(/"/g, '\\"') + '"'); } catch (e) { return m[1]; }
+  }
+  function setup() {
+    document.querySelectorAll("[onclick*='confirm(']").forEach(function (b) {
+      var t = msgOf(b.getAttribute("onclick")); if (t === null) return;
+      b.removeAttribute("onclick"); b.setAttribute("data-confirm", t);
+    });
+    document.querySelectorAll("form[onsubmit*='confirm(']").forEach(function (f) {
+      var t = msgOf(f.getAttribute("onsubmit")); if (t === null) return;
+      f.removeAttribute("onsubmit"); f.setAttribute("data-confirm", t);
+    });
+  }
+  function close(panel, back) { if (panel) { panel.remove(); if (back) { back.hidden = false; back.focus(); } } }
+  function ask(form, btn, text) {
+    var old = form.parentNode.querySelector(":scope > .px-confirm"); if (old) { old.remove(); form.querySelectorAll("[hidden][data-confirm]").forEach(function (x) { x.hidden = false; }); }
+    var label = (btn && btn.textContent.trim()) || "Continue";
+    var yesText = (btn && btn.getAttribute("data-yes")) || "Yes, " + (/^[A-Z]{2}/.test(label) ? label : label.charAt(0).toLowerCase() + label.slice(1));
+    var p = document.createElement("div"); p.className = "px-callout px-confirm"; p.setAttribute("role", "alertdialog"); p.setAttribute("aria-live", "assertive");
+    /* The approved message style: the question in bold, each further sentence on its own line. */
+    text.split(/(?<=[.?!])\s+/).forEach(function (s, i) { var q = document.createElement("p"); if (i === 0) { var st = document.createElement("strong"); st.textContent = s; q.appendChild(st); } else q.textContent = s; p.appendChild(q); });
+    /* One action at a time: the original button steps aside while the note is open (checklist 51). */
+    if (btn) btn.hidden = true;
+    var row = document.createElement("div"); row.className = "px-confirm-row";
+    var yes = document.createElement("button"); yes.type = "button"; yes.className = "btn px-btn"; yes.textContent = yesText; yes.title = "Goes ahead: " + label.toLowerCase() + ".";
+    var no = document.createElement("button"); no.type = "button"; no.className = "btn ghost px-btn px-btn-ghost"; no.textContent = "No, go back"; no.title = "Closes this note. Nothing changes.";
+    row.appendChild(yes); row.appendChild(no); p.appendChild(row);
+    form.after(p); yes.focus();
+    yes.addEventListener("click", function () { form.dataset.ok = "1"; if (btn) btn.dataset.ok = "1"; p.remove(); if (form.requestSubmit) form.requestSubmit(btn || undefined); else (btn || form).click(); });
+    no.addEventListener("click", function () { close(p, btn); });
+    p.addEventListener("keydown", function (e) { if (e.key === "Escape") close(p, btn); });
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-confirm], input[type=submit][data-confirm]");
+    if (!b || !document.body.classList.contains("proto")) return;
+    if (b.dataset.ok === "1") { delete b.dataset.ok; return; }
+    var f = b.form; if (!f) return;
+    e.preventDefault(); ask(f, b, b.getAttribute("data-confirm"));
+  }, true);
+  document.addEventListener("submit", function (e) {
+    var f = e.target;
+    if (!document.body.classList.contains("proto") || !f.hasAttribute("data-confirm")) return;
+    if (f.dataset.ok === "1") { delete f.dataset.ok; return; }
+    e.preventDefault(); ask(f, e.submitter || f.querySelector("[type=submit], button:not([type=button])"), f.getAttribute("data-confirm"));
+  }, true);
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup); else setup();
+})();

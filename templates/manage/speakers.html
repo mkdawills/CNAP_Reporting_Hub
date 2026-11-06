@@ -43,18 +43,18 @@
 <div class="panel">
   <h2 class="sectionhead">Coming up ({{ upcoming|length }})</h2>
   {% if upcoming %}<div class="scroll"><table title="Talks that have not finished yet. Each speaker’s survey goes out when the talk ends."><thead><tr><th>Speaker</th><th>Talk</th><th>Ends</th><th>Survey</th><th></th></tr></thead><tbody>
-  {% for t in upcoming %}<tr><td>{{ t.speaker }}{% if t.speaker.institution %}<div class="small muted">{{ t.speaker.institution }}</div>{% endif %}</td><td>{{ t.title }}</td><td class="small">{{ t.ends_at|date:"M j, g:i A" }}</td>
+  {% for t in upcoming %}<tr><td>{{ t.speaker }}{% if t.speaker.institution %}<div class="small muted">{{ t.speaker.institution }}</div>{% endif %}</td><td>{{ t.title }}</td><td class="small">{{ t.ends_at|date:"M j, g:i A" }} Central Time</td>
     <td class="small">{% if t.auto_send %}Goes out automatically when the talk ends.{% else %}You’ll send it by hand.{% endif %}</td>
-    <td>{% if can_manage %}<form method="post" action="{% url 'manage:speaker_send' t.pk %}" style="display:inline">{% csrf_token %}<button class="btn small ghost" type="submit">Send the survey now</button></form>
-      <form method="post" action="{% url 'manage:speaker_remove' t.pk %}" style="display:inline">{% csrf_token %}<button class="btn small ghost" type="submit">Remove</button></form>{% endif %}</td></tr>{% endfor %}
+    <td>{% if can_manage %}<form method="post" action="{% url 'manage:speaker_send' t.pk %}" style="display:inline">{% csrf_token %}<button class="btn small ghost" type="submit" data-confirm="Email the NeuroSync Speaker Survey to {{ t.speaker }} now, before the talk ends?">Send the survey now</button></form>
+      <form method="post" action="{% url 'manage:speaker_remove' t.pk %}" style="display:inline">{% csrf_token %}<button class="btn small ghost" type="submit" data-confirm="Remove the talk “{{ t.title }}”? No survey goes out for a removed talk.">Remove</button></form>{% endif %}</td></tr>{% endfor %}
   </tbody></table></div>{% else %}<p class="small muted">No talks are coming up. Add one above.</p>{% endif %}
 </div>
 <div class="panel">
   <h2 class="sectionhead">Past talks ({{ past|length }})</h2>
   {% if past %}<div class="scroll"><table title="Talks already given, and whether each speaker’s survey went out."><thead><tr><th>Speaker</th><th>Talk</th><th>Ended</th><th>Survey</th><th></th></tr></thead><tbody>
-  {% for t in past %}<tr><td>{{ t.speaker }}</td><td>{{ t.title }}</td><td class="small">{{ t.ends_at|date:"M j, g:i A" }}</td>
-    <td class="small">{% if t.sent_at %}Sent {{ t.sent_at|date:"M j, g:i A" }} to {{ t.sent_to }}.{% if t.assignment %}<br>{% if t.assignment.status == 'submitted' %}Answered.{% else %}Not answered yet.{% endif %}{% endif %}{% else %}Not sent.{% endif %}</td>
-    <td>{% if can_manage %}<form method="post" action="{% url 'manage:speaker_send' t.pk %}">{% csrf_token %}<button class="btn small ghost" type="submit">{% if t.sent_at %}Send it again{% else %}Send the survey now{% endif %}</button></form>{% endif %}</td></tr>{% endfor %}
+  {% for t in past %}<tr><td>{{ t.speaker }}</td><td>{{ t.title }}</td><td class="small">{{ t.ends_at|date:"M j, g:i A" }} Central Time</td>
+    <td class="small">{% if t.sent_at %}Sent {{ t.sent_at|date:"M j, g:i A" }} Central Time to {{ t.sent_to }}.{% if t.assignment %}<br>{% if t.assignment.status == 'submitted' %}Answered.{% else %}Not answered yet.{% endif %}{% endif %}{% else %}Not sent.{% endif %}</td>
+    <td>{% if can_manage %}<form method="post" action="{% url 'manage:speaker_send' t.pk %}">{% csrf_token %}<button class="btn small ghost" type="submit" data-confirm="Email the NeuroSync Speaker Survey to {{ t.speaker }}{% if t.sent_at %} again{% endif %}?">{% if t.sent_at %}Send it again{% else %}Send the survey now{% endif %}</button></form>{% endif %}</td></tr>{% endfor %}
   </tbody></table></div>{% else %}<p class="small muted">No past talks yet.</p>{% endif %}
 </div>
 <details class="panel"><summary class="small"><strong>What the email says</strong></summary>

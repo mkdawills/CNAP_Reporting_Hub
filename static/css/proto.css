@@ -1358,3 +1358,12 @@ body.proto :is(.r90-pagebar, .px-rollbar.foldall:not(.r90-partbody .px-rollbar))
 /* MW 2026-11-06: a darker line marks the start of a new survey or part; lines inside a part stay light. */
 body.proto .r90 .px-section { border-top-color: color-mix(in srgb, var(--px-ink) 30%, var(--px-surface)); }
 body.proto .r90 .px-section:first-of-type { border-top: 0; }
+/* Confirm on the page (checklist 110): a lavender note right under the button, sentences stacked, buttons on the left. */
+body.proto .px-confirm { margin: var(--px-3) 0; padding: var(--px-4) var(--px-5); max-width: var(--px-measure); background: var(--px-brand-tint); border: 1px solid color-mix(in srgb, var(--px-brand) 25%, var(--px-line)); border-radius: var(--px-r); text-align: left; white-space: normal; }
+body.proto .px-confirm p { margin: 0; color: var(--px-ink); font-size: var(--px-fs-sm); line-height: 1.55; }
+body.proto .px-confirm p + p { margin-top: .4em; }
+body.proto .px-confirm-row { display: flex; flex-wrap: wrap; gap: var(--px-3); margin-top: var(--px-4); }
+/* The confirmation note uses the approved message style (no outline, bold question), with room to breathe. */
+body.proto .px-callout.px-confirm { display: block; border: 0; margin: var(--px-4) 0 var(--px-6); padding: var(--px-5) var(--px-6); }
+body.proto .px-callout.px-confirm p + p { margin-top: .5em; }
+body.proto .px-callout.px-confirm .px-confirm-row { margin-top: var(--px-5); }
