@@ -328,3 +328,14 @@ def test_core_counts_skip_resources_only_planned(demo):
     for k in after.values():
         assert k["mentions"] >= k["total"]
     assert max(k["scale"] for k in after.values()) in (0, 100)
+
+
+@override_settings(UI_PROTOTYPE=True)
+def test_names_on_hover_only_where_names_are_allowed(client, demo):
+    """Point to a count to see who is behind it (MW 2026-11-06): the evaluator yes; de-identified readers never."""
+    url = f"/manage/results/{demo.short_label}/bn_core_survey/"
+    client.force_login(User.objects.get(username="mwills"))
+    assert 'class="px-names"' in client.get(url).content.decode()
+    client.force_login(User.objects.get(username="hbailey"))
+    html = client.get(url).content.decode()
+    assert 'class="px-names"' not in html and "data-names" not in html
