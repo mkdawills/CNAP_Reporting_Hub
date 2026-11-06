@@ -1389,3 +1389,15 @@ body.proto.pa .pa-page .pcard .head { margin-bottom: 0; }
 body.proto.pa .pa-page .pcard .head .whatsnext { margin-top: var(--px-3); }
 body.proto.pa .pa-page .pa-cardlinks { margin: var(--px-4) 0 0; color: var(--px-muted); }
 body.proto.pa .pa-page > .panel + .panel, body.proto.pa .pa-page > * + .panel, body.proto.pa .pa-page > .panel + *:not(.px-dlfoot) { border-top-color: color-mix(in srgb, var(--px-ink) 30%, var(--px-surface)) !important; }
+
+/* Division, everywhere (MW 2026-11-06, checklist 147): a darker line starts each item on a page (a form section,
+   a survey or part, a dashboard section, a list, a builder step, a person-page section, a data check, a period);
+   lighter lines divide the sections inside one item; inside a section there is only space, apart from table rows. */
+body.proto { --px-divide: color-mix(in srgb, var(--px-ink) 30%, var(--px-surface)); }
+body.proto .p21 .section, body.proto .p21 .section.outline { border-bottom-color: var(--px-divide); }
+body.proto .px-rolls:not(.r90-partbody .px-rolls) > details.px-roll { border-bottom-color: var(--px-divide); }
+body.proto .px-rolls:not(.r90-partbody .px-rolls) > details.px-roll:first-of-type, body.proto .px-rolls:not(.r90-partbody .px-rolls) > .px-rollbar + details.px-roll { border-top-color: var(--px-divide); }
+body.proto .px-page .rbd-step + .rbd-step, body.proto .px-page .r33-cores, body.proto .px-page .r33-cta, body.proto .px-page .r33-lists, body.proto .px-page .rbd-go { border-top-color: var(--px-divide); }
+body.proto .r90 .px-section { border-top-color: var(--px-divide); }
+body.proto.pa .pa-page .rollup > section + section, body.proto.pa .pa-page .rollup .panel.rollsec, body.proto.pa .pa-page .rollup details.panel, body.proto.pa .pa-page details.pa-roll ~ details.pa-roll, body.proto.pa .pa-page details.pa-roll + details.pa-roll { border-top-color: var(--px-divide) !important; }
+body.proto.pa .pa-page .rollup > div:first-of-type > .panel.rollsec:first-child { border-top-color: var(--px-line) !important; }
