@@ -21,11 +21,11 @@
   </header>
 
   {% if p %}
-  {% if p.status == 'open' %}<div class="px-callout r65-note" role="note"><p>{{ p.short_label }} is still open.<br>These results are live, not an official snapshot.</p></div>{% endif %}
+  {% if p.status == 'open' %}<div class="px-callout r65-note" role="note"><p>{{ p.name }} is still open.<br>These results are live, not an official snapshot.</p></div>{% endif %}
   {% if cards and cards.0.historical %}<div class="px-callout r65-note" role="note"><p>{{ "This period predates the Reporting Hub, so answers were never collected here. Forms marked “Prior-year averages” show the averages imported from the old site-visit workbooks. Forms marked “Nothing on file” have no imported numbers for this period; if you have those numbers, the Center can import them the same way."|stack }}</p></div>{% endif %}
 
   <section class="px-section r65-list" aria-labelledby="r65-h">
-    <h2 class="px-h2" id="r65-h">Forms in {{ p.short_label }}</h2>
+    <h2 class="px-h2" id="r65-h">Forms in {{ p.name }}</h2>
     {% if not cards.0.historical %}<p class="r65-dl"><a class="px-btn small quiet" href="{% url 'manage:export_everything' p.short_label %}" title="One Excel workbook: a contents sheet, each form’s answers your access includes, and the papers, talks, and grants lists.">Download everything (Excel)</a></p>{% endif %}
     <div class="px-tablewrap">
     <table class="px-table r65-table" title="Every form in this period, with completion and your access to its results.">
@@ -36,7 +36,7 @@
         <td class="num" data-label="Complete">{% if c.comp %}{{ c.comp.complete }} of {{ c.comp.assigned }}{% else %}<span class="px-muted" title="Not applicable for this period">—</span>{% endif %}</td>
         <td class="num" data-label="Opted out">{% if c.comp %}{{ c.comp.opted_out }}{% else %}<span class="px-muted" title="Not applicable for this period">—</span>{% endif %}</td>
         <td class="r65-access" data-label="Your access">{% if c.locked %}Confidential: no access{% elif c.no_data %}<span class="px-muted">Nothing on file for this period</span>{% elif c.historical %}Prior-year averages{% elif c.mode == 'identified' %}With names{% elif c.mode == 'deidentified' %}Without names{% else %}Combined results only{% endif %}</td>
-        <td class="r65-open">{% if not c.locked and not c.no_data %}<a class="px-btn small quiet" href="{% url 'manage:form_report' p.short_label c.fd.code %}" title="Open the {{ c.fd.name }} results for {{ p.short_label }}.">Open results</a>{% endif %}</td>
+        <td class="r65-open">{% if not c.locked and not c.no_data %}<a class="px-btn small quiet" href="{% url 'manage:form_report' p.short_label c.fd.code %}" title="Open the {{ c.fd.name }} results for {{ p.name }}.">Open results</a>{% endif %}</td>
       </tr>{% empty %}<tr><td colspan="5" class="px-muted">No forms in this period.</td></tr>{% endfor %}
       </tbody>
     </table>

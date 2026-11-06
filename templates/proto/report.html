@@ -7,7 +7,7 @@
 <div class="r90">
   <div class="px-top">
   <div class="px-top-main">
-  <a class="px-link p21-back" href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.short_label }}</a>
+  <a class="px-link p21-back" href="{% url 'manage:results' %}?period={{ period.short_label }}">All results for {{ period.name }}</a>
   <header class="px-mast">
     <p class="px-eyebrow">Results · {{ period.name }}</p>
     <div class="px-mast-row">
@@ -30,16 +30,17 @@
     </dl>
   </header>
 
+  {% if period.assignments.exists %}{# imported prior-year averages have no responses, so no note about names #}
   <div class="r90-privacy px-callout" role="note">
     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
     {% if fd.confidentiality_class == 'mentoring' %}<p><strong>Confidential mentoring {{ noun }}.</strong><br>This page opens only for people with confidential mentoring access.<br>The combined results come first.<br>Anything that could identify a person is kept apart in the last section, “Identifiable information.”</p>
     {% elif mode == 'identified' %}<p><strong>Results with names.</strong><br>The combined results come first.<br>Names and individual responses are kept apart in the last section, “Identifiable information.”</p>
     {% elif mode == 'deidentified' %}<p><strong>Results without names.</strong><br>Names are not shown for this {{ noun }}, to protect respondents’ confidentiality.{% if deid_blocked %}<br>Fewer than 5 people completed this {{ noun }}, so only the combined results are shown.{% endif %}</p>
     {% else %}<p><strong>Combined results only.</strong><br>Individual responses to this {{ noun }} are not shown with your access.</p>{% endif %}
-  </div>
+  </div>{% endif %}
 
   {% if not period.assignments.exists %}
-  <div class="px-callout warn r90-imported"><p>These are prior-year averages imported from the site-visit reports. There are no individual responses for this period, so the answer-by-answer charts appear only for periods run in the Hub.</p></div>
+  <div class="px-callout warn r90-imported"><p>These are prior-year averages imported from the site-visit reports.<br>There are no individual responses for this period, so the answer-by-answer charts appear only for periods run in the Hub.</p></div>
   {% endif %}
 
   </div>
