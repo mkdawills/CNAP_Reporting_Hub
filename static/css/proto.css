@@ -1288,3 +1288,73 @@ body.proto.pa .pa-page details.lgroup > summary > span + span:not(.px-roll-cue) 
 body.proto.pa .pa-page details.lgroup[open] > summary { margin-bottom: var(--px-3); }
 body.proto.pa .pa-page details.lgroup > summary > .px-roll-cue { border-left: 0; padding-left: var(--px-4); font-size: var(--px-fs-sm); color: var(--px-brand); }
 body.proto.pa .pa-page details.lgroup > summary > .rchip { padding: 3px 10px; border: 1px solid; font-size: var(--px-fs-xs); }
+
+/* Roll-up order and spacing (MW 2026-11-06: "create some order and clarity with line height and padding and hierarchy logic").
+   One system for every results page and Center results:
+   - A part's number hangs in the left gutter; the title, the line under it, and everything in the part start on one left edge.
+   - Each level keeps one size and one spacing, open or closed, so a heading never moves when its section opens.
+     Part: serif 1.5rem, 20px above and below.  Section: label, then serif 1.25rem, 20px above and below.  Table title: sans 1rem.
+   - A section that holds only its year-by-year table doesn't repeat its own heading inside. */
+body.proto .r90 { --rh-gut: calc(26px + var(--px-3)); }
+body.proto .r90 .r90-pagebar { margin: 0 0 var(--px-2); }
+body.proto .r90 .r32-showing { margin: 0 0 var(--px-3) var(--rh-gut); }
+body.proto .r90 .px-section details.r90-partroll > summary.px-section-head { padding: var(--px-5) var(--px-3); margin: 0 calc(-1 * var(--px-3)); border-radius: var(--px-r); }
+body.proto .r90 details.r90-partroll > summary .px-roll-cue { margin-top: 6px; }
+body.proto .r90 .r90-part { font: 500 1.5rem/1.3 var(--px-serif); margin: 0; }
+body.proto .r90 .r90-partt { gap: 6px; }
+body.proto .r90 .r90-partt > .px-note { padding-left: var(--rh-gut); font-size: var(--px-fs-sm); line-height: 1.5; color: var(--px-muted); }
+body.proto .r90 .r90-partbody { margin-left: var(--rh-gut); padding-bottom: var(--px-5); }
+body.proto .r90 .px-section { margin: 0; border-top: 1px solid var(--px-line); }
+body.proto .r90 .px-section:first-of-type { border-top: 0; }
+body.proto .r90 .px-section:has(details.r90-partroll:not([open])) { margin-bottom: 0; }
+/* Sections inside a part: the same height and spacing open or closed. */
+body.proto .r90 details.r90-sec > summary, body.proto .r90 .r90-partbody details.px-roll > summary { padding: var(--px-5) var(--px-3); }
+body.proto .r90 details.r90-sec > summary .px-roll-t { gap: 4px; }
+body.proto .r90 details.r90-sec > summary .px-label { font-size: var(--px-fs-xs); line-height: 1.4; }
+body.proto .r90 details.r90-sec > summary .px-h2 { font: 500 1.25rem/1.3 var(--px-serif); margin: 0; }
+body.proto .r90 details.r90-sec > .px-roll-body { padding: 0 0 var(--px-6); }
+body.proto .r90 .r90-partbody > .r90-secs > details.px-roll:first-of-type { border-top: 1px solid var(--px-line); }
+/* Table titles inside a section: one step below the section heading. */
+body.proto .r90 .r90-lon { margin-top: var(--px-6); padding-top: var(--px-5); }
+body.proto .r90 .r90-lon .px-h3 { font: 600 1rem/1.4 var(--px-sans); margin: 2px 0 var(--px-2); }
+body.proto .r90 .r90-lon-only { margin-top: 0; padding-top: 0; border-top: 0; }
+body.proto .r90 .r90-lon-only > .r90-lonlabel, body.proto .r90 .r90-lon-only > .px-h3 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+body.proto .r90 details.r90-sec > summary, body.proto .r90 .r90-partbody details.px-roll > summary { align-items: start; }
+body.proto .r90 details.r90-sec > summary .px-roll-cue, body.proto .r90 .r90-partbody details.px-roll > summary .px-roll-cue { margin-top: 14px; }
+/* One line between parts, never two: the last section in a part has no line of its own. */
+body.proto .r90 .r90-partbody details.px-roll:last-of-type { border-bottom: 0; }
+body.proto .r90 .r90-partbody details.px-roll:last-of-type > .px-roll-body { padding-bottom: var(--px-3); }
+body.proto .r90 .r90-partbody { padding-bottom: var(--px-4); }
+@media (max-width: 760px) {
+  body.proto .r90 .r90-part { font-size: 1.25rem; }
+  body.proto .r90 details.r90-sec > summary .px-h2 { font-size: 1.125rem; }
+}
+/* Administration roll-ups use the same rhythm: 20px above and below every heading, one line between sections. */
+body.proto.pa .pa-page details.pa-roll > summary, body.proto.pa .pa-page .rollhead { padding: var(--px-5) 0; margin: 0; }
+body.proto.pa .pa-page details.pa-roll + details.pa-roll { margin-top: 0; padding-top: 0; border-top: 1px solid var(--px-line); }
+body.proto.pa .pa-page details.pa-roll[open] > summary { padding-bottom: var(--px-4); }
+/* Roll-ups that the page splits across several boxes keep the same rhythm: one line, no extra gap. */
+body.proto.pa .pa-page > .panel:has(> details.pa-roll:first-child), body.proto.pa .pa-page > .panel:has(> .foldall:first-child) { margin-top: 0; padding-top: 0; }
+body.proto.pa .pa-page details.pa-roll ~ details.pa-roll { border-top: 1px solid var(--px-line); }
+body.proto.pa .pa-page .foldall + details.pa-roll, body.proto.pa .pa-page .foldall + section { border-top: 0; }
+/* Roll-up sections across a two-column grid read as one stacked list, with one line between each. */
+body.proto.pa .pa-page .grid2.rollup { display: block; }
+body.proto.pa .pa-page .rollup .panel.rollsec { margin: 0 !important; padding: 0 !important; border: 0; border-top: 1px solid var(--px-line) !important; }
+body.proto.pa .pa-page .rollup > div:first-of-type > .panel.rollsec:first-child, body.proto.pa .pa-page .rollup > .foldall + div > .panel.rollsec:first-child { border-top: 0 !important; }
+body.proto.pa .pa-page .rollup .panel.rollsec[data-open="1"] > :last-child { margin-bottom: var(--px-5); }
+body.proto.pa .pa-page .rollup details.panel { margin: 0 !important; padding: 0 !important; border: 0; border-top: 1px solid var(--px-line) !important; }
+body.proto.pa .pa-page .rollup details.panel > summary { padding: var(--px-5) 0; }
+
+/* MW 2026-11-06: Show all and Collapse all travel down the page with the reader. The pair sits in a small
+   white pill at the top right, staying in reach while the page scrolls; below the slim top bar on phones. */
+body.proto :is(.r90-pagebar, .px-rollbar.foldall:not(.r90-partbody .px-rollbar)), body.proto.pa .pa-page .foldall:not([hidden]) {
+  position: sticky; top: var(--px-4); z-index: 25; width: fit-content; margin-left: auto;
+  padding: 2px var(--px-3); gap: var(--px-4); border: 1px solid var(--px-line); border-radius: 999px;
+  background: color-mix(in srgb, var(--px-surface) 94%, transparent); backdrop-filter: blur(6px);
+  box-shadow: 0 2px 10px rgba(30, 20, 50, .06);
+}
+@media (max-width: 760px) { body.proto :is(.r90-pagebar, .px-rollbar.foldall:not(.r90-partbody .px-rollbar)), body.proto.pa .pa-page .foldall:not([hidden]) { top: 76px; } }
+
+/* MW 2026-11-06: a darker line marks the start of a new survey or part; lines inside a part stay light. */
+body.proto .r90 .px-section { border-top-color: color-mix(in srgb, var(--px-ink) 30%, var(--px-surface)); }
+body.proto .r90 .px-section:first-of-type { border-top: 0; }

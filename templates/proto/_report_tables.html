@@ -64,7 +64,7 @@
   {% if t.left_out %}<p class="px-note">{{ t.left_out }} item{{ t.left_out|pluralize }} aren’t shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"that item,those items" }}. This keeps anyone’s answers from being worked out.</p>{% endif %}
 {% endif %}
 {% if t.lon and t.lon.periods|length > 1 %}
-<div class="r90-lon">
+<div class="r90-lon{% if t.skip_main %} r90-lon-only{% endif %}">
   <p class="px-label r90-lonlabel">Table {{ t.lon.no }} · {% with first=t.lon.periods|first last=t.lon.periods|last %}{{ first.short_label }} to {{ last.short_label }} averages{% endwith %}</p><h4 class="px-h3" id="{{ pfx|default:'r90' }}-lon{{ t.lon.no }}">Year by year: {{ t.lon_title|admin_section_name }}</h4>
   {% with tr=t.lon.trend %}{% if tr %}
 <div class="trend">

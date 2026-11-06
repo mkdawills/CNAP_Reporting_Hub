@@ -22,7 +22,7 @@
         <select id="r32-period" name="period" onchange="this.form.submit()" title="Choose a reporting period. The page reloads with that period’s results.">{% for p in periods %}<option value="{{ p.short_label }}" {% if p == selected %}selected{% endif %}>{{ p.short_label }}</option>{% endfor %}</select>
         <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>{% endif %}
     </div>
-    <p class="r65-purpose">{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}{{ "Combined results from finalized reporting periods. These results show what the Center learned from everyone’s answers."|stack }}{% endif %}</p>
+    <p class="r65-purpose">{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}What the Center learned from everyone’s answers, combined, for each finalized reporting period.{% endif %}</p>
     {% if view != "products" %}<p class="r32-priv" title="Results show only combined numbers. No one’s individual answers, and no names, ever appear here."><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Individual answers and names are never shown.</p>{% endif %}
   </header>
 
@@ -93,7 +93,7 @@
     <div class="p21-navtop"><p class="px-label">On this page</p><button type="button" class="p21-collapse" data-navtoggle aria-expanded="true" title="Hide this list to give the page more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
     <ol>{% for c in cards %}<li><a href="#r32-f{{ forloop.counter }}" data-onpage><span class="px-onpage-n">{{ forloop.counter }}</span>{{ c.fd.name }}</a></li>{% endfor %}</ol>
   </nav>
-  <div class="px-onpage-main">
+  <div class="px-onpage-main r90">
     <div class="px-rollbar foldall taskfold r90-pagebar"><button type="button" data-pageroll="open" title="Opens every form and every section on this page.">Show all</button><button type="button" data-pageroll="close" title="Rolls the page up to the form names.">Collapse all</button></div>
     <p class="px-eyebrow r32-showing">Showing results for {{ selected.name }}</p>
     {% for c in cards %}
