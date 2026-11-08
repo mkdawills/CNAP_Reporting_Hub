@@ -1868,3 +1868,5 @@ body.proto .px-mast-row > .px-status { margin: 0 !important; order: 2; }
   html body.proto .px-onpage-layout.navclosed::before { left: calc(64px + 24px); }
 }
 @media (min-width: 1181px) { html body.proto .px-onpage-layout > .px-onpage { padding-right: var(--px-4); box-sizing: border-box; } }
+/* The note under the Center totals: every line centered the same way, one sentence per line (MW 2026-11-08). */
+body.proto .made-foot { text-align: center; line-height: 1.7; }
