@@ -23,7 +23,7 @@
   {% if p %}
   <div class="px-page">{# one white page for the content (MW 2026-11-06) #}
   {% if p.status == 'open' %}<div class="px-callout r65-note" role="note"><p>{{ p.name }} is still open.<br>These results are live, not an official snapshot.</p></div>{% endif %}
-  {% if cards and cards.0.historical %}<div class="px-callout r65-note" role="note"><p>{{ "This reporting session predates the Reporting Hub, so answers were never collected here. Forms marked “Prior-year averages” show the averages imported from the old site-visit workbooks. Forms marked “Nothing on file” have no imported numbers for this reporting session; if you have those numbers, the Center can import them the same way."|stack }}</p></div>{% endif %}
+  {% if cards and cards.0.historical %}<div class="px-callout r65-note" role="note"><p>{{ "This reporting session predates the Reporting Hub, so answers were never collected here. Forms marked “Prior-year averages” show the averages imported from the old site-visit workbooks. Forms marked “Nothing on file” have no imported numbers for this reporting session. If you have those numbers, the Center can import them the same way."|stack }}</p></div>{% endif %}
 
   <section class="px-section r65-list" aria-labelledby="r65-h">
     <h2 class="px-h2" id="r65-h">Forms in {{ p.name }}</h2>

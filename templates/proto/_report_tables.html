@@ -23,7 +23,7 @@
   {% endif %}
   {% endwith %}
   <div class="r90-full">
-<div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on" title="Show both the number of people (n) and the share (%) for each answer. The table stays the same; only the columns shown change.">n and %</button><button type="button" data-nview="n" title="Show only how many people chose each answer, the way the site-visit counts tables read.">n only</button><button type="button" data-nview="p" title="Show only the share of answers for each option, easiest for comparing items with different numbers of answers.">% only</button></div>
+<div class="nview" role="group" aria-label="Columns to show"><span class="small muted">Show:</span> <button type="button" data-nview="both" class="on" title="Show both the number of people (n) and the share (%) for each answer. The table stays the same. Only the columns shown change.">n and %</button><button type="button" data-nview="n" title="Show only how many people chose each answer, the way the site-visit counts tables read.">n only</button><button type="button" data-nview="p" title="Show only the share of answers for each option, easiest for comparing items with different numbers of answers.">% only</button></div>
 <div class="scroll"><table class="reptab" title="Every item in this section for this reporting session: the mean, the standard deviation, and how many people chose each answer.">
   <thead>
     <tr>
@@ -98,7 +98,7 @@
     <tr class="totrow"><td style="text-align:right"><strong>Overall mean ratings:</strong></td>{% for c in t.lon.overall %}<td class="num{% if forloop.first %} ygstart{% endif %}" style="{{ c.style }}"><strong>{% if c.mean is not None %}{{ c.mean|floatformat:1 }}{% else %}–{% endif %}</strong></td><td class="num sdc">{% if c.sd is not None %}({{ c.sd|floatformat:1 }}){% endif %}</td>{% endfor %}</tr>
   </tbody>
 </table></div>
-<p class="small muted mt">{{ "Shading: red is below this table’s middle value, blue is above it; the deeper the color, the further from the middle."|stack }}{% if t.lon.has_sd %} {{ "SDs exist only where the source report gave them."|stack }}{% endif %}</p>
+<p class="small muted mt">{{ "Shading: red is below this table’s middle value, and blue is above it. The deeper the color, the further from the middle."|stack }}{% if t.lon.has_sd %} {{ "SDs exist only where the source report gave them."|stack }}{% endif %}</p>
 </details>
 </div>
 {% endif %}

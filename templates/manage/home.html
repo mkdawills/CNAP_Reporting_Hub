@@ -29,7 +29,7 @@
       <div class="field"><label>Photo (JPG, PNG, or WebP, under 8 MB)<input type="file" name="image" accept=".jpg,.jpeg,.png,.webp" required></label></div>
       <div class="field"><label>Describe the photo in a few words, for screen readers<input type="text" name="alt_text" maxlength="300" placeholder="For example: CNAP members at the Year 9 site visit" required></label></div>
       <div class="field"><label>Caption under the photo (optional)<input type="text" name="caption" maxlength="300" placeholder="For example: The CNAP team, spring 2026"></label></div>
-      <p class="small muted">{{ "Use a photo everyone pictured has agreed to share; the sign-in page is public."|stack }}</p>
+      <p class="small muted">{{ "Use a photo everyone pictured has agreed to share. The sign-in page is public."|stack }}</p>
       <div class="fieldrow"><button class="btn" title="Puts this photo on the sign-in page, replacing any earlier one.">Use this photo</button></div>
     </form>
     {% if site_photo %}<form method="post" action="{% url 'manage:photo_set' %}" class="mt">{% csrf_token %}<input type="hidden" name="action" value="remove"><button data-confirm="Take the photo off the sign-in page? The sign-in box stays." class="btn ghost small" title="Takes the photo off the sign-in page. The sign-in box stays.">Remove the photo</button></form>{% endif %}

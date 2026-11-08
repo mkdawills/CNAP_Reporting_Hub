@@ -6,7 +6,7 @@
 {% if p %}
 <h2 style="margin:4px 0 14px">{{ p.name }}</h2>
 {% if p.status == 'open' %}<div class="banner">{{ p.short_label }} is still open. These results are live, not an official snapshot.</div>{% endif %}
-{% if cards and cards.0.historical %}<p class="small muted">{{ "This reporting session predates the Reporting Hub, so answers were never collected here. The forms marked “Prior-year averages” show the year-by-year averages imported from the old site-visit workbooks. The forms marked “Nothing on file” have no imported numbers for this reporting session; if you have those numbers, the Center can import them the same way."|stack }}</p>{% endif %}
+{% if cards and cards.0.historical %}<p class="small muted">{{ "This reporting session predates the Reporting Hub, so answers were never collected here. The forms marked “Prior-year averages” show the year-by-year averages imported from the old site-visit workbooks. The forms marked “Nothing on file” have no imported numbers for this reporting session. If you have those numbers, the Center can import them the same way."|stack }}</p>{% endif %}
 <div class="panel scroll">
   <table title="Every form in this reporting session, with completion and your access to its report."><thead><tr><th>Form</th><th class="num">Complete</th><th class="num">Opted out</th><th>Your access</th><th></th></tr></thead><tbody>
   {% for c in cards %}<tr>

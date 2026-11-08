@@ -52,7 +52,7 @@
     </div>
   </aside>
   <main id="main">
-    {% if is_view_only_admin and request.resolver_match.namespace == 'manage' %}<div class="banner">View only. You can open every screen; changes are made by the evaluator.</div>{% endif %}
+    {% if is_view_only_admin and request.resolver_match.namespace == 'manage' %}<div class="banner">View only. You can open every screen.<br>The evaluator makes the changes.</div>{% endif %}
     {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m|stack }}{% else %}{{ m|stack }}{% endif %}</li>{% endfor %}</ul>{% endif %}
     {% block content %}{% endblock %}
     {% if request.proto_admin and not request.proto_own %}<script>

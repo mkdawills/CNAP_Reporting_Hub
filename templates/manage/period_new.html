@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Add a reporting session · {{ platform_name }}{% endblock %}
 {% block content %}
-<div class="head"><div><h1>Add a reporting session {% why "A reporting session is one survey session: Fall (surveyed in November), RPPR/Spring (surveyed in March), or a site-visit round. Creating one does not send anything; forms go out at launch." %}</h1><p>{{ "Nothing is sent when you add a reporting session. You’ll review what every respondent receives before launch."|stack }}</p></div></div>
+<div class="head"><div><h1>Add a reporting session {% why "A reporting session is one survey session: Fall (surveyed in November), RPPR/Spring (surveyed in March), or a site-visit round. Creating one does not send anything. Forms go out at launch." %}</h1><p>{{ "Nothing is sent when you add a reporting session. You’ll review what every respondent receives before launch."|stack }}</p></div></div>
 {% if request.proto_active %}<div class="panel pn-wrap"><div class="pn-grid">
   <form method="post">{% csrf_token %}
   {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}

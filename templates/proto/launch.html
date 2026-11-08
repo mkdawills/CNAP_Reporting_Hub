@@ -38,7 +38,7 @@ check the flags, check the totals, check each person, then approve.{% endcomment
     <section class="px-section" id="lch-1" aria-labelledby="lch-1-h">
       <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-1-h"><span>1</span>Check before launching</h2><p class="px-note">{% if warnings %}<b>{{ warnings|length }}</b> thing{{ warnings|length|pluralize }} to fix or confirm. This list updates as you fix them.{% else %}Nothing to fix.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="r90-partbody">
-        {% if warnings %}<ul class="lch-flags">{% for w in warnings %}<li><span class="lch-flag">To check</span><p>{{ w.text }}</p><a class="px-link" href="{{ w.url }}" title="Opens the page where this can be fixed. Come back here afterward; this list updates.">{% if '/projects/' in w.url %}Open the project{% else %}Open the person’s page{% endif %}</a></li>{% endfor %}</ul>
+        {% if warnings %}<ul class="lch-flags">{% for w in warnings %}<li><span class="lch-flag">To check</span><p>{{ w.text }}</p><a class="px-link" href="{{ w.url }}" title="Opens the page where this can be fixed. Come back here afterward. This list updates.">{% if '/projects/' in w.url %}Open the project{% else %}Open the person’s page{% endif %}</a></li>{% endfor %}</ul>
         {% else %}<div class="px-callout ok" role="status"><p><strong>No problems found.</strong><br>Every project has its people, and everyone on the roster has a role and an email.</p></div>{% endif %}
       </div></details>
     </section>

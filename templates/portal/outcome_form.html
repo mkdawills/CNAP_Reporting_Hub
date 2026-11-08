@@ -11,7 +11,7 @@
   {% if kind == 'pub' and stage != 'declined' or kind == 'presentation' or kind == 'grant' and stage == 'planned' or kind == 'grant' and stage == 'submitted' %}
   {% include "portal/_stevens_box.html" %}{% endif %}
   {% if kind == 'grant' and stage == 'not_funded' %}<details class="ackbox"><summary>What happens with your reviewer feedback?</summary>
-    <p class="small">{{ "As a CNAP awardee, you’re required to provide your reviewer feedback to the Center Director. Email it; don’t paste it on this page. The Center Director will provide support and coaching for your next steps. The Center Director may also have the project manager do a thematic analysis of the feedback."|stack }}</p>
+    <p class="small">{{ "As a CNAP awardee, you’re required to provide your reviewer feedback to the Center Director. Email it. Don’t paste it on this page. The Center Director will provide support and coaching for your next steps. The Center Director may also have the project manager do a thematic analysis of the feedback."|stack }}</p>
   </details>{% endif %}
   {% if form.non_field_errors %}<div class="error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
   {% for field in form %}

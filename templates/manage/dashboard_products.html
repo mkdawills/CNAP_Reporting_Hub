@@ -19,7 +19,7 @@
 </details>
 
 <details class="panel dashsec cntsec">
-  <summary><h2>Approximate publication pipeline comparison {% why "MW's Table 2: how many of last year's in-pipeline papers published the following year. The ratios are presumed estimates; papers are not tracked individually through the pipeline." %}</h2></summary>
+  <summary><h2>Approximate publication pipeline comparison {% why "MW's Table 2: how many of last year's in-pipeline papers published the following year. The ratios are presumed estimates. Papers are not tracked individually through the pipeline." %}</h2></summary>
   <div class="scroll"><table class="cnttab dashtab" title="Prior-year non-published count against next-year published count, with the approximate conversion ratio.">
     <thead><tr><th>Step</th><th class="num">Prior year non-published</th><th class="num">Next year published</th><th class="num">Conversion ratio</th></tr></thead>
     <tbody>{% for r in d.pipeline %}<tr><td>{{ r.step }}</td><td class="num">{{ r.prior }}</td><td class="num">{{ r.published }}</td><td class="num">{{ r.ratio }}</td></tr>{% empty %}<tr><td colspan="4" class="muted">Two years of records are needed before this table fills in.</td></tr>{% endfor %}</tbody>
@@ -85,7 +85,7 @@
 
 {% else %}
 <details class="panel dashsec cntsec">
-  <summary><h2>Center overall proposal counts {% why "MW's Grants Overall sheet: awarded, pending, and declined proposals by grant year. Pending is a proposal submitted and waiting; declined is a not-funded decision." %}</h2></summary>
+  <summary><h2>Center overall proposal counts {% why "MW's Grants Overall sheet: awarded, pending, and declined proposals by grant year. Pending is a proposal submitted and waiting. Declined is a not-funded decision." %}</h2></summary>
   {% include 'manage/_graph.html' with g=d.g_counts %}
   <p class="dash-legend">{% for label, color in d.legend %}<span><i style="background:{{ color }}"></i>{{ label }}</span>{% endfor %}</p>
   <div class="scroll"><table class="cnttab dashtab" title="Awarded, pending, and declined proposal counts by grant year.">
