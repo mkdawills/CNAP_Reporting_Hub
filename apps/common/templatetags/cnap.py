@@ -500,7 +500,7 @@ FORM_PURPOSE = {
     "mentor_questionnaire": "This questionnaire asks about your role as a CNAP mentor, considering all of your mentees together.",
     "neurosync_speaker_survey": "This survey asks NeuroSync speakers how the NeuroSync visit went.",
     "neurosync_survey": "Your ratings help the Center choose NeuroSync speakers and topics, and decide how the series is run.",
-    "nih_documents": "Each year, the Center reviews Current and Pending (Other) Support for Core Directors, Research Project Leaders, Pilot Project Leaders, and the Program Director/Principal Investigator.",
+    "nih_documents": "Each year, the Center reviews Current and Pending (Other) Support, and any foreign activity documents, for Core Directors, Research Project Leaders, Pilot Project Leaders, and the Program Director/Principal Investigator.",
     "pilot_mentor_report": "This report records your meetings with your Pilot Grantee/Mentee and your view of the Pilot Grantee/Mentee's progress toward the pilot program milestones.",
     "primary_mentor_report": "This report records your meetings with your Research Project Leader and your view of the Research Project Leader's progress toward the project milestones.",
     "progress_core": "Your semiannual progress report summarizes your core's accomplishments, plans, and changes.",

@@ -369,9 +369,9 @@ def _row_summary(qs, saved):
 # people who are asked for Current and Pending only). Keyed like display.intro_by. Display only: the form keeps its name.
 TITLE_BY = {
     "nih_documents": {
-        "default": "NIH Documents: Current and Pending (Other) Support",
+        "default": "NIH Documents: Current and Pending (Other) Support and Foreign Activity Documents",
         "osc": "NIH Documents: Biosketch",
-        "senior_key": "NIH Documents: Biosketch, Current and Pending (Other) Support, and Malign Foreign Talent Recruitment Program (MFTRP) Certification",
+        "senior_key": "NIH Documents: Biosketch, Current and Pending (Other) Support, Foreign Activity Documents, and Malign Foreign Talent Recruitment Program (MFTRP) Certification",
     },
 }
 
