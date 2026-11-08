@@ -9,10 +9,10 @@
     <h1 class="px-title si-title" id="si-h">Email me a sign-in link</h1>
     {% if sent %}
       <div class="px-callout ok" role="status"><p><strong>If {{ email }} is on file with the Center, a sign-in link is on its way.</strong></p></div>
-      <p class="px-note">The link works once and expires in {{ days }} days.<br>Please check your spam folder if the email doesn’t arrive in a few minutes.<br>Still nothing? Please make sure it’s the address the Center has for you.<br>You can also email the evaluator at {{ evaluator_email }}.</p>
+      <p class="px-note">The link works once and expires in {{ days }} days.<br>Check your spam folder if the email doesn’t arrive in a few minutes.<br>Still nothing? Make sure it’s the address the Center has for you.<br>You can also email the evaluator at {{ evaluator_email }}.</p>
       <div class="si-acts"><a class="px-btn quiet" href="{% url 'link_request' %}" title="Enter a different email address.">Send to a different address</a><a class="px-link" href="{% url 'login' %}">Back to sign in</a></div>
     {% else %}
-      <p class="px-note si-lede">Please enter the email address the Center has for you.<br>We’ll send a link that signs you in.</p>
+      <p class="px-note si-lede">Enter the email address the Center has for you.<br>We’ll send a link that signs you in.</p>
       <form method="post" class="si-form">{% csrf_token %}
         <label class="si-field" for="id_email"><span class="px-label">Email address</span><input type="email" name="email" id="id_email" autocomplete="email" autofocus required></label>
         <div class="si-acts"><button class="px-btn" type="submit" title="Email me a link that signs me in.">Send me a link</button><a class="px-link" href="{% url 'login' %}">Back to sign in</a></div>

@@ -95,7 +95,7 @@ def test_pdf_only_and_must_really_be_pdf(center):
     errs = rs.save_draft(
         a, u, {}, {"file-biosketch": SimpleUploadedFile("bio.docx", b"PK..", "application/msword")}
     )
-    assert any("Please upload a PDF" in e for e in errs)
+    assert any("Upload a PDF" in e for e in errs)
     errs = rs.save_draft(
         a, u, {}, {"file-biosketch": SimpleUploadedFile("bio.pdf", b"not a pdf", "application/pdf")}
     )

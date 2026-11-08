@@ -77,7 +77,7 @@ def test_send_by_hand_and_the_form_shows_the_talk(client, center):
     if u:
         client.force_login(u)
         page = client.get(f"/tasks/{t.assignment_id}/").content.decode()
-        assert "Hippocampal maps" in page and "Please answer by" in page
+        assert "Hippocampal maps" in page and "Answer by" in page
         assert "This reporting session runs" not in page
 
 

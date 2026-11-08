@@ -1,6 +1,7 @@
 {% autoescape off %}Hello {{ person.first_name }},
 
-The {{ period.name }} CNAP reporting session is open. You have {{ summary }} to complete by {{ due }}{% if total %}, {{ total }} in all{% endif %}:
+The {{ period.name }} CNAP reporting session is open. You have {{ summary }} to complete by {{ due }}.{% if total %}
+{{ total|capfirst }} in all.{% endif %}
 {% for i in items %}
 - {{ i.label }}: {{ i.time }}{% endfor %}
 

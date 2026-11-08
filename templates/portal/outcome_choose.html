@@ -7,12 +7,12 @@
 <div class="panel choosebox">
   {% if facts %}<p class="choose-facts"><span class="muted">What you have on file:</span> {{ facts }}</p>{% endif %}
   {% if choices %}
-    <p class="choose-lead">{% if obj.status == 'planned' %}On this page, you can either change the status of this planned {% if kind == 'pub' %}paper{% else %}proposal{% endif %}{% if choices|length == 1 %} to {{ choices.0.1|lower }}{% endif %}, or edit the planned details.{% else %}On this page, you can record what happened to this {% if kind == 'pub' %}paper{% else %}proposal{% endif %}.{% endif %}<br>Please choose what happened.</p>
+    <p class="choose-lead">{% if obj.status == 'planned' %}On this page, you can either change the status of this planned {% if kind == 'pub' %}paper{% else %}proposal{% endif %}{% if choices|length == 1 %} to {{ choices.0.1|lower }}{% endif %}, or edit the planned details.{% else %}On this page, you can record what happened to this {% if kind == 'pub' %}paper{% else %}proposal{% endif %}.{% endif %}<br>Choose what happened.</p>
     <div class="choose-btns">
       {% for s, label in choices %}<a class="btn big" href="?for={{ owner.pk }}&to={{ s }}">{{ label }}</a>{% endfor %}
       {% if obj.status == 'planned' %}<a class="btn ghost big" href="?for={{ owner.pk }}&to=planned">Edit the planned details</a>{% endif %}
     </div>
-    <p class="small choose-hint">{% if obj.status == 'planned' %}If the details above are out of date, please choose “Edit the planned details.”{% else %}If nothing has changed, you can simply go back.{% endif %}</p>
+    <p class="small choose-hint">{% if obj.status == 'planned' %}If the details above are out of date, choose “Edit the planned details.”{% else %}If nothing has changed, you can simply go back.{% endif %}</p>
   {% else %}
     <p class="choose-lead">{{ obj.get_status_display }} is the final status, so there is nothing to move this {% if kind == 'pub' %}paper{% else %}proposal{% endif %} to.<br>You can still view or edit the {% if kind == 'pub' %}paper’s{% else %}proposal’s{% endif %} details.</p>
     <div class="choose-btns"><a class="btn big" href="?for={{ owner.pk }}&to={{ obj.status }}">View or edit the details</a></div>

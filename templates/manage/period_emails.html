@@ -6,9 +6,9 @@
   <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you: the “your reporting session is open” email, reminders every 4 days, then daily past-due notes. Pause it if the Center needs quiet, for example during a campus emergency." %}</h2>
   <p class="em-lead">The Hub sends three emails for this reporting session, each on its own schedule.</p>
   <div class="scroll"><table class="em-sched nosort"><thead><tr><th scope="col">Email</th><th scope="col">When it goes</th><th scope="col">What it says</th></tr></thead><tbody>
-    <tr><th scope="row">“Your reporting session is open”</th><td>Once, on opening day, {{ sched.opens|date:"l, F j" }}</td><td>The person’s forms and the due date</td></tr>
-    <tr><th scope="row">The reminder</th><td>Every 4 days, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}</td><td>Only the forms the person still has left</td></tr>
-    <tr><th scope="row">The past-due email</th><td>Every day from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the reporting session closes on {{ sched.closes|date:"F j" }}{% else %} until you close the reporting session{% endif %}</td><td>The forms were due and can still be turned in</td></tr>
+    <tr><th scope="row">“Your reporting session is open”</th><td>Once, on opening day, {{ sched.opens|date:"l, F j" }}</td><td>Each survey and report the person has, with its time, and the due date</td></tr>
+    <tr><th scope="row">The reminder</th><td>Every 4 days, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}</td><td>Only the surveys and reports the person still has left, with their times</td></tr>
+    <tr><th scope="row">The past-due email</th><td>Every day from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the reporting session closes on {{ sched.closes|date:"F j" }}{% else %} until you close the reporting session{% endif %}</td><td>The due date has passed, and the person can still turn in the surveys and reports left</td></tr>
   </tbody></table></div>
   {% include "proto/_timeline.html" with tl=etl tl_label="Show every automatic email on a timeline" %}
   <ul class="em-rules">
@@ -37,38 +37,8 @@
       </tbody></table></div></details>
     {% if skipped %}<details class="em-roll"><summary><h3>Not emailed ({{ skipped|length }})</h3></summary><ul class="em-skip">{% for r in skipped %}<li>{{ r.person }}: {{ r.skip }}</li>{% endfor %}</ul></details>{% endif %}
     <details class="em-roll"><summary><h3>What the email says</h3></summary>
-      <pre class="em-text">{% if kind == 'open' %}Subject: CNAP Reporting Hub: your {{ p.name }} reporting session is open
-
-Hello [first name],
-
-The {{ p.name }} CNAP reporting session is open. Please complete these [N] forms by [due date]:
-- [each form, with its project or core]
-
-Open your forms:
-[personal sign-in link, or the site address for K-State members]
-
-This link signs you in. The link works once and expires in 7 days. You can get a new one any time at [site]/accounts/link/
-
-Your answers are saved as you go, so you can finish across several sittings. Surveys you don't use have a one-click opt-out.
-
-Thank you,
-The CNAP evaluation team{% else %}Subject: Reminder: your {{ p.name }} CNAP forms are due [date]
-
-Hello [first name],
-
-A reminder that your {{ p.name }} CNAP forms are due [due date]. Still to do:
-- [each form not yet done]
-
-Open your forms:
-[personal sign-in link, or the site address for K-State members]
-
-Anything you've started is saved.
-
-Thank you,
-The CNAP evaluation team{% endif %}{% if kind == 'overdue' %}
-
-(After the due date, the reminder begins: “Your {{ p.name }} CNAP forms were due [due date], and the session is still open, so there’s still time.”){% endif %}</pre>
-      <p class="em-note">The wording is a draft for your review.</p>
+      <pre class="em-text">{{ sample }}</pre>
+      <p class="em-note">This is the email exactly as {% if to_send %}the first person on the list{% else %}one person{% endif %} would receive it today.<br>The wording is a draft for your review.</p>
     </details>
   </div>
 </div>

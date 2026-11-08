@@ -2,12 +2,12 @@
 
 Thank you for speaking at NeuroSync{% if talk.title %} on "{{ talk.title }}"{% endif %}.
 
-We'd like to hear how the experience went for you. The survey will take about 5 minutes. Please answer by {{ due }}:
+We'd like to hear how the experience went for you. The survey will take about 5 minutes. Answer by {{ due }}:
 {{ url }}
 {% if with_link %}
 This link signs you in. The link works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
 {% else %}
-Please sign in with your K-State eID.
+Sign in with your K-State eID.
 {% endif %}
 Your answers help us make NeuroSync better for future speakers.
 

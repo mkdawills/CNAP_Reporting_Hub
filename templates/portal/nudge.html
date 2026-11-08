@@ -26,13 +26,13 @@
       <p>A friendly reminder: as a CNAP awardee{% if role_word %} and {{ role_word }}{% endif %}, these are the milestones you have committed to:</p>
       <ul class="nudge-miles">{% for m in milestones %}<li>{{ m }}</li>{% endfor %}</ul>
       {% endif %}
-      <p>Please also <a href="{% url 'portal:outcome_update' 'grant' grant.pk %}?for={{ nudge.person.pk }}">update this proposal’s record</a> so your plans on file stay current.</p>
+      <p>Also <a href="{% url 'portal:outcome_update' 'grant' grant.pk %}?for={{ nudge.person.pk }}">update this proposal’s record</a> so your plans on file stay current.</p>
     {% endif %}
   {% elif not still_planned %}
     <p>Good news: this proposal is no longer marked as planned, so there is nothing to answer here.</p>
     <p><a href="{% url 'portal:outcomes' %}?for={{ nudge.person.pk }}">Open your publications, talks, and grants</a></p>
   {% else %}
-    <p class="choose-lead">We are checking in to see how this planned proposal submission is coming along.<br>Please answer by selecting one of the choices below, and add a few comments if you like.</p>
+    <p class="choose-lead">We are checking in to see how this planned proposal submission is coming along.<br>Answer by selecting one of the choices below, and add a few comments if you like.</p>
     <form method="post">{% csrf_token %}
       <ol class="nudge-opts">
         {% for code, label in choices %}
@@ -41,7 +41,7 @@
       </ol>
       <div class="field"><label for="nudge-c">A few comments (optional)</label>
         <textarea id="nudge-c" name="comments" rows="3" placeholder="Anything you would like us to know."></textarea>
-        <p class="small muted pivot-note" hidden>Since you are pivoting, please share your new alternative plans here.</p>
+        <p class="small muted pivot-note" hidden>Since you are pivoting, share your new alternative plans here.</p>
       </div>
       <div class="fieldrow"><button class="btn" type="submit">Send my answer</button></div>
     </form>
@@ -60,7 +60,7 @@
   <div class="nudge-supports">
     <h2>Grant Writing support from the CNAP administrative team</h2>
     <ul>{% for s in supports %}<li>{{ s }}</li>{% endfor %}</ul>
-    <p class="small muted">Please reach out any time; we are glad to help.</p>
+    <p class="small muted">Reach out any time; we are glad to help.</p>
   </div>
   <p class="small" style="margin-top:18px"><a href="{% url 'portal:outcomes' %}?for={{ nudge.person.pk }}">Back to my publications, talks, and grants</a></p>
 </div>

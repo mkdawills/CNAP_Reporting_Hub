@@ -100,7 +100,7 @@ def link_code(request):
         else:
             messages.warning(
                 request,
-                "We’ve sent several codes in the last few minutes. Please use the latest one, or try again shortly.",
+                "We’ve sent several codes in the last few minutes. Use the latest one, or try again shortly.",
             )
         return redirect(f"{request.path}?next={nxt}")
     if request.method == "POST":

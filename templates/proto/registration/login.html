@@ -8,9 +8,9 @@
     <img class="si-logo" src="{% static 'img/cnap-logo.png' %}" alt="CNAP Center: Cognitive and Neurobiological Approaches to Plasticity">
     <p class="px-eyebrow">Kansas State University</p>
     <h1 class="px-title si-title" id="si-h">CNAP Reporting Hub</h1>
-    <p class="px-note si-lede">Please sign in to see your reporting tasks.</p>
-    {% if throttled %}<div class="px-callout alert" role="alert"><p>There have been too many sign-in attempts.<br>Please wait 15 minutes, or use an emailed sign-in link.</p></div>
-    {% elif form.errors %}<div class="px-callout alert" role="alert"><p>That username and password don’t match.<br>Please try again, or sign in with an emailed link.</p></div>{% endif %}
+    <p class="px-note si-lede">Sign in to see your reporting tasks.</p>
+    {% if throttled %}<div class="px-callout alert" role="alert"><p>There have been too many sign-in attempts.<br>Wait 15 minutes, or use an emailed sign-in link.</p></div>
+    {% elif form.errors %}<div class="px-callout alert" role="alert"><p>That username and password don’t match.<br>Try again, or sign in with an emailed link.</p></div>{% endif %}
     <form method="post" class="si-form">{% csrf_token %}
       <label class="si-field" for="id_username"><span class="px-label">Username</span><input type="text" name="username" id="id_username" autocomplete="username" autofocus required></label>
       <label class="si-field" for="id_password"><span class="px-label">Password</span><input type="password" name="password" id="id_password" autocomplete="current-password" required></label>
@@ -19,7 +19,7 @@
     </form>
     <div class="si-or"><span>or</span></div>
     <div class="si-acts"><a class="px-btn quiet" href="{% url 'link_request' %}" title="We email you a link that signs you in. No password needed.">Email me a sign-in link</a></div>
-    <p class="px-note si-foot">Not at K-State?<br>Please use an emailed sign-in link.<br>K-State single sign-on will replace passwords once K-State IT approves it.</p>
+    <p class="px-note si-foot">Not at K-State?<br>Use an emailed sign-in link.<br>K-State single sign-on will replace passwords once K-State IT approves it.</p>
   </section>
 </div>
 {% endblock %}

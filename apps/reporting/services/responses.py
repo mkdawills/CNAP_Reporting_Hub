@@ -110,7 +110,7 @@ def _draft(assignment, user):
     resp = current_response(assignment)
     if resp and resp.submitted_at:
         raise LockedError(
-            "This form has been submitted. Ask the Center to reopen it if you need to change it."
+            "This survey or report has been submitted. Ask the Center to reopen it if you need to change it."
         )
     if not resp:
         resp = Response.objects.create(assignment=assignment, submitted_by=None)
@@ -184,14 +184,14 @@ def store_upload(user, uploaded, question):
             kind = f"a Word document ({names})"
         else:
             kind = f"one of these file types: {', '.join(accept)}"
-        raise UploadError(f"Please upload {kind}. Other file types can’t be accepted.")
+        raise UploadError(f"Upload {kind}. Other file types can’t be accepted.")
     if uploaded.size > MAX_UPLOAD_BYTES:
-        raise UploadError("That file is larger than 20 MB. Please upload a smaller file.")
+        raise UploadError("That file is larger than 20 MB. Upload a smaller file.")
     if ext == ".pdf":
         head = uploaded.read(1024)
         uploaded.seek(0)
         if b"%PDF-" not in head:
-            raise UploadError("That file doesn’t look like a PDF. Please upload the PDF itself.")
+            raise UploadError("That file doesn’t look like a PDF. Upload the PDF itself.")
     digest = hashlib.sha256()
     for chunk in uploaded.chunks():
         digest.update(chunk)
@@ -212,7 +212,7 @@ def store_upload(user, uploaded, question):
 def save_draft(assignment, user, post, files=None, *, row_action=None):
     """Save whatever is filled in. Returns a list of messages for fields that couldn't be saved."""
     if not is_editable(assignment, user):
-        raise LockedError("This form can’t be changed now.")
+        raise LockedError("This survey or report can’t be changed now.")
     schema = FormSchema(assignment.form_version)
     resp = _draft(assignment, user)
     problems = []
@@ -288,7 +288,7 @@ def save_draft(assignment, user, post, files=None, *, row_action=None):
 def submit(assignment, user, *, request=None):
     """Submit the current draft. Raises SubmitError listing required questions still blank."""
     if not is_editable(assignment, user):
-        raise LockedError("This form can’t be submitted now.")
+        raise LockedError("This survey or report can’t be submitted now.")
     schema = FormSchema(assignment.form_version)
     resp = _draft(assignment, user)
     answers, rows, files = answers_of(resp, schema)
@@ -337,9 +337,9 @@ def quick_opt_out(assignment, user):
     schema = FormSchema(assignment.form_version)
     q = schema.optout_question
     if not q:
-        raise ValueError("This form has no opt-out.")
+        raise ValueError("This survey or report has no opt-out.")
     if not is_editable(assignment, user):
-        raise LockedError("This form can’t be changed now.")
+        raise LockedError("This survey or report can’t be changed now.")
     resp = _draft(assignment, user)
     _set_value(resp, q, "yes")
     if schema.followup_section:
@@ -355,7 +355,7 @@ def reopen(actor, assignment, reason=""):
     (no longer current) and a new current draft starts from a copy of it.
     """
     if assignment.status not in (AssignmentStatus.SUBMITTED, AssignmentStatus.COMPLETED_OPT_OUT):
-        raise ValueError("Only a submitted form can be reopened.")
+        raise ValueError("Only a submitted survey or report can be reopened.")
     old = current_response(assignment)
     if old:
         old.is_current = False

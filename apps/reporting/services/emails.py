@@ -59,7 +59,7 @@ def _items(assignments):
             "label": _label(a),
             "noun": "report" if a.form_definition.category == FormCategory.REPORT else "survey",
             "minutes": minutes,
-            "time": label or duration(minutes),
+            "time": s.time_label() if label else duration(minutes),
         })
     total = sum(i["minutes"] for i in items)
     summary = todo_summary(sum(1 for i in items if i["noun"] == "survey"), sum(1 for i in items if i["noun"] == "report"))
@@ -225,3 +225,29 @@ def schedule_preview(period):
         "first_reminder": opens + timedelta(days=REMINDER_GAP_DAYS),
         "after_due": due + timedelta(days=1),
     }
+
+
+def preview(period, kind):
+    """The email exactly as one person would receive it today (MW 2026-11-07), for the emails page.
+    Uses the first person this email would go to; the sign-in link is shown as a placeholder. Sends nothing."""
+    rows = [r for r in plan(period, kind) if r["assignments"]]
+    if not rows:
+        return ""
+    r = next((x for x in rows if not x["skip"]), rows[0])
+    due = timezone.localtime(period.due_at)
+    items, summary, total = _items(r["assignments"])
+    body = render_to_string(
+        f"email/period_{kind}.txt",
+        {
+            "person": r["person"], "period": period, "forms": r["forms"], "items": items,
+            "summary": summary, "total": total, "due": f"{due:%A, %B} {due.day}",
+            "url": "[personal sign-in link]" if r["with_link"] else f"{settings.SITE_URL}/tasks/",
+            "with_link": r["with_link"], "days": signin.LINK_DAYS, "site": settings.SITE_URL,
+        },
+    )
+    subject = {
+        "open": f"CNAP Reporting Hub: your {period.name} reporting session is open",
+        "reminder": f"Reminder: your {period.name} CNAP reporting session is due {due:%B} {due.day}",
+        "overdue": f"Your {period.name} CNAP reporting session was due {due:%B} {due.day}",
+    }[kind]
+    return f"Subject: {subject}\n\n{body.strip()}"

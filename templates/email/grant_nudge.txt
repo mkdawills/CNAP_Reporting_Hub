@@ -8,7 +8,7 @@ We are checking in to see how this planned proposal submission is coming along:
   To: {{ grant.funding_agency }}{% endif %}{% if grant.anticipated_submission_date %}
   Anticipated submission: {% if grant.anticipated_day_known %}{{ grant.anticipated_submission_date|date:"F j, Y" }}{% else %}{{ grant.anticipated_submission_date|date:"F Y" }}{% endif %}{% endif %}
 
-Please answer by clicking the choice that fits best.
+Answer by clicking the choice that fits best.
 Your click opens a short page in the Reporting Hub where your answer is recorded, with room for a few comments:
 
 {% for label, u in choice_links %}  {{ forloop.counter }}. {{ label }}

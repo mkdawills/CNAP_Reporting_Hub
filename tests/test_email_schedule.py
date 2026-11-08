@@ -63,7 +63,7 @@ def test_reminders_every_four_days_then_daily(center):
     sent = dict((k, n) for k, n, _ in emails.run_schedule(center, today))
     assert sent["overdue"] > 0
     assert dict((k, n) for k, n, _ in emails.run_schedule(center, today))["overdue"] == 0
-    msg = [m for m in mail.outbox if "were due" in m.subject][-1]
+    msg = [m for m in mail.outbox if "was due" in m.subject][-1]
     assert "still open" in msg.body
 
 

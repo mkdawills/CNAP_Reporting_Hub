@@ -6,7 +6,7 @@
   <div class="head" style="margin-top:14px"><svg class="trace" aria-hidden="true" preserveAspectRatio="none"><rect x="1.5" y="1.5" rx="15" ry="15" pathLength="100"/></svg><div>
     <h1>{{ fd.name|title_break }}</h1>
     <p>{% if not fd.display.no_period_line %}{{ a.reporting_period.name }}{% if context_line %} · {{ context_line }}{% endif %} · {% endif %}{% status_chip a.status respondent=True %}</p>
-    {% if fd.display.no_period_line %}<p class="small">Please answer by {{ a.due_at|date:"l, F j" }}.</p>{% else %}<p class="small">This reporting session runs {{ a.reporting_period|span }}.<br>Please report only on what happened during this reporting session.</p>{% endif %}
+    {% if fd.display.no_period_line %}<p class="small">Answer by {{ a.due_at|date:"l, F j" }}.</p>{% else %}<p class="small">This reporting session runs {{ a.reporting_period|span }}.<br>Report only on what happened during this reporting session.</p>{% endif %}
     <p class="small">Other respondents never see your answers.</p>
   </div></div>
 
@@ -15,7 +15,7 @@
   {% if preview %}<div class="previewbar"><p>{% if a.status == 'in_progress' %}{{ "You previously started this "|add:noun|add:", and your answers are saved. This preview doesn’t change anything."|stack }}{% elif a.reporting_period.in_preview %}This is a preview.<br>Answering opens {{ a.reporting_period.opens_at|date:"l, F j" }}.{% else %}This is a preview.<br>Nothing here is saved.{% endif %}</p>
     {% if a.reporting_period.in_preview %}<a class="btn ghost" href="{% url 'portal:tasks' %}">Back to my list</a>{% elif a.status == 'not_started' or a.status == 'in_progress' %}<a class="btn" href="{% url 'portal:form' a.pk %}">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a>{% endif %}</div>{% endif %}
   {% if resume %}<p class="resume">{{ "Welcome back. Your earlier answers are filled in, so you can pick up where you left off."|stack }}</p>{% endif %}
-  {% if not editable and not preview %}<p class="readonly mt">{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}Submitted.<br>Below is a read-only copy of everything you entered.{% if can_edit_again %}<br>You can change your answers until the reporting session closes.</p><form method="post" action="{% url 'portal:edit_again' a.pk %}" class="editagain">{% csrf_token %}<button class="btn" type="submit">Edit my answers</button></form><p class="small muted readonly-after">{% else %}<br>If you need to change something, please ask the evaluator to reopen it: <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.{% endif %}{% else %}{{ "This reporting session is closed, so this form is read-only."|stack }}{% endif %}</p>{% endif %}
+  {% if not editable and not preview %}<p class="readonly mt">{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}Submitted.<br>Below is a read-only copy of everything you entered.{% if can_edit_again %}<br>You can change your answers until the reporting session closes.</p><form method="post" action="{% url 'portal:edit_again' a.pk %}" class="editagain">{% csrf_token %}<button class="btn" type="submit">Edit my answers</button></form><p class="small muted readonly-after">{% else %}<br>If you need to change something, ask the evaluator to reopen it: <a href="mailto:{{ evaluator_email }}">{{ evaluator_email }}</a>.{% endif %}{% else %}{{ "This reporting session is closed, so this form is read-only."|stack }}{% endif %}</p>{% endif %}
   {% if errors %}<div class="error" role="alert">{% for e in errors %}<div>{{ e|stack }}</div>{% endfor %}</div>{% endif %}
   {% if missing_list %}<div class="error errbox" role="alert"><p><strong>{% if missing_list|length == 1 %}One required question still needs an answer{% else %}{{ missing_list|length }} required questions still need answers{% endif %}</strong> before you can submit (or save a draft for later):</p><ul class="misslist">{% for m in missing_list %}<li><a href="#q-{{ m.code }}">{{ m.prompt }}</a></li>{% endfor %}</ul></div>{% endif %}
 
@@ -27,7 +27,7 @@
     <div class="optout">
       <p class="optout-h">Opt out</p>
       <label><input type="checkbox" id="optout" name="q-{{ optout.code }}" value="yes" {% if opted %}checked{% endif %} {% if not editable %}disabled{% endif %}> {{ optout.prompt|stack }}</label>
-      <div class="small muted" style="margin-top:4px">{% if optout_followups %}{{ "Choosing this option replaces the survey with a few short questions. Please answer them, then submit."|stack }}{% else %}{{ "Choosing this option completes the survey. You won’t see the remaining questions."|stack }}{% endif %}</div>
+      <div class="small muted" style="margin-top:4px">{% if optout_followups %}{{ "Choosing this option replaces the survey with a few short questions. Answer them, then submit."|stack }}{% else %}{{ "Choosing this option completes the survey. You won’t see the remaining questions."|stack }}{% endif %}</div>
     </div>{% endif %}
     {% for sv in sections %}{% include "portal/_section.html" %}{% endfor %}
     {% if preview_followup %}<p class="small muted" style="margin:30px 0 -14px">If you opt out, you’ll see these questions instead:</p>{% with sv=preview_followup %}{% include "portal/_section.html" with sv=sv %}{% endwith %}{% endif %}

@@ -20,7 +20,7 @@
     <p class="small muted">This {{ period.name }} reporting session runs {{ period|span }}.{% if todo %}<br>{{ due }}.{% endif %}</p>
     {% if is_core_director %}<details class="wnote"><summary title="Why your list of core surveys looks the way it does. Click to read it.">A note about your core surveys</summary>
       {% for d in is_core_director %}<p class="small muted">Since you’re the {{ d.core.name|cut:" Core" }} ({{ d.core.code }}) Core Director, you do not receive the {{ d.core.code }} Core user survey.</p>{% endfor %}
-      <p class="small muted">{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Please opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p>
+      <p class="small muted">{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p>
     </details>{% endif %}
   </div>
   {% if first_up and not period.in_preview %}<a class="welcome-next" href="{% url 'portal:form' first_up.a.pk %}">
@@ -57,7 +57,7 @@
 {% else %}
 <p class="privacy">Other respondents never see your answers.</p>
 <details class="panel donebox todobox"><summary title="The forms you still need to fill in this reporting session, grouped by what they are about. Click to open the list or roll it back up.">To do ({% if cp_check %}{{ todo|add:1 }}{% else %}{{ todo }}{% endif %})</summary>
-  <p class="small muted">{{ "Your forms are grouped by what they are about. Please click a group to open it, or use Show all."|stack }}</p>
+  <p class="small muted">{{ "Your forms are grouped by what they are about. Click a group to open it, or use Show all."|stack }}</p>
   <div class="scroll"><table class="tasks" title="Your open forms for this reporting session, grouped by what they are about."><thead class="vh"><tr><th>Form</th><th>Actions</th><th></th><th></th><th>About how long it takes</th></tr></thead><tbody>
   {% if cp_check %}{% include "portal/_cp_rows.html" %}{% endif %}
   {% for g in groups %}
@@ -69,7 +69,7 @@
   {% endfor %}
   {% if outcome and not outcome.done %}
     <tr class="gap" aria-hidden="true"><td colspan="5"></td></tr>
-    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon 'outcomes' %}Publications, talks, and grants</h3><p>{{ "Please keep your papers, presentations, and grant proposals up to date."|stack }}</p></div></div></td></tr>
+    <tr class="grouphead"><td colspan="5"><div class="gh"><div><h3>{% group_icon 'outcomes' %}Publications, talks, and grants</h3><p>{{ "Keep your papers, presentations, and grant proposals up to date."|stack }}</p></div></div></td></tr>
     {% for i in outcome.items %}{% if not i.done %}<tr class="openrow"><td><strong>{% if i.self %}Review your publications, talks, and grants{% else %}Review publications, talks, and grants for {{ i.owner }}{% endif %}</strong><div class="small muted">{% if i.n_review %}You have {{ i.n_review }} product{{ i.n_review|pluralize }} to review{% if i.n_ask %} and {% endif %}{% else %}You have {% endif %}{% if i.n_ask %}{{ i.n_ask }} question{{ i.n_ask|pluralize }} to answer{% endif %}.</div></td>
       <td class="acts">{% if period.in_preview %}<span class="small muted">This opens when the reporting session starts.</span>{% else %}<a class="btn small" href="{% url 'portal:outcomes' %}?for={{ i.owner.pk }}">Start</a>{% endif %}</td><td class="acts"></td><td class="acts"></td><td class="mins"><span>About {{ outcome.minutes }} min</span></td></tr>{% endif %}{% endfor %}
   {% endif %}

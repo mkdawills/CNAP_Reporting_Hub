@@ -9,7 +9,7 @@
     <div class="px-mast-row"><h1 class="px-title">Has your Current and Pending (Other) Support changed?</h1>
       <span class="px-status" data-s="{% if c.answered_at %}submitted{% else %}not_started{% endif %}">{% if c.answered_at %}Answered{% else %}Not answered{% endif %}</span></div>
     <ul class="px-facts">
-      <li><span class="px-label">Please answer by</span><span class="v">{{ c.due|date:"l, F j" }}</span></li>
+      <li><span class="px-label">Answer by</span><span class="v">{{ c.due|date:"l, F j" }}</span></li>
       <li><span class="px-label">Last turned in</span><span class="v">{% if c.assignment.submitted_at %}{{ c.assignment.submitted_at|date:"F j, Y" }}{% else %}On file with the Center{% endif %}</span></li>
       <li><span class="px-label">RPPR due to NIH</span><span class="v">{{ c.rppr_due|date:"F j" }}</span></li>
     </ul>
@@ -17,7 +17,7 @@
   </header>
 
   {% if c.answered_at %}
-  <div class="px-callout ok" role="status"><p><strong>Thank you.</strong><br>{% if c.changed %}Your new Current and Pending ({{ c.file.original_filename }}) is saved.{% else %}You told us nothing changed.{% endif %}<br>If something changes again before the spring, please email the evaluator at {{ evaluator_email }}.</p></div>
+  <div class="px-callout ok" role="status"><p><strong>Thank you.</strong><br>{% if c.changed %}Your new Current and Pending ({{ c.file.original_filename }}) is saved.{% else %}You told us nothing changed.{% endif %}<br>If something changes again before the spring, email the evaluator at {{ evaluator_email }}.</p></div>
   {% else %}
   {% if error %}<div class="px-callout p21-err" role="alert"><p>{{ error }}</p></div>{% endif %}
   <ol class="cp30-opts">
@@ -29,9 +29,9 @@
     <li class="cp30-opt">
       <h2 class="px-h2"><span class="cp30-n" aria-hidden="true">B</span>It has changed</h2>
       <ol class="cp30-steps">
-        <li>Please update your Current and Pending in <a class="px-link" href="https://www.ncbi.nlm.nih.gov/sciencv/" target="_blank" rel="noopener" title="Opens SciENcv in a new tab.">SciENcv</a>.</li>
-        <li>Please certify it in SciENcv, then download the certified PDF.<br>Please don’t flatten the PDF.</li>
-        <li>Please upload the PDF here.</li>
+        <li>Update your Current and Pending in <a class="px-link" href="https://www.ncbi.nlm.nih.gov/sciencv/" target="_blank" rel="noopener" title="Opens SciENcv in a new tab.">SciENcv</a>.</li>
+        <li>Certify it in SciENcv, then download the certified PDF.<br>Don’t flatten the PDF.</li>
+        <li>Upload the PDF here.</li>
       </ol>
       <form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="changed">
         <label class="filezone cp30-file"><span class="filezone-t">Choose a file from your computer</span><span class="filezone-s">PDF only. Your file uploads when you press Upload the new PDF.</span><input type="file" name="file-current_pending" accept=".pdf" aria-label="New Current and Pending (certified PDF)"></label>
@@ -40,6 +40,6 @@
     </li>
   </ol>
   {% endif %}
-  <div class="px-callout cp30-help"><p><strong>Need help with SciENcv?</strong><br>Please contact your Central Office grant specialist.<br>Unsure who that is? Start with Morgan Wills at {{ evaluator_email }}.<br>Morgan can point you in the right direction.</p></div>
+  <div class="px-callout cp30-help"><p><strong>Need help with SciENcv?</strong><br>Contact your Central Office grant specialist.<br>Unsure who that is? Start with Morgan Wills at {{ evaluator_email }}.<br>Morgan can point you in the right direction.</p></div>
 </div>
 {% endblock %}

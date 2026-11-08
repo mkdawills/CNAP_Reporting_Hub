@@ -331,7 +331,7 @@ def update(request, kind, pk):
                 data["pubmed_url"] = found["url"]
             if found.get("cnap_in_grant_index") is not None and not data.get("cnap_in_grant_index"):
                 data["cnap_in_grant_index"] = "yes" if found["cnap_in_grant_index"] else "no"
-            note = "Filled in from PubMed. Please check the title, journal, date, and authors before saving."
+            note = "Filled in from PubMed. Check the title, journal, date, and authors before saving."
             if found.get("cnap_in_grant_index") is not None:
                 note += (
                     " CNAP’s grant "
@@ -420,7 +420,7 @@ def update(request, kind, pk):
             label = "publication" if kind == "pub" else f"proposal ({created.version_label})"
             messages.success(
                 request,
-                f"Your changes are saved. A new planned {label} was created from it. Please check its details below.",
+                f"Your changes are saved. A new planned {label} was created from it. Check its details below.",
             )
             return redirect(_url("portal:outcome_update", owner, kind, created.pk, to="planned"))
         messages.success(request, "Your changes are saved.")
@@ -579,10 +579,10 @@ def nudge(request, pk):
         comments = request.POST.get("comments", "").strip()
         valid = {c for c, _ in GrantNudge.Choice.choices}
         if choice not in valid:
-            messages.error(request, "Please choose one of the five answers.")
+            messages.error(request, "Choose one of the five answers.")
         elif choice == GrantNudge.Choice.PIVOT and not comments:
             messages.error(
-                request, "Please share your new alternative plans in the comments box."
+                request, "Share your new alternative plans in the comments box."
             )
         else:
             from django.utils import timezone

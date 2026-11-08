@@ -17,10 +17,10 @@
     {% with purpose=fd.code|form_purpose %}{% if purpose %}<p class="p21-purpose">{{ purpose|stack }}</p>{% endif %}{% endwith %}
     <ul class="px-facts" aria-label="Dates for this {{ noun }}">
       {% if fd.display.no_period_line %}
-      <li><span class="px-label">{% if reader %}Due{% else %}Please answer by{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
+      <li><span class="px-label">{% if reader %}Due{% else %}Answer by{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
       {% else %}
       <li><span class="px-label">{% if noun == 'report' %}Report on work from{% else %}CNAP reporting session{% endif %}</span><span class="v">{{ a.reporting_period|span }}</span></li>
-      <li><span class="px-label">{% if reader %}Due{% elif noun == 'report' %}Submission due{% else %}Please answer by{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
+      <li><span class="px-label">{% if reader %}Due{% elif noun == 'report' %}Submission due{% else %}Answer by{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
       {% endif %}
       {% for label, value in prefill %}<li><span class="px-label">{{ label }}</span><span class="v">{{ value|default:"—" }}</span></li>{% endfor %}
     </ul>
@@ -30,17 +30,17 @@
   {% if preview %}<div class="px-callout p21-msg p21-preview" role="status"><p>{% if a.status == 'in_progress' %}You previously started this {{ noun }}, and your answers are saved.<br>This preview doesn’t change anything.{% elif a.reporting_period.in_preview %}This is a preview.<br>Answering opens {{ a.reporting_period.opens_at|date:"l, F j" }}.{% else %}This is a preview.<br>Nothing here is saved.{% endif %}</p>
     {% if a.reporting_period.in_preview %}<a class="px-btn small quiet" href="{% url 'portal:tasks' %}">Back to my list</a>{% elif a.status == 'not_started' or a.status == 'in_progress' %}<a class="px-btn small" href="{% url 'portal:form' a.pk %}" title="Open the {{ noun }} and begin answering.">{% if a.status == 'in_progress' %}Continue{% else %}Start{% endif %}</a>{% endif %}</div>{% endif %}
   {% if resume %}<div class="px-callout p21-msg" role="status"><p>Welcome back.<br>Your earlier answers are filled in, so you can pick up where you left off.</p></div>{% endif %}
-  {% if not editable and not preview and not reader %}<div class="px-callout ok p21-msg" role="status"><p>{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}<strong>Submitted.</strong><br>Below is a read-only copy of everything you entered.{% if can_edit_again %}<br>You can change your answers until the reporting session closes.{% else %}<br>If you need to change something, please ask the evaluator to reopen it: {{ evaluator_email }}.{% endif %}{% else %}This reporting session is closed, so this {{ noun }} is read-only.{% endif %}</p>
+  {% if not editable and not preview and not reader %}<div class="px-callout ok p21-msg" role="status"><p>{% if a.status == 'submitted' or a.status == 'completed_opt_out' %}<strong>Submitted.</strong><br>Below is a read-only copy of everything you entered.{% if can_edit_again %}<br>You can change your answers until the reporting session closes.{% else %}<br>If you need to change something, ask the evaluator to reopen it: {{ evaluator_email }}.{% endif %}{% else %}This reporting session is closed, so this {{ noun }} is read-only.{% endif %}</p>
     {% if can_edit_again %}<form method="post" action="{% url 'portal:edit_again' a.pk %}">{% csrf_token %}<button class="px-btn small quiet" type="submit" title="Reopen your answers so you can change them.">Edit my answers</button></form>{% endif %}</div>{% endif %}
   {% if errors %}<div class="px-callout p21-err" role="alert">{% for e in errors %}<p>{{ e|stack }}</p>{% endfor %}</div>{% endif %}
-  {% if missing_list %}<div class="px-callout p21-err" role="alert" tabindex="-1" id="p21-missing"><div><p><strong>{% if missing_list|length == 1 %}One required answer is still missing{% else %}{{ missing_list|length }} required answers are still missing{% endif %}.</strong><br>Please complete {% if missing_list|length == 1 %}it{% else %}them{% endif %} before you submit. Your draft is saved.</p>
+  {% if missing_list %}<div class="px-callout p21-err" role="alert" tabindex="-1" id="p21-missing"><div><p><strong>{% if missing_list|length == 1 %}One required answer is still missing{% else %}{{ missing_list|length }} required answers are still missing{% endif %}.</strong><br>Complete {% if missing_list|length == 1 %}it{% else %}them{% endif %} before you submit. Your draft is saved.</p>
     <ul class="p21-misslist">{% for m in missing_list %}<li><a href="#q-{{ m.code }}">{{ m.prompt }}</a></li>{% endfor %}</ul></div></div>{% endif %}
 
   <div class="p21-layout{% if nsec < 2 and not intro %} p21-nonav{% endif %}">
     {# ------------------------------------------------ section navigator (forms with more than one part) #}
     {% if nsec > 1 or intro %}
     <nav class="p21-nav" id="p21-nav" aria-label="Sections of this {{ noun }}"{% if editable %} data-editable="1"{% endif %}>
-      <div class="p21-navtop"><p class="px-label">In this {{ noun }}</p><button type="button" class="p21-collapse" data-navtoggle aria-controls="p21-nav" aria-expanded="true" title="Hide this list to give the form more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
+      <div class="p21-navtop"><p class="px-label">In this {{ noun }}</p><button type="button" class="p21-collapse" data-navtoggle aria-controls="p21-nav" aria-expanded="true" title="Hide this list to give the {{ noun }} more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
       <ol>
         {% if intro %}<li><a href="#p21-start" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>{% if fd.display.doc_outline %}What to upload{% elif fd.display.intro_title %}{{ fd.display.intro_title }}{% else %}Before you begin{% endif %}</span></a></li>{% endif %}
         {% if optout %}{% if opted or not reader %}<li><a href="#p21-optout" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>Opt out</span></a></li>{% endif %}{% endif %}
@@ -62,7 +62,7 @@
       <section class="p21-optout" id="p21-optout" aria-labelledby="p21-optout-h">
         <h2 class="px-h3" id="p21-optout-h">Opt out</h2>
         <label class="p21-optbox"><input type="checkbox" id="optout" name="q-{{ optout.code }}" value="yes" {% if opted %}checked{% endif %} {% if not editable %}disabled{% endif %}><span>{{ optout.prompt|stack }}</span></label>
-        <p class="px-note">{% if optout_followups %}Choosing this replaces the survey with a few short questions.<br>Please answer them, then submit.{% else %}Choosing this completes the survey.<br>You won’t see the remaining questions.{% endif %}</p>
+        <p class="px-note">{% if optout_followups %}Choosing this replaces the survey with a few short questions.<br>Answer them, then submit.{% else %}Choosing this completes the survey.<br>You won’t see the remaining questions.{% endif %}</p>
       </section>{% endif %}
       {% for sv in sections %}{% include "portal/_section.html" %}{% endfor %}
       {% if preview_followup %}<p class="px-note p21-followup-note">If you opt out, you’ll see these questions instead:</p>{% with sv=preview_followup %}{% include "portal/_section.html" with sv=sv %}{% endwith %}{% endif %}
@@ -70,7 +70,7 @@
       {% if editable %}
       <section class="p21-finish" id="p21-finish" aria-labelledby="p21-finish-h">
         <h2 class="px-h2" id="p21-finish-h">Review and submit</h2>
-        <p class="px-note">Please choose one.</p>
+        <p class="px-note">Choose one.</p>
         <ul class="p21-choices">
           <li><button class="px-btn quiet" type="submit" name="action" value="save" formnovalidate title="Saves your work without sending the {{ noun }}.">Save draft</button><p>Keeps your work{% if fd.display.doc_outline %}, including any file you chose,{% endif %} without sending the {{ noun }}.<br>You can come back any time before the reporting session closes.</p></li>
           <li><button class="px-btn" type="submit" name="action" value="submit" data-submitlabel title="Sends your {{ noun }} to the Center.">{% if opted %}Submit opt-out{% else %}Submit {{ noun }}{% endif %}</button><p>Sends your {{ noun }} to the Center.<br>Every required answer must be complete first.</p></li>

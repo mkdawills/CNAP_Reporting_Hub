@@ -617,6 +617,7 @@ def period_emails(request, pk):
             "sched": emails.schedule_preview(p),
             "today_kind": emails.scheduled_kind(p),
             "etl": _email_timeline(request, p),
+            "sample": emails.preview(p, kind),
         },
     )
 

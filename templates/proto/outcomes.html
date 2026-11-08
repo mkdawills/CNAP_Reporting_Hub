@@ -23,7 +23,7 @@
     </ul>
   </header>
   {% if not window.0 %}<div class="px-callout warn" role="status"><p><strong>Adding and updating opens again on {{ window.1|date:"l, F j" }}.</strong><br>The Center is finishing this reporting session’s report.<br>Your records are safe, and you can read them below.</p></div>
-  {% elif period %}<div class="px-callout{% if st.done %} ok{% endif %}" role="status"><p>{% if st.done %}<strong>You’re all caught up for {{ period.name }}.</strong><br>Thank you.{% else %}<strong>{{ period.name }}: {% if st.n_review %}{{ st.n_review }} item{{ st.n_review|pluralize }} to review{% if st.n_ask %} and {% endif %}{% endif %}{% if st.n_ask %}{{ st.n_ask }} question{{ st.n_ask|pluralize }} to answer{% endif %}.</strong>{% if st.n_review %}<br>Items to review are marked below.<br>If nothing has changed, please choose “No change.”<br>If something has changed, please choose “Update progress.”{% endif %}{% endif %}</p></div>{% endif %}
+  {% elif period %}<div class="px-callout{% if st.done %} ok{% endif %}" role="status"><p>{% if st.done %}<strong>You’re all caught up for {{ period.name }}.</strong><br>Thank you.{% else %}<strong>{{ period.name }}: {% if st.n_review %}{{ st.n_review }} item{{ st.n_review|pluralize }} to review{% if st.n_ask %} and {% endif %}{% endif %}{% if st.n_ask %}{{ st.n_ask }} question{{ st.n_ask|pluralize }} to answer{% endif %}.</strong>{% if st.n_review %}<br>Items to review are marked below.<br>If nothing has changed, choose “No change.”<br>If something has changed, choose “Update progress.”{% endif %}{% endif %}</p></div>{% endif %}
   {% if window.0 %}<div class="o36-add"><span class="px-label">Add</span>
     <a class="px-btn small quiet" href="{% url 'portal:outcome_new' 'pub' %}?for={{ owner.pk }}" title="Record a paper you plan to submit, have submitted, or have published.">A paper</a>
     <a class="px-btn small quiet" href="{% url 'portal:outcome_new' 'grant' %}?for={{ owner.pk }}" title="Record a grant proposal you plan to submit or have submitted.">A grant proposal</a>
@@ -78,7 +78,7 @@
           <span class="px-note">{% if t.cnap_cited %}Acknowledges CNAP{% elif t.cnap_cited is False %}No CNAP acknowledgment{% endif %}</span>
           {% if window.0 %}<a class="px-btn small quiet" href="{% url 'portal:presentation_edit' t.pk %}?for={{ owner.pk }}" title="Change this talk or poster’s details.">Edit</a>{% endif %}</li>
         {% empty %}<li class="px-note">No talks or posters recorded yet.</li>{% endfor %}</ul>
-        <p class="px-note">Please add a talk or poster only after it has taken place.<br>NeuroSync presentations don’t count here.</p>
+        <p class="px-note">Add a talk or poster only after it has taken place.<br>NeuroSync presentations don’t count here.</p>
       </div>
     </details>
 
@@ -90,7 +90,7 @@
         <p class="px-note">You can let someone, such as a student in your lab, keep these records for you.<br>Those people see and change only your papers, proposals, and talks, never your surveys.</p>
         <ul class="o36-dels">{% for d in delegates %}<li><span>{{ d.delegate }}</span><form method="post" action="{% url 'portal:outcome_delegate_end' d.pk %}">{% csrf_token %}<button class="px-btn small quiet" title="Stop letting this person enter for you.">Remove</button></form></li>{% empty %}<li class="px-note">No one has been added yet.</li>{% endfor %}</ul>
         <form method="post" action="{% url 'portal:outcome_delegate_add' %}" class="o36-addform">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}">
-          <label><span class="px-label">Add a person</span><select name="person" required><option value="">Please choose…</option>{% for p in roster %}{% if p != owner %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label>
+          <label><span class="px-label">Add a person</span><select name="person" required><option value="">Choose…</option>{% for p in roster %}{% if p != owner %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label>
           <button class="px-btn small" title="Let this person keep your records.">Add</button></form>
       </div>
     </details>

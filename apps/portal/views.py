@@ -108,7 +108,7 @@ def _own_assignment(request, pk):
         pk=pk,
     )
     if a.person_id != request.user.person_id:
-        raise PermissionDenied("Only the person who received a form can open it here.")
+        raise PermissionDenied("Only the person who received a survey or report can open it here.")
     return a
 
 
@@ -228,7 +228,7 @@ def form(request, pk):
             messages.error(request, str(exc))
             return redirect("portal:form", pk)
         if action.startswith("sheet:") and not errors:
-            messages.success(request, "Your sheet’s rows were added. Please check them below.")
+            messages.success(request, "Your sheet’s rows were added. Check them below.")
             return redirect(f"{reverse('portal:form', args=[pk])}#sec-{action[6:]}")
         if action.startswith("add:"):
             return redirect(
@@ -314,10 +314,10 @@ def edit_again(request, pk):
     """The respondent reopens their own submitted form while the period is open; the submitted copy is kept."""
     a = _own_assignment(request, pk)
     if not rs.can_self_reopen(a, request.user):
-        messages.error(request, "This form can’t be changed now. Please ask the evaluator if you need to.")
+        messages.error(request, "This survey or report can’t be changed now. Ask the evaluator if you need to.")
         return redirect("portal:form", pk)
     rs.reopen(request.user, a, reason="Reopened by the respondent")
-    messages.success(request, "Your answers are open to change. Please submit again when you’re done.")
+    messages.success(request, "Your answers are open to change. Submit again when you’re done.")
     return redirect("portal:form", pk)
 
 

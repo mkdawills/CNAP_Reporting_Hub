@@ -2,7 +2,7 @@
 <article class="o36-card{% if c.review %} review{% endif %}" id="item-{{ c.kind }}-{{ c.obj.pk }}" aria-labelledby="t-{{ c.kind }}-{{ c.obj.pk }}">
   <header class="o36-head">
     <div class="o36-headt">
-      <p class="px-label">{% if c.kind == 'pub' %}Paper{% else %}Grant proposal · {{ c.obj.version_label }}{% endif %}{% if c.review %} <span class="px-status" data-s="in_progress">Please review</span>{% endif %}</p>
+      <p class="px-label">{% if c.kind == 'pub' %}Paper{% else %}Grant proposal · {{ c.obj.version_label }}{% endif %}{% if c.review %} <span class="px-status" data-s="in_progress">Review</span>{% endif %}</p>
       <h3 class="o36-ttl" id="t-{{ c.kind }}-{{ c.obj.pk }}">{{ c.title }}</h3>
       {% if c.sub %}<p class="px-note">{{ c.sub }}</p>{% endif %}
     </div>
@@ -36,9 +36,9 @@
       {% if window.0 and not r.lead %}<form method="post" action="{% url 'portal:outcome_people' c.kind c.obj.pk %}">{% csrf_token %}<input type="hidden" name="person" value="{{ r.person.pk }}"><button class="px-link quietlink" name="action" value="remove" title="Take this person off the item. They will no longer see it.">Remove</button></form>{% endif %}</li>{% endfor %}</ul>
     {% if window.0 %}<details class="px-more o36-addp"><summary title="Add a co-investigator, co-author, or other CNAP person involved. They can see and update this item, and they get an email when it changes.">Add a CNAP person involved</summary>
       <form method="post" action="{% url 'portal:outcome_people' c.kind c.obj.pk %}" class="o36-addform">{% csrf_token %}<input type="hidden" name="action" value="add">
-        <label><span class="px-label">Person</span><select name="person" required><option value="">Please choose…</option>{% for p in roster %}{% if p.pk not in c.ids %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label>
+        <label><span class="px-label">Person</span><select name="person" required><option value="">Choose…</option>{% for p in roster %}{% if p.pk not in c.ids %}<option value="{{ p.pk }}">{{ p }}</option>{% endif %}{% endfor %}</select></label>
         {% if c.kind == 'grant' %}<label><span class="px-label">Role</span><select name="role" data-role>{% for v, l in role_choices %}<option value="{{ v }}" {% if v == 'co_i' %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></label>
-        <label data-other-sel-box hidden><span class="px-label">Please describe the role</span><input type="text" name="role_other" maxlength="200" placeholder="For example: Significant contributor"></label>{% endif %}
+        <label data-other-sel-box hidden><span class="px-label">Describe the role</span><input type="text" name="role_other" maxlength="200" placeholder="For example: Significant contributor"></label>{% endif %}
         <button class="px-btn small" title="Add this person. We email them right away.">Add</button>
       </form>
       <p class="px-note">The person can then see and update this item.<br>Everyone involved gets an email when someone changes it.</p>

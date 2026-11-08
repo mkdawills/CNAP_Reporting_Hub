@@ -22,7 +22,7 @@
     <ul class="px-facts" aria-label="This reporting session">
       <li><span class="px-label">Collects data from</span><span class="v">{{ period|span }}</span></li>
       {% if todo %}{% with d=period.due_at|days_until %}<li><span class="px-label">Due</span><span class="v">{{ period.due_at|date:"l, F j" }}{% if d > 1 %} · {{ d }} days left{% elif d == 1 %} · Tomorrow{% elif d == 0 %} · Today{% else %} · Past due{% endif %}</span></li>{% endwith %}{% endif %}
-      {% if todo %}<li><span class="px-label">To do</span><span class="v">{{ todo_summary|capfirst }}{% if minutes_left %}, {{ minutes_left|duration }} in all{% endif %}</span></li>{% endif %}
+      {% if todo %}<li><span class="px-label">To do</span><span class="v">{{ todo_summary|capfirst }}.{% if minutes_left %}<br>{{ minutes_left|duration|capfirst }} in all.{% endif %}</span></li>{% endif %}
     </ul>
   </header>
 
@@ -64,7 +64,7 @@
 
   {% if is_core_director %}<details class="px-more t3-note"><summary>A note about your core surveys</summary>
     <div class="t3-notebody">{% for d in is_core_director %}<p>Since you’re the {{ d.core.name|cut:" Core" }} ({{ d.core.code }}) Core Director, you do not receive the {{ d.core.code }} Core user survey.</p>{% endfor %}
-    <p>{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Please opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p></div>
+    <p>{{ "In case you’re a user of the other cores, you’ll receive the option to respond to the other core user surveys. Opt out if you’re not a user of the other cores. The opt-out provides us with valuable information."|stack }}</p></div>
   </details>{% endif %}
 
 {% endif %}
@@ -92,7 +92,7 @@
         {% endfor %}
         {% if outcome and not outcome.done %}
         <div class="t3-group">
-          <div class="t3-ghead"><div><h3 class="px-h3 t3-gh">{% group_icon "outcomes" %}Publications, talks, and grants</h3><p class="px-note">Please keep your papers, presentations, and grant proposals up to date.</p></div></div>
+          <div class="t3-ghead"><div><h3 class="px-h3 t3-gh">{% group_icon "outcomes" %}Publications, talks, and grants</h3><p class="px-note">Keep your papers, presentations, and grant proposals up to date.</p></div></div>
           <ul class="t3-list px-surface">{% for i in outcome.items %}{% if not i.done %}
             <li class="t3-row"><div class="t3-main"><p class="t3-name">{% if i.self %}Review your publications, talks, and grants{% else %}Review publications, talks, and grants for {{ i.owner }}{% endif %}</p>
               <p class="t3-sub">{% if i.n_review %}{{ i.n_review }} product{{ i.n_review|pluralize }} to review{% if i.n_ask %} and {% endif %}{% endif %}{% if i.n_ask %}{{ i.n_ask }} question{{ i.n_ask|pluralize }} to answer{% endif %}.</p></div>

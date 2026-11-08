@@ -187,7 +187,12 @@ class FormSchema:
         return max(5, -(-seconds // 300) * 5)
 
     def time_label(self):
-        return self.display.get("time_label") or f"About {self.minutes()} minutes"
+        label = self.display.get("time_label")
+        if label:  # abbreviations spelled out (MW): "plus 5 min" reads "plus about 5 minutes"
+            import re
+
+            return re.sub(r"\bplus (\d+) min\b", r"plus about \1 minutes", label).replace(" page upload", "-page upload")
+        return f"About {self.minutes()} minutes"
 
     @staticmethod
     def is_option(question):

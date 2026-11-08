@@ -22,11 +22,11 @@
       <p class="small">All three together:</p>
       <div class="acktext"><span>{{ ack.all }}</span><button type="button" class="btn small ghost copy">Copy</button></div>
       {% core_rrids as rr %}{% if rr %}
-      <p class="small">If you used a CNAP core, please also cite its Research Resource Identifier (RRID) in your methods, right after the core’s name:</p>
+      <p class="small">If you used a CNAP core, also cite its Research Resource Identifier (RRID) in your methods, right after the core’s name:</p>
       {% for c in rr %}<div class="acktext"><span>{{ c.name }} ({{ c.rrid }}), Kansas State University</span><button type="button" class="btn small ghost copy">Copy</button></div>{% endfor %}
       <p class="small muted">{{ "The RRID lets anyone find every paper that used the core, even without the grant number."|stack }}</p>{% endif %}
-      <p class="small">If you paid for a core as fee-for-service, with no CNAP project funding, please don’t cite the grant number.<br>Here is the suggested wording:</p>
+      <p class="small">If you paid for a core as fee-for-service, with no CNAP project funding, don’t cite the grant number.<br>Here is the suggested wording:</p>
       <div class="acktext"><span>We acknowledge the [core name]{% if rr %} ([its RRID]){% endif %} of the CNAP COBRE at Kansas State University, an NIH Institutional Development Award (IDeA) program resource. No IDeA funds were used to support this work.</span><button type="button" class="btn small ghost copy">Copy</button></div>
-      <p class="small muted">{{ "Papers with foreign co-authors may cite the grant only if the National Institute of General Medical Sciences (NIGMS) approved the foreign component in advance. Otherwise, please credit the core with its RRID and leave the grant number out."|stack }}</p>
+      <p class="small muted">{{ "Papers with foreign co-authors may cite the grant only if the National Institute of General Medical Sciences (NIGMS) approved the foreign component in advance. Otherwise, credit the core with its RRID and leave the grant number out."|stack }}</p>
     {% endif %}
   </details>

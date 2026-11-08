@@ -94,14 +94,14 @@
     <ol>{% for c in cards %}<li><a href="#r32-f{{ forloop.counter }}" data-onpage><span class="px-onpage-n">{{ forloop.counter }}</span>{{ c.fd.name }}</a></li>{% endfor %}</ol>
   </nav>
   <div class="px-onpage-main r90">
-    <div class="px-rollbar foldall taskfold r90-pagebar"><button type="button" data-pageroll="open" title="Opens every form and every section on this page.">Show all</button><button type="button" data-pageroll="close" title="Rolls the page up to the form names.">Collapse all</button></div>
+    <div class="px-rollbar foldall taskfold r90-pagebar"><button type="button" data-pageroll="open" title="Opens every survey and every section on this page.">Show all</button><button type="button" data-pageroll="close" title="Rolls the page up to the survey names.">Collapse all</button></div>
     <p class="px-eyebrow r32-showing">Showing results for {{ selected.name }}</p>
     {% for c in cards %}
     <section class="px-section" id="r32-f{{ forloop.counter }}" aria-labelledby="r32-h{{ forloop.counter }}">
-      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this form up to its name, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="r32-h{{ forloop.counter }}"><span>{{ forloop.counter }}</span>{{ c.fd.name }}</h2>
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this survey up to its name, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="r32-h{{ forloop.counter }}"><span>{{ forloop.counter }}</span>{{ c.fd.name }}</h2>
         <p class="px-note">{% if c.historical %}These averages come from the {{ selected.name }} site-visit report.{% else %}<b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered all the survey items.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="r90-partbody"><div class="r90-secs px-rolls" data-rollgroup>
-        {% if c.tables|length > 1 %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section of this form at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section of this form up to its heading.">Collapse all</button></div>{% endif %}
+        {% if c.tables|length > 1 %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section of this survey at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section of this survey up to its heading.">Collapse all</button></div>{% endif %}
         {% with pfx="r32f"|add:c.fd.code %}{% include "proto/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd pfx=pfx %}{% endwith %}
       </div></div></details>
     </section>
