@@ -21,7 +21,7 @@ def test_dashboard_renders(client, center, kind):
     r = client.get(f"/manage/outcomes/dashboard/{kind}/")
     assert r.status_code == 200
     page = r.content.decode()
-    assert "Observations are written by the evaluator" in page
+    assert "The evaluator writes the observations" in page
     if kind != "talks":  # the test seed has no dated presentations, so talks may have no graph
         assert "dash-svg" in page  # a graph rendered
 
