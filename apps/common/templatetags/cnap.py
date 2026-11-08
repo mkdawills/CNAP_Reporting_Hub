@@ -425,6 +425,19 @@ def why(text):
     )
 
 
+@register.simple_tag
+def info(text):
+    """A small "i" beside a label (MW 2026-11-08): hovering, focusing, or tapping it shows clear directions.
+    Same bubble as the "?" on headings; "i" marks practical directions rather than why a feature exists."""
+    from django.utils.html import format_html
+
+    return format_html(
+        '<span class="whyq whyi" tabindex="0" role="note" aria-label="{}">i<span class="whyb">{}</span></span>',
+        text,
+        text,
+    )
+
+
 @register.filter
 def usd(value):
     """Dollar amounts with thousands separators: 1250000 -> $1,250,000 (MW 2026-11-03)."""

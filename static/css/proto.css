@@ -1850,3 +1850,6 @@ body.proto .r90 .r90-partbody :is(h3.px-h3, h3.r90-sec-h, details.r90-sec > summ
 html body.proto .t3 .t3-top:has(+ .px-rolls) { margin-bottom: 0 !important; }
 /* Review before launch: the person column is wide enough that each "Not sent" note wraps to two lines at most (MW 2026-11-07). Text stays left-aligned. */
 html body.proto .lch .lch-matrix th.lch-who { width: 300px !important; min-width: 280px !important; max-width: 300px; }
+/* The "i" mark for practical directions (MW 2026-11-08): the same bubble as "?", one sentence per line. */
+body.proto .whyq.whyi { font: 700 11px/1 Georgia, "Times New Roman", serif; font-style: normal; text-transform: none; letter-spacing: 0; margin-left: 4px; vertical-align: 1px; }
+body.proto .whyq.whyi .whyb { white-space: pre-line; text-align: left; font: 400 var(--px-fs-sm)/1.55 var(--px-sans); width: 320px; left: 0; transform: none; }
