@@ -20,7 +20,7 @@
     <p class="px-eyebrow">{{ period.name }}</p>
     <h1 class="px-title">{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
     <ul class="px-facts" aria-label="This reporting session">
-      <li><span class="px-label">Collects data from</span><span class="v">{{ period|span }}</span></li>
+      <li><span class="px-label">Your answers cover</span><span class="v">{{ period|span }}</span></li>
       {% if todo %}{% with d=period.due_at|days_until %}<li><span class="px-label">Due</span><span class="v">{{ period.due_at|date:"l, F j" }}{% if d > 1 %} · {{ d }} days left{% elif d == 1 %} · Tomorrow{% elif d == 0 %} · Today{% else %} · Past due{% endif %}</span></li>{% endwith %}{% endif %}
       {% if todo %}<li><span class="px-label">To do</span><span class="v">{{ todo_summary|capfirst }}.{% if minutes_left %}<br>{{ minutes_left|duration|capfirst }} in all.{% endif %}</span></li>{% endif %}
     </ul>
