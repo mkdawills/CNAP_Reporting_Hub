@@ -36,7 +36,7 @@
 {% if followups and followups.counts %}
 <div class="panel rollsec"><h2 class="sectionhead">People who opted out</h2>
   {% for prompt, counts in followups.counts.items %}<p><strong>{{ prompt }}</strong> {% for label, n in counts.items %}<span class="fchip">{{ label }}: {{ n }}</span> {% endfor %}</p>{% endfor %}
-  {% if show_verbatims and followups.texts %}<table class="verb" title="What people wrote when they opted out, one row per answer."><thead><tr><th>Reasons given</th></tr></thead>{% for t in followups.texts %}<tr><td>{{ t }}</td></tr>{% endfor %}</table>{% endif %}
+  {% if show_verbatims and followups.texts %}<table class="verb" title="What members wrote when they opted out, one row per answer."><thead><tr><th>Reasons given</th></tr></thead>{% for t in followups.texts %}<tr><td>{{ t }}</td></tr>{% endfor %}</table>{% endif %}
 </div>{% endif %}
 
 {% if period.assignments.exists and not is_report %}
@@ -52,7 +52,7 @@
   <p class="subttl" style="margin-top:22px">Verbatim responses</p>
   {% if show_verbatims %}
     {% for v in verbatims %}<p class="subttl" style="color:var(--ink)">{{ v.prompt }}</p>
-      <table class="verb" title="Every written answer to this question, one row per person."><thead><tr><th>What people wrote</th></tr></thead>{% for t in v.answers %}<tr><td>{{ t }}</td></tr>{% empty %}<tr><td class="muted">No responses.</td></tr>{% endfor %}</table>{% endfor %}
+      <table class="verb" title="Every written answer to this question, one row per person."><thead><tr><th>What members wrote</th></tr></thead>{% for t in v.answers %}<tr><td>{{ t }}</td></tr>{% empty %}<tr><td class="muted">No responses.</td></tr>{% endfor %}</table>{% endfor %}
   {% elif deid_blocked %}<p class="small muted">{{ "Written answers aren’t shown because fewer than 5 people completed this survey. The combined results above still apply."|stack }}</p>
   {% else %}<p class="small muted">{{ "Written answers are visible only to the evaluator and the Center Director and Associate Director."|stack }}</p>{% endif %}
 </div>{% endif %}

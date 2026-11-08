@@ -43,7 +43,7 @@ STAGE_HELP = {
     "open": "Step 3, open: forms are collecting answers, and the automatic emails and reminders are running. Click to see who has finished.",
     "closed": "Step 4, closed: no more answers come in, so the numbers stop moving. Click to see the reporting session.",
     "generated": "Step 5, results generated: the Hub builds every report and freezes a snapshot of the numbers. Click to open the results.",
-    "reviewed": "Step 6, reviewed: you read the results and write the themes from what people wrote. Click to open the results.",
+    "reviewed": "Step 6, reviewed: you read the results and write the themes from what members wrote. Click to open the results.",
     "finalized": "Step 7, finalized: the results are official and ready for the RPPR and the External Advisory Committee. Click to open the results.",
 }
 

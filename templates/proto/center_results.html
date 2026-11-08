@@ -99,7 +99,7 @@
     {% for c in cards %}
     <section class="px-section" id="r32-f{{ forloop.counter }}" aria-labelledby="r32-h{{ forloop.counter }}">
       <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this survey up to its name, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="r32-h{{ forloop.counter }}"><span>{{ forloop.counter }}</span>{{ c.fd.name }}</h2>
-        <p class="px-note">{% if c.historical %}These averages come from the {{ selected.name }} site-visit report.{% else %}<b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered all the survey items.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+        <p class="px-note">{% if c.historical %}These averages come from the {{ selected.name }} site-visit report.{% else %}<b>{{ c.full }}</b> {{ c.full|pluralize:"member,members" }} answered all the survey items.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="r90-partbody"><div class="r90-secs px-rolls" data-rollgroup>
         {% if c.tables|length > 1 %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section of this survey at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section of this survey up to its heading.">Collapse all</button></div>{% endif %}
         {% with pfx="r32f"|add:c.fd.code %}{% include "proto/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd pfx=pfx %}{% endwith %}

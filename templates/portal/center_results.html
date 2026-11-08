@@ -52,7 +52,7 @@
   <div class="panel rollsec">
     <h2 class="sectionhead">{{ c.fd.name }}</h2>
     {% if c.historical %}<p class="facts2 muted">These averages come from the {{ selected.name }} site-visit report.</p>
-    {% else %}<p class="facts2"><b>{{ c.full }}</b> {{ c.full|pluralize:"person,people" }} answered all the survey items.</p>{% endif %}
+    {% else %}<p class="facts2"><b>{{ c.full }}</b> {{ c.full|pluralize:"member,members" }} answered all the survey items.</p>{% endif %}
     {% include "manage/_report_tables.html" with tables=c.tables min_n=c.min_n show_codes=False fd=c.fd %}
   </div>
   {% empty %}<div class="panel"><p class="muted">There are no survey results for this reporting session.</p></div>{% endfor %}

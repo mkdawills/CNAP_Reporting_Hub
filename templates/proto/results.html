@@ -13,7 +13,7 @@
         <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript>
       </form>
     </div>
-    <p class="r65-purpose">{{ "Each form’s combined results for a reporting session: the average rating for every question, how those averages compare with past years, and everything people wrote. The layout matches the Center’s site-visit reports, so the numbers can be copied straight across."|stack }}</p>
+    <p class="r65-purpose">{{ "Each form’s combined results for a reporting session: the average rating for every question, how those averages compare with past years, and everything members wrote. The layout matches the Center’s site-visit reports, so the numbers can be copied straight across."|stack }}</p>
     {% if p %}{% with done=cards|length %}<ul class="px-facts" aria-label="This reporting session at a glance">
       <li><span class="px-label">Status</span><span class="v">{% if p.status == 'open' %}Open: live results{% else %}{{ p.get_status_display }}{% endif %}</span></li>
       <li><span class="px-label">Forms</span><span class="v">{{ done }}</span></li>
