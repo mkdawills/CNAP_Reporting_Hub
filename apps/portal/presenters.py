@@ -365,6 +365,54 @@ def _row_summary(qs, saved):
     return {"heads": heads, "rows": rows}
 
 
+# A form's title names only what this person is asked for (MW 2026-11-08: the NIH Documents title promised a biosketch to
+# people who are asked for Current and Pending only). Keyed like display.intro_by. Display only: the form keeps its name.
+TITLE_BY = {
+    "nih_documents": {
+        "default": "NIH Documents: Current and Pending (Other) Support",
+        "osc": "NIH Documents: Biosketch",
+        "senior_key": "NIH Documents: Biosketch, Current and Pending (Other) Support, and Malign Foreign Talent Recruitment Program (MFTRP) Certification",
+    },
+}
+
+
+def _audience_key(a, answers):
+    by = (a.form_definition.display or {}).get("intro_by") or {}
+    src = by.get("source")
+    if not src:
+        return None
+    val = answers.get(src)
+    if val in (None, ""):
+        from apps.forms_engine.models import Question
+
+        q = Question.objects.filter(form_version__form_definition=a.form_definition, code=src).order_by(
+            "-form_version__version_no"
+        ).first()
+        val = rs.system_value(a, q) if q else None
+    return val
+
+
+def _respondent_words(text, noun):
+    """Respondents see "survey" or "report", never "form" (MW 2026-11-07), in the Hub's own directions.
+    Survey questions keep their wording; this touches only the intro text and its title."""
+    if not text:
+        return text
+    import re
+
+    text = re.sub(r"\bThis form\b", f"This {noun}", text)
+    text = re.sub(r"\bthis form\b", f"this {noun}", text)
+    text = re.sub(r"\bPlease (\w)", lambda m: m.group(1).upper(), text)  # no "Please" in directions (MW)
+    return text
+
+
+def title_for(a, answers):
+    titles = TITLE_BY.get(a.form_definition.code)
+    if not titles:
+        return a.form_definition.name
+    key = _audience_key(a, answers)
+    return titles.get(key) or titles.get("default") or a.form_definition.name
+
+
 def _intro_for(a, answers):
     """Directions written for this person: a form may give one intro per audience, picked by a site-set answer
     (MW 2026-11-02: an OSC reads only about the biosketch). display.intro_by = {"source": code, value: text}."""
@@ -474,7 +522,10 @@ def form_page(request, a, *, editable, errors=(), missing=(), preview=False):
         "fd": fd,
         "noun": _noun(fd),
         "schema": schema,
-        "intro": _intro_for(a, answers),
+        "intro": _respondent_words(_intro_for(a, answers), _noun(fd)),
+        "intro_title": _respondent_words((fd.display or {}).get("intro_title") or "", _noun(fd)),
+        "form_title": title_for(a, answers),
+        **(period_help(a.reporting_period) if a.reporting_period_id else {}),
         "sections": [s for s in sections if not (preview and s["is_followup"])],
         "preview_followup": preview_followup,
         "optout": optout_q,
@@ -566,3 +617,42 @@ def center_results(period):
         if any(t["rows"] or t["left_out"] for t in data["tables"]):
             cards.append(data)
     return cards
+
+
+def period_help(period):
+    """The "i" directions beside a reporting session's dates (MW 2026-11-08), the same on My tasks and on every survey
+    and report: what the answers cover, when they are due, and what the time estimate means. One sentence per line."""
+    from datetime import timedelta
+
+    from django.utils import timezone
+
+    from apps.common.templatetags.cnap import coverage
+
+    start, end, prev_close = coverage(period)
+    opens, due = timezone.localtime(period.opens_at), timezone.localtime(period.due_at)
+    before = start - timedelta(days=1)
+    first = (
+        f"Describe everything since the last reporting session closed on {prev_close:%B} {prev_close.day}, "
+        f"{prev_close.year}, through {end:%B} {end.day}, {end.year}."
+        if prev_close
+        else f"Describe what happened from {start:%B} {start.day} to {end:%B} {end.day}, {end.year}."
+    )
+    return {
+        "cover_help": "\n".join([
+            first,
+            f"For example, a talk given on {start:%B} {start.day} counts here, and a talk given on "
+            f"{before:%B} {before.day} belongs to the last reporting session.",
+            "If you left something out of an earlier reporting session, you can report it now.",
+            f"The surveys and reports open on {opens:%B} {opens.day} and are due on {due:%B} {due.day}.",
+        ]),
+        "due_help": "\n".join([
+            f"Submit each survey and report by {due:%-I:%M %p} Central Time on {due:%A, %B} {due.day}.",
+            "Until then, a reminder email comes every 4 days, listing only what is left.",
+            "After the due date, the surveys and reports stay open until the evaluator closes the reporting session.",
+        ]),
+        "todo_help": "\n".join([
+            "Each time is an estimate.",
+            "Your answers save as you go, so you can finish across several sittings.",
+            "A survey you don’t use has a one-click opt-out.",
+        ]),
+    }

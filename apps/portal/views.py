@@ -90,42 +90,9 @@ def tasks(request):
         ctx["done_n"] = ctx["total"] - ctx["todo"]
         ctx["pct"] = round(100 * ctx["done_n"] / ctx["total"]) if ctx["total"] else 0
     if ctx.get("period"):
-        from django.utils import timezone as _tz
+        from .presenters import period_help, todo_summary
 
-        from .presenters import todo_summary
-
-        _p = ctx["period"]
-        from apps.common.templatetags.cnap import coverage as _coverage
-
-        _start, _end, _prev_close = _coverage(_p)
-        _opens, _due = _tz.localtime(_p.opens_at), _tz.localtime(_p.due_at)
-        from datetime import timedelta as _td
-
-        _before = _start - _td(days=1)
-        ctx["due_help"] = (
-            f"Submit each survey and report by {_due:%-I:%M %p} Central Time on {_due:%A, %B} {_due.day}.\n"
-            "Until then, a reminder email comes every 4 days, listing only what is left.\n"
-            "After the due date, the surveys and reports stay open until the evaluator closes the reporting session."
-        )
-        ctx["todo_help"] = (
-            "Each time is an estimate.\n"
-            "Your answers save as you go, so you can finish across several sittings.\n"
-            "A survey you don’t use has a one-click opt-out."
-        )
-        ctx["cover_help"] = (
-            ""
-            + (
-                f"Describe everything since the last reporting session closed on {_prev_close:%B} {_prev_close.day}, "
-                f"{_prev_close.year}, through {_end:%B} {_end.day}, {_end.year}.\n"
-                if _prev_close
-                else f"Describe what happened from {_start:%B} {_start.day} to {_end:%B} {_end.day}, {_end.year}.\n"
-            )
-            + f"For example, a talk given on {_start:%B} {_start.day} counts here, "
-            f"and a talk given on {_before:%B} {_before.day} belongs to the last reporting session.\n"
-            "If you left something out of an earlier reporting session, you can report it now.\n"
-            f"The surveys and reports open on {_opens:%B} {_opens.day} and are due on {_due:%B} {_due.day}."
-        )
-
+        ctx.update(period_help(ctx["period"]))
         ctx["todo_summary"] = todo_summary(
             ctx.get("todo_surveys", 0), ctx.get("todo_reports", 0), 1 if oc and not oc["done"] else 0
         )

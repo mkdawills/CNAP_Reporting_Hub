@@ -1,5 +1,5 @@
 {% extends "base.html" %}{% load cnap static %}
-{% block title %}{{ fd.name }} · {{ platform_name }}{% endblock %}
+{% block title %}{{ form_title|default:fd.name }} · {{ platform_name }}{% endblock %}
 {% block content %}
 {# Every respondent form (Screen 21 design, extended to all forms in Batch 1, MW 2026-11-05). #}
 {# Same view, same form, same field names, same Save draft / Submit actions, same autosave address, #}
@@ -11,7 +11,7 @@
   <header class="px-mast p21-mast">
     <p class="px-eyebrow">{% if not fd.display.no_period_line %}{{ a.reporting_period.name }}{% else %}{{ noun|capfirst }}{% endif %}{% if context_line %} · {{ context_line }}{% endif %}</p>
     <div class="px-mast-row">
-      <h1 class="px-title">{{ fd.name }}</h1>
+      <h1 class="px-title">{{ form_title|default:fd.name }}</h1>
       {% if preview %}<span class="px-status" data-s="not_started">Preview</span>{% else %}<span class="px-status" data-s="{{ a.status }}">{% if a.status == 'submitted' %}Submitted{% elif a.status == 'in_progress' %}In progress{% elif a.status == 'completed_opt_out' %}Opted out{% elif a.status == 'exempt' %}Not needed{% else %}Not started{% endif %}</span>{% endif %}
     </div>
     {% with purpose=fd.code|form_purpose %}{% if purpose %}<p class="p21-purpose">{{ purpose|stack }}</p>{% endif %}{% endwith %}
@@ -19,12 +19,12 @@
       {% if fd.display.no_period_line %}
       <li><span class="px-label">{% if reader %}Due{% else %}Answer by{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
       {% else %}
-      <li><span class="px-label">{% if noun == 'report' %}Report on work from{% else %}CNAP reporting session{% endif %}</span><span class="v">{{ a.reporting_period|span }}</span></li>
-      <li><span class="px-label">{% if reader %}Due{% elif noun == 'report' %}Submission due{% else %}Answer by{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
+      <li><span class="px-label">{% if reader %}Covers{% else %}Your answers cover{% if cover_help %} {% info cover_help %}{% endif %}{% endif %}</span><span class="v">{{ a.reporting_period|span }}</span></li>
+      <li><span class="px-label">Due{% if due_help and not reader %} {% info due_help %}{% endif %}</span><span class="v">{{ a.due_at|date:"l, F j, Y" }}</span></li>
       {% endif %}
       {% for label, value in prefill %}<li><span class="px-label">{{ label }}</span><span class="v">{{ value|default:"—" }}</span></li>{% endfor %}
     </ul>
-    {% if reader %}<p class="px-note p21-private">{% if deidentified %}De-identified response.<br>Names and anything that could identify the respondent are not shown.{% else %}Response from {{ a.person }}.{% endif %}<br>Read-only.</p>{% else %}<p class="px-note p21-private">{% if not fd.display.no_period_line %}{% if noun == 'report' %}Report{% else %}Answer{% endif %} only on what happened during this reporting session.<br>{% endif %}Other respondents never see your answers.</p>{% endif %}
+    {% if reader %}<p class="px-note p21-private">{% if deidentified %}De-identified response.<br>Names and anything that could identify the respondent are not shown.{% else %}Response from {{ a.person }}.{% endif %}<br>Read-only.</p>{% else %}<p class="px-note p21-private">Other respondents never see your answers.</p>{% endif %}
   </header>
 
   {% if preview %}<div class="px-callout p21-msg p21-preview" role="status"><p>{% if a.status == 'in_progress' %}You previously started this {{ noun }}, and your answers are saved.<br>This preview doesn’t change anything.{% elif a.reporting_period.in_preview %}This is a preview.<br>Answering opens {{ a.reporting_period.opens_at|date:"l, F j" }}.{% else %}This is a preview.<br>Nothing here is saved.{% endif %}</p>
@@ -42,7 +42,7 @@
     <nav class="p21-nav" id="p21-nav" aria-label="Sections of this {{ noun }}"{% if editable %} data-editable="1"{% endif %}>
       <div class="p21-navtop"><p class="px-label">In this {{ noun }}</p><button type="button" class="p21-collapse" data-navtoggle aria-controls="p21-nav" aria-expanded="true" title="Hide this list to give the {{ noun }} more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
       <ol>
-        {% if intro %}<li><a href="#p21-start" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>{% if fd.display.doc_outline %}What to upload{% elif fd.display.intro_title %}{{ fd.display.intro_title }}{% else %}Before you begin{% endif %}</span></a></li>{% endif %}
+        {% if intro %}<li><a href="#p21-start" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>{% if fd.display.doc_outline %}What to upload{% elif intro_title %}{{ intro_title }}{% else %}Before you begin{% endif %}</span></a></li>{% endif %}
         {% if optout %}{% if opted or not reader %}<li><a href="#p21-optout" data-nav="start"><span class="p21-dot" aria-hidden="true"></span><span>Opt out</span></a></li>{% endif %}{% endif %}
         {% for sv in sections %}<li{% if not sv.visible %} hidden{% endif %} data-navsec="{{ sv.s.code }}"><a href="#sec-{{ sv.s.code }}" data-nav="{{ sv.s.code }}" data-req="{% for v in sv.questions %}{% if v.required and v.widget != 'system' %}{{ v.code }} {% endif %}{% endfor %}"{% with part=sv.s.code|part_no:fd.display %}{% if part %} data-part="1"{% elif not sv.questions %} data-empty="1"{% endif %}{% endwith %}><span class="p21-dot" aria-hidden="true"></span><span>{{ sv.s.title|default:"Questions" }}</span><span class="p21-navstate px-sr"></span></a></li>{% endfor %}
         {% if editable %}<li><a href="#p21-finish" data-nav="finish"><span class="p21-dot" aria-hidden="true"></span><span>Review and submit</span></a></li>{% endif %}
@@ -54,8 +54,8 @@
     {# ------------------------------------------------ the form (field names unchanged) #}
     <form method="post" enctype="multipart/form-data" id="runner" class="p21-form" novalidate data-minutes="{{ minutes }}"{% if editable %} data-autosave="{% url 'portal:autosave' a.pk %}"{% endif %}>{% csrf_token %}
       {% if intro %}<section class="p21-start" id="p21-start" aria-labelledby="p21-start-h">
-        <h2 class="px-h2" id="p21-start-h">{% if fd.display.doc_outline %}What to upload{% elif fd.display.intro_title %}{{ fd.display.intro_title }}{% else %}Before you begin{% endif %}</h2>
-        <p class="p21-start-lede">{% if fd.display.doc_outline or fd.display.intro_title %}{{ intro|stack }}{% else %}{{ intro|reveal }}{% endif %}</p>
+        <h2 class="px-h2" id="p21-start-h">{% if fd.display.doc_outline %}What to upload{% elif intro_title %}{{ intro_title }}{% else %}Before you begin{% endif %}</h2>
+        <p class="p21-start-lede">{% if fd.display.doc_outline or intro_title %}{{ intro|stack }}{% else %}{{ intro|reveal }}{% endif %}</p>
       </section>{% endif %}
       <div class="formprog" id="formprog" hidden aria-live="polite"><span id="formprog-t"></span><span class="formprog-bar"><span id="formprog-f"></span></span></div>
       {% if optout and opted or optout and not reader %}{# a reader sees the opt-out only when the person chose it, as in the current design #}
