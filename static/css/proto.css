@@ -1867,3 +1867,4 @@ body.proto .px-mast-row > .px-status { margin: 0 !important; order: 2; }
   html body.proto .px-onpage-layout::before { left: calc(210px + 24px); }
   html body.proto .px-onpage-layout.navclosed::before { left: calc(64px + 24px); }
 }
+@media (min-width: 1181px) { html body.proto .px-onpage-layout > .px-onpage { padding-right: var(--px-4); box-sizing: border-box; } }
