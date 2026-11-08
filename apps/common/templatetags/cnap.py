@@ -190,13 +190,21 @@ def guidance(value):
     """
     if not value:
         return ""
+    import re
+
+    # No "Please" in directions (MW 2026-11-07); the questions themselves are not touched here.
+    value = re.sub(r"\bPlease (\w)", lambda m: m.group(1).upper(), str(value))
     out, bullets, cards = [], [], []
+    state = {"ordered": False}
 
     def flush():
         if bullets:
             items = "".join(format_html("<li>{}</li>", b) for b in bullets)
-            out.append(f'<ul class="guide">{items}</ul>')
+            # Steps are numbered (MW 2026-11-08): a list introduced by a line about steps is an ordered list.
+            tag = "ol" if state["ordered"] else "ul"
+            out.append(f'<{tag} class="guide{" steps" if tag == "ol" else ""}">{items}</{tag}>')
             bullets.clear()
+        state["ordered"] = False
         if cards:
             out.append('<div class="gcards">' + "".join(cards) + "</div>")
             cards.clear()
@@ -223,6 +231,8 @@ def guidance(value):
         flush()
         if not line:
             continue
+        if line.endswith(":") and re.search(r"\bsteps?\b", line, re.I):
+            state["ordered"] = True
         if line.endswith(":") and len(line) < 60:
             out.append(format_html('<p class="guidehead">{}</p>', line))
         else:
@@ -501,8 +511,8 @@ FORM_PURPOSE = {
     "neurosync_speaker_survey": "This survey asks NeuroSync speakers how the NeuroSync visit went.",
     "neurosync_survey": "Your ratings help the Center choose NeuroSync speakers and topics, and decide how the series is run.",
     "nih_documents": "Each year, the Center reviews Current and Pending (Other) Support, and any foreign activity documents, for Core Directors, Research Project Leaders, Pilot Project Leaders, and the Program Director/Principal Investigator.",
-    "pilot_mentor_report": "This report records your meetings with your Pilot Grantee/Mentee and your view of the Pilot Grantee/Mentee's progress toward the pilot program milestones.",
-    "primary_mentor_report": "This report records your meetings with your Research Project Leader and your view of the Research Project Leader's progress toward the project milestones.",
+    "pilot_mentor_report": "This report records your meetings with your Pilot Grantee/Mentee. It also records your view of the Pilot Grantee/Mentee's progress toward the pilot program milestones.",
+    "primary_mentor_report": "This report records your meetings with your Research Project Leader. It also records your view of the Research Project Leader's progress toward the project milestones.",
     "progress_core": "Your semiannual progress report summarizes your core's accomplishments, plans, and changes.",
     "progress_pilot": "Your semiannual progress report summarizes your pilot project's accomplishments, plans, and changes, including plans for grant submissions.",
     "progress_research": "Your semiannual progress report summarizes your research project's accomplishments, plans, and changes.",

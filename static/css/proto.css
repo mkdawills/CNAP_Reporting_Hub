@@ -1880,3 +1880,13 @@ body.proto th.sorth .sortglue { white-space: nowrap; }
 body.proto th.sorth .sortarr::before { content: "\00a0↕"; color: var(--px-muted); font-size: .85em; }
 body.proto th.sorth.asc .sortarr::before { content: "\00a0↑"; color: var(--px-brand); }
 body.proto th.sorth.desc .sortarr::before { content: "\00a0↓"; color: var(--px-brand); }
+/* Numbered steps in instructions (MW 2026-11-08): hanging numbers, words aligned. */
+body.proto ol.guide.steps { margin: var(--px-2) 0 var(--px-3); padding-left: 1.6em; list-style: decimal; }
+body.proto ol.guide.steps > li { padding-left: .3em; margin: 4px 0; }
+body.proto ol.guide.steps > li::marker { color: var(--px-ink-2); font-weight: 600; }
+
+/* MW 2026-11-08: the "i" sits on the same line as its label, centered on the label's text, never wrapped below it and never raised above it. */
+html body.proto .px-label:has(> .whyi) { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+html body.proto .px-label > .whyq.whyi { margin-left: 0; vertical-align: middle; width: 16px; height: 16px; flex: none; position: relative; top: 0; }
+/* The "i" glyph has no descender, so it rides high in its circle; nudge it to the visual center. */
+html body.proto .whyq.whyi { box-sizing: border-box; padding-top: 2px; line-height: 1; }

@@ -57,6 +57,16 @@
           "label": "Open SciENcv (opens in a new tab)",
           "url": "https://www.ncbi.nlm.nih.gov/sciencv/"
         }
+      ],
+      "foreign": [
+        {
+          "label": "NIH’s notice on foreign appointment and employment contracts, NOT-OD-26-018 (opens in a new tab)",
+          "url": "https://grants.nih.gov/grants/guide/notice-files/NOT-OD-26-018.html"
+        },
+        {
+          "label": "NIH’s instructions for the Current and Pending (Other) Support Common Form, which covers foreign activities (opens in a new tab)",
+          "url": "https://grants.nih.gov/grants-process/write-application/forms-directory/cpos-common-form"
+        }
       ]
     },
     "intro_by": {
