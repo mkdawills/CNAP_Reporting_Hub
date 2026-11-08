@@ -1,15 +1,15 @@
 {% autoescape off %}Hello {{ person.first_name }},
 
-This is a reminder that your {{ period.name }} CNAP {% if forms|length == 1 %}form is{% else %}forms are{% endif %} due {{ due }}. Still to do:
-{% for f in forms %}
-- {{ f }}{% endfor %}
+This is a reminder that your {{ period.name }} CNAP reporting session is due {{ due }}. You still have {{ summary }} to complete{% if total %}, {{ total }} in all{% endif %}:
+{% for i in items %}
+- {{ i.label }}: {{ i.time }}{% endfor %}
 
-Open your forms:
+Open your reporting session:
 {{ url }}
 {% if with_link %}
 This link signs you in. The link works once and expires in {{ days }} days. You can get a new one any time at {{ site }}/accounts/link/
 {% else %}
-Please sign in with your K-State eID.
+Sign in with your K-State eID.
 {% endif %}
 Anything you've started is saved.
 

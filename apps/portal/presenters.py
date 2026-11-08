@@ -41,6 +41,25 @@ def _schemas():
     return get
 
 
+def _label_minutes(label):
+    """Minutes a written time label promises, for the total (MW 2026-11-07): "2 page upload, plus 5 min" counts as 5."""
+    import re
+
+    nums = re.findall(r"(\d+)\s*min", label or "")
+    return int(nums[-1]) if nums else 0
+
+
+def todo_summary(surveys, reports, checkins=0):
+    """"3 surveys and 2 reports" (MW 2026-11-07): respondents see surveys and reports, never "forms"."""
+    parts = []
+    for n, one, many in ((surveys, "survey", "surveys"), (reports, "report", "reports"), (checkins, "check-in", "check-ins")):
+        if n:
+            parts.append(f"{n} {one if n == 1 else many}")
+    if len(parts) <= 2:
+        return " and ".join(parts)
+    return ", ".join(parts[:-1]) + ", and " + parts[-1]
+
+
 def _noun(fd):
     return "report" if fd.category == FormCategory.REPORT else "survey"
 
@@ -82,7 +101,7 @@ def task_list(person, period, mine, just_done=None):
                 "group": group,
                 "about": disp.get("about", []),
                 "time": s.time_label(),
-                "minutes": s.minutes() if not disp.get("time_label") else 0,
+                "minutes": s.minutes() if not disp.get("time_label") else _label_minutes(disp.get("time_label")),
                 "can_opt_out": bool(s.optout_question) and is_open and not period.in_preview,
                 "opt_out_note": (disp.get("opt_out") or {}).get("short", ""),
                 "used_core": bool(fd.about_core_id and fd.about_core_id in used),
@@ -125,6 +144,9 @@ def task_list(person, period, mine, just_done=None):
                 "used": used_rows,
                 "rows": others,
                 "count": len(g),
+                "summary": todo_summary(
+                    sum(1 for r in g if r["noun"] == "survey"), sum(1 for r in g if r["noun"] == "report")
+                ),
             }
         )
     done_rows = [r for r in rows if not r["is_open"]]
@@ -157,6 +179,14 @@ def task_list(person, period, mine, just_done=None):
         "done_n": total - todo,
         "pct": round(100 * (total - todo) / total) if total else 0,
         "minutes_left": sum(r["minutes"] for r in open_rows),
+        "total_summary": todo_summary(
+            sum(1 for r in rows if r["noun"] == "survey"), sum(1 for r in rows if r["noun"] == "report")
+        ),
+        "done_summary": todo_summary(
+            sum(1 for r in done_rows if r["noun"] == "survey"), sum(1 for r in done_rows if r["noun"] == "report")
+        ),
+        "todo_surveys": sum(1 for r in open_rows if r["noun"] == "survey"),
+        "todo_reports": sum(1 for r in open_rows if r["noun"] == "report"),
         "has_optouts": any(r["can_opt_out"] for r in open_rows),
         "next_up": next_up,
         "just_done": done_item,

@@ -328,18 +328,47 @@ def _series_from_table(t, palette=None, status_keys=None):
     return out
 
 
+
+def _by_project_and_member(dated):
+    """By project and by CNAP member (MW 2026-11-07): each product counts once under every project it credits and once
+    under every CNAP member on it, by grant year. Members are listed by last name, never ranked."""
+    proj, mem, mem_sort = {}, {}, {}
+    for o, y in dated:
+        if y is None:
+            continue
+        for pl in o.project_links.all():
+            _bump(proj, pl.project.title, y)
+        for pp in o.people.all():
+            pr = pp.person
+            label = f"{pr.first_name} {pr.last_name}".strip()
+            mem_sort[label] = (pr.last_name.lower(), pr.first_name.lower())
+            _bump(mem, label, y)
+    return proj, mem, mem_sort
+
+
+def _pm_tables(dated, years):
+    proj, mem, mem_sort = _by_project_and_member(dated)
+    ys = sorted(set(years) | {y for d in (proj, mem) for v in d.values() for y in v})
+    return (
+        _table(sorted(proj), proj, ys),
+        _table(sorted(mem, key=lambda k: mem_sort[k]), mem, ys),
+    )
+
+
 def pubs_dashboard():
     pubs = list(
         Publication.objects.filter(archived_at__isnull=True).prefetch_related(
-            "resource_links__resource"
+            "resource_links__resource", "project_links__project", "people__person"
         )
     )
     counts, core_counts, per_core = {}, {}, {}
+    dated = []
     for p in pubs:
         published = p.status == PublicationStatus.PUBLISHED
         y = grant_year(
             p.publication_date if published else (p.submission_date or p.created_at.date())
         )
+        dated.append((p, y))
         _bump(counts, "Published" if published else "Non-published statuses", y)
         for name in _core_groups(p):
             _bump(core_counts, name, y)
@@ -400,19 +429,22 @@ def pubs_dashboard():
         ),
         "core_legend": [(n, SERIES[i % len(SERIES)]) for i, n in enumerate(core_names)],
         "cores": cores,
+        **dict(zip(("t_proj", "t_member"), _pm_tables(dated, years))),
     }
 
 
 def talks_dashboard():
     talks = list(
         Presentation.objects.filter(archived_at__isnull=True).prefetch_related(
-            "resource_links__resource"
+            "resource_links__resource", "project_links__project", "people__person"
         )
     )
     by_type, core_counts, totals = {}, {}, {}
+    dated = []
     type_labels = [label for _, label in PresentationType.choices]
     for t in talks:
         y = grant_year(t.presented_on)
+        dated.append((t, y))
         _bump(totals, "All presentations", y)
         _bump(by_type, t.get_presentation_type_display(), y)
         for name in _core_groups(t):
@@ -452,6 +484,7 @@ def talks_dashboard():
             trend=True,
         ),
         "core_legend": [(n, SERIES[i % len(SERIES)]) for i, n in enumerate(core_names)],
+        **dict(zip(("t_proj", "t_member"), _pm_tables(dated, years))),
     }
 
 
@@ -466,9 +499,10 @@ def grants_dashboard():
     grants = list(
         GrantSubmission.objects.filter(archived_at__isnull=True)
         .exclude(status=GrantStatus.PLANNED)
-        .prefetch_related("resource_links__resource")
+        .prefetch_related("resource_links__resource", "project_links__project", "people__person")
     )
     counts, dollars = {}, {}
+    dated = []
     per_core_counts, per_core_dollars = {}, {}
     for g in grants:
         bucket = next((lab for st, lab, _ in GRANT_BUCKETS if g.status == st), None)
@@ -483,6 +517,7 @@ def grants_dashboard():
         else:
             y = grant_year(g.submission_date)
             amount = float(g.requested_total or 0)
+        dated.append((g, y))
         _bump(counts, bucket, y)
         _bump(dollars, bucket, y, amount)
         for name in _core_groups(g):
@@ -534,6 +569,7 @@ def grants_dashboard():
         ),
         "legend": legend,
         "cores": cores,
+        **dict(zip(("t_proj", "t_member"), _pm_tables(dated, years))),
     }
 
 

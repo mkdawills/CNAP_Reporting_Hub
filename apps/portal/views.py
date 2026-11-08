@@ -89,6 +89,12 @@ def tasks(request):
             ctx["minutes_left"] += oc["minutes"]
         ctx["done_n"] = ctx["total"] - ctx["todo"]
         ctx["pct"] = round(100 * ctx["done_n"] / ctx["total"]) if ctx["total"] else 0
+    if ctx.get("period"):
+        from .presenters import todo_summary
+
+        ctx["todo_summary"] = todo_summary(
+            ctx.get("todo_surveys", 0), ctx.get("todo_reports", 0), 1 if oc and not oc["done"] else 0
+        )
     from apps.common import prototype
 
     return render(request, prototype.template(request, "tasks", "portal/tasks.html"), ctx)

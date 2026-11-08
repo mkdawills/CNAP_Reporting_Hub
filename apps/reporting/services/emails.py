@@ -40,6 +40,32 @@ def _label(a):
     return a.form_definition.name + (f" ({ctx})" if ctx else "")
 
 
+def _items(assignments):
+    """Each survey or report with its time, and the summary line (MW 2026-11-07):
+    "3 surveys and 2 reports, about 1 hour in all", then each one by name with its own time."""
+    from apps.common.enums import FormCategory
+    from apps.common.templatetags.cnap import duration
+    from apps.forms_engine.runtime import FormSchema
+    from apps.portal.presenters import _label_minutes, todo_summary
+
+    cache, items = {}, []
+    for a in assignments:
+        if a.form_version_id not in cache:
+            cache[a.form_version_id] = FormSchema(a.form_version)
+        s = cache[a.form_version_id]
+        label = (s.display or {}).get("time_label")
+        minutes = _label_minutes(label) if label else s.minutes()
+        items.append({
+            "label": _label(a),
+            "noun": "report" if a.form_definition.category == FormCategory.REPORT else "survey",
+            "minutes": minutes,
+            "time": label or duration(minutes),
+        })
+    total = sum(i["minutes"] for i in items)
+    summary = todo_summary(sum(1 for i in items if i["noun"] == "survey"), sum(1 for i in items if i["noun"] == "report"))
+    return items, summary, (duration(total) if total else "")
+
+
 def plan(period, kind):
     """Rows of {person, email, forms, with_link, skip}. skip is a reason the person won't be emailed, or ''."""
     if kind not in PeriodEmail.Kind.values:
@@ -88,6 +114,7 @@ def plan(period, kind):
                 "person": p,
                 "email": p.primary_email,
                 "forms": [_label(a) for a in forms],
+                "assignments": forms,
                 "with_link": signin.may_use_link(p),
                 "skip": skip,
             }
@@ -111,12 +138,16 @@ def send(period, kind, actor=None, dry_run=False):
             if r["with_link"]
             else f"{settings.SITE_URL}/tasks/"
         )
+        items, summary, total = _items(r["assignments"])
         body = render_to_string(
             f"email/period_{kind}.txt",
             {
                 "person": p,
                 "period": period,
                 "forms": r["forms"],
+                "items": items,
+                "summary": summary,
+                "total": total,
                 "due": f"{due:%A, %B} {due.day}",
                 "url": url,
                 "with_link": r["with_link"],
@@ -126,8 +157,8 @@ def send(period, kind, actor=None, dry_run=False):
         )
         subject = {
             "open": f"CNAP Reporting Hub: your {period.name} reporting session is open",
-            "reminder": f"Reminder: your {period.name} CNAP forms are due {due:%B} {due.day}",
-            "overdue": f"Your {period.name} CNAP forms were due {due:%B} {due.day}",
+            "reminder": f"Reminder: your {period.name} CNAP reporting session is due {due:%B} {due.day}",
+            "overdue": f"Your {period.name} CNAP reporting session was due {due:%B} {due.day}",
         }[kind]
         send_mail(
             subject=subject,

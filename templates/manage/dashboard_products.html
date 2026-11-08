@@ -123,6 +123,7 @@
 </details>
 {% endfor %}
 {% endif %}
+{% if kind == 'pubs' %}{% include 'manage/_dash_pm.html' with plural='publications' %}{% elif kind == 'talks' %}{% include 'manage/_dash_pm.html' with plural='presentations' %}{% else %}{% include 'manage/_dash_pm.html' with plural='proposals' %}{% endif %}
 
 <p class="small muted">These dashboards fill in from the records in the Hub.<br>Years before the Hub launched show numbers only if their product records are imported.</p>
 {% endblock %}

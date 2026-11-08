@@ -482,3 +482,19 @@ def form_purpose(code):
 def soft_lower(value):
     """Lower-case a label for use mid-sentence, keeping abbreviations: "Papers citing a core RRID" -> "papers citing a core RRID"."""
     return " ".join(w if (w.isupper() and len(w) > 1) else w.lower() for w in str(value).split(" "))
+
+
+@register.filter
+def duration(minutes):
+    """"About 45 minutes", "About 1 hour", "About 1 hour 15 minutes" (MW 2026-11-07)."""
+    try:
+        m = int(minutes)
+    except (TypeError, ValueError):
+        return ""
+    h, r = divmod(m, 60)
+    if not h:
+        return f"about {m} minute{'s' if m != 1 else ''}"
+    out = f"about {h} hour{'s' if h != 1 else ''}"
+    if r:
+        out += f" {r} minute{'s' if r != 1 else ''}"
+    return out

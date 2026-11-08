@@ -22,15 +22,6 @@ from apps.common.enums import OPTION_QUESTION_TYPES, QuestionType, RuleAction, R
 
 from .models import CompletionPathway, FormVersion
 
-MINUTES = {
-    QuestionType.LIKERT: 0.25,
-    QuestionType.YES_NO: 0.25,
-    QuestionType.SINGLE_SELECT: 0.5,
-    QuestionType.MULTI_SELECT: 0.5,
-    QuestionType.SHORT_TEXT: 0.5,
-    QuestionType.DATE: 0.25,
-    QuestionType.LONG_TEXT: 1,
-}
 
 
 class FormSchema:
@@ -176,28 +167,27 @@ class FormSchema:
     # ------------------------------------------------------------------ display
 
     def minutes(self):
-        """Rough time to complete, shown on My tasks. A form's display "minutes" overrides the estimate."""
+        """Time to complete, shown to respondents (MW 2026-11-07): 10 seconds for each multiple-choice question or short
+        entry, 2 minutes for each written answer, rounded up to the nearest 5 minutes. Uploads and instructions add no
+        time here; a form whose display gives its own "time_label" (the progress reports' "2 page upload, plus 5 min")
+        shows that wording instead. A form's display "minutes" overrides the estimate."""
         if self.display.get("minutes"):
             return int(self.display["minutes"])
-        total = 0.0
+        seconds = 0
         followup = self.followup_section
         for s in self.sections:
             if followup and s.pk == followup.pk:
                 continue
-            if s.is_repeatable:
-                total += 3
-                continue
             for q in s.questions.all():
                 if q.config.get("widget") == "optout_checkbox":
                     continue
-                if q.question_type == QuestionType.LONG_TEXT and q.config.get("narrative"):
-                    total += 5
-                else:
-                    total += MINUTES.get(q.question_type, 0.5)
-        return max(2, round(total + 0.49))
+                if q.question_type in (QuestionType.INSTRUCTIONS, QuestionType.FILE):
+                    continue
+                seconds += 120 if q.question_type == QuestionType.LONG_TEXT else 10
+        return max(5, -(-seconds // 300) * 5)
 
     def time_label(self):
-        return self.display.get("time_label") or f"About {self.minutes()} min"
+        return self.display.get("time_label") or f"About {self.minutes()} minutes"
 
     @staticmethod
     def is_option(question):

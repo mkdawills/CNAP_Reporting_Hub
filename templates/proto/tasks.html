@@ -13,7 +13,7 @@
     <ul class="t3-list px-surface">{% include "proto/_cp_row.html" %}</ul></section>{% endif %}
 {% else %}
 
-  {% if period.in_preview %}<div class="px-callout" role="status"><p><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong><br>You can read every form now with Preview. Answering opens that day. Nothing you do here before then is saved.</p></div>{% endif %}
+  {% if period.in_preview %}<div class="px-callout" role="status"><p><strong>{{ period.name }} opens {{ period.opens_at|date:"l, F j" }}.</strong><br>You can read every survey and report now with Preview. Answering opens that day. Nothing you do here before then is saved.</p></div>{% endif %}
 
   {# ---------------------------------------------------------------- masthead #}
   <header class="px-mast t3-mast">
@@ -21,25 +21,25 @@
     <h1 class="px-title">{{ greeting }}, {{ request.user.person.first_name|default:request.user.username }}.</h1>
     <ul class="px-facts" aria-label="This reporting session">
       <li><span class="px-label">Collects data from</span><span class="v">{{ period|span }}</span></li>
-      {% if todo %}{% with d=period.due_at|days_until %}<li><span class="px-label">Forms due</span><span class="v">{{ period.due_at|date:"l, F j" }}{% if d > 1 %} · {{ d }} days left{% elif d == 1 %} · Tomorrow{% elif d == 0 %} · Today{% else %} · Past due{% endif %}</span></li>{% endwith %}{% endif %}
-      {% if todo %}<li><span class="px-label">Time left to finish</span><span class="v">About {{ minutes_left }} minute{{ minutes_left|pluralize }}</span></li>{% endif %}
+      {% if todo %}{% with d=period.due_at|days_until %}<li><span class="px-label">Due</span><span class="v">{{ period.due_at|date:"l, F j" }}{% if d > 1 %} · {{ d }} days left{% elif d == 1 %} · Tomorrow{% elif d == 0 %} · Today{% else %} · Past due{% endif %}</span></li>{% endwith %}{% endif %}
+      {% if todo %}<li><span class="px-label">To do</span><span class="v">{{ todo_summary|capfirst }}{% if minutes_left %}, {{ minutes_left|duration }} in all{% endif %}</span></li>{% endif %}
     </ul>
   </header>
 
   {% if just_done %}
   <div class="px-callout ok t3-thanks" role="status" data-confetti="{{ just_done.a.pk }}">
     <div><p><strong>Thank you, {{ request.user.person.first_name|default:request.user.username }}. {% if just_done.a.status == 'completed_opt_out' %}Your opt-out is recorded{% else %}Your answers are in{% endif %}.</strong><br>You finished the {{ just_done.name }}.{% if not next_up %} {% if todo %}You have {{ todo }} left on your list.{% else %}That was your last one.{% endif %}{% endif %}</p>
-    {% if next_up %}<p class="t3-thanks-next">Next up is the {{ next_up.name }}. The form will take {{ next_up.time|lower }}.</p>{% endif %}</div>
+    {% if next_up %}<p class="t3-thanks-next">Next up is the {{ next_up.name }}. The {{ next_up.noun }} will take {{ next_up.time|lower }}.</p>{% endif %}</div>
     {% if next_up %}<div class="t3-thanks-acts"><a class="px-btn" href="{% url 'portal:form' next_up.a.pk %}">Start now</a><a class="px-btn quiet" href="{% url 'portal:tasks' %}">Back to my list</a></div>{% endif %}
   </div>
   {% endif %}
 
   {# ---------------------------------------------------------------- progress + next up #}
   {% with opted=done|status_count:"completed_opt_out" %}{% with submitted=done_n|minus:opted %}
-  <section class="t3-top" aria-label="Reporting progress and your next form">
+  <section class="t3-top" aria-label="Reporting progress and your next survey or report">
     <div class="t3-progress">
       <h2 class="px-h2">Reporting progress</h2>
-      <p class="px-note t3-progress-sub">{{ total }} form{{ total|pluralize }} for you this reporting session.</p>
+      <p class="px-note t3-progress-sub">{{ total_summary|capfirst }} for you this reporting session.</p>
       <div class="px-meter t3-meter" role="img" aria-label="{{ submitted }} submitted, {{ opted }} opted out, {{ todo }} still to do, out of {{ total }}.">
         <span class="m-ok" style="width: {{ submitted|pct:total }}%"></span><span class="m-opt" style="width: {{ opted|pct:total }}%"></span>
       </div>
@@ -76,13 +76,13 @@
 {% if period %}
     {% if todo or cp_check %}
     <details class="px-roll" id="t3-todo">
-      <summary title="Your forms still to finish, grouped by what they are about. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="t3-todo-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2"/><circle cx="5" cy="18" r="1.2"/></svg>To do</h2><span class="px-roll-meta"><b>{% if cp_check %}{{ todo|add:1 }}{% else %}{{ todo }}{% endif %}</b> to finish{% if todo %} · about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <summary title="Your surveys and reports still to finish, grouped by what they are about. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="t3-todo-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2"/><circle cx="5" cy="18" r="1.2"/></svg>To do</h2><span class="px-roll-meta"><b>{% if cp_check %}{{ todo|add:1 }}{% else %}{{ todo }}{% endif %}</b> to finish{% if todo %} · about {{ minutes_left }} minute{{ minutes_left|pluralize }} in all{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="px-roll-body">
         <p class="px-note t3-rollnote">Grouped by what they are about. Other respondents never see your answers.</p>
         {% if cp_check %}<div class="t3-group"><div class="t3-ghead"><h3 class="px-h3 t3-gh">{% group_icon "nih" %}A quick NIH question</h3><span class="px-label">1 question</span></div><ul class="t3-list px-surface">{% include "proto/_cp_row.html" %}</ul></div>{% endif %}
         {% for g in groups %}
         <div class="t3-group">
-          <div class="t3-ghead"><div><h3 class="px-h3 t3-gh">{% group_icon g.code %}{{ g.title }}</h3><p class="px-note">{{ g.sub|stack }}</p></div><span class="px-label">{{ g.count }} form{{ g.count|pluralize }}</span></div>
+          <div class="t3-ghead"><div><h3 class="px-h3 t3-gh">{% group_icon g.code %}{{ g.title }}</h3><p class="px-note">{{ g.sub|stack }}</p></div><span class="px-label">{{ g.summary|capfirst }}</span></div>
           <ul class="t3-list px-surface">
             {% for r in g.used %}{% include "proto/_task_row.html" %}{% endfor %}
             {% if g.used and g.rows %}<li class="t3-divider">{% if g.rows|length == 1 %}Did you also use this core?{% else %}Did you also use these cores?{% endif %}</li>{% endif %}
@@ -107,7 +107,7 @@
 
     {% if done or outcome.done %}
     <details class="px-roll" id="t3-done">
-      <summary title="Forms you have submitted or opted out of this reporting session. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg>Finished</h2><span class="px-roll-meta"><b>{{ done_count }}</b> form{{ done_count|pluralize }} submitted or opted out</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <summary title="Surveys and reports you have submitted or opted out of this reporting session. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg>Finished</h2><span class="px-roll-meta">{{ done_summary|capfirst|default:done_count }} submitted or opted out</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="px-roll-body">
         <ul class="t3-list px-surface">{% for r in done %}{% include "proto/_task_row.html" %}{% endfor %}
           {% if outcome.done %}<li class="t3-row"><div class="t3-main"><p class="t3-name">Publications, talks, and grants</p><p class="t3-sub">Up to date for this reporting session.</p></div><div class="t3-state"><span class="px-status" data-s="submitted">Up to date</span></div><div class="t3-acts"><span class="t3-slot"><a class="px-btn small quiet" href="{% url 'portal:outcomes' %}" title="See what you entered.">View</a></span><span class="t3-slot"></span><span class="t3-slot"></span></div></li>{% endif %}

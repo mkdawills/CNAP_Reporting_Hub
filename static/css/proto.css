@@ -1815,3 +1815,17 @@ html body.proto.pa .pa-page .foldall + *, html body.proto .lch .foldall + * { ma
 body.proto .ack-td { white-space: nowrap; }
 body.proto .ack-td .ack-f { display: flex !important; flex-direction: row !important; gap: 6px; margin-top: 8px; }
 body.proto .ack-td .ack-f .btn { margin: 0 !important; display: inline-flex !important; width: auto !important; }
+
+/* "How to acknowledge CNAP" is a help note, not a field (MW 2026-11-07): a lavender band with no box border,
+   an "i" mark and the words in purple, opening in place. Fields stay white boxes; help is tinted, so the two never look alike. */
+html body.proto.pa .pa-page details.ackbox.ackbox, html body.proto details.ackbox.ackbox { border: 0 !important; border-radius: var(--px-r, 8px); background: var(--px-brand-tint) !important; box-shadow: none !important; padding: 0 !important; }
+html body.proto details.ackbox > summary { display: flex; align-items: center; gap: 10px; padding: 10px 14px !important; cursor: pointer; list-style: none;
+  font: 600 var(--px-fs-sm)/1.4 var(--px-sans); color: var(--px-brand) !important; }
+html body.proto details.ackbox > summary::-webkit-details-marker { display: none; }
+html body.proto details.ackbox > summary::before { content: "i"; flex: none; display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--px-brand); color: var(--px-surface); font: 700 11px/1 Georgia, serif; font-style: normal; }
+html body.proto details.ackbox > summary::after { content: "Show"; margin-left: auto; font-weight: 500; }
+html body.proto details.ackbox[open] > summary::after { content: "Hide"; }
+html body.proto details.ackbox[open] > :not(summary) { padding: 0 16px 0 42px !important; margin-left: 0 !important; }
+html body.proto details.ackbox[open] > :last-child { padding-bottom: 16px !important; }
+html body.proto details.ackbox .stevens-why { margin-bottom: var(--px-3) !important; }

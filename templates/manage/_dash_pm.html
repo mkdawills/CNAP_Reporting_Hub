@@ -1,0 +1,17 @@
+{% load cnap %}{% comment %}By project and by CNAP member (MW 2026-11-07), on all three product dashboards. Read-only, from the Hub's records.{% endcomment %}
+<details class="panel dashsec cntsec">
+  <summary><h2>{{ plural|capfirst }} by project {% why "The count for each CNAP project, by grant year. A record that credits two projects counts once under each." %}</h2></summary>
+  {% if d.t_proj.rows %}<div class="scroll"><table class="cnttab dashtab" title="{{ plural|capfirst }} credited to each project, by grant year.">
+    <thead><tr><th>Project</th>{% for y in d.t_proj.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t_proj.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v|default:"" }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small muted">One that credits several projects counts once under each, so the rows can add up to more than the total.</p>{% else %}<p class="small muted">No {{ plural }} credit a project yet.</p>{% endif %}
+</details>
+<details class="panel dashsec cntsec">
+  <summary><h2>{{ plural|capfirst }} by CNAP member {% why "The count for each CNAP member, by grant year. Members are listed by last name, not ranked." %}</h2></summary>
+  {% if d.t_member.rows %}<div class="scroll"><table class="cnttab dashtab" title="{{ plural|capfirst }} each CNAP member is on, by grant year.">
+    <thead><tr><th>CNAP member</th>{% for y in d.t_member.years %}<th class="num">Y{{ y }}</th>{% endfor %}<th class="num">Total</th></tr></thead>
+    <tbody>{% for r in d.t_member.rows %}<tr><td>{{ r.label }}</td>{% for v in r.vals %}<td class="num">{{ v|default:"" }}</td>{% endfor %}<td class="num"><strong>{{ r.total }}</strong></td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="small muted">Members are listed by last name.<br>One with several CNAP members counts once under each.</p>{% else %}<p class="small muted">No {{ plural }} list a CNAP member yet.</p>{% endif %}
+</details>
