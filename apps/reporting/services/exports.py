@@ -280,7 +280,7 @@ def add_form_sheets(wb, user, fd, period, used, first=False):
     notes = [
         period.name,
         "With names." if data["mode"] == IDENTIFIED else "Without names: respondents are numbered in the same order as the results page.",
-        "Rating questions show the number the person chose (for example, 4 for Good); other questions show the words the person saw.",
+        "Rating questions show the number the person chose (for example, 4 for Good). Other questions show the words the person saw.",
     ]
     if data["blocked"]:
         write_sheet(ws, fd.name, ["Note"], [[data["blocked"] + "."]], notes=notes[:2])

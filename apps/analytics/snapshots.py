@@ -47,7 +47,7 @@ def generate(actor, period, reason=""):
     if prev and prev.status in (SnapshotStatus.GENERATED, SnapshotStatus.REVIEWED):
         raise SnapshotError("Finish reviewing the current results first.")
     if period.status == PeriodStatus.FINALIZED and not reason.strip():
-        raise SnapshotError("A correction needs a reason; it is recorded in the audit log.")
+        raise SnapshotError("A correction needs a reason. The reason is recorded in the audit log.")
     snap = ReportingSnapshot.objects.create(
         reporting_period=period,
         version_no=(prev.version_no + 1) if prev else 1,

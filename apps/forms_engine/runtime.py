@@ -191,7 +191,7 @@ class FormSchema:
         if label:  # abbreviations spelled out (MW): "plus 5 min" reads "plus about 5 minutes"
             import re
 
-            return re.sub(r"\bplus (\d+) min\b", r"plus about \1 minutes", label).replace(" page upload", "-page upload")
+            return re.sub(r"\bplus (\d+) min\b", r"plus about \1 minutes of questions", label).replace(" page upload", "-page upload")
         return f"About {self.minutes()} minutes"
 
     @staticmethod

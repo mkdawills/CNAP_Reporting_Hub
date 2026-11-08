@@ -382,7 +382,7 @@ class GrantPlanned(_Funding, _PlannedDay, _Resources):
     )
     role_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
     anticipated_total = money("Anticipated total budget (optional)")
-    planned_estimated_direct = money("Estimated direct costs (optional; preliminary)")
+    planned_estimated_direct = money("Estimated direct costs (optional, preliminary)")
     field_order = [
         "funding_source",
         "federal_agency",
@@ -530,7 +530,7 @@ class GrantNotFunded(forms.Form):
         label="Your initial reflections on the decision (optional)",
         widget=forms.Textarea(attrs={"rows": 3}),
         required=False,
-        help_text="If you like, please share your own first thoughts about the decision here. Please don’t paste your reviewer comments here; those go to the Center Director by email.",
+        help_text="If you like, share your own first thoughts about the decision here. Don’t paste your reviewer comments here. Reviewer comments go to the Center Director by email.",
     )
     discussed_with_program_officer = yn("Was this submission discussed with a Program Officer?")
     feedback_shared_with_cnap = yn("Have you emailed your reviewer feedback to the Center Director?")

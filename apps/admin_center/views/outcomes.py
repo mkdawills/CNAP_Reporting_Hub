@@ -504,7 +504,7 @@ class GrantForm(forms.ModelForm):
                 "For example, a core technician\u2019s own research grant on an unrelated topic is left out, "
                 "while an equipment grant for the core counts. "
                 "This follows the FY27 COBRE guidance for Table 1: \u201cWhen reporting funding for Core staff, report only if related to IDeA support. For example, equipment grants.\u201d "
-                "When unsure, leave it unticked; the Table 1 list can be checked on the RPPR tab before it goes in."
+                "When unsure, leave it unticked. The Table 1 list can be checked on the RPPR tab before it goes in."
             ),
             "cnap_portion": (
                 "If the CNAP investigator is the sole PI, leave this blank: "
@@ -810,7 +810,7 @@ def export(request, kind):
         if not _identified(
             request.user, nihdocs.DOC_FORM if kind == "nihdocs" else "progress_core"
         ):
-            raise PermissionDenied("These lists name people; your role can’t download them.")
+            raise PermissionDenied("These lists name people. Your role can’t download them.")
         if kind == "nihdocs":
             return _nihdocs_zip(request, gy)
 

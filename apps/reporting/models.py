@@ -300,9 +300,9 @@ class Assignment(TimestampedModel):
     def clean(self):
         self.fill_copied_columns()
         if self.context_kind == ContextKind.PROJECT and not self.project_id:
-            raise ValidationError({"project": "This form is about a project; choose one."})
+            raise ValidationError({"project": "This form is about a project. Choose one."})
         if self.context_kind == ContextKind.CORE and not self.core_id:
-            raise ValidationError({"core": "This form is about a core; choose one."})
+            raise ValidationError({"core": "This form is about a core. Choose one."})
         if self.context_kind == ContextKind.NONE and (self.project_id or self.core_id):
             raise ValidationError("This form has no project or core context.")
         if self.status == AssignmentStatus.EXEMPT and not self.exempt_reason.strip():

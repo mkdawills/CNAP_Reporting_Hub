@@ -531,7 +531,7 @@ def project(request, pk):
             old_kind = Project.objects.get(pk=pk).kind
             if form.cleaned_data["kind"] != old_kind and pr.relationships.exists():
                 form.add_error(
-                    "kind", "This project already has people attached; its type can’t change."
+                    "kind", "This project already has people attached, so the project’s type can’t change."
                 )
             else:
                 form.save()

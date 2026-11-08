@@ -26,6 +26,13 @@ from apps.reporting.services.assignments import due_label
 from . import presenters
 
 
+def _with_checkin(summary):
+    """Adds the check-in to "7 surveys and 3 reports" so the count matches the totals beside it."""
+    parts = [x for x in summary.replace(", and ", ", ").replace(" and ", ", ").split(", ") if x]
+    parts.append("1 check-in")
+    return parts[0] if len(parts) == 1 else (" and ".join(parts) if len(parts) == 2 else ", ".join(parts[:-1]) + ", and " + parts[-1])
+
+
 @login_required
 def home(request):
     """Send people where they work: respondents to My tasks, administrators to their home."""
@@ -96,6 +103,8 @@ def tasks(request):
         ctx["todo_summary"] = todo_summary(
             ctx.get("todo_surveys", 0), ctx.get("todo_reports", 0), 1 if oc and not oc["done"] else 0
         )
+        if oc:  # the check-in is one of the tasks, so every total names it (MW 2026-11-08: totals must agree)
+            ctx["total_summary"] = _with_checkin(ctx.get("total_summary") or "")
     from apps.common import prototype
 
     return render(request, prototype.template(request, "tasks", "portal/tasks.html"), ctx)

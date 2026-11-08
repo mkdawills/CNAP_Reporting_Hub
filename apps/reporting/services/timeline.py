@@ -69,7 +69,7 @@ def period_timeline(period, today=None):
         add(start, "Past-due emails every day" if not paused else "Past-due emails (paused)",
             f"To everyone not yet finished, {until}.", "zone", "warn")
 
-    add(closed or closes_plan, "Closed" if closed else "Closes", "Respondents can no longer change their forms." if closed else "Planned closing date; you close the reporting session on Reporting sessions.")
+    add(closed or closes_plan, "Closed" if closed else "Closes", "Respondents can no longer change their forms." if closed else "Planned closing date. You close the reporting session on Reporting sessions.")
     snaps = list(period.snapshots.order_by("generated_at"))
     if snaps:
         add(_d(snaps[0].generated_at), "Results generated", f"Version {snaps[0].version_no}.")

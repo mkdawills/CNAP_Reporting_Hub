@@ -431,7 +431,7 @@ def launch_go(request, pk):
         messages.success(
             request,
             f"{p.short_label} is set up for preview. {result.created} forms were assigned. "
-            f"People can sign in and read their forms now; answering opens {when}.",
+            f"Members can sign in and read their surveys and reports now. Answering opens {when}.",
         )
     else:
         messages.success(request, f"{p.short_label} is open. {result.created} forms were assigned.")

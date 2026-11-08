@@ -114,7 +114,7 @@ def amount(g):
     if (shared or g.prime_or_subaward == "subaward") and g.cnap_portion is not None:
         return float(g.cnap_portion), "CNAP investigator's portion"
     return float(g.award_total or 0), (
-        "total; the CNAP investigator's portion is missing"
+        "total. The CNAP investigator's portion is missing"
         if shared or g.prime_or_subaward == "subaward"
         else "total"
     )
