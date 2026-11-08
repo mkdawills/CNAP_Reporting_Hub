@@ -370,9 +370,36 @@ def after_lead(value):
     return _lead_split(value)[1]
 
 
+def coverage(p):
+    """What a reporting session's answers cover (MW 2026-11-08): everything since the previous reporting session closed,
+    through this session's end date. The boundary moves each year (the RPPR session may close around February 20), so it
+    comes from the sessions themselves: the day after the previous session closed (or its planned close, or its due date,
+    while it is still open). The first session uses its own start date. Worked out each time; nothing is stored.
+    Returns (start, end, previous_close) with previous_close None for the first session."""
+    from datetime import timedelta
+
+    from django.utils import timezone
+
+    from apps.reporting.models import ReportingPeriod
+
+    prev = (
+        ReportingPeriod.objects.filter(display_order__lt=p.display_order).order_by("-display_order").first()
+        if getattr(p, "display_order", None) is not None
+        else None
+    )
+    if prev is None:
+        return p.start_date, p.end_date, None
+    mark = prev.closed_at or prev.closes_at or prev.due_at
+    closed = timezone.localtime(mark).date() if mark else None
+    if not closed or closed >= p.end_date:
+        return p.start_date, p.end_date, None
+    return closed + timedelta(days=1), p.end_date, closed
+
+
 def period_span(p):
-    """'June 1 to November 30, 2026' for a reporting period (year shown once when both dates share it)."""
-    s, e = p.start_date, p.end_date
+    """'June 1 to November 30, 2026' for a reporting session (year shown once when both dates share it).
+    The start is the day after the previous session closed (see coverage)."""
+    s, e, _ = coverage(p)
     first = f"{s:%B} {s.day}" + ("" if s.year == e.year else f", {s.year}")
     return f"{first} to {e:%B} {e.day}, {e.year}"
 

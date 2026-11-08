@@ -95,7 +95,9 @@ def tasks(request):
         from .presenters import todo_summary
 
         _p = ctx["period"]
-        _start, _end = _p.start_date, _p.end_date
+        from apps.common.templatetags.cnap import coverage as _coverage
+
+        _start, _end, _prev_close = _coverage(_p)
         _opens, _due = _tz.localtime(_p.opens_at), _tz.localtime(_p.due_at)
         from datetime import timedelta as _td
 
@@ -111,8 +113,14 @@ def tasks(request):
             "A survey you don’t use has a one-click opt-out."
         )
         ctx["cover_help"] = (
-            f"Describe what happened from {_start:%B} {_start.day} to {_end:%B} {_end.day}, {_end.year}.\n"
-            f"For example, a talk given on {_start:%B} {_start.day} counts here, "
+            ""
+            + (
+                f"Describe everything since the last reporting session closed on {_prev_close:%B} {_prev_close.day}, "
+                f"{_prev_close.year}, through {_end:%B} {_end.day}, {_end.year}.\n"
+                if _prev_close
+                else f"Describe what happened from {_start:%B} {_start.day} to {_end:%B} {_end.day}, {_end.year}.\n"
+            )
+            + f"For example, a talk given on {_start:%B} {_start.day} counts here, "
             f"and a talk given on {_before:%B} {_before.day} belongs to the last reporting session.\n"
             "If you left something out of an earlier reporting session, you can report it now.\n"
             f"The surveys and reports open on {_opens:%B} {_opens.day} and are due on {_due:%B} {_due.day}."
