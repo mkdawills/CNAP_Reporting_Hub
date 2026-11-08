@@ -111,9 +111,10 @@ def tasks(request):
             "A survey you don’t use has a one-click opt-out."
         )
         ctx["cover_help"] = (
-            f"Describe only what happened from {_start:%B} {_start.day} to {_end:%B} {_end.day}, {_end.year}.\n"
+            f"Describe what happened from {_start:%B} {_start.day} to {_end:%B} {_end.day}, {_end.year}.\n"
             f"For example, a talk given on {_start:%B} {_start.day} counts here, "
             f"and a talk given on {_before:%B} {_before.day} belongs to the last reporting session.\n"
+            "If you left something out of an earlier reporting session, you can report it now.\n"
             f"The surveys and reports open on {_opens:%B} {_opens.day} and are due on {_due:%B} {_due.day}."
         )
 
