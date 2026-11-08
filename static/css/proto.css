@@ -1829,3 +1829,10 @@ html body.proto details.ackbox[open] > summary::after { content: "Hide"; }
 html body.proto details.ackbox[open] > :not(summary) { padding: 0 16px 0 42px !important; margin-left: 0 !important; }
 html body.proto details.ackbox[open] > :last-child { padding-bottom: 16px !important; }
 html body.proto details.ackbox .stevens-why { margin-bottom: var(--px-3) !important; }
+
+/* Column reordering (MW 2026-11-07): drag a header on a computer; the column under the pointer shows where it lands. */
+body.proto th.coldrag { cursor: grab; }
+body.proto th.coldrag.dragging { opacity: .5; }
+body.proto th.coldrag.dropto { box-shadow: inset 3px 0 0 var(--px-brand); }
+body.proto .colnote { margin: 0 0 var(--px-2); font-size: var(--px-fs-sm); color: var(--px-ink-2); display: flex; gap: var(--px-3); align-items: baseline; }
+body.proto .colnote .linkbtn { margin: 0; padding: 0; background: none; border: 0; color: var(--px-brand); text-decoration: underline; font: inherit; cursor: pointer; }

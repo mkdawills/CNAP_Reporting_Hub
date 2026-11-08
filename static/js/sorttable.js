@@ -36,54 +36,77 @@
 })();
 
 
-// Drag a header to move its column; a Reset columns link puts everything back (MW 2026-11-03).
+// Drag a header to move its column (MW 2026-11-03), on every table (MW 2026-11-07), on computers only.
+// The order is remembered in this browser for this page; "Reset the columns" puts the standard order back.
+// Downloads always keep the standard order. Tables with grouped (two-row) headers keep their order.
 (function () {
-  document.querySelectorAll("table").forEach(function (table) {
+  if (!window.matchMedia || !window.matchMedia("(pointer: fine)").matches) return;
+  function store(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function load(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
+  document.querySelectorAll("table").forEach(function (table, tIndex) {
     var head = table.tHead, body = table.tBodies[0];
-    if (!head || !body || table.querySelector("colgroup") || !head.rows.length || head.rows.length > 1) return;
-    var ths = Array.from(head.rows[0].cells);
-    if (ths.length < 3) return;
-    var original = null, resetLink = null, from = null;
-    function allRows() { return [head.rows[0]].concat(Array.from(body.rows)); }
-    function fullRow(r) { return r.cells.length === ths.length; }
-    function snapshot() {
-      if (original) return;
-      original = allRows().map(function (r) { return Array.from(r.cells); });
-    }
-    function showReset() {
-      if (resetLink) return;
-      resetLink = document.createElement("button");
-      resetLink.type = "button";
-      resetLink.className = "btn small ghost colreset";
-      resetLink.textContent = "Reset the columns";
-      resetLink.addEventListener("click", function () {
-        original.forEach(function (cells, i) {
-          var r = allRows()[i];
-          if (!r) return;
-          cells.forEach(function (c) { r.appendChild(c); });
-        });
-        resetLink.remove();
-        resetLink = null;
+    if (!head || !body || head.rows.length !== 1) return;
+    var n = head.rows[0].cells.length;
+    if (n < 2 || table.closest(".flipped") || table.classList.contains("flipped")) return;
+    if (head.querySelector("[colspan]")) return;
+    var key = "cols:" + location.pathname + ":" + tIndex + ":" + Array.from(head.rows[0].cells).map(function (c) { return c.textContent.trim(); }).join("|");
+    var cols = table.querySelector("colgroup") ? Array.from(table.querySelectorAll("colgroup > col")) : null;
+    Array.from(head.rows[0].cells).forEach(function (c, i) { c.dataset.colOrig = i; });
+    function rows() { return [head.rows[0]].concat(Array.from(body.rows)).concat(table.tFoot ? Array.from(table.tFoot.rows) : []); }
+    function order() { return Array.from(head.rows[0].cells).map(function (c) { return +c.dataset.colOrig; }); }
+    function apply(ord) {
+      // ord lists original indexes in the new order
+      var cur = order();
+      rows().forEach(function (r) {
+        if (r.cells.length !== n) return;
+        var byOrig = {};
+        Array.from(r.cells).forEach(function (c, i) { byOrig[cur[i]] = c; });
+        ord.forEach(function (o) { if (byOrig[o]) r.appendChild(byOrig[o]); });
       });
-      table.parentNode.insertBefore(resetLink, table);
+      if (cols && cols.length === n) {
+        var cg = cols[0].parentNode, byO = {};
+        cols.forEach(function (c, i) { byO[cur[i]] = c; });
+        ord.forEach(function (o) { if (byO[o]) cg.appendChild(byO[o]); });
+        cols = Array.from(cg.children);
+      }
     }
-    ths.forEach(function (th, idx) {
+    var note = null;
+    function showNote() {
+      if (note) return;
+      note = document.createElement("p");
+      note.className = "colnote";
+      note.innerHTML = "<span>Columns reordered on this computer.</span> ";
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "linkbtn colreset"; b.textContent = "Reset the columns";
+      b.addEventListener("click", function () {
+        apply(order().slice().sort(function (a, c) { return a - c; }));
+        store(key, null); note.remove(); note = null;
+      });
+      note.appendChild(b);
+      var wrap = table.parentNode.classList && table.parentNode.classList.contains("scroll") ? table.parentNode : table;
+      wrap.parentNode.insertBefore(note, wrap);
+    }
+    var saved = load(key);
+    if (saved && saved.length === n && saved.join() !== order().join()) { apply(saved); showNote(); }
+    var from = null;
+    Array.from(head.rows[0].cells).forEach(function (th) {
       th.draggable = true;
-      th.addEventListener("dragstart", function (e) { from = Array.from(head.rows[0].cells).indexOf(th); snapshot(); try { e.dataTransfer.setData("text/plain", ""); } catch (err) {} });
-      th.addEventListener("dragover", function (e) { e.preventDefault(); });
+      th.classList.add("coldrag");
+      th.title = (th.title ? th.title + " " : "") + "Drag to move this column.";
+      th.addEventListener("dragstart", function (e) { from = Array.from(head.rows[0].cells).indexOf(th); th.classList.add("dragging"); try { e.dataTransfer.setData("text/plain", ""); e.dataTransfer.effectAllowed = "move"; } catch (err) {} });
+      th.addEventListener("dragend", function () { th.classList.remove("dragging"); head.querySelectorAll(".dropto").forEach(function (x) { x.classList.remove("dropto"); }); });
+      th.addEventListener("dragover", function (e) { e.preventDefault(); th.classList.add("dropto"); });
+      th.addEventListener("dragleave", function () { th.classList.remove("dropto"); });
       th.addEventListener("drop", function (e) {
-        e.preventDefault();
+        e.preventDefault(); th.classList.remove("dropto");
         var to = Array.from(head.rows[0].cells).indexOf(th);
         if (from === null || to === from) return;
-        allRows().forEach(function (r) {
-          if (!fullRow(r)) return;
-          var moving = r.cells[from], target = r.cells[to];
-          if (!moving || !target) return;
-          if (to > from) target.insertAdjacentElement("afterend", moving);
-          else target.insertAdjacentElement("beforebegin", moving);
-        });
-        from = null;
-        showReset();
+        var ord = order(), moved = ord.splice(from, 1)[0];
+        ord.splice(to, 0, moved);
+        apply(ord); from = null;
+        var standard = ord.slice().sort(function (a, c) { return a - c; }).join();
+        if (ord.join() === standard) { store(key, null); if (note) { note.remove(); note = null; } }
+        else { store(key, ord); showNote(); }
       });
     });
   });
