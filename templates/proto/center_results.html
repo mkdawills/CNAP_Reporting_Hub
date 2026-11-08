@@ -49,7 +49,7 @@
   {# Which core each kind of product drew on (MW 2026-11-06). Counts only, for the chosen years. #}
   <section class="r33-cores" aria-labelledby="r33-cores-h">
     <h2 class="px-h2" id="r33-cores-h">Which cores the products drew on</h2>
-    <p class="px-note">{{ span }}.<br>A product that drew on two cores counts once for each, so a bar can show more than its number of products.<br>Only resources a product used count, not ones it only planned to use.</p>
+    <p class="px-note">{{ span }}.<br>A paper, talk, or proposal that used two cores is counted under each core, so the bars can add up to more than the number of products.<br>Only cores and resources a product actually used are counted, not ones it only planned to use.</p>
     <ul class="r33-legend">{% for code, name, color in core_groups %}<li><i style="background: {{ color }}"></i>{{ name }}</li>{% endfor %}</ul>
     <dl class="r33-bars">
       {% for k in by_core %}<div class="r33-row">
