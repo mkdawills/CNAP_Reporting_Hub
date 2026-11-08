@@ -11,6 +11,8 @@ from datetime import timedelta
 from django.utils import timezone
 
 from ..models import PeriodEmail
+import datetime as dt
+
 from . import emails as em
 
 
@@ -43,19 +45,39 @@ def period_timeline(period, today=None):
             add(d, "“Your reporting session is open,” for people added later", f"Sent to {_people(n)}.", "email")
 
     # Every reminder date the schedule plans, plus any reminder sent by hand on another day.
+    # Email controls (MW 2026-11-08): the evaluator's frequency, skipped days, and added days.
+    gap = em.every(period, "reminder")
+    skips, adds = em.skipped_days(period), em.added_days(period)
     plan = []
-    d = opens + timedelta(days=em.REMINDER_GAP_DAYS) if opens else None
+    d = opens + timedelta(days=gap) if opens else None
     while d and due and d <= due:
         plan.append(d)
-        d += timedelta(days=em.REMINDER_GAP_DAYS)
+        d += timedelta(days=gap)
     hand = sorted(d for (k, d), _ in sent.items() if k == PeriodEmail.Kind.REMINDER and d not in plan)
-    for day in sorted(set(plan) | set(hand)):
-        n = sent.get((PeriodEmail.Kind.REMINDER, day), 0)
-        if day < today or (day == today and n):
-            detail = f"Sent to {_people(n)} with forms still to do." if n else "Not sent: nobody needed one, or emails were paused."
+    added = {dt.date.fromisoformat(x): k for x, k in adds.items()}
+    for day in sorted(set(plan) | set(hand) | {x for x, k in added.items() if x not in plan}):
+        n = sent.get((PeriodEmail.Kind.REMINDER, day), 0) + sent.get((PeriodEmail.Kind.OVERDUE, day), 0) * (day in added)
+        kind_word = "Past-due email" if added.get(day) == "overdue" else "Reminder email"
+        future = day > today or (day == today and not n)
+        if day in added:
+            label = f"{kind_word}, added"
+        elif day in plan:
+            label = kind_word
         else:
-            detail = "Paused: nothing goes out unless you turn automatic emails back on." if paused else "Goes to everyone with forms still to do."
-        add(day, "Reminder email" + ("" if day in plan else ", sent by hand"), detail, "email")
+            label = f"{kind_word}, sent by hand"
+        if day.isoformat() in skips and day not in added and day > today:
+            add(day, "Reminder email, skipped", "You skipped this email. Nothing goes out this day.", "email", "muted")
+            ev[-1].update(iso=day.isoformat(), skipped=True)
+            continue
+        if not future:
+            detail = f"Sent to {_people(n)} with surveys or reports still to do." if n else "Not sent: nobody needed one, or emails were paused."
+        else:
+            detail = "Paused: nothing goes out unless you turn automatic emails back on." if paused else (
+                "Goes to everyone with surveys or reports still to do." if day in added else
+                "Goes to everyone with surveys or reports still to do, unless the person had an email in the last " + (f"{gap} days." if gap > 1 else "day."))
+        add(day, label, detail, "email")
+        if day > today and day != opens:
+            ev[-1].update(iso=day.isoformat(), added=day in added, skippable=day in plan and day not in added)
 
     add(due, "Due", f"{timezone.localtime(period.due_at):%-I:%M %p} Central Time.", "due")
 
@@ -66,8 +88,10 @@ def period_timeline(period, today=None):
     if due and not closed:
         start = max(due + timedelta(days=1), today if today > due else due + timedelta(days=1))
         until = f"until {end:%B %-d}" if end else "until you close the reporting session"
-        add(start, "Past-due emails every day" if not paused else "Past-due emails (paused)",
-            f"To everyone not yet finished, {until}.", "zone", "warn")
+        og = em.every(period, "overdue")
+        often = "every day" if og == 1 else f"every {og} days"
+        add(start, f"Past-due emails {often}" if not paused else "Past-due emails (paused)",
+            f"To everyone not yet finished, {until}." + (" Skipped days: " + ", ".join(f"{dt.date.fromisoformat(x):%B %-d}" for x in sorted(skips) if dt.date.fromisoformat(x) > due) + "." if any(dt.date.fromisoformat(x) > due for x in skips) else ""), "zone", "warn")
 
     add(closed or closes_plan, "Closed" if closed else "Closes", "Respondents can no longer change their forms." if closed else "Planned closing date. You close the reporting session on Reporting sessions.")
     snaps = list(period.snapshots.order_by("generated_at"))
@@ -93,7 +117,8 @@ def period_timeline(period, today=None):
         left = (due - today).days
         now = f"Reminder emails: {left} day{'s' if left != 1 else ''} until the due date." if left else "Due today."
     else:
-        now = "Past due: past-due emails go out every day until you close the reporting session."
+        og = em.every(period, "overdue")
+        now = "Past due: past-due emails go out " + ("every day" if og == 1 else f"every {og} days") + " until you close the reporting session."
     if paused and not closed:
         now += " Automatic emails are paused."
     marker = {"date": today, "label": f"Today, {today:%B %-d}", "detail": now, "kind": "now", "tone": "warn" if now.startswith("Past due") else "", "state": "now"}

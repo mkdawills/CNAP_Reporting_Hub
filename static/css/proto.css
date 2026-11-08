@@ -1918,3 +1918,25 @@ html body.proto td.rridcell .rridcore { flex: none; width: 2.2em; color: var(--p
 /* Core report pages: a line and 48 pixels between sections, as on every page. */
 html body.proto .crp .px-page > .px-section + .px-section, html body.proto .crp form.px-page > .px-section + .px-section { border-top: 1px solid var(--px-line); margin-top: var(--px-sec); padding-top: var(--px-sec); }
 html body.proto .crp .px-section > .px-note { margin-top: 8px; }
+
+/* Email controls (MW 2026-11-08). */
+html body.proto .em-ctl { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--px-sub); margin-top: var(--px-sub); }
+html body.proto .em-ctl-box { border: 1px solid var(--px-line); border-radius: 12px; padding: 20px; min-width: 0; }
+html body.proto .em-ctl-box h3, html body.proto .em-word h4 { margin: 0 0 8px; font: 600 var(--px-fs-md, 1.05rem)/1.3 var(--px-sans); }
+html body.proto .em-ctl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; }
+html body.proto .em-ctl-row label { min-width: 11em; font-weight: 500; }
+html body.proto .em-ctl-row input[type=number] { width: 5em; }
+html body.proto .em-ctl-row span { color: var(--px-muted); font-size: var(--px-fs-sm); }
+html body.proto .em-ctl-box .actions, html body.proto .em-word .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+html body.proto .em-word { margin-top: var(--px-sub); padding-top: var(--px-sub); border-top: 1px solid var(--px-line); display: grid; gap: 8px; max-width: 75ch; }
+html body.proto .em-word label { font-weight: 500; margin-top: 8px; }
+html body.proto .em-word input[type=text], html body.proto .em-word textarea { width: 100%; box-sizing: border-box; font: inherit; }
+html body.proto .px-tl-act { margin-top: 8px; display: block; }
+html body.proto .px-tl-muted .px-tl-t b { color: var(--px-muted); text-decoration: line-through; }
+
+/* "In this survey" on phones and tablets (MW 2026-11-08): with no left rule, the status marks hang at the box's edge
+   and every line of text (the heading, each section, the save note) starts at the same point. */
+@media (max-width: 980px) {
+  html body.proto .p21-nav ol a { padding-left: 0; padding-right: 0; margin-left: 0; gap: 10px; }
+  html body.proto .p21-nav .p21-navtop .px-label, html body.proto .p21-nav .p21-savehint { padding-left: 30px; }
+}

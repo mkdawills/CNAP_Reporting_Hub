@@ -35,6 +35,70 @@ class EmailError(Exception):
     pass
 
 
+# Email controls (MW 2026-11-08). Each period's email_plan can change how often reminders and past-due
+# emails go out, skip a scheduled day, add a day, and reword each email's subject and opening sentence.
+# The list of surveys and reports, the due date, and the sign-in link always stay automatic.
+STANDARD_WORDING = {
+    "open": {
+        "subject": "CNAP Reporting Hub: your {session} reporting session is open",
+        "opening": "The {session} CNAP reporting session is open.",
+    },
+    "reminder": {
+        "subject": "Reminder: your {session} CNAP reporting session is due {due}",
+        "opening": "This is a reminder that your {session} CNAP reporting session is due {due}.",
+    },
+    "overdue": {
+        "subject": "Your {session} CNAP reporting session was due {due}",
+        "opening": "Your {session} CNAP reporting session was due {due}, and the reporting session is still open, so there's still time.",
+    },
+}
+EVERY_LIMITS = {"reminder": (1, 14), "overdue": (1, 7)}
+
+
+def every(period, kind):
+    """Days between reminders (kind "reminder") or past-due emails (kind "overdue") for one person."""
+    default = REMINDER_GAP_DAYS if kind == "reminder" else OVERDUE_GAP_DAYS
+    lo, hi = EVERY_LIMITS[kind]
+    try:
+        n = int((period.email_plan or {}).get(f"{kind}_every", default))
+    except (TypeError, ValueError):
+        n = default
+    return min(max(n, lo), hi)
+
+
+def skipped_days(period):
+    return set((period.email_plan or {}).get("skip", []))
+
+
+def added_days(period):
+    """{date ISO string: kind} for emails the evaluator added on the timeline."""
+    return {x["date"]: x["kind"] for x in (period.email_plan or {}).get("add", []) if x.get("kind") in ("reminder", "overdue")}
+
+
+def wording(period, kind):
+    """{subject, opening, custom}: this period's wording for one email, with {session} and {due} still in place."""
+    std = STANDARD_WORDING[kind]
+    own = ((period.email_plan or {}).get("wording") or {}).get(kind) or {}
+    subject = (own.get("subject") or "").strip() or std["subject"]
+    opening = (own.get("opening") or "").strip() or std["opening"]
+    return {"subject": subject, "opening": opening, "custom": subject != std["subject"] or opening != std["opening"]}
+
+
+def _fill(text, period):
+    due = timezone.localtime(period.due_at)
+    return text.replace("{session}", period.name).replace("{due}", f"{due:%A, %B} {due.day}")
+
+
+def subject_for(period, kind):
+    # Subjects name the due date without the weekday, as before.
+    due = timezone.localtime(period.due_at)
+    return wording(period, kind)["subject"].replace("{session}", period.name).replace("{due}", f"{due:%B} {due.day}")
+
+
+def opening_for(period, kind):
+    return _fill(wording(period, kind)["opening"], period)
+
+
 def _label(a):
     ctx = a.project.title if a.project_id else (a.core.name if a.core_id else "")
     return a.form_definition.name + (f" ({ctx})" if ctx else "")
@@ -66,7 +130,7 @@ def _items(assignments):
     return items, summary, (duration(total) if total else "")
 
 
-def plan(period, kind):
+def plan(period, kind, gap=None):
     """Rows of {person, email, forms, with_link, skip}. skip is a reason the person won't be emailed, or ''."""
     if kind not in PeriodEmail.Kind.values:
         raise EmailError("Unknown email kind.")
@@ -89,7 +153,7 @@ def plan(period, kind):
             sent[e.person_id] = e.sent_at
         last[e.person_id] = e.sent_at  # any email for this period counts toward the gap
     today = timezone.localdate()
-    gap_days = OVERDUE_GAP_DAYS if kind == PeriodEmail.Kind.OVERDUE else REMINDER_GAP_DAYS
+    gap_days = gap if gap is not None else (every(period, kind) if kind != "open" else 0)
     rows = []
     for d in by.values():
         p = d["person"]
@@ -122,11 +186,11 @@ def plan(period, kind):
     return rows
 
 
-def send(period, kind, actor=None, dry_run=False):
+def send(period, kind, actor=None, dry_run=False, gap=None):
     """Send the emails plan() says to send. Returns (sent, skipped) counts."""
     if not period.accepting_responses:
         raise EmailError("Emails can be sent only while the reporting session is open for answers.")
-    rows = plan(period, kind)
+    rows = plan(period, kind, gap=gap)
     due = timezone.localtime(period.due_at)
     n = 0
     for r in rows:
@@ -148,6 +212,7 @@ def send(period, kind, actor=None, dry_run=False):
                 "items": items,
                 "summary": summary,
                 "total": total,
+                "opening": opening_for(period, kind),
                 "due": f"{due:%A, %B} {due.day}",
                 "url": url,
                 "with_link": r["with_link"],
@@ -155,11 +220,7 @@ def send(period, kind, actor=None, dry_run=False):
                 "site": settings.SITE_URL,
             },
         )
-        subject = {
-            "open": f"CNAP Reporting Hub: your {period.name} reporting session is open",
-            "reminder": f"Reminder: your {period.name} CNAP reporting session is due {due:%B} {due.day}",
-            "overdue": f"Your {period.name} CNAP reporting session was due {due:%B} {due.day}",
-        }[kind]
+        subject = subject_for(period, kind)
         send_mail(
             subject=subject,
             message=body,
@@ -196,6 +257,11 @@ def scheduled_kind(period, today=None):
         return None
     if today == opens:
         return PeriodEmail.Kind.OPEN
+    iso = today.isoformat()
+    if iso in added_days(period):
+        return added_days(period)[iso]
+    if iso in skipped_days(period):
+        return None
     return PeriodEmail.Kind.REMINDER if today <= due else PeriodEmail.Kind.OVERDUE
 
 
@@ -207,9 +273,12 @@ def run_schedule(period, today=None):
     kind = scheduled_kind(period, today)
     if not kind:
         return []
+    today = today or timezone.localdate()
     out = [(PeriodEmail.Kind.OPEN, *send(period, PeriodEmail.Kind.OPEN))]
     if kind != PeriodEmail.Kind.OPEN:
-        out.append((kind, *send(period, kind)))
+        # An added day goes to everyone with something left, whatever their last email (one a day at most).
+        gap = 1 if today.isoformat() in added_days(period) else None
+        out.append((kind, *send(period, kind, gap=gap)))
     return out
 
 
@@ -222,7 +291,9 @@ def schedule_preview(period):
         "opens": opens,
         "due": due,
         "closes": closes,
-        "first_reminder": opens + timedelta(days=REMINDER_GAP_DAYS),
+        "first_reminder": opens + timedelta(days=every(period, "reminder")),
+        "reminder_every": every(period, "reminder"),
+        "overdue_every": every(period, "overdue"),
         "after_due": due + timedelta(days=1),
     }
 
@@ -240,14 +311,10 @@ def preview(period, kind):
         f"email/period_{kind}.txt",
         {
             "person": r["person"], "period": period, "forms": r["forms"], "items": items,
-            "summary": summary, "total": total, "due": f"{due:%A, %B} {due.day}",
+            "summary": summary, "total": total, "opening": opening_for(period, kind), "due": f"{due:%A, %B} {due.day}",
             "url": "[personal sign-in link]" if r["with_link"] else f"{settings.SITE_URL}/tasks/",
             "with_link": r["with_link"], "days": signin.LINK_DAYS, "site": settings.SITE_URL,
         },
     )
-    subject = {
-        "open": f"CNAP Reporting Hub: your {period.name} reporting session is open",
-        "reminder": f"Reminder: your {period.name} CNAP reporting session is due {due:%B} {due.day}",
-        "overdue": f"Your {period.name} CNAP reporting session was due {due:%B} {due.day}",
-    }[kind]
+    subject = subject_for(period, kind)
     return f"Subject: {subject}\n\n{body.strip()}"

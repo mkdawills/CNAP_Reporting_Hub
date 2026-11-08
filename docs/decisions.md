@@ -683,3 +683,11 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - Fewer than SMALL_N_THRESHOLD (5) full responses: the core report holds the reflections only (MW: "maybe reflections only").
 - Numbers: the same combined tables members see in Center results (items with fewer than 5 answers left out).
 - The three core user surveys' purpose line now tells members: "The [core] directors receive a report of combined answers and written comments, without names." (MW: "sure").
+
+## 2026-11-08 - Email controls (Batch 4, MW approved "all!")
+
+- New `ReportingPeriod.email_plan` (JSON): `reminder_every` (1 to 14 days, default 4), `overdue_every` (1 to 7, default 1), `skip` (days with no automatic email), `add` (days with an added reminder or past-due email), and `wording` (subject and opening sentence per email). Empty means the standard schedule and wording.
+- Frequency stays person-relative, as before: each person's gap counts from that person's last email.
+- An added day goes to everyone with surveys or reports still to do, whatever their last email, still at most one email a day. A skipped day sends nothing. Opening day and past days can't be changed.
+- Wording: the subject and the opening sentence are editable, with {session} and {due} filling in. The list of surveys and reports, the due date, and the sign-in link always fill in automatically. "Go back to the standard wording" restores the original.
+- The emails page timeline has "Skip this email," "Restore this email," and "Remove this email" on each future day. Every change is in the audit log.

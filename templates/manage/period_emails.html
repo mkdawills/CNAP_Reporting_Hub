@@ -3,14 +3,32 @@
 {% block content %}
 <div class="head"><div><h1>{{ p.name }}: emails</h1><p>{{ "Each person gets a personal list of forms and the due date. People who sign in by emailed link get a personal link; K-State members sign in with a K-State eID."|stack }}</p></div></div>
 {% if request.proto_active %}<div class="panel em-auto">
-  <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you: the “your reporting session is open” email, reminders every 4 days, then daily past-due notes. Pause it if the Center needs quiet, for example during a campus emergency." %}</h2>
+  <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you: the “your reporting session is open” email, reminders, then past-due notes, on the schedule below. Change how often, skip or add a day, or pause it entirely, for example during a campus emergency." %}</h2>
   <p class="em-lead">The Hub sends three emails for this reporting session, each on its own schedule.</p>
   <div class="scroll"><table class="em-sched nosort"><thead><tr><th scope="col">Email</th><th scope="col">When it goes</th><th scope="col">What it says</th></tr></thead><tbody>
     <tr><th scope="row">“Your reporting session is open”</th><td>Once, on opening day, {{ sched.opens|date:"l, F j" }}</td><td>Each survey and report the person has, with its time, and the due date</td></tr>
-    <tr><th scope="row">The reminder</th><td>Every 4 days, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}</td><td>Only the surveys and reports the person still has left, with their times</td></tr>
-    <tr><th scope="row">The past-due email</th><td>Every day from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the reporting session closes on {{ sched.closes|date:"F j" }}{% else %} until you close the reporting session{% endif %}</td><td>The due date has passed, and the person can still turn in the surveys and reports left</td></tr>
+    <tr><th scope="row">The reminder</th><td>Every {% if sched.reminder_every == 1 %}day{% else %}{{ sched.reminder_every }} days{% endif %}, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}</td><td>Only the surveys and reports the person still has left, with their times</td></tr>
+    <tr><th scope="row">The past-due email</th><td>Every {% if sched.overdue_every == 1 %}day{% else %}{{ sched.overdue_every }} days{% endif %} from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the reporting session closes on {{ sched.closes|date:"F j" }}{% else %} until you close the reporting session{% endif %}</td><td>The due date has passed, and the person can still turn in the surveys and reports left</td></tr>
   </tbody></table></div>
-  {% include "proto/_timeline.html" with tl=etl tl_label="Show every automatic email on a timeline" %}
+  {% if can_manage %}{% url 'manage:period_emails_plan' p.pk as plan_url %}{% endif %}
+  {% include "proto/_timeline.html" with tl=etl tl_label="Show every automatic email on a timeline" tl_edit=plan_url %}
+  {% if can_manage %}
+  <div class="em-ctl">
+    <form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-ctl-box">{% csrf_token %}
+      <h3>How often</h3>
+      <p class="em-note">Each person’s gap is counted from that person’s last email.</p>
+      <div class="em-ctl-row"><label for="em-re">Reminder, every</label><input id="em-re" type="number" name="reminder_every" min="1" max="14" value="{{ sched.reminder_every }}"><span>days, up to 14</span></div>
+      <div class="em-ctl-row"><label for="em-oe">Past-due email, every</label><input id="em-oe" type="number" name="overdue_every" min="1" max="7" value="{{ sched.overdue_every }}"><span>days, up to 7</span></div>
+      <div class="actions"><button class="btn small" type="submit" name="action" value="every">Save how often</button></div>
+    </form>
+    <form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-ctl-box">{% csrf_token %}
+      <h3>Add or skip one day</h3>
+      <p class="em-note">An added email goes to everyone with surveys or reports still to do, whatever their last email.<br>A skipped day sends nothing.<br>You can also skip or restore any day on the timeline above.</p>
+      <div class="em-ctl-row"><label for="em-d">Day</label><input id="em-d" type="date" name="date" min="{{ sched.opens|date:'Y-m-d' }}"{% if sched.closes %} max="{{ sched.closes|date:'Y-m-d' }}"{% endif %} required></div>
+      <div class="actions"><button class="btn small" type="submit" name="action" value="add">Add an email this day</button><button class="btn small ghost" type="submit" name="action" value="skip">Skip this day</button></div>
+    </form>
+  </div>
+  {% endif %}
   <ul class="em-rules">
     <li>Only people with forms still to do get the reminder and the past-due email.</li>
     <li>No one gets more than one email in a day.</li>
@@ -38,7 +56,14 @@
     {% if skipped %}<details class="em-roll"><summary><h3>Not emailed ({{ skipped|length }})</h3></summary><ul class="em-skip">{% for r in skipped %}<li>{{ r.person }}: {{ r.skip }}</li>{% endfor %}</ul></details>{% endif %}
     <details class="em-roll"><summary><h3>What the email says</h3></summary>
       <pre class="em-text">{{ sample }}</pre>
-      <p class="em-note">This is the email exactly as {% if to_send %}the first person on the list{% else %}one person{% endif %} would receive it today.<br>The wording is a draft for your review.</p>
+      <p class="em-note">This is the email exactly as {% if to_send %}the first person on the list{% else %}one person{% endif %} would receive it today.</p>
+      {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-word">{% csrf_token %}<input type="hidden" name="kind" value="{{ kind }}">
+        <h4>Change the wording</h4>
+        <p class="em-note">You can change the subject and the opening sentence.<br>The list of surveys and reports, the due date, and the sign-in link always fill in automatically.<br>Write {session} for the reporting session’s name and {due} for the due date.</p>
+        <label for="em-subj">Subject</label><input id="em-subj" type="text" name="subject" value="{{ words.subject }}" maxlength="200">
+        <label for="em-open">Opening sentence</label><textarea id="em-open" name="opening" rows="3" maxlength="600">{{ words.opening }}</textarea>
+        <div class="actions"><button class="btn small" type="submit" name="action" value="wording">Save the wording</button>{% if words.custom %}<button class="btn small ghost" type="submit" name="action" value="wording_reset">Go back to the standard wording</button>{% endif %}</div>
+      </form>{% endif %}
     </details>
   </div>
 </div>

@@ -64,6 +64,10 @@ class ReportingPeriod(TimestampedModel):
         default=True,
         help_text="Send emails on schedule: opening day, every 4 days until the due date, then daily until the period closes.",
     )
+    # Email controls (MW 2026-11-08): {"reminder_every": 4, "overdue_every": 1, "skip": ["2026-11-12"],
+    # "add": [{"date": "2026-11-20", "kind": "reminder"}], "wording": {"reminder": {"subject": "", "opening": ""}}}.
+    # Empty means the standard schedule and wording.
+    email_plan = models.JSONField(default=dict, blank=True)
 
     class Meta:
         db_table = "reporting_periods"

@@ -4,6 +4,7 @@ import datetime as dt
 
 from django import forms
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -618,6 +619,7 @@ def period_emails(request, pk):
             "today_kind": emails.scheduled_kind(p),
             "etl": _email_timeline(request, p),
             "sample": emails.preview(p, kind),
+            "words": emails.wording(p, kind),
         },
     )
 
@@ -643,6 +645,88 @@ def period_emails_auto(request, pk):
         request, "Automatic emails are on." if on else "Automatic emails are paused."
     )
     return redirect(f"/manage/periods/{p.pk}/emails/")
+
+
+@manage_action
+def period_emails_plan(request, pk):
+    """Email controls (MW 2026-11-08): how often, skip or add a day, and each email's wording."""
+    import datetime as _dt
+
+    from apps.reporting.services import emails
+
+    p = get_object_or_404(ReportingPeriod, pk=pk)
+    plan = dict(p.email_plan or {})
+    action = request.POST.get("action", "")
+    back = f"/manage/periods/{p.pk}/emails/"
+    opens = timezone.localtime(p.opens_at).date()
+    due = timezone.localtime(p.due_at).date()
+    if action == "every":
+        for k in ("reminder", "overdue"):
+            raw = request.POST.get(f"{k}_every", "")
+            lo, hi = emails.EVERY_LIMITS[k]
+            if not raw.isdigit() or not lo <= int(raw) <= hi:
+                messages.error(request, f"Choose {lo} to {hi} days for the {'reminder' if k == 'reminder' else 'past-due email'}.")
+                return redirect(back)
+            plan[f"{k}_every"] = int(raw)
+        msg = "Saved. Reminders go every {} and past-due emails every {}.".format(
+            "day" if plan["reminder_every"] == 1 else f"{plan['reminder_every']} days",
+            "day" if plan["overdue_every"] == 1 else f"{plan['overdue_every']} days",
+        )
+    elif action in ("skip", "unskip", "add", "remove"):
+        try:
+            day = _dt.date.fromisoformat(request.POST.get("date", ""))
+        except ValueError:
+            messages.error(request, "Choose a day.")
+            return redirect(back)
+        iso = day.isoformat()
+        nice = f"{day:%A, %B} {day.day}"
+        skips = set(plan.get("skip", []))
+        adds = [x for x in plan.get("add", []) if x.get("date") != iso]
+        if day <= timezone.localdate():
+            messages.error(request, "Choose a day after today.")
+            return redirect(back)
+        if day <= opens:
+            messages.error(request, "Choose a day after opening day. The “your reporting session is open” email always goes on opening day.")
+            return redirect(back)
+        if action == "skip":
+            skips.add(iso)
+            msg = f"Skipped. No automatic email goes out on {nice}."
+        elif action == "unskip":
+            skips.discard(iso)
+            msg = f"Restored. The scheduled email goes out on {nice}."
+        elif action == "add":
+            skips.discard(iso)
+            adds.append({"date": iso, "kind": "reminder" if day <= due else "overdue"})
+            msg = f"Added. A {'reminder' if day <= due else 'past-due email'} goes to everyone with surveys or reports still to do on {nice}."
+        else:
+            msg = f"Removed the email you added for {nice}."
+        plan["skip"], plan["add"] = sorted(skips), sorted(adds, key=lambda x: x["date"])
+    elif action in ("wording", "wording_reset"):
+        kind = request.POST.get("kind", "")
+        if kind not in emails.STANDARD_WORDING:
+            raise PermissionDenied
+        words = dict(plan.get("wording") or {})
+        if action == "wording_reset":
+            words.pop(kind, None)
+            msg = "Back to the standard wording."
+        else:
+            subject = request.POST.get("subject", "").strip()[:200]
+            opening = request.POST.get("opening", "").strip()[:600]
+            if not subject or not opening:
+                messages.error(request, "Write a subject and an opening sentence.")
+                return redirect(f"{back}?kind={kind}")
+            words[kind] = {"subject": subject, "opening": opening}
+            msg = "Saved the wording. The sample below shows it."
+        plan["wording"] = words
+        back = f"{back}?kind={kind}"
+    else:
+        raise PermissionDenied
+    old = p.email_plan
+    p.email_plan = plan
+    p.save(update_fields=["email_plan", "updated_at"])
+    record_event(request.user, AuditLog.Action.UPDATE, p, old={"email_plan": old}, new={"email_plan": plan})
+    messages.success(request, msg)
+    return redirect(back)
 
 
 @manage_action

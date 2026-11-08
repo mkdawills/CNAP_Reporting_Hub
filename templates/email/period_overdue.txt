@@ -1,6 +1,6 @@
 {% autoescape off %}Hello {{ person.first_name }},
 
-Your {{ period.name }} CNAP reporting session was due {{ due }}, and the reporting session is still open, so there's still time. You still have {{ summary }} to complete.{% if total %}
+{{ opening }} You still have {{ summary }} to complete.{% if total %}
 {{ total|capfirst }} in all.{% endif %}
 {% for i in items %}
 - {{ i.label }}: {{ i.time }}{% endfor %}
