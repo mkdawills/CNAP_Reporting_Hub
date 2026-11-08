@@ -2,7 +2,7 @@
 {% block title %}{{ title }} · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>{{ title }} {% why "A live recreation of the evaluator's product dashboards. The same tables and graphs, generated from the Hub's records, so they are always current, and ready to paste into the Word write-up for the External Advisory Committee or the RPPR." %}</h1>
-  <p>Generated from the Hub’s records just now, in the layout of the Center’s dashboard documents.<br>Observations are written by the evaluator; the Hub supplies the numbers.</p>
+  <p>Generated from the Hub’s records just now, in the layout of the Center’s dashboard documents.<br>The evaluator writes the observations.<br>The Hub supplies the numbers.</p>
 </div><div class="headactions"><a class="btn ghost" href="{% url 'manage:outcomes' %}?tab={{ kind }}">Back to {% if kind == 'pubs' %}publications{% elif kind == 'talks' %}presentations{% else %}grants{% endif %}</a></div></div>
 
 {% if kind == 'pubs' %}
