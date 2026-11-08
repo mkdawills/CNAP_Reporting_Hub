@@ -24,7 +24,7 @@
       {% endif %}
       {% for label, value in prefill %}<li><span class="px-label">{{ label }}</span><span class="v">{{ value|default:"—" }}</span></li>{% endfor %}
     </ul>
-    {% if reader %}<p class="px-note p21-private">{% if deidentified %}De-identified response.<br>Names and anything that could identify the respondent are not shown.{% else %}Response from {{ a.person }}.{% endif %}<br>Read-only.</p>{% else %}<p class="px-note p21-private">{% if not fd.display.no_period_line %}Please {% if noun == 'report' %}report{% else %}answer{% endif %} only on what happened during this reporting session.<br>{% endif %}Other respondents never see your answers.</p>{% endif %}
+    {% if reader %}<p class="px-note p21-private">{% if deidentified %}De-identified response.<br>Names and anything that could identify the respondent are not shown.{% else %}Response from {{ a.person }}.{% endif %}<br>Read-only.</p>{% else %}<p class="px-note p21-private">{% if not fd.display.no_period_line %}{% if noun == 'report' %}Report{% else %}Answer{% endif %} only on what happened during this reporting session.<br>{% endif %}Other respondents never see your answers.</p>{% endif %}
   </header>
 
   {% if preview %}<div class="px-callout p21-msg p21-preview" role="status"><p>{% if a.status == 'in_progress' %}You previously started this {{ noun }}, and your answers are saved.<br>This preview doesn’t change anything.{% elif a.reporting_period.in_preview %}This is a preview.<br>Answering opens {{ a.reporting_period.opens_at|date:"l, F j" }}.{% else %}This is a preview.<br>Nothing here is saved.{% endif %}</p>

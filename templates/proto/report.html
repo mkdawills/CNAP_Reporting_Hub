@@ -48,7 +48,7 @@
   <section class="px-section" id="r90-part1" aria-labelledby="r90-combined-h">
     <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this part up to its heading, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="r90-combined-h"><span>1</span>Combined results</h2></div><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="r90-partbody">
     <div class="r90-secs px-rolls" data-rollgroup>{% if tables|length > 1 %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section in this part at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section in this part up to its heading.">Collapse all</button></div>{% endif %}{% include "proto/_report_tables.html" with show_codes=True %}</div>
-    {% if is_report and not tables %}<p class="px-note">Narrative report. Please read each submission from the list in “Identifiable information.”</p>{% endif %}
+    {% if is_report and not tables %}<p class="px-note">Narrative report. Read each submission from the list in “Identifiable information.”</p>{% endif %}
     </div></details>
   </section>
 
@@ -91,7 +91,7 @@
   {# ======================================================== 3. identifiable #}
   {% if who or rows or deid_blocked %}
   <section class="px-section r90-ident" id="r90-part3" aria-labelledby="r90-ident-h">
-    <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this part up to its heading, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="r90-ident-h"><span>3</span>{% if who %}Identifiable information{% else %}Individual responses{% endif %}</h2><p class="px-note">{% if who %}Names and individual responses.<br>Please don’t share them outside the evaluation team.{% else %}Each response, without names.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="r90-partbody">
+    <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this part up to its heading, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="r90-ident-h"><span>3</span>{% if who %}Identifiable information{% else %}Individual responses{% endif %}</h2><p class="px-note">{% if who %}Names and individual responses.<br>Don’t share them outside the evaluation team.{% else %}Each response, without names.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary><div class="r90-partbody">
     <div class="px-rolls" data-rollgroup>
     {% if who and rows %}<div class="px-rollbar foldall taskfold"><button type="button" data-roll="open" title="Opens every section in this part at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section in this part up to its heading.">Collapse all</button></div>{% endif %}
     {% if who %}

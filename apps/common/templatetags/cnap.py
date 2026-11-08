@@ -491,6 +491,7 @@ def duration(minutes):
         m = int(minutes)
     except (TypeError, ValueError):
         return ""
+    m = -(-m // 5) * 5  # rounded up to the nearest 5 minutes, like every estimate
     h, r = divmod(m, 60)
     if not h:
         return f"about {m} minute{'s' if m != 1 else ''}"

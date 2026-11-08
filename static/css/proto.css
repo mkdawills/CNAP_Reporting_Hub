@@ -1585,7 +1585,8 @@ body.proto.pa .pa-page details.ackbox > summary { font: 500 var(--px-fs-sm)/1.4 
    32 pixels between the line and the title, 12 pixels between the title and its content. Open or closed. */
 body.proto .r90 .px-section details.r90-partroll > summary.px-section-head { padding: var(--px-sec) var(--px-3) var(--px-3) !important; }
 body.proto .r90 .r90-partbody > :first-child, body.proto .r90 .r90-partbody > .r90-secs > :first-child:not(.px-rollbar) { margin-top: 0; }
-body.proto .r90 details.r90-sec > summary, body.proto .r90 .r90-partbody details.px-roll > summary, body.proto .px-rolls:not(.r90-partbody .px-rolls) > details.px-roll > summary { padding: var(--px-sub) var(--px-3) var(--px-3) !important; }
+body.proto .r90 details.r90-sec > summary, body.proto .r90 .r90-partbody details.px-roll > summary { padding: var(--px-sub) var(--px-3) var(--px-3) !important; }
+body.proto .px-rolls:not(.r90-partbody .px-rolls) > details.px-roll > summary { padding: var(--px-sec) var(--px-3) var(--px-3) !important; }
 body.proto .r90 details.r90-sec > .px-roll-body, body.proto details.px-roll > .px-roll-body { padding-top: var(--px-2); }
 body.proto .r90 details.r90-sec > summary .px-roll-cue, body.proto .r90 .r90-partbody details.px-roll > summary .px-roll-cue { margin-top: calc(var(--px-sub) - var(--px-5) + 14px); }
 body.proto .lch .lch-tools { margin-top: var(--px-2); }
@@ -1836,3 +1837,16 @@ body.proto th.coldrag.dragging { opacity: .5; }
 body.proto th.coldrag.dropto { box-shadow: inset 3px 0 0 var(--px-brand); }
 body.proto .colnote { margin: 0 0 var(--px-2); font-size: var(--px-fs-sm); color: var(--px-ink-2); display: flex; gap: var(--px-3); align-items: baseline; }
 body.proto .colnote .linkbtn { margin: 0; padding: 0; background: none; border: 0; color: var(--px-brand); text-decoration: underline; font: inherit; cursor: pointer; }
+
+/* Batch 1 and 2 sweep (MW 2026-11-07): the same rhythm as administration.
+   48px from a section's line to its title on every page; results parts no longer stack an extra 24px above the title. */
+body.proto .r90 .px-section:has(> details.r90-partroll) { padding-top: 0 !important; }
+body.proto .r90 .px-onpage-main > .px-section:first-child > details.r90-partroll > summary { padding-top: calc(var(--px-sec) - 42px) !important; }
+/* Show all and Collapse all on respondent and results pages: 24px under what is above, 12px above the first line. */
+html body.proto .px-page .foldall, html body.proto .t3 .foldall, html body.proto .r90 .foldall { margin-top: var(--px-5) !important; margin-bottom: var(--px-3) !important; }
+html body.proto .t3 .foldall + *, html body.proto .r90 .foldall + * { margin-top: 0 !important; }
+/* Results pages: a section inside a part is one level down, so its title is a smaller, bold, sans heading (MW 2026-11-07). */
+body.proto .r90 .r90-partbody :is(h3.px-h3, h3.r90-sec-h, details.r90-sec > summary h3, details.px-roll > summary h3, .px-roll-h:not(.r90-part)) { font: 600 var(--px-fs-md)/1.35 var(--px-sans) !important; letter-spacing: 0; color: var(--px-ink); }
+html body.proto .t3 .t3-top:has(+ .px-rolls) { margin-bottom: 0 !important; }
+/* Review before launch: the person column is wide enough that each "Not sent" note wraps to two lines at most (MW 2026-11-07). Text stays left-aligned. */
+html body.proto .lch .lch-matrix th.lch-who { width: 300px !important; min-width: 280px !important; max-width: 300px; }
