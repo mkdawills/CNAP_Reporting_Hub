@@ -1874,3 +1874,9 @@ body.proto .made-foot { text-align: center; line-height: 1.7; }
 body.proto .px-widenote { margin: 0 0 var(--px-2); font-size: var(--px-fs-sm); color: var(--px-ink-2); }
 body.proto .px-wide { position: relative; }
 body.proto .px-wide-more { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 56px), rgba(0,0,0,.25)); }
+/* Sort arrows glued to the last word (MW 2026-11-08). */
+body.proto th.sorth::after, body.proto th.sorth.hashelp::after { content: none !important; }
+body.proto th.sorth .sortglue { white-space: nowrap; }
+body.proto th.sorth .sortarr::before { content: "\00a0↕"; color: var(--px-muted); font-size: .85em; }
+body.proto th.sorth.asc .sortarr::before { content: "\00a0↑"; color: var(--px-brand); }
+body.proto th.sorth.desc .sortarr::before { content: "\00a0↓"; color: var(--px-brand); }

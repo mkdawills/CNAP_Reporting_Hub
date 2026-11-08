@@ -173,3 +173,32 @@
     wrap.parentNode.insertBefore(bar, wrap);
   });
 })();
+
+// The sort arrow stays on the same line as the header's last word (MW 2026-11-08): the last word and the arrow
+// are joined in one unbreakable piece, so a narrow column wraps the words, never the arrow alone.
+(function () {
+  function glue(th) {
+    if (th.querySelector(".sortglue")) return;
+    var walker = document.createTreeWalker(th, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) { return n.nodeValue.trim() && !n.parentNode.closest(".whyq, .whyb, .sr") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT; }
+    });
+    var last = null, n;
+    while ((n = walker.nextNode())) last = n;
+    var g = document.createElement("span");
+    g.className = "sortglue";
+    if (last) {
+      var text = last.nodeValue.replace(/\s+$/, "");
+      var cut = text.lastIndexOf(" ") + 1;
+      last.nodeValue = text.slice(0, cut);
+      g.appendChild(document.createTextNode(text.slice(cut)));
+      last.parentNode.insertBefore(g, last.nextSibling);
+    } else th.appendChild(g);
+    var a = document.createElement("span");
+    a.className = "sortarr";
+    a.setAttribute("aria-hidden", "true");
+    g.appendChild(a);
+  }
+  function run() { document.querySelectorAll("body.proto th.sorth").forEach(glue); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(run, 0); });
+  else setTimeout(run, 0);
+})();
