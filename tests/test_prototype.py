@@ -114,7 +114,7 @@ def test_screen21_keeps_every_field_and_both_actions(client, demo):
         assert 'value="submit"' in html and 'value="save"' in html
         assert f"/tasks/{pilot.pk}/autosave/" in html
     # the reporting period and the deadline are shown as two separate facts
-    assert "Report on work from" in after and "Submission due" in after
+    assert "Your answers cover" in after and "Due" in after
     assert pilot.due_at.strftime("%B") in after
 
 

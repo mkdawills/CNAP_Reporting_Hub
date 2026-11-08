@@ -538,3 +538,59 @@ document.addEventListener("DOMContentLoaded", function () {
     h.after(wrap); box.remove();
   }, 0);
 });
+
+/* A link to a section further down a page opens that section (MW 2026-11-08: "7 of 18" on Results jumps to who answered). */
+(function () {
+  function openTarget() {
+    var id = location.hash.slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    for (var a = el; a; a = a.parentElement) { if (a.tagName === "DETAILS") a.open = true; }
+    setTimeout(function () { el.scrollIntoView({ block: "start" }); }, 50);
+  }
+  document.addEventListener("DOMContentLoaded", function () { setTimeout(openTarget, 60); });
+  window.addEventListener("hashchange", openTarget);
+})();
+
+/* A table wider than its space says so (MW 2026-11-08: "did you know the table is cut off?"): a short note above it and a
+   soft fade on the edge that has more columns, which goes away once the reader reaches the end. */
+(function () {
+  function scrollers() {
+    return Array.prototype.filter.call(document.querySelectorAll("body.proto table"), function (t) { return t.offsetParent; })
+      .map(function (t) {
+        for (var a = t.parentElement; a && a !== document.body; a = a.parentElement) {
+          var o = getComputedStyle(a).overflowX;
+          if (o === "auto" || o === "scroll") return a;
+        }
+        return null;
+      }).filter(function (x, i, arr) { return x && arr.indexOf(x) === i; });
+  }
+  function update(box) {
+    var more = box.scrollWidth - box.clientWidth > 4;
+    var atEnd = box.scrollLeft + box.clientWidth >= box.scrollWidth - 4;
+    box.classList.toggle("px-wide", more);
+    box.classList.toggle("px-wide-more", more && !atEnd);
+    var note = box.previousElementSibling && box.previousElementSibling.classList.contains("px-widenote") ? box.previousElementSibling : null;
+    if (more && !note) {
+      note = document.createElement("p");
+      note.className = "px-widenote";
+      note.innerHTML = "This table is wider than the page.<br>Scroll sideways to see every column" +
+        (document.querySelector(".px-onpage-layout:not(.navclosed)") ? ", or hide \u201cOn this page\u201d for more room." : ".");
+      box.parentNode.insertBefore(note, box);
+    } else if (!more && note) note.remove();
+  }
+  function run() {
+    scrollers().forEach(function (box) {
+      update(box);
+      if (!box.dataset.wideWatch) {
+        box.dataset.wideWatch = "1";
+        box.addEventListener("scroll", function () { update(box); }, { passive: true });
+      }
+    });
+  }
+  document.addEventListener("DOMContentLoaded", function () { setTimeout(run, 120); });
+  window.addEventListener("resize", function () { clearTimeout(run.t); run.t = setTimeout(run, 150); });
+  document.addEventListener("toggle", function () { setTimeout(run, 30); }, true);
+  document.addEventListener("click", function () { setTimeout(run, 60); });
+})();

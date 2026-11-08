@@ -1870,3 +1870,7 @@ body.proto .px-mast-row > .px-status { margin: 0 !important; order: 2; }
 @media (min-width: 1181px) { html body.proto .px-onpage-layout > .px-onpage { padding-right: var(--px-4); box-sizing: border-box; } }
 /* The note under the Center totals: every line centered the same way, one sentence per line (MW 2026-11-08). */
 body.proto .made-foot { text-align: center; line-height: 1.7; }
+/* Wide tables (MW 2026-11-08): a note above, and a fade on the right edge while more columns are hidden. */
+body.proto .px-widenote { margin: 0 0 var(--px-2); font-size: var(--px-fs-sm); color: var(--px-ink-2); }
+body.proto .px-wide { position: relative; }
+body.proto .px-wide-more { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 56px), rgba(0,0,0,.25)); }
