@@ -45,7 +45,7 @@ def test_profile_help_and_evaluator_contact(client, center):
     client.force_login(santos)
     html = client.get("/profile/").content.decode()
     assert (
-        "Please contact your institution’s research office" in html and "research@k-state.edu" not in html
+        "Contact your institution’s research office" in html and "research@k-state.edu" not in html
     )
 
 

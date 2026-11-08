@@ -105,7 +105,7 @@ def test_progress_report_file_required(instruments):
     assert [q.code for q in s.missing_required({"file": "12"} | no | {"c4": "yes"})] == ["c4_note"]
     assert [q.code for q in s.missing_required({"file": "12"} | no | {"c5c": "no"})] == ["c5c_note"]
     assert "proj_status" not in s.by_code and "tables_file" not in s.by_code
-    assert s.time_label() == "1–2 page upload, plus 5 min"
+    assert s.time_label() == "1–2-page upload, plus about 5 minutes"
 
 
 def test_time_estimates_are_sensible(instruments):
