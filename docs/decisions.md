@@ -673,3 +673,13 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - Feedback button at the bottom right of every signed-in page: topic, optional 1 to 5 rating,
   and a note, saved with the page it came from (page_feedback); read and marked done on the new
   admin "Page feedback" page.
+
+## 2026-11-08 - Core reports for core directors (MW approved)
+
+- MW has historically given each core director a core report: the numbers and written answers from the user survey about that core, plus her themes and reflections. The Hub now does the same.
+- One core report per core user survey per reporting session (new table `core_reports`: reflections, held-back answer ids, release time, release count, and the frozen released content).
+- The evaluator reads the written answers, ticks "Hold back" on any that could identify the writer, writes reflections, and releases. Release is possible once the reporting session closes. A release freezes the written answers, themes, and reflections. Later changes need "Release again". "Withdraw the release" hides it again. Every release and withdrawal is in the audit log.
+- Core directors (current core_director relationship) see "Core reports" in the menu and read only the reports for the cores they direct. Co-directors see the same report. No names, no list of who answered, no answers grouped as one person's response, and written answers in a stable shuffled order.
+- Fewer than SMALL_N_THRESHOLD (5) full responses: the core report holds the reflections only (MW: "maybe reflections only").
+- Numbers: the same combined tables members see in Center results (items with fewer than 5 answers left out).
+- The three core user surveys' purpose line now tells members: "The [core] directors receive a report of combined answers and written comments, without names." (MW: "sure").

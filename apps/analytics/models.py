@@ -218,3 +218,38 @@ class DataQualityDismissal(TimestampedModel):
                 name="data_quality_dismissals_unique",
             ),
         ]
+
+
+class CoreReport(TimestampedModel):
+    """The core report for one core user survey in one reporting session (MW 2026-11-08).
+
+    The evaluator reads the written answers, hides any that could identify the writer, writes
+    reflections, and releases the report. Only then can that core's directors read it.
+    A release freezes the written answers, themes, and reflections in `released_content`;
+    a later change is released again, and every release is in the audit log.
+    """
+
+    reporting_period = models.ForeignKey(
+        ReportingPeriod, on_delete=models.PROTECT, related_name="core_reports"
+    )
+    form_definition = models.ForeignKey(
+        FormDefinition, on_delete=models.PROTECT, related_name="core_reports"
+    )
+    reflections = models.TextField(blank=True)
+    hidden_answers = models.JSONField(
+        default=list, blank=True, help_text="Answer ids the evaluator held back from the core directors."
+    )
+    released_at = models.DateTimeField(null=True, blank=True)
+    released_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    release_count = models.PositiveSmallIntegerField(default=0)
+    released_content = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        db_table = "core_reports"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["reporting_period", "form_definition"], name="core_reports_unique"
+            ),
+        ]

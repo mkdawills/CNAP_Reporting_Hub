@@ -528,3 +528,39 @@ def print_form(request, pk):
     ctx = presenters.form_page(request, a, editable=False)
     blocks = documents.response_blocks(ctx, named=True)
     return documents.file_response([blocks], fd.name, f"{fd.name} {a.reporting_period.short_label}", fmt)
+
+
+@login_required
+def core_reports(request):
+    """Core reports the evaluator released for the cores this person directs (MW 2026-11-08)."""
+    from apps.analytics import core_reports as cr
+
+    reports = list(cr.released_for(request.user))
+    if not cr.directed_core_ids(request.user):
+        raise PermissionDenied
+    from apps.common import prototype
+
+    return render(request, prototype.template(request, "core_reports", "portal/core_reports.html"), {"reports": reports})
+
+
+@login_required
+def core_report(request, pk):
+    from apps.analytics import core_reports as cr
+    from apps.analytics.models import CoreReport
+    from apps.analytics.report import build
+    from apps.common import prototype
+
+    report = get_object_or_404(
+        CoreReport.objects.select_related("form_definition__about_core", "reporting_period"), pk=pk
+    )
+    if not cr.can_read(request.user, report):
+        raise PermissionDenied
+    content = report.released_content or {}
+    data = None
+    if not content.get("small"):
+        data = build(report.form_definition, report.reporting_period, audience="respondent")
+    return render(
+        request,
+        prototype.template(request, "core_report", "portal/core_report.html"),
+        {"report": report, "c": content, "data": data, "core": report.form_definition.about_core},
+    )

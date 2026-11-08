@@ -178,7 +178,7 @@
         <td class="small">{% for x in o.project_links.all %}{% if x.project.kind != 'pilot' %}<div>{{ x.project.title }}</div>{% endif %}{% endfor %}</td>
         <td class="small">{% for x in o.project_links.all %}{% if x.project.kind == 'pilot' %}<div>{{ x.project.title }}</div>{% endif %}{% endfor %}</td>
         <td class="small">{% for x in o.resource_links.all %}<div>{{ x.resource.name }}</div>{% empty %}<span class="muted">—</span>{% endfor %}</td>
-        <td class="small">{% for x in o.resource_links.all %}{% if x.resource.core.rrid and o.status == 'published' %}<div><span class="rridtag {{ x.rrid_cited|default:'none' }}">{% if x.rrid_cited == 'yes' %}Yes{% elif x.rrid_cited == 'no' %}No{% elif x.rrid_cited == 'unsure' %}Not sure{% else %}Not answered{% endif %}</span> <span class="muted">{{ x.resource.core.code }}</span></div>{% endif %}{% endfor %}</td>
+        <td class="small rridcell">{% for x in o.resource_links.all %}{% if x.resource.core.rrid and o.status == 'published' %}<div class="rridrow"><span class="rridcore" title="{{ x.resource.core.name }}">{{ x.resource.core.code }}</span><span class="rridtag {{ x.rrid_cited|default:'none' }}">{% if x.rrid_cited == 'yes' %}Yes{% elif x.rrid_cited == 'no' %}No{% elif x.rrid_cited == 'unsure' %}Not sure{% else %}Not answered{% endif %}</span></div>{% endif %}{% endfor %}</td>
         <td class="small nowrap">{{ o.get_status_display }}{% if o.substatus %}<div class="muted">{{ o.get_substatus_display }}</div>{% endif %}</td>
         {% include "manage/_ack_cell.html" with kind="publication" %}
       </tr>{% endwith %}

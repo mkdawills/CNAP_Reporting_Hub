@@ -1,0 +1,50 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{{ core.name }} report · {{ report.reporting_period.short_label }} · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Core report, the core director's side (MW 2026-11-08). Only what the evaluator released; never names. #}
+<div class="crp">
+  <a class="px-link p21-back" href="{% url 'portal:core_reports' %}">All core reports</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Core report · {{ report.reporting_period.name }}</p>
+    <h1 class="px-title">{{ core.name }} report</h1>
+    <p class="p21-purpose">What members said about the {{ core.name }} in the {{ report.form_definition.name }}, with the evaluator’s themes and reflections.<br>Names are never shown.</p>
+    <ul class="px-facts">
+      <li><span class="px-label">Released</span><span class="v">{{ report.released_at|date:"F j, Y" }}</span></li>
+      {% if not c.small %}<li><span class="px-label">Full responses</span><span class="v">{{ c.full }}</span></li>{% endif %}
+    </ul>
+  </header>
+
+  {% if c.small %}<div class="px-callout"><p>Fewer than 5 people answered every item, so this core report holds the evaluator’s reflections only.<br>That protects respondents’ confidentiality.</p></div>{% endif %}
+
+  <div class="px-page">
+    <section class="px-section" aria-labelledby="crp-r">
+      <h2 class="px-h2" id="crp-r">The evaluator’s reflections</h2>
+      {% if c.reflections %}<div class="crp-text">{{ c.reflections|linebreaks }}</div>{% else %}<p class="px-note">No reflections were written for this reporting session.</p>{% endif %}
+    </section>
+
+    {% if not c.small %}
+    {% if c.themes %}<section class="px-section" aria-labelledby="crp-t">
+      <h2 class="px-h2" id="crp-t">Themes</h2>
+      <div class="crp-text">{{ c.themes|linebreaks }}</div>
+    </section>{% endif %}
+
+    <section class="px-section" aria-labelledby="crp-w">
+      <h2 class="px-h2" id="crp-w">Written answers</h2>
+      <p class="px-note">Written answers appear without names, in a shuffled order.</p>
+      {% for g in c.written %}
+      <div class="crp-q">
+        <h3 class="px-h3">{{ g.prompt }}</h3>
+        <ul class="crp-list">{% for t in g.answers %}<li><p>{{ t|linebreaksbr }}</p></li>{% endfor %}</ul>
+      </div>
+      {% empty %}<p class="px-note">No written answers for this reporting session.</p>{% endfor %}
+    </section>
+
+    {% if data and data.tables %}<section class="px-section" aria-labelledby="crp-n">
+      <h2 class="px-h2" id="crp-n">Combined numbers</h2>
+      <p class="px-note">Items with fewer than {{ data.min_n }} answers are left out.</p>
+      <div class="px-rolls" data-rollgroup>{% with pfx="crp"|add:report.form_definition.code %}{% include "proto/_report_tables.html" with tables=data.tables min_n=data.min_n show_codes=False fd=data.fd pfx=pfx %}{% endwith %}</div>
+    </section>{% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

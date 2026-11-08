@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Core reports · {{ platform_name }}{% endblock %}
+{% block content %}
+{# The core reports a core director can read (MW 2026-11-08). #}
+<div class="crp">
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">My work</p>
+    <h1 class="px-title">Core reports</h1>
+    <p class="p21-purpose">The core report for each core you direct: what members said in the core’s user survey, without names, with the evaluator’s themes and reflections.<br>A core report appears here once the evaluator releases it.</p>
+  </header>
+  <div class="px-page">
+    {% if reports %}
+    <ul class="crp-index">{% for r in reports %}<li><a class="px-link" href="{% url 'portal:core_report' r.pk %}">{{ r.form_definition.about_core.name }} report, {{ r.reporting_period.name }}</a><span class="px-note">Released {{ r.released_at|date:"F j, Y" }}</span></li>{% endfor %}</ul>
+    {% else %}
+    <p class="px-note">No core reports yet.<br>The evaluator releases each core report after the reporting session closes.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

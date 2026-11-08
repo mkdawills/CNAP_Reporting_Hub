@@ -502,9 +502,9 @@ def admin_section_name(value):
 # Kept in the prototype layer, so the form definitions and their versions stay unchanged.
 # Nouns, not pronouns, so each sentence stands on its own.
 FORM_PURPOSE = {
-    "bn_core_survey": "This survey asks how well the Behavioral Neuroscience Core's facilities and services worked for you, and how often you used the Behavioral Neuroscience Core.",
-    "cn_core_survey": "This survey asks how well the Cognitive Neuroscience Core's spaces, equipment, and support worked for you, and how often you used the Cognitive Neuroscience Core.",
-    "ni_core_survey": "This survey asks how well the Neuroinformatics Core's resources supported your research, and how often you used the Neuroinformatics Core.",
+    "bn_core_survey": "This survey asks how well the Behavioral Neuroscience Core's facilities and services worked for you, and how often you used the Behavioral Neuroscience Core. The Behavioral Neuroscience Core directors receive a report of combined answers and written comments, without names.",
+    "cn_core_survey": "This survey asks how well the Cognitive Neuroscience Core's spaces, equipment, and support worked for you, and how often you used the Cognitive Neuroscience Core. The Cognitive Neuroscience Core directors receive a report of combined answers and written comments, without names.",
+    "ni_core_survey": "This survey asks how well the Neuroinformatics Core's resources supported your research, and how often you used the Neuroinformatics Core. The Neuroinformatics Core directors receive a report of combined answers and written comments, without names.",
     "core_usage_report": "This report shows the National Institutes of Health who used your core and what came of that use.",
     "mentee_survey": "This survey asks how available, helpful, and supportive your mentor or mentors have been on your CNAP project.",
     "mentor_questionnaire": "This questionnaire asks about your role as a CNAP mentor, considering all of your mentees together.",

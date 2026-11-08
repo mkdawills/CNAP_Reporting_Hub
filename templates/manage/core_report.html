@@ -1,0 +1,62 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{{ core.name }} report · {{ p.short_label }} · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Core report, the evaluator's side (MW 2026-11-08): read, hold back, reflect, release. #}
+<div class="crp">
+  <a class="px-link p21-back" href="{% url 'manage:form_report' p.short_label fd.code %}">Back to the {{ fd.name }} results</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Results · {{ p.name }}</p>
+    <h1 class="px-title">{{ core.name }} report</h1>
+    <p class="p21-purpose">What the {{ core.name }} directors receive from the {{ fd.name }}.<br>The core directors see nothing until you release this core report.</p>
+    <ul class="px-facts">
+      <li><span class="px-label">Status</span><span class="v">{% if report.released_at %}Released {{ report.released_at|date:"F j, Y" }}{% if report.release_count > 1 %} (release {{ report.release_count }}){% endif %}.{% if changed %}<br><span class="gap">Changed since the release. Release again to send the changes.</span>{% endif %}{% else %}Not released.{% endif %}</span></li>
+      <li><span class="px-label">Goes to</span><span class="v">{% if directors %}{{ directors|join:", " }}{% else %}<span class="gap">No current core director.</span>{% endif %}</span></li>
+      <li><span class="px-label">Full responses</span><span class="v">{{ full }}</span></li>
+    </ul>
+  </header>
+
+  {% if small %}<div class="px-callout warn"><p>Fewer than {{ min_n }} people answered every item, so this core report holds your reflections only.<br>The numbers, themes, and written answers stay with you, to protect respondents’ confidentiality.</p></div>{% endif %}
+
+  <form method="post" action="{% url 'manage:core_report_save' p.short_label fd.code %}" class="px-page">{% csrf_token %}
+    {% if not small %}
+    <section class="px-section" aria-labelledby="crp-1">
+      <h2 class="px-h2 r90-part" id="crp-1"><span>1</span>Written answers</h2>
+      <p class="px-note">Read each written answer.<br>Tick “Hold back” beside any written answer that could point to the person who wrote it.<br>The core directors see the written answers without names, in a shuffled order.</p>
+      {% for g in written %}
+      <div class="crp-q">
+        <h3 class="px-h3">{{ g.prompt }}</h3>
+        <ul class="crp-list">{% for x in g.answers %}<li class="{% if x.hidden %}held{% endif %}"><p>{{ x.text|linebreaksbr }}</p>{% if can_manage %}<label class="crp-hold"><input type="checkbox" name="hide" value="{{ x.id }}"{% if x.hidden %} checked{% endif %}> Hold back</label>{% elif x.hidden %}<span class="crp-hold">Held back</span>{% endif %}</li>{% endfor %}</ul>
+      </div>
+      {% empty %}<p class="px-note">No written answers yet.</p>{% endfor %}
+    </section>
+
+    <section class="px-section" aria-labelledby="crp-2">
+      <h2 class="px-h2 r90-part" id="crp-2"><span>2</span>Themes</h2>
+      {% if themes %}<div class="crp-text">{{ themes|linebreaks }}</div>{% else %}<p class="px-note">No themes written yet.</p>{% endif %}
+      <p class="px-note">The core report uses the themes from the <a class="px-link" href="{% url 'manage:form_report' p.short_label fd.code %}#r90-part2">{{ fd.name }} results</a>.<br>To change the themes, edit them there.</p>
+    </section>
+    {% endif %}
+
+    <section class="px-section" aria-labelledby="crp-3">
+      <h2 class="px-h2 r90-part" id="crp-3"><span>{% if small %}1{% else %}3{% endif %}</span>Your reflections</h2>
+      <p class="px-note">Your interpretation for the {{ core.name }} directors: what stands out, what changed since the last reporting session, and what the core directors might consider.</p>
+      {% if can_manage %}<textarea name="reflections" rows="10" class="crp-area" aria-labelledby="crp-3">{{ report.reflections }}</textarea>{% elif report.reflections %}<div class="crp-text">{{ report.reflections|linebreaks }}</div>{% else %}<p class="px-note">No reflections written yet.</p>{% endif %}
+    </section>
+
+    {% if not small %}
+    <section class="px-section" aria-labelledby="crp-4">
+      <h2 class="px-h2 r90-part" id="crp-4"><span>4</span>Numbers</h2>
+      <p class="px-note">The core directors see the same combined numbers members see in Center results.<br>Items with fewer than {{ min_n }} answers are left out, as in Center results.</p>
+    </section>
+    {% endif %}
+
+    {% if can_manage %}
+    <div class="actions crp-actions">
+      <button class="btn ghost" type="submit" name="action" value="save">Save</button>
+      {% if releasable %}<button class="btn" type="submit" name="action" value="release">{% if report.released_at %}Release again{% else %}Release to the core directors{% endif %}</button>{% else %}<span class="px-note">A core report can be released once the reporting session closes.</span>{% endif %}
+      {% if report.released_at %}<button class="btn ghost" type="submit" name="action" value="withdraw">Withdraw the release</button>{% endif %}
+    </div>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}

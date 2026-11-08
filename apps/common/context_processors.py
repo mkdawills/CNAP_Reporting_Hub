@@ -51,4 +51,6 @@ def cnap(request):
         "is_view_only_admin": access.is_view_only_admin(user),
         "access_label": label,
         "has_cnap_roles": has_roles,
+        # Core directors get a "Core reports" link (MW 2026-11-08).
+        "directs_core": any(r.relationship_type.code == "core_director" and r.core_id for r in rels),
     }

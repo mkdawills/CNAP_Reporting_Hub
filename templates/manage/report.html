@@ -43,6 +43,7 @@
 <div class="panel rollsec">
   <h2 class="sectionhead">Qualitative data</h2>
   <p class="subttl">Themes</p>
+  {% if is_core_survey %}<p><a href="{% url 'manage:core_report' period.short_label fd.code %}">Core report for the {{ fd.about_core.name }} directors</a>{% if core_report.released_at %} (released {{ core_report.released_at|date:"F j" }}){% endif %}</p>{% endif %}
   {% if can_edit_themes %}
     <form method="post" action="{% url 'manage:save_themes' period.short_label fd.code %}">{% csrf_token %}
       <textarea name="themes" rows="4" placeholder="One theme per line">{{ themes|default:"" }}</textarea>

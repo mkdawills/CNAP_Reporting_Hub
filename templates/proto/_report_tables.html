@@ -61,7 +61,7 @@
   </tbody>
 </table></div>
 </div>
-  {% if t.left_out %}<p class="px-note">{{ t.left_out }} item{{ t.left_out|pluralize }} aren’t shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"that item,those items" }}. This keeps anyone’s answers from being worked out.</p>{% endif %}
+  {% if t.left_out %}<p class="px-note">{{ t.left_out }} item{{ t.left_out|pluralize }} {{ t.left_out|pluralize:"isn’t,aren’t" }} shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"that item,those items" }}. <br>This keeps anyone’s answers from being worked out.</p>{% endif %}
 {% endif %}
 {% if t.lon and t.lon.periods|length > 1 %}
 <div class="r90-lon{% if t.skip_main %} r90-lon-only{% endif %}">

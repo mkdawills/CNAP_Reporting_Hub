@@ -12,6 +12,7 @@ from apps.common import prototype
 from apps.accounts import access
 from apps.analytics import report as rpt
 from apps.analytics import snapshots
+from apps.analytics.models import CoreReport
 from apps.audit.models import AuditLog, record_event
 from apps.common.enums import COMPLETE_STATUSES, ConfidentialityClass, FormCategory, PeriodStatus
 from apps.forms_engine.models import FormDefinition
@@ -161,6 +162,9 @@ def form_report(request, label, code):
             "show_verbatims": show_verbatims,
             "who": who,
             "deid_blocked": mode == DEIDENTIFIED and not deidentified_rows_allowed(fd, p),
+            # The core report for this core's directors (MW 2026-11-08).
+            "core_report": CoreReport.objects.filter(reporting_period=p, form_definition=fd).first(),
+            "is_core_survey": bool(fd.about_core_id) and fd.category == FormCategory.SURVEY and p.assignments.exists(),
             "can_edit_themes": access.can_manage(request.user)
             and data["snapshot"] is not None
             and data["snapshot"].provenance != "aggregate_import",

@@ -52,7 +52,7 @@
   </tbody>
 </table></div>
 </details>
-{% if t.left_out %}<p class="small muted mt">{{ t.left_out }} item{{ t.left_out|pluralize }} aren’t shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"it,them" }}. {{ "This keeps anyone’s answers from being worked out."|stack }}</p>{% endif %}
+{% if t.left_out %}<p class="small muted mt">{{ t.left_out }} item{{ t.left_out|pluralize }} {{ t.left_out|pluralize:"isn’t,aren’t" }} shown because fewer than {{ min_n }} people rated {{ t.left_out|pluralize:"it,them" }}. {{ "This keeps anyone’s answers from being worked out."|stack }}</p>{% endif %}
 </div>
 {% endif %}
 {% if t.lon and t.lon.periods|length > 1 %}

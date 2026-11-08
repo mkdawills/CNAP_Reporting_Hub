@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import audit, dashboards, formspec, home, outcomes, people, periods, quality, results, roster, speakers
+from .views import audit, core_reports, dashboards, formspec, home, outcomes, people, periods, quality, results, roster, speakers
 
 app_name = "manage"
 
@@ -86,6 +86,8 @@ urlpatterns = [
     path("results/", results.results, name="results"),
     path("results/build/", results.export_builder, name="export_builder"),
     path("results/<str:label>/<slug:code>/", results.form_report, name="form_report"),
+    path("results/<str:label>/<slug:code>/core-report/", core_reports.core_report, name="core_report"),
+    path("results/<str:label>/<slug:code>/core-report/save/", core_reports.core_report_save, name="core_report_save"),
     path("results/<str:label>/<slug:code>/themes/", results.save_themes, name="save_themes"),
     path("results/<str:label>/<slug:code>/export/", results.export_report, name="export_report"),
     path("results/<str:label>/<slug:code>/answers.xlsx", results.export_answers, name="export_answers"),
