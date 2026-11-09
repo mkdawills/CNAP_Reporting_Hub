@@ -69,7 +69,7 @@ def planned_day():
     return forms.IntegerField(
         label="Day (optional)", min_value=1, max_value=31, required=False,
         widget=forms.NumberInput(attrs={"style": "max-width:6em", "inputmode": "numeric"}),
-        help_text="Please add the day if you know it.",
+        help_text="Add the day if you know it.",
     )
 
 
@@ -100,9 +100,9 @@ class _Resources(forms.Form):
         data = super().clean()
         res = data.get("resources") or []
         if self.resources_required and not res:
-            self.add_error("resources", "Please choose at least one Center resource.")
+            self.add_error("resources", "Choose at least one Center resource.")
         if any(r.code == "other" for r in res) and not data.get("resources_other_text", "").strip():
-            self.add_error("resources_other_text", "Please say what Other means.")
+            self.add_error("resources_other_text", "Say what Other means.")
         # projects go with the project resources ticked (MW 2026-11-03)
         codes = {r.code for r in res}
         kinds = {"primary"} if "research_project" in codes else set()
@@ -111,7 +111,7 @@ class _Resources(forms.Form):
         data["projects"] = prj
         for code, kind, what in (("research_project", "primary", "research"), ("pilot_project", "pilot", "pilot")):
             if code in codes and not any(p.kind == kind for p in prj):
-                self.add_error("projects", f"Please choose which {what} project or projects.")
+                self.add_error("projects", f"Choose which {what} project or projects.")
         return data
 
 
@@ -130,7 +130,7 @@ class PubPlanned(_PlannedDay, _Resources):
     publication_type = forms.ChoiceField(
         choices=PublicationType.choices, initial="journal_article", label="Type"
     )
-    publication_type_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: data descriptor.")
+    publication_type_other = forms.CharField(label="Describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: data descriptor.")
     field_order = ["title", "journal", "anticipated_submission_month", "anticipated_day", "publication_type", "publication_type_other"]
 
     def clean(self):
@@ -140,11 +140,11 @@ class PubPlanned(_PlannedDay, _Resources):
 class PubSubmitted(_Resources):
     resources_required = True
     journal = forms.CharField(
-        label="Journal", max_length=300, help_text="Please change it only if it’s different."
+        label="Journal", max_length=300, help_text="Change it only if it’s different."
     )
     submission_date = forms.DateField(label="Date of submission", widget=DATE)
     title = forms.CharField(
-        label="Title", max_length=500, help_text="Please change it only if it’s different."
+        label="Title", max_length=500, help_text="Change it only if it’s different."
     )
     anticipated_publication_date = forms.DateField(
         label="Anticipated date of publication", widget=DATE, required=False
@@ -159,13 +159,13 @@ class PubPublished(_Resources):
     pubmed_url = forms.URLField(
         label="PubMed link",
         max_length=500,
-        help_text="Please paste the link, then use “Fill in from PubMed” to fill the details below.",
+        help_text="Paste the link, then use “Fill in from PubMed” to fill the details below.",
     )
     title = forms.CharField(label="Title", max_length=500)
     author_display_text = forms.CharField(
         label="Authors",
         help_text=(
-            "Please list every author, in order, exactly as they appear on the paper. "
+            "List every author, in order, exactly as they appear on the paper. "
             "For example: Okafor A, Kim H, Moreau C. "
             "“Fill in from PubMed” fills this for you."
         ),
@@ -176,7 +176,7 @@ class PubPublished(_Resources):
     cnap_cited = yn("Did your journal article acknowledge CNAP in alignment with the Stevens Amendment?")
     cnap_cited.help_text = "The “How to acknowledge CNAP” box at the top of this page explains the Stevens Amendment and gives the wording. If your article did not acknowledge CNAP, continue to report it. However, be very careful that you select No. We will reach out to determine if this can be remedied retrospectively."
     cnap_in_grant_index = yn("Did you list CNAP in the grant index portion of your PubMed entry?")
-    cnap_in_grant_index.help_text = "PubMed lists a paper’s grants in its Grant support section. Please choose Yes if P20GM113109 appears there."
+    cnap_in_grant_index.help_text = "PubMed lists a paper’s grants in its Grant support section. Choose Yes if P20GM113109 appears there."
     has_foreign_authors = yn("Did your publication include any foreign authors?")
     foreign_component_approved = yn(
         "Has NIGMS given prior approval for the foreign component?", required=False
@@ -246,11 +246,11 @@ def _pub_published_clean(self):
     picked = {r.pk for r in data.get("resources") or []}
     for pk, name in self.rrid_fields.items():
         if pk in picked and not data.get(name):
-            self.add_error(name, "Please answer, or choose Not sure.")
+            self.add_error(name, "Answer, or choose Not sure.")
     if data.get("has_foreign_authors") and data.get("foreign_component_approved") is None:
         self.add_error(
             "foreign_component_approved",
-            "Please answer: it decides whether the paper can be reported to NIH.",
+            "Answer: it decides whether the paper can be reported to NIH.",
         )
     if data.get("has_foreign_authors") is False:
         data["foreign_component_approved"] = None
@@ -301,7 +301,7 @@ class _Funding(forms.Form):
     )
     federal_agency = forms.ChoiceField(
         label="Federal funding agency",
-        choices=[("", "Please choose the agency")] + FEDERAL_AGENCIES,
+        choices=[("", "Choose the agency")] + FEDERAL_AGENCIES,
         required=False,
     )
     federal_agency_other = forms.CharField(
@@ -311,7 +311,7 @@ class _Funding(forms.Form):
         label="Funding agency",
         max_length=200,
         required=False,
-        help_text="Please give the foundation, state program, or other non-federal funder.",
+        help_text="Give the foundation, state program, or other non-federal funder.",
     )
 
     def __init__(self, *a, **kw):
@@ -334,18 +334,18 @@ class _Funding(forms.Form):
         if src == "federal":
             agency = data.get("federal_agency")
             if not agency:
-                self.add_error("federal_agency", "Please choose the federal agency.")
+                self.add_error("federal_agency", "Choose the federal agency.")
             elif agency == "other":
                 other = (data.get("federal_agency_other") or "").strip()
                 if not other:
-                    self.add_error("federal_agency_other", "Please name the federal agency.")
+                    self.add_error("federal_agency_other", "Name the federal agency.")
                 data["funding_agency"] = other
             else:
                 data["funding_agency"] = agency
             data["funding_source_type"] = "nih" if agency == "NIH" else "federal_other"
         elif src == "non_federal":
             if not (data.get("funding_agency") or "").strip():
-                self.add_error("funding_agency", "Please give the funder’s name.")
+                self.add_error("funding_agency", "Give the funder’s name.")
             data["funding_source_type"] = "non_federal"
         return data
 
@@ -357,7 +357,7 @@ class GrantPlanned(_Funding, _PlannedDay, _Resources):
         label="Funding opportunity link",
         max_length=500,
         required=False,
-        help_text="Please paste the link to the Funding Opportunity Announcement (FOA), Request for Applications (RFA), or other funding announcement, if available.",
+        help_text="Paste the link to the Funding Opportunity Announcement (FOA), Request for Applications (RFA), or other funding announcement, if available.",
     )
     mechanism = forms.CharField(
         label="Funding mechanism",
@@ -372,15 +372,15 @@ class GrantPlanned(_Funding, _PlannedDay, _Resources):
     project_title = forms.CharField(
         label="Proposal title",
         max_length=500,
-        help_text="Please give the title of the proposal you’re submitting, not your CNAP project’s title.",
+        help_text="Give the title of the proposal you’re submitting, not your CNAP project’s title.",
     )
     role = forms.ChoiceField(
         label="Your role on this proposal",
         choices=GrantRole.choices,
         initial=GrantRole.PI,
-        help_text="Please give your role on this proposal, for example Principal Investigator (PI) or Co-Investigator.",
+        help_text="Give your role on this proposal, for example Principal Investigator (PI) or Co-Investigator.",
     )
-    role_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
+    role_other = forms.CharField(label="Describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
     anticipated_total = money("Anticipated total budget (optional)")
     planned_estimated_direct = money("Estimated direct costs (optional, preliminary)")
     field_order = [
@@ -424,10 +424,10 @@ class GrantSubmitted(_Funding, _Resources):
     project_title = forms.CharField(
         label="Proposal title",
         max_length=500,
-        help_text="Please give the title of the proposal you submitted, not your CNAP project’s title.",
+        help_text="Give the title of the proposal you submitted, not your CNAP project’s title.",
     )
     role = forms.ChoiceField(label="Your role", choices=GrantRole.choices)
-    role_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
+    role_other = forms.CharField(label="Describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
     requested_total = money("Total requested budget", required=True)
     requested_direct = money("Estimated direct costs (optional)")
     requested_indirect = money("Estimated indirect costs (optional)")
@@ -495,11 +495,11 @@ class GrantAwarded(_Resources):
         super().__init__(*a, **kw)
         self.fields[
             "award_total"
-        ].help_text = "Please give direct plus indirect costs for the entire project period, not one year."
+        ].help_text = "Give direct plus indirect costs for the entire project period, not one year."
         self.fields["cnap_portion"].help_text = (
             "If you’re the sole Principal Investigator (PI), please leave this blank: the full award counts. "
-            "Please fill this in only if you’re a Multiple Principal Investigator (MPI), Co-Principal Investigator (Co-PI), a collaborator, or on a subaward. "
-            "Please give the part of the total award that is yours (direct plus indirect, entire project period). NIH counts this part, not the whole award. "
+            "Fill this in only if you’re a Multiple Principal Investigator (MPI), Co-Principal Investigator (Co-PI), a collaborator, or on a subaward. "
+            "Give the part of the total award that is yours (direct plus indirect, entire project period). NIH counts this part, not the whole award. "
             "For example: on a $1,200,000 award where your subaward is $250,000, please enter 250000."
         )
 
@@ -558,13 +558,13 @@ class PresentationForm(_Resources):
     )
     author_display_text = forms.CharField(
         label="Presenters and authors",
-        help_text="Please list them in the order shown on the talk or poster, for example: Okafor A, Kim H, Moreau C.",
+        help_text="List them in the order shown on the talk or poster, for example: Okafor A, Kim H, Moreau C.",
         widget=forms.Textarea(attrs={"rows": 2}),
         required=False,
     )
     cnap_cited = yn("Did your presentation acknowledge CNAP in alignment with the Stevens Amendment?")
     cnap_cited.help_text = "The “How to acknowledge CNAP” box at the top of this page explains the Stevens Amendment and gives the wording. If your presentation did not acknowledge CNAP, continue to report it. However, be very careful that you select No. We will reach out to determine if this can be remedied retrospectively."
-    presentation_type_other = forms.CharField(label="Please describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: panel discussion.")
+    presentation_type_other = forms.CharField(label="Describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: panel discussion.")
     field_order = [
         "presentation_type",
         "presentation_type_other",
@@ -586,7 +586,7 @@ class PresentationForm(_Resources):
         d = self.cleaned_data["presented_on"]
         if d and d > timezone.localdate():
             raise forms.ValidationError(
-                "That date hasn’t happened yet. Please add this talk or poster after you’ve given it."
+                "That date hasn’t happened yet. Add this talk or poster after you’ve given it."
             )
         return d
 

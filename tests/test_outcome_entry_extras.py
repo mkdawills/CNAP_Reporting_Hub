@@ -44,7 +44,7 @@ def test_planned_publication_day_is_optional(client, center):
     assert "That month has only 28 days." in r.content.decode()
     # a project resource needs its project
     r = client.post("/outcomes/new/pub/", base | {"title": "Spindles D", "projects": []})
-    assert "Please choose which pilot project or projects." in r.content.decode()
+    assert "Choose which pilot project or projects." in r.content.decode()
 
 
 def test_proposal_title_is_explained(client, center):

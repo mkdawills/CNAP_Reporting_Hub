@@ -85,7 +85,7 @@ def test_asked_only_for_ticked_cores_that_have_an_rrid(client, center):
     assert bn.core.rrid in page  # in the "how to acknowledge" box too
     # ticked but unanswered: asked to answer
     r = _published(client, p, [bn, cn])
-    assert "Please answer, or choose Not sure." in r.content.decode()
+    assert "Answer, or choose Not sure." in r.content.decode()
     _published(client, p, [bn, cn], **{f"rrid_{bn.pk}": "no"})
     links = {x.resource_id: x.rrid_cited for x in PublicationResource.objects.filter(publication=p)}
     assert links == {bn.pk: "no", cn.pk: ""}

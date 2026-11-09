@@ -75,7 +75,7 @@ def test_publication_lifecycle(client, center):
             "submission_date": "2026-11-01",
         },
     )
-    assert r.status_code == 200 and "Please choose at least one Center resource" in r.content.decode()
+    assert r.status_code == 200 and "Choose at least one Center resource" in r.content.decode()
     client.post(
         f"/outcomes/pub/{p.pk}/",
         {

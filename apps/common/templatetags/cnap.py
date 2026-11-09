@@ -549,3 +549,28 @@ def duration(minutes):
     if r:
         out += f" {r} minute{'s' if r != 1 else ''}"
     return out
+
+
+# Center resources in three visual groups (MW 2026-11-09: so the projects don't fade into the back).
+RESOURCE_GROUPS = (
+    ("Cores", ("BN Core", "NI Core", "CN Core", "Administrative Core")),
+    ("Projects", ("Research Project(s)", "Pilot Project(s)")),
+    ("Other support", ("Connect Lab", "Mentorship", "Other")),
+)
+
+
+@register.filter
+def resource_groups(field):
+    """[(group title, [bound checkbox, ...])] in RESOURCE_GROUPS order; anything unknown goes last."""
+    boxes = list(field)
+    out, used = [], set()
+    for title, names in RESOURCE_GROUPS:
+        items = [b for b in boxes if str(b.choice_label).strip() in names]
+        items.sort(key=lambda b: names.index(str(b.choice_label).strip()))
+        used.update(id(b) for b in items)
+        if items:
+            out.append((title, items))
+    rest = [b for b in boxes if id(b) not in used]
+    if rest:
+        out.append(("More", rest))
+    return out

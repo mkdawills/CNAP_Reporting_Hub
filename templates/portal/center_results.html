@@ -10,7 +10,7 @@
     <header class="o33-head">
       <p class="o33-k">Center-wide totals</p>
       <h2 id="o33-h">Year {{ prod.gy }}<span>{{ prod.start|date:"F j, Y" }} to {{ prod.end|date:"F j, Y" }}</span></h2>
-      <p class="o33-s">These numbers count every CNAP member’s work together, not only yours.</p>
+      <p class="o33-s">These numbers count every CNAP member’s work together, in aggregate, not only yours.</p>
     </header>
     <ul class="prodsum o33-grid{% if show_detail %} detail{% endif %}">
       {% if show_detail %}<li><a href="#papers" title="Click to see the list of publications this year."><b>{{ prod.n_papers }}</b><span class="o33-l">Publications</span></a></li>

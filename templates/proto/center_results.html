@@ -43,7 +43,7 @@
     <h2 class="made-h" id="r33-h">{{ span }} totals</h2>
     {% if not asof or asof >= prod.start %}<p class="made-sub">{{ prod.start|date:"F j, Y" }} to {{ prod.end|date:"F j, Y" }}</p>{% endif %}
     {% if asof and asof < prod.start %}<p class="made-sub r33-asofnote">{{ asof|date:"F j, Y" }} is before {{ span }} began, so there is nothing to count yet.<br>Choose a later day, or an earlier grant year.</p>{% elif asof %}<p class="made-sub r33-asofnote">As of {{ asof|date:"F j, Y" }}.</p>{% elif asof_bad %}<p class="made-sub r33-asofnote">That day can’t be shown, because it is in the future or isn’t a real date.<br>These are today’s totals.</p>{% endif %}
-    <p class="made-sub">{{ "These numbers count every CNAP member’s work together, not only yours."|stack }}</p>
+    <p class="made-sub">{{ "These numbers count every CNAP member’s work together, in aggregate, not only yours."|stack }}</p>
     <ul class="made-row">
       <li>{% if show_detail %}<a class="r33-n" href="#r33-papers" title="See the list of publications this year.">{% else %}<span class="r33-n">{% endif %}<span class="made-n">{{ prod.n_papers }}</span><span class="made-l">publications</span>{% if show_detail %}</a>{% else %}</span>{% endif %}</li>
       <li>{% if show_detail %}<a class="r33-n" href="#r33-talks" title="See the list of presentations this year.">{% else %}<span class="r33-n">{% endif %}<span class="made-n">{{ prod.n_talks }}</span><span class="made-l">presentations</span>{% if show_detail %}</a>{% else %}</span>{% endif %}</li>
