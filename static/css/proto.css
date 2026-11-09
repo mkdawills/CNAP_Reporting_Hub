@@ -2023,3 +2023,16 @@ html body.proto .rck .rck-tbl col.c-reply { width: 12em; }
 html body.proto .rck .rck-tbl th, html body.proto .rck .rck-tbl td { text-align: left; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--px-line); }
 /* A solid button made from a link keeps white text in the prototype, wherever a link color rule would win (MW 2026-11-08). */
 html body.proto a.btn:not(.ghost), html body.proto a.btn:not(.ghost):visited, html body.proto a.btn:not(.ghost):hover { color: #fff; text-decoration: none; }
+
+/* "As of" control (MW 2026-11-05). */
+html body.proto .r33-asof { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+html body.proto .r33-asof .px-label:has(> .whyi) { margin-right: 2px; }
+html body.proto .r33-asof input[type=date], html body.proto .r33-asof select { font: inherit; font-size: var(--px-fs-sm); padding: 6px 8px; border: 1px solid var(--px-line-strong); border-radius: 8px; background: var(--px-surface, #fff); max-width: 100%; }
+html body.proto .r33-asof .px-btn { margin: 0; }
+html body.proto .r33-asofnote { color: var(--px-brand-ink); font-weight: 500; }
+html body.proto .aso .px-page > .px-section + .px-section { border-top: 1px solid var(--px-line); margin-top: var(--px-sec); padding-top: var(--px-sec); }
+html body.proto .aso .aso-tbl { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: var(--px-sub); }
+html body.proto .aso .aso-tbl col.c-st { width: 11em; }
+html body.proto .aso .aso-tbl th, html body.proto .aso .aso-tbl td { text-align: left; vertical-align: top; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--px-line); }
+html body.proto .p21-mast .r33-asof { margin: var(--px-sub) 0 0; }
+@media (max-width: 700px) { html body.proto .aso .aso-tbl { table-layout: auto; } html body.proto .aso .aso-tbl col.c-st { width: auto; } }

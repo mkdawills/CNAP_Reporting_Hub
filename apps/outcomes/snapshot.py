@@ -88,7 +88,13 @@ def by_year(gy=None):
     return {"years": years, "first": first, "rows": rows}
 
 
-def products(gy=None):
+def _clamp(rng, asof):
+    """A grant year's (start, end), ending no later than the "As of" day (MW 2026-11-05)."""
+    start, end = rng
+    return (start, min(end, asof)) if asof else (start, end)
+
+
+def products(gy=None, asof=None):
     """The Center's products in one budget year, for the respondent Center results page (MW 2026-10-28).
 
     Published papers, talks and posters given, and funded grants are public, so they are listed. Submitted
@@ -96,7 +102,7 @@ def products(gy=None):
     from apps.common.enums import GrantRole
 
     gy = gy or current_year()
-    start, end = period(gy)
+    start, end = _clamp(period(gy), asof)
     live = {"archived_at__isnull": True}
 
     def names(links, key="person"):
@@ -179,10 +185,10 @@ CORE_GROUPS = (
 CORE_CODES = {"bn_core", "ni_core", "cn_core", "admin_core"}
 
 
-def products_for(years):
+def products_for(years, asof=None):
     """products() for any set of grant years, merged: lists newest first, counts summed."""
     years = sorted(set(years))
-    parts = [products(gy) for gy in years]
+    parts = [products(gy, asof) for gy in years]
     merged = {
         "years": years,
         "gy": years[-1] if len(years) == 1 else None,
@@ -200,7 +206,7 @@ def start_of(years):
     return period(min(years))[0]
 
 
-def by_core(years):
+def by_core(years, asof=None):
     """How many of each kind of product drew on each core, for the chosen grant years (MW 2026-11-06).
 
     Counts only, no names. A product that drew on two cores counts once for each, so a bar's
@@ -211,7 +217,7 @@ def by_core(years):
 
     years = sorted(set(years))
     live = {"archived_at__isnull": True}
-    rng = lambda field: Q(**{f"{field}__range": period(years[0])}) if len(years) == 1 else _ranges(field, years)
+    rng = lambda field: _ranges(field, years, asof)
     kinds = (
         ("papers", "Papers published", Publication.objects.filter(rng("publication_date"), status=PublicationStatus.PUBLISHED, **live), True),
         ("talks", "Talks and posters", Presentation.objects.filter(rng("presented_on"), **live), False),
@@ -240,10 +246,10 @@ def by_core(years):
     return out
 
 
-def _ranges(field, years):
+def _ranges(field, years, asof=None):
     from django.db.models import Q
 
     q = Q()
     for gy in years:
-        q |= Q(**{f"{field}__range": period(gy)})
+        q |= Q(**{f"{field}__range": _clamp(period(gy), asof)})
     return q

@@ -15,6 +15,7 @@
         <noscript><button class="px-btn small quiet" type="submit">Show</button></noscript></form>{% endif %}
     </div>
     <p class="p21-purpose">{% if acting_for_other %}{{ owner }}’s{% else %}Your{% endif %} papers, talks, and grant proposals, with each one’s progress from planned to published or funded.</p>
+    {% include "proto/_asof_form.html" with day=None picks=asof_picks %}
     <ul class="px-facts">
       <li><span class="px-label">In progress</span><span class="v">{{ open_cards|length }}</span></li>
       <li><span class="px-label">Papers finished</span><span class="v">{{ done_pubs|length }}</span></li>

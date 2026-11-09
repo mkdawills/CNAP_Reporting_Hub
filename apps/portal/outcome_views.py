@@ -104,6 +104,11 @@ def home(request):
         "delegate"
     )
     tpl = prototype.template(request, "outcomes", "portal/outcomes.html")
+    from apps.outcomes import asof as asof_mod
+
+    asof = asof_mod.parse(request.GET.get("asof"))
+    if asof and tpl != "portal/outcomes.html":
+        return _as_of_page(request, owner, owners, asof)
     extra = {}
     if tpl != "portal/outcomes.html":
         extra = _journey_cards(st)
@@ -122,12 +127,37 @@ def home(request):
             "window": os.entry_window(),
             "words": STATUS_WORDS,
             "next": NEXT,
+            "asof_picks": asof_mod.quick_picks(),
             "review_pub": {p.pk for p in st["review_pubs"]},
             "review_grant": {g.pk for g in st["review_grants"]},
             "roster": Person.objects.filter(archived_at__isnull=True, is_active=True).order_by(
                 "last_name", "first_name"
             ),
         },
+    )
+
+
+def _as_of_page(request, owner, owners, day):
+    """Where each of the person's papers, proposals, and talks stood at the end of `day` (MW 2026-11-05).
+    Read-only. Built from the status history, dated by the person where a date was given."""
+    from apps.outcomes import asof as asof_mod
+
+    def rows(kind, objs, title, sub):
+        out = []
+        for o in objs:
+            st = asof_mod.status_on(kind, o, day)
+            if st:
+                out.append({"title": title(o), "sub": sub(o), "then": STATUS_WORDS[kind].get(st, st), "now": STATUS_WORDS[kind].get(o.status, o.status), "changed": st != o.status, "anchor": f"item-{kind}-{o.pk}"})
+        return out
+
+    pubs = rows("pub", os.pubs_of(owner).prefetch_related("status_history"), lambda o: o.title, lambda o: o.journal)
+    grants = rows("grant", os.grants_of(owner).prefetch_related("status_history"), lambda o: o.project_title, lambda o: " ".join(x for x in (o.funding_agency, o.mechanism) if x))
+    talks = [{"title": t.title, "sub": " · ".join(x for x in (t.get_presentation_type_display(), t.event) if x), "day": t.presented_on, "anchor": f"item-talk-{t.pk}"} for t in os.presentations_of(owner) if asof_mod.talk_on(t, day)]
+    return render(
+        request,
+        "proto/outcomes_asof.html",
+        {"owner": owner, "owners": owners, "day": day, "pubs": pubs, "grants": grants, "talks": talks,
+         "picks": asof_mod.quick_picks(), "acting_for_other": owner.pk != request.user.person.pk},
     )
 
 

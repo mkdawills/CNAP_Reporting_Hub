@@ -1,0 +1,37 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Publications, talks, and grants as of {{ day|date:"F j, Y" }} · {{ platform_name }}{% endblock %}
+{% block content %}
+{# The "As of" view (MW 2026-11-05). Read-only: where each item stood at the end of the chosen day. #}
+<div class="o36 aso">
+  <a class="px-link p21-back" href="{% url 'portal:outcomes' %}{% if acting_for_other %}?for={{ owner.pk }}{% endif %}">Back to today</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">My work</p>
+    <h1 class="px-title">Publications, talks, and grants as of {{ day|date:"F j, Y" }}</h1>
+    <p class="p21-purpose">Where {% if acting_for_other %}{{ owner }}’s{% else %}your{% endif %} papers, proposals, and talks stood at the end of {{ day|date:"l, F j, Y" }}.<br>Each step uses the date {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %} gave for it, or the day it was entered in the Hub.<br>This view is read-only.</p>
+    {% include "proto/_asof_form.html" %}
+    <ul class="px-facts">
+      <li><span class="px-label">Papers</span><span class="v">{{ pubs|length }}</span></li>
+      <li><span class="px-label">Proposals</span><span class="v">{{ grants|length }}</span></li>
+      <li><span class="px-label">Talks and posters</span><span class="v">{{ talks|length }}</span></li>
+    </ul>
+  </header>
+  <div class="px-page">
+    <section class="px-section" aria-labelledby="aso-p"><h2 class="px-h2" id="aso-p">Papers</h2>
+      {% if pubs %}<div class="scroll"><table class="aso-tbl"><colgroup><col><col class="c-st"><col class="c-st"></colgroup><thead><tr><th scope="col">Title</th><th scope="col">Status on {{ day|date:"F j" }}</th><th scope="col">Status today</th></tr></thead><tbody>
+      {% for r in pubs %}<tr><td><a class="px-link" href="{% url 'portal:outcomes' %}{% if acting_for_other %}?for={{ owner.pk }}{% endif %}#{{ r.anchor }}">{{ r.title }}</a>{% if r.sub %}<div class="px-note">{{ r.sub }}</div>{% endif %}</td><td><b>{{ r.then }}</b></td><td>{% if r.changed %}{{ r.now }}{% else %}<span class="px-note">Same</span>{% endif %}</td></tr>{% endfor %}
+      </tbody></table></div>{% else %}<p class="px-note">No papers yet on that day.</p>{% endif %}
+    </section>
+    <section class="px-section" aria-labelledby="aso-g"><h2 class="px-h2" id="aso-g">Proposals</h2>
+      {% if grants %}<div class="scroll"><table class="aso-tbl"><colgroup><col><col class="c-st"><col class="c-st"></colgroup><thead><tr><th scope="col">Title</th><th scope="col">Status on {{ day|date:"F j" }}</th><th scope="col">Status today</th></tr></thead><tbody>
+      {% for r in grants %}<tr><td><a class="px-link" href="{% url 'portal:outcomes' %}{% if acting_for_other %}?for={{ owner.pk }}{% endif %}#{{ r.anchor }}">{{ r.title }}</a>{% if r.sub %}<div class="px-note">{{ r.sub }}</div>{% endif %}</td><td><b>{{ r.then }}</b></td><td>{% if r.changed %}{{ r.now }}{% else %}<span class="px-note">Same</span>{% endif %}</td></tr>{% endfor %}
+      </tbody></table></div>{% else %}<p class="px-note">No proposals yet on that day.</p>{% endif %}
+    </section>
+    <section class="px-section" aria-labelledby="aso-t"><h2 class="px-h2" id="aso-t">Talks and posters</h2>
+      {% if talks %}<div class="scroll"><table class="aso-tbl"><colgroup><col><col class="c-st"></colgroup><thead><tr><th scope="col">Title</th><th scope="col">Date given</th></tr></thead><tbody>
+      {% for r in talks %}<tr><td><a class="px-link" href="{% url 'portal:outcomes' %}{% if acting_for_other %}?for={{ owner.pk }}{% endif %}#{{ r.anchor }}">{{ r.title }}</a>{% if r.sub %}<div class="px-note">{{ r.sub }}</div>{% endif %}</td><td>{% if r.day %}{{ r.day|date:"F j, Y" }}{% endif %}</td></tr>{% endfor %}
+      </tbody></table></div>{% else %}<p class="px-note">No talks or posters yet on that day.</p>{% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}

@@ -705,3 +705,9 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - The link needs no sign-in, can be forwarded to a student, shows names and roles only (never email addresses), lists people sharing a project or core with the link's owner first, and stops working when the reporting session opens (it then shows "This roster check has closed").
 - Nothing on the roster changes from a suggestion. The evaluator opens the person's page or the add-person form, makes the change, and marks the suggestion handled, or declines it.
 - Review before launch now begins with step 1, "Roster check replies": who has replied, who is still out, and how many suggestions wait. The other steps moved down one number.
+
+## 2026-11-08 - The "As of" view (Batch 4, decided November 5)
+
+- Display only; no data change. `apps/outcomes/asof.py` works out where each paper and proposal stood at the end of any past day from its status history, using the date the person gave for each step (submission, publication, decline, award notice, decision) and the day the Hub recorded the step otherwise. Records imported later still count from their own dates. A talk counts from the day it was given. Future days and invalid dates are refused.
+- Publications, talks, and grants: an "As of" control under the page introduction (a date box, quick picks for the last day of each past reporting session, Show, Back to today). Choosing a day opens a read-only page with three tables (papers, proposals, talks), each showing the status on that day and today. Titles link back to their cards.
+- Center results, Research outputs: the same control. The totals, the core chart, and the lists end at the chosen day, for the grant year that holds that day. A day before the chosen grant year began says so. Survey and report results keep their frozen snapshots and are unchanged.

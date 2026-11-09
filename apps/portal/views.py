@@ -371,9 +371,17 @@ def center_results(request):
             chosen = list(years)
         else:
             chosen = [int(x) for x in picked + [request.GET.get("year", "")] if str(x).isdigit() and int(x) in years]
+        # "As of" (MW 2026-11-05): the totals as they stood at the end of a chosen past day.
+        # With no years chosen, the grant year that holds that day.
+        from apps.outcomes import asof as asof_mod
+
+        asof = asof_mod.parse(request.GET.get("asof"))
+        if asof and not chosen and rppr.current_year(asof) in years:
+            chosen = [rppr.current_year(asof)]
         chosen = sorted(set(chosen)) or [now]
         gy = chosen[-1]
-        prod = dict(snapshot.products_for(chosen)) if len(chosen) > 1 else dict(snapshot.products(gy))
+        ctx.update(asof=asof, asof_picks=asof_mod.quick_picks(), asof_bad=bool(request.GET.get("asof")) and not asof)
+        prod = dict(snapshot.products_for(chosen, asof)) if len(chosen) > 1 else dict(snapshot.products(gy, asof))
         prod.update(n_papers=len(prod["papers"]), n_talks=len(prod["talks"]), n_awards=len(prod["awards"]))
         all_years = len(chosen) == len(years) and len(years) > 1
         if len(chosen) == 1:
@@ -382,7 +390,7 @@ def center_results(request):
             span = f"Years {chosen[0]} to {chosen[-1]}"
         else:
             span = "Years " + ", ".join(str(y) for y in chosen[:-1]) + (", and " if len(chosen) > 2 else " and ") + str(chosen[-1])
-        ctx.update({"chosen": chosen, "all_years": all_years, "span": f"All years ({span})" if all_years else span, "by_core": snapshot.by_core(chosen), "core_groups": snapshot.CORE_GROUPS})
+        ctx.update({"chosen": chosen, "all_years": all_years, "span": f"All years ({span})" if all_years else span, "by_core": snapshot.by_core(chosen, asof), "core_groups": snapshot.CORE_GROUPS})
         # MW 2026-11-04: respondents see counts only. Titles, people, and funders stay with the
         # evaluator, the Center Director, and the Associate Director (the administrator screens).
         show_detail = access.can_view_admin(request.user)
