@@ -2038,3 +2038,8 @@ html body.proto .aso .aso-tbl col.c-st { width: 11em; }
 html body.proto .aso .aso-tbl th, html body.proto .aso .aso-tbl td { text-align: left; vertical-align: top; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--px-line); }
 html body.proto .p21-mast .r33-asof { margin: var(--px-sub) 0 0; }
 @media (max-width: 700px) { html body.proto .aso .aso-tbl { table-layout: auto; } html body.proto .aso .aso-tbl col.c-st { width: auto; } }
+/* MW 2026-11-09: the "i" sits close to the words it explains: a 2px gap and a narrower mark. */
+html body.proto .px-label:has(> .whyi) { gap: 2px; }
+html body.proto .px-label > .whyq.whyi { width: 14px; height: 14px; }
+html body.proto .whyq.whyi { margin-left: 2px; }
+html body.proto .px-label > .whyq.whyi, html body.proto .r33-asof .px-label > .whyq.whyi { margin-left: 0; }
