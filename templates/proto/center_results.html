@@ -24,7 +24,7 @@
     </div>
     <p class="r65-purpose">{% if view == "products" %}Research outputs from all CNAP members, combined.{% else %}What the Center learned from everyone’s answers, combined, for each finalized reporting session.{% endif %}</p>
     {% if view == "products" %}<form method="get" class="r33-asof" id="r33-asof"><input type="hidden" name="view" value="products">
-          <label class="px-label" for="r33-asof-d">As of {% info "Choose a past day to see the totals for its grant year as they stood at the end of that day. The quick picks are the last days of past reporting sessions. Days before the Hub’s records show only what was imported." %}</label>
+          <label class="px-label" for="r33-asof-d">As of {% info "Curious about counts from the past? Select a previous day. What you see is the total, as of the close of business, on the date selected. The quick picks are the last days of past reporting sessions. Days before the Hub’s records show only what was imported." %}</label>
           <input id="r33-asof-d" type="date" name="asof" value="{% if asof %}{{ asof|date:'Y-m-d' }}{% endif %}" max="{% now 'Y-m-d' %}">
           {% if asof_picks %}<select aria-label="Last day of a past reporting session" onchange="if(this.value){document.getElementById('r33-asof-d').value=this.value;this.form.submit()}"><option value="">Last day of a reporting session</option>{% for q in asof_picks %}<option value="{{ q.day|date:'Y-m-d' }}">{{ q.label }}, {{ q.day|date:"F j, Y" }}</option>{% endfor %}</select>{% endif %}
           <button class="px-btn small" type="submit">Show</button>{% if asof %}<a class="px-link" href="?view=products{% for y in chosen %}&amp;years={{ y }}{% endfor %}">Back to today</a>{% endif %}
