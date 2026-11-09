@@ -92,6 +92,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Four-screen design prototype (MW 2026-11-05). Off unless the environment turns it on.
 UI_PROTOTYPE = env.bool("UI_PROTOTYPE", default=False)
+# Show only the redesign, with no "Current" switch (MW 2026-11-09: test copies for reviewers). Follows UI_PROTOTYPE
+# unless set; set UI_PROTOTYPE_ONLY=false to compare the two designs side by side.
+UI_PROTOTYPE_ONLY = env.bool("UI_PROTOTYPE_ONLY", default=UI_PROTOTYPE)
 
 # PostgreSQL only. SQLite is never used, even for tests: the constraints
 # that protect CNAP data (composite foreign keys, exclusion constraints,

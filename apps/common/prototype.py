@@ -39,7 +39,11 @@ SCREENS = {
 
 
 def enabled(request):
-    return bool(getattr(settings, "UI_PROTOTYPE", False)) and request.session.get("ui_view", "after") == "after"
+    if not getattr(settings, "UI_PROTOTYPE", False):
+        return False
+    if getattr(settings, "UI_PROTOTYPE_ONLY", False):
+        return True  # reviewers see only the redesign (MW 2026-11-09)
+    return request.session.get("ui_view", "after") == "after"
 
 
 def template(request, key, default):

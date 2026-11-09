@@ -29,6 +29,7 @@ def cnap(request):
             "evaluator_email": settings.EVALUATOR_EMAIL,
             "site_photo": SitePhoto.current(),
             "demo_site": getattr(settings, "DEMO_SITE", False),
+            "proto_only": getattr(settings, "UI_PROTOTYPE_ONLY", False),
         }
     person = getattr(user, "person", None)
     rels = (
@@ -53,6 +54,7 @@ def cnap(request):
         "access_label": label,
         "has_cnap_roles": has_roles,
         "demo_site": getattr(settings, "DEMO_SITE", False),
+        "proto_only": getattr(settings, "UI_PROTOTYPE_ONLY", False),
         # Core directors get a "Core reports" link (MW 2026-11-08).
         "directs_core": any(r.relationship_type.code == "core_director" and r.core_id for r in rels),
     }
