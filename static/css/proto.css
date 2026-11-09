@@ -1995,7 +1995,7 @@ html body.proto .h31 .h31-tbl .h31-day { white-space: nowrap; }
 html body.proto .h31 .h31-tbl { table-layout: fixed; }
 html body.proto .h31 .h31-tbl col.c-kind { width: 9em; }
 html body.proto .h31 .h31-tbl col.c-status { width: 11em; }
-html body.proto .h31 .h31-tbl col.c-day { width: 8.5em; }
+html body.proto .h31 .h31-tbl col.c-day { width: 11em; }
 html body.proto .h31 .t3-state .px-note { white-space: nowrap; }
 @media (max-width: 700px) {
   /* Phones: each row becomes a short block: the title first, then kind, status, and date on one line. */
@@ -2059,3 +2059,13 @@ html body.proto .side .foot { display: flex; flex-wrap: wrap; align-items: cente
    and the line below starts exactly under the title's first letter. */
 html body.proto .px-roll-h.r90-part > span { transform: translateY(-1px); }
 html body.proto .px-roll-h.r90-part + .px-roll-meta, html body.proto .px-roll-h.r90-part + .px-roll-figs { padding-left: 36px; }
+/* MW 2026-11-09: text never sits on a column's dividing line. Every cell after the first keeps 12px from the line. */
+html body.proto .h31 .h31-tbl :is(th, td):not(:first-child),
+html body.proto .aso .aso-tbl :is(th, td):not(:first-child),
+html body.proto .rck .rck-tbl :is(th, td):not(:first-child),
+html body.proto .t3-yl-tbl :is(th, td):not(:first-child) { padding-left: 12px; }
+@media (max-width: 700px) { html body.proto .h31 .h31-tbl td:not(:first-child) { padding-left: 0; } }
+/* Month names spelled out on timelines (MW: no abbreviations), so the date column is wider. */
+html body.proto .px-tl-list li { grid-template-columns: 96px 22px minmax(0, 1fr); }
+html body.proto .px-tl-list li::before { left: calc(96px + 10px); }
+@media (max-width: 760px) { html body.proto .px-tl-list li { grid-template-columns: 84px 22px minmax(0, 1fr); } html body.proto .px-tl-list li::before { left: calc(84px + 10px); } }

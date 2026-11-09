@@ -3,7 +3,7 @@
   <summary title="Every date for this reporting session: launch, opening, each reminder email, the due date, past-due emails, closing, and results."><span class="px-tl-q">{{ tl_label|default:"Show the full timeline" }}</span><span class="px-tl-now">{{ tl.now }}</span><span class="px-roll-cue" aria-hidden="true"></span></summary>
   <ol class="px-tl-list">
     {% for e in tl.events %}<li class="px-tl-{{ e.state }}{% if e.tone %} px-tl-{{ e.tone }}{% endif %} px-tl-k-{{ e.kind }}">
-      <time datetime="{{ e.date|date:'Y-m-d' }}">{{ e.date|date:"M j" }}</time>
+      <time datetime="{{ e.date|date:'Y-m-d' }}">{{ e.date|date:"F j" }}</time>
       <span class="px-tl-dot" aria-hidden="true"></span>
       <span class="px-tl-t"><b>{% if e.tone == 'warn' and e.kind != 'now' and 'Past-due' not in e.label %}Past due: {% endif %}{{ e.label }}</b>{% if e.detail %}<span>{{ e.detail }}</span>{% endif %}{% if tl_edit and e.iso %}<form method="post" action="{{ tl_edit }}" class="px-tl-act">{% csrf_token %}<input type="hidden" name="date" value="{{ e.iso }}">{% if e.skipped %}<button class="btn small ghost" type="submit" name="action" value="unskip" title="Puts this email back on the schedule.">Restore this email</button>{% elif e.added %}<button class="btn small ghost" type="submit" name="action" value="remove" title="Takes the email you added off the schedule.">Remove this email</button>{% elif e.skippable %}<button class="btn small ghost" type="submit" name="action" value="skip" title="Nothing goes out this day. You can restore it any time before the day.">Skip this email</button>{% endif %}</form>{% endif %}</span>
     </li>{% endfor %}
