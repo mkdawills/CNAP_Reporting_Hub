@@ -1979,3 +1979,27 @@ html body.proto .t3-yl-tbl { margin-top: 12px; width: 100%; max-width: 720px; bo
 html body.proto .t3-yl-tbl th, html body.proto .t3-yl-tbl td { text-align: left; padding: 8px 16px 8px 0; border-bottom: 1px solid var(--px-line); vertical-align: top; }
 html body.proto .t3-yl-tbl th:last-child, html body.proto .t3-yl-tbl td:last-child { white-space: nowrap; padding-right: 0; }
 @media (max-width: 600px) { html body.proto .t3-yl-tbl th:last-child, html body.proto .t3-yl-tbl td:last-child { white-space: normal; } }
+
+/* My history (MW 2026-11-05). */
+html body.proto .h31 .h31-group + .h31-group { margin-top: var(--px-sec); }
+html body.proto .h31 .h31-group > .px-h3 { margin: 0 0 4px; }
+html body.proto .h31 .h31-group > .px-note { margin: 0 0 12px; }
+html body.proto .h31 .h31-lede { margin: 0 0 var(--px-sub); }
+html body.proto .h31 .h31-tbl { width: 100%; border-collapse: collapse; margin-top: 12px; }
+html body.proto .h31 .h31-tbl th, html body.proto .h31 .h31-tbl td { text-align: left; vertical-align: top; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--px-line); }
+html body.proto .h31 .h31-tbl td:first-child, html body.proto .h31 .h31-tbl th:first-child { white-space: nowrap; width: 9em; }
+html body.proto .h31 .h31-tbl .h31-day { white-space: nowrap; }
+/* Every grant year's table shares one set of column widths, so the columns line up from year to year. */
+html body.proto .h31 .h31-tbl { table-layout: fixed; }
+html body.proto .h31 .h31-tbl col.c-kind { width: 9em; }
+html body.proto .h31 .h31-tbl col.c-status { width: 11em; }
+html body.proto .h31 .h31-tbl col.c-day { width: 8.5em; }
+html body.proto .h31 .t3-state .px-note { white-space: nowrap; }
+@media (max-width: 700px) {
+  /* Phones: each row becomes a short block: the title first, then kind, status, and date on one line. */
+  html body.proto .h31 .h31-tbl, html body.proto .h31 .h31-tbl tbody { display: block; }
+  html body.proto .h31 .h31-tbl thead, html body.proto .h31 .h31-tbl colgroup { display: none; }
+  html body.proto .h31 .h31-tbl tr { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--px-line); }
+  html body.proto .h31 .h31-tbl td { display: block; border: 0; padding: 0; width: auto !important; color: var(--px-ink-2); font-size: var(--px-fs-sm); }
+  html body.proto .h31 .h31-tbl td:nth-child(2) { order: -1; flex-basis: 100%; color: var(--px-ink); font-size: inherit; }
+}

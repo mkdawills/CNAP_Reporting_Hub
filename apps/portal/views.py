@@ -342,7 +342,14 @@ def history(request):
         )
         .order_by("-reporting_period__display_order", "form_definition__sort_order")
     )
-    return render(request, "portal/history.html", {"rows": presenters.history_rows(done)})
+    from apps.common import prototype
+
+    tpl = prototype.template(request, "history", "portal/history.html")
+    ctx = {"rows": presenters.history_rows(done)}
+    if tpl != "portal/history.html":
+        products = presenters.my_products(person)
+        ctx.update(products=products, n_done=len(done), n_products=sum(len(y["rows"]) for y in products))
+    return render(request, tpl, ctx)
 
 
 @login_required

@@ -45,3 +45,23 @@ def test_only_your_own(member):
     mine = {i["label"] for y in year_plan(person, p) for i in y["items"]}
     theirs = {i["label"] for y in year_plan(other, p) for i in y["items"]}
     assert mine and theirs
+
+
+@override_settings(UI_PROTOTYPE=True)
+def test_my_history_part_two_lists_own_products_by_grant_year(client, member):
+    from apps.portal.presenters import my_products
+
+    best = max(
+        (u for u in User.objects.filter(person__isnull=False)),
+        key=lambda u: sum(len(y["rows"]) for y in my_products(u.person)),
+    )
+    years = my_products(best.person)
+    assert years and [y["year"] for y in years] == sorted((y["year"] for y in years), reverse=True)
+    client.force_login(best)
+    session = client.session
+    session["ui_view"] = "after"
+    session.save()
+    html = client.get("/history/").content.decode()
+    assert "Publications, talks, and grants" in html
+    first = years[0]["rows"][0]
+    assert f"#{first['anchor']}" in html

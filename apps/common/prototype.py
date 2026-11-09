@@ -32,6 +32,7 @@ SCREENS = {
     "builder": "proto/builder.html",  # Build a download (MW 2026-11-06)
     "launch": "proto/launch.html",
     # Core reports for core directors (MW 2026-11-08): the same templates, in the prototype look.
+    "history": "proto/history.html",  # My history with part 2 (MW 2026-11-05)
     "core_reports": "portal/core_reports.html",
     "core_report": "portal/core_report.html",  # Review before launch, redesigned (MW 2026-11-06)
 }

@@ -706,3 +706,46 @@ def year_plan(person, period):
             }
         )
     return sessions if len(sessions) > 1 else []
+
+
+def my_products(person):
+    """My history, part 2 (MW 2026-11-05): the person's papers, proposals, and talks from Hub entries,
+    by grant year, newest first. Each links to its card on Publications, talks, and grants.
+    A paper or proposal resubmitted elsewhere shows once, as its latest attempt, like its card."""
+    from apps.outcomes import services as os
+    from apps.outcomes.models import Publication
+    from apps.outcomes.rppr import current_year
+
+    words = {
+        "pub": {"planned": "Planned", "submitted": "Submitted", "published": "Published", "declined": "Declined"},
+        "grant": {"planned": "Planned", "submitted": "Submitted, pending", "awarded": "Awarded", "not_funded": "Not funded"},
+    }
+    pubs = list(os.pubs_of(person))
+    superseded = set(
+        Publication.objects.filter(resubmission_of__in=pubs, archived_at__isnull=True).values_list("resubmission_of_id", flat=True)
+    )
+    latest = {}
+    for g in os.grants_of(person):
+        if g.grant_family_id not in latest or g.version_no > latest[g.grant_family_id].version_no:
+            latest[g.grant_family_id] = g
+    rows = []
+    for p in pubs:
+        if p.pk in superseded:
+            continue
+        day = p.publication_date or p.submission_date or p.anticipated_publication_date or timezone.localtime(p.created_at).date()
+        rows.append({"kind": "Paper", "title": p.title, "sub": p.journal, "status": words["pub"].get(p.status, p.get_status_display()), "day": day, "anchor": f"item-pub-{p.pk}"})
+    for g in latest.values():
+        day = g.submission_date or g.anticipated_submission_date or timezone.localtime(g.created_at).date()
+        sub = " ".join(x for x in (g.funding_agency, g.mechanism) if x)
+        rows.append({"kind": "Proposal", "title": g.project_title, "sub": sub, "status": words["grant"].get(g.status, g.get_status_display()), "day": day, "anchor": f"item-grant-{g.pk}"})
+    for t in os.presentations_of(person):
+        day = t.presented_on or timezone.localtime(t.created_at).date()
+        rows.append({"kind": "Talk or poster", "title": t.title, "sub": t.event, "status": t.get_presentation_type_display(), "day": day, "anchor": f"item-talk-{t.pk}"})
+    years = {}
+    for r in rows:
+        years.setdefault(current_year(r["day"]), []).append(r)
+    order = {"Paper": 0, "Proposal": 1, "Talk or poster": 2}
+    return [
+        {"year": y, "rows": sorted(rs, key=lambda r: (order[r["kind"]], -r["day"].toordinal(), r["title"].lower()))}
+        for y, rs in sorted(years.items(), reverse=True)
+    ]

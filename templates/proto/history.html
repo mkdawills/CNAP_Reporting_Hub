@@ -1,0 +1,47 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}My history · {{ platform_name }}{% endblock %}
+{% block content %}
+{# My history in the prototype look, with part 2 (MW 2026-11-05). Same data as portal/history.html, plus the person's own Hub entries. #}
+<div class="t3 h31">
+  <header class="px-mast t3-mast">
+    <p class="px-eyebrow">My work</p>
+    <h1 class="px-title">My history</h1>
+    <p class="p21-purpose">Everything you have submitted, and every paper, proposal, and talk you entered in the Hub.</p>
+    <ul class="px-facts">
+      <li><span class="px-label">Surveys and reports</span><span class="v">{{ n_done }}</span></li>
+      <li><span class="px-label">Papers, proposals, and talks</span><span class="v">{{ n_products }}</span></li>
+    </ul>
+  </header>
+
+  <div class="px-rolls" data-rollgroup>
+    <details class="px-roll" id="h31-forms" open>
+      <summary title="Everything you have submitted, by reporting session. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h r90-part"><span>1</span>Surveys and reports</h2><span class="px-roll-meta">By reporting session</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        {% for g in rows %}
+        <section class="h31-group" aria-labelledby="h31-p{{ g.period.pk }}">
+          <h3 class="px-h3" id="h31-p{{ g.period.pk }}">{{ g.period.name }}</h3>
+          <p class="px-note">{% if g.period.closed_at %}The reporting session ran {{ g.period|span }}.{% else %}This reporting session runs {{ g.period|span }}.{% endif %}</p>
+          <ul class="t3-list px-surface">{% for r in g.rows %}<li class="t3-row"><div class="t3-main"><p class="t3-name">{{ r.name }}</p>{% if r.context %}<p class="t3-sub">{{ r.context }}</p>{% endif %}{% if r.opted %}<p class="t3-sub">You opted out of this survey: {{ r.pathway }}.</p>{% endif %}</div><div class="t3-state">{% if r.a.submitted_at %}<span class="px-note">Submitted {{ r.a.submitted_at|date:"F j, Y" }}</span>{% endif %}</div><div class="t3-acts"><a class="px-btn small ghost" href="{% url 'portal:form' r.a.pk %}">View</a></div></li>{% endfor %}</ul>
+        </section>
+        {% empty %}<p class="px-note">You haven’t submitted anything yet.<br>Your open surveys and reports are under My tasks.</p>{% endfor %}
+      </div>
+    </details>
+
+    <details class="px-roll" id="h31-products" open>
+      <summary title="Your papers, proposals, and talks, by grant year. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h r90-part"><span>2</span>Publications, talks, and grants</h2><span class="px-roll-meta">By grant year</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <p class="px-note h31-lede">Every paper, proposal, and talk you or someone working for you entered in the Hub, by grant year.<br>A grant year runs June 1 through May 31.<br>Select a title to open its card on Publications, talks, and grants.</p>
+        {% for y in products %}
+        <section class="h31-group" aria-labelledby="h31-y{{ y.year }}">
+          <h3 class="px-h3" id="h31-y{{ y.year }}">Year {{ y.year }}</h3>
+          <div class="scroll"><table class="h31-tbl"><colgroup><col class="c-kind"><col><col class="c-status"><col class="c-day"></colgroup><thead><tr><th scope="col">Kind</th><th scope="col">Title</th><th scope="col">Status</th><th scope="col">Date</th></tr></thead><tbody>
+          {% for r in y.rows %}<tr><td>{{ r.kind }}</td><td><a class="px-link" href="{% url 'portal:outcomes' %}#{{ r.anchor }}">{{ r.title }}</a>{% if r.sub %}<div class="px-note">{{ r.sub }}</div>{% endif %}</td><td>{{ r.status }}</td><td class="h31-day">{{ r.day|date:"M j, Y" }}</td></tr>{% endfor %}
+          </tbody></table></div>
+        </section>
+        {% empty %}<p class="px-note">Nothing entered yet.<br>Add papers, proposals, and talks on <a class="px-link" href="{% url 'portal:outcomes' %}">Publications, talks, and grants</a>.</p>{% endfor %}
+      </div>
+    </details>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}

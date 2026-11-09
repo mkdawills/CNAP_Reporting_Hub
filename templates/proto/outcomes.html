@@ -74,7 +74,7 @@
     <details class="px-roll" id="o36-talks">
       <summary title="Talks and posters you have given. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg>Talks and posters</h2><span class="px-roll-meta"><b>{{ presentations|length }}</b> recorded</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="px-roll-body">
-        <ul class="o36-talks">{% for t in presentations %}<li><div><p class="o36-ttl">{{ t.title }}</p><p class="px-note">{{ t.get_presentation_type_display }}{% if t.event %} · {{ t.event }}{% endif %}{% if t.presented_on %} · {{ t.presented_on|date:"F j, Y" }}{% endif %}</p></div>
+        <ul class="o36-talks">{% for t in presentations %}<li id="item-talk-{{ t.pk }}"><div><p class="o36-ttl">{{ t.title }}</p><p class="px-note">{{ t.get_presentation_type_display }}{% if t.event %} · {{ t.event }}{% endif %}{% if t.presented_on %} · {{ t.presented_on|date:"F j, Y" }}{% endif %}</p></div>
           <span class="px-note">{% if t.cnap_cited %}Acknowledges CNAP{% elif t.cnap_cited is False %}No CNAP acknowledgment{% endif %}</span>
           {% if window.0 %}<a class="px-btn small quiet" href="{% url 'portal:presentation_edit' t.pk %}?for={{ owner.pk }}" title="Change this talk or poster’s details.">Edit</a>{% endif %}</li>
         {% empty %}<li class="px-note">No talks or posters recorded yet.</li>{% endfor %}</ul>
