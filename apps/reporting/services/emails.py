@@ -42,16 +42,21 @@ STANDARD_WORDING = {
     "open": {
         "subject": "CNAP Reporting Hub: your {session} reporting session is open",
         "opening": "The {session} CNAP reporting session is open.",
+        "closing": "Your answers are saved as you go, so you can finish across several sittings.\nSurveys you don't use have a one-click opt-out.",
     },
     "reminder": {
         "subject": "Reminder: your {session} CNAP reporting session is due {due}",
         "opening": "This is a reminder that your {session} CNAP reporting session is due {due}.",
+        "closing": "Anything you've started is saved.",
     },
     "overdue": {
         "subject": "Your {session} CNAP reporting session was due {due}",
         "opening": "Your {session} CNAP reporting session was due {due}, and the reporting session is still open, so there's still time.",
+        "closing": "Anything you've started is saved.",
     },
 }
+SIGNOFF = "Thank you,\nThe CNAP evaluation team"
+PARTS = ("subject", "opening", "closing", "signoff")
 EVERY_LIMITS = {"reminder": (1, 14), "overdue": (1, 7)}
 
 
@@ -76,12 +81,12 @@ def added_days(period):
 
 
 def wording(period, kind):
-    """{subject, opening, custom}: this period's wording for one email, with {session} and {due} still in place."""
-    std = STANDARD_WORDING[kind]
+    """This period's wording for one email: subject, opening, closing, and sign-off, with {session} and {due} still in place."""
+    std = dict(STANDARD_WORDING[kind], signoff=SIGNOFF)
     own = ((period.email_plan or {}).get("wording") or {}).get(kind) or {}
-    subject = (own.get("subject") or "").strip() or std["subject"]
-    opening = (own.get("opening") or "").strip() or std["opening"]
-    return {"subject": subject, "opening": opening, "custom": subject != std["subject"] or opening != std["opening"]}
+    out = {k: (own.get(k) or "").strip() or std[k] for k in PARTS}
+    out["custom"] = any(out[k] != std[k] for k in PARTS)
+    return out
 
 
 def _fill(text, period):
@@ -97,6 +102,11 @@ def subject_for(period, kind):
 
 def opening_for(period, kind):
     return _fill(wording(period, kind)["opening"], period)
+
+
+def parts_for(period, kind):
+    w = wording(period, kind)
+    return {"opening": _fill(w["opening"], period), "closing": _fill(w["closing"], period), "signoff": _fill(w["signoff"], period)}
 
 
 def _label(a):
@@ -203,8 +213,7 @@ def send(period, kind, actor=None, dry_run=False, gap=None):
             else f"{settings.SITE_URL}/tasks/"
         )
         items, summary, total = _items(r["assignments"])
-        body = render_to_string(
-            f"email/period_{kind}.txt",
+        ctx = (
             {
                 "person": p,
                 "period": period,
@@ -212,18 +221,21 @@ def send(period, kind, actor=None, dry_run=False, gap=None):
                 "items": items,
                 "summary": summary,
                 "total": total,
-                "opening": opening_for(period, kind),
+                **parts_for(period, kind),
                 "due": f"{due:%A, %B} {due.day}",
                 "url": url,
                 "with_link": r["with_link"],
                 "days": signin.LINK_DAYS,
                 "site": settings.SITE_URL,
-            },
+                "kind": kind,
+            }
         )
+        body = render_to_string(f"email/period_{kind}.txt", ctx)
         subject = subject_for(period, kind)
         send_mail(
             subject=subject,
             message=body,
+            html_message=render_to_string("email/period.html", ctx),
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[r["email"]],
             fail_silently=False,
@@ -298,23 +310,24 @@ def schedule_preview(period):
     }
 
 
-def preview(period, kind):
+def preview(period, kind, html=False):
     """The email exactly as one person would receive it today (MW 2026-11-07), for the emails page.
     Uses the first person this email would go to; the sign-in link is shown as a placeholder. Sends nothing."""
     rows = [r for r in plan(period, kind) if r["assignments"]]
     if not rows:
-        return ""
+        return {} if html else ""
     r = next((x for x in rows if not x["skip"]), rows[0])
     due = timezone.localtime(period.due_at)
     items, summary, total = _items(r["assignments"])
-    body = render_to_string(
-        f"email/period_{kind}.txt",
-        {
-            "person": r["person"], "period": period, "forms": r["forms"], "items": items,
-            "summary": summary, "total": total, "opening": opening_for(period, kind), "due": f"{due:%A, %B} {due.day}",
-            "url": "[personal sign-in link]" if r["with_link"] else f"{settings.SITE_URL}/tasks/",
-            "with_link": r["with_link"], "days": signin.LINK_DAYS, "site": settings.SITE_URL,
-        },
-    )
+    ctx = {
+        "person": r["person"], "period": period, "forms": r["forms"], "items": items,
+        "summary": summary, "total": total, **parts_for(period, kind), "due": f"{due:%A, %B} {due.day}",
+        "url": "#" if r["with_link"] else f"{settings.SITE_URL}/tasks/",
+        "with_link": r["with_link"], "days": signin.LINK_DAYS, "site": settings.SITE_URL, "kind": kind,
+    }
+    if html:
+        return {"subject": subject_for(period, kind), "html": render_to_string("email/period.html", ctx)}
+    ctx["url"] = "[personal sign-in link]" if r["with_link"] else ctx["url"]
+    body = render_to_string(f"email/period_{kind}.txt", ctx)
     subject = subject_for(period, kind)
     return f"Subject: {subject}\n\n{body.strip()}"

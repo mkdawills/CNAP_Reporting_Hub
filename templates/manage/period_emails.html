@@ -3,39 +3,26 @@
 {% block content %}
 <div class="head"><div><h1>{{ p.name }}: emails</h1><p>{{ "Each person gets a personal list of forms and the due date. People who sign in by emailed link get a personal link; K-State members sign in with a K-State eID."|stack }}</p></div></div>
 {% if request.proto_active %}<div class="panel em-auto">
-  <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you: the “your reporting session is open” email, reminders, then past-due notes, on the schedule below. Change how often, skip or add a day, or pause it entirely, for example during a campus emergency." %}</h2>
+  {# MW 2026-11-08: one place for each thing. Status and pause at the top, frequency inside the table, skip and add on the timeline. #}
+  <div class="em-head">
+    <h2 class="sectionhead">Automatic emails are {% if p.auto_emails %}on{% else %}paused{% endif %}{% why "The Hub does the chasing for you. Only people with surveys or reports still to do get the reminder and the past-due email. No one gets more than one email in a day. Anyone added during the reporting session gets the “your reporting session is open” email first. Pause the emails if the Center needs quiet, for example during a campus emergency." %}</h2>
+    {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_auto' p.pk %}">{% csrf_token %}<input type="hidden" name="on" value="{% if p.auto_emails %}0{% else %}1{% endif %}"><button class="btn small ghost" type="submit">{% if p.auto_emails %}Pause automatic emails{% else %}Turn automatic emails on{% endif %}</button></form>{% endif %}
+  </div>
   <p class="em-lead">The Hub sends three emails for this reporting session, each on its own schedule.</p>
+  <form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-schedform">{% csrf_token %}<input type="hidden" name="action" value="every">
   <div class="scroll"><table class="em-sched nosort"><thead><tr><th scope="col">Email</th><th scope="col">When it goes</th><th scope="col">What it says</th></tr></thead><tbody>
     <tr><th scope="row">“Your reporting session is open”</th><td>Once, on opening day, {{ sched.opens|date:"l, F j" }}</td><td>Each survey and report the person has, with its time, and the due date</td></tr>
-    <tr><th scope="row">The reminder</th><td>Every {% if sched.reminder_every == 1 %}day{% else %}{{ sched.reminder_every }} days{% endif %}, from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}</td><td>Only the surveys and reports the person still has left, with their times</td></tr>
-    <tr><th scope="row">The past-due email</th><td>Every {% if sched.overdue_every == 1 %}day{% else %}{{ sched.overdue_every }} days{% endif %} from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the reporting session closes on {{ sched.closes|date:"F j" }}{% else %} until you close the reporting session{% endif %}</td><td>The due date has passed, and the person can still turn in the surveys and reports left</td></tr>
+    <tr><th scope="row">The reminder</th><td>{% if can_manage %}<label class="em-every">Every <input type="number" name="reminder_every" min="1" max="14" value="{{ sched.reminder_every }}" aria-label="Days between reminders, 1 to 14"> days,</label>{% else %}Every {% if sched.reminder_every == 1 %}day{% else %}{{ sched.reminder_every }} days{% endif %},{% endif %} from {{ sched.first_reminder|date:"F j" }} through the due date, {{ sched.due|date:"F j" }}</td><td>Only the surveys and reports the person still has left, with their times</td></tr>
+    <tr><th scope="row">The past-due email</th><td>{% if can_manage %}<label class="em-every">Every <input type="number" name="overdue_every" min="1" max="7" value="{{ sched.overdue_every }}" aria-label="Days between past-due emails, 1 to 7"> days</label>{% else %}Every {% if sched.overdue_every == 1 %}day{% else %}{{ sched.overdue_every }} days{% endif %}{% endif %} from {{ sched.after_due|date:"F j" }}{% if sched.closes %} until the reporting session closes on {{ sched.closes|date:"F j" }}{% else %} until you close the reporting session{% endif %}</td><td>The due date has passed, and the person can still turn in the surveys and reports left</td></tr>
   </tbody></table></div>
+  {% if can_manage %}<p class="em-note em-savenote"><button class="btn small" type="submit">Save how often</button><span>Each person’s gap counts from that person’s last email.</span></p>{% endif %}
+  </form>
   {% if can_manage %}{% url 'manage:period_emails_plan' p.pk as plan_url %}{% endif %}
   {% include "proto/_timeline.html" with tl=etl tl_label="Show every automatic email on a timeline" tl_edit=plan_url %}
-  {% if can_manage %}
-  <div class="em-ctl">
-    <form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-ctl-box">{% csrf_token %}
-      <h3>How often</h3>
-      <p class="em-note">Each person’s gap is counted from that person’s last email.</p>
-      <div class="em-ctl-row"><label for="em-re">Reminder, every</label><input id="em-re" type="number" name="reminder_every" min="1" max="14" value="{{ sched.reminder_every }}"><span>days, up to 14</span></div>
-      <div class="em-ctl-row"><label for="em-oe">Past-due email, every</label><input id="em-oe" type="number" name="overdue_every" min="1" max="7" value="{{ sched.overdue_every }}"><span>days, up to 7</span></div>
-      <div class="actions"><button class="btn small" type="submit" name="action" value="every">Save how often</button></div>
-    </form>
-    <form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-ctl-box">{% csrf_token %}
-      <h3>Add or skip one day</h3>
-      <p class="em-note">An added email goes to everyone with surveys or reports still to do, whatever their last email.<br>A skipped day sends nothing.<br>You can also skip or restore any day on the timeline above.</p>
-      <div class="em-ctl-row em-stack"><label for="em-d">Day</label><input id="em-d" type="date" name="date" min="{{ sched.opens|date:'Y-m-d' }}"{% if sched.closes %} max="{{ sched.closes|date:'Y-m-d' }}"{% endif %} required></div>
-      <div class="actions"><button class="btn small" type="submit" name="action" value="add">Add an email this day</button><button class="btn small ghost" type="submit" name="action" value="skip">Skip this day</button></div>
-    </form>
-  </div>
-  {% endif %}
-  <ul class="em-rules">
-    <li>Only people with forms still to do get the reminder and the past-due email.</li>
-    <li>No one gets more than one email in a day.</li>
-    <li>Anyone added during the reporting session gets the “your reporting session is open” email first.</li>
-  </ul>
-  {% if today_kind %}<p class="em-today">Today’s scheduled email is {% if today_kind == 'open' %}the “your reporting session is open” email{% elif today_kind == 'reminder' %}the reminder{% else %}the past-due email{% endif %}.</p>{% endif %}
-  {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_auto' p.pk %}">{% csrf_token %}<input type="hidden" name="on" value="{% if p.auto_emails %}0{% else %}1{% endif %}"><div class="actions"><button class="btn small ghost" type="submit">{% if p.auto_emails %}Pause automatic emails{% else %}Turn automatic emails on{% endif %}</button></div></form>{% endif %}
+  {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-addday">{% csrf_token %}<input type="hidden" name="action" value="add">
+    <label for="em-d">Add an email on</label><input id="em-d" type="date" name="date" min="{{ sched.opens|date:'Y-m-d' }}"{% if sched.closes %} max="{{ sched.closes|date:'Y-m-d' }}"{% endif %} required><button class="btn small ghost" type="submit">Add</button>
+    <span class="em-note">It goes to everyone with surveys or reports still to do, whatever their last email.</span>
+  </form>{% endif %}
 </div>
 <div class="panel em-hand">
   <h2 class="sectionhead">Send one of these emails by hand</h2>
@@ -55,13 +42,15 @@
       </tbody></table></div></details>
     {% if skipped %}<details class="em-roll"><summary><h3>Not emailed ({{ skipped|length }})</h3></summary><ul class="em-skip">{% for r in skipped %}<li>{{ r.person }}: {{ r.skip }}</li>{% endfor %}</ul></details>{% endif %}
     <details class="em-roll"><summary><h3>What the email says</h3></summary>
-      <pre class="em-text">{{ sample }}</pre>
+      {% if sample_html %}<div class="em-mail"><p class="em-mail-subj"><span>Subject</span>{{ sample_html.subject }}</p><div class="em-mail-body">{{ sample_html.html|safe }}</div></div>{% else %}<pre class="em-text">{{ sample }}</pre>{% endif %}
       <p class="em-note">This is the email exactly as {% if to_send %}the first person on the list{% else %}one person{% endif %} would receive it today.</p>
       {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-word">{% csrf_token %}<input type="hidden" name="kind" value="{{ kind }}">
         <h4>Change the wording</h4>
-        <p class="em-note">You can change the subject and the opening sentence.<br>The list of surveys and reports, the due date, and the sign-in link always fill in automatically.<br>Write {session} for the reporting session’s name and {due} for the due date.</p>
+        <p class="em-note">You can change the subject, the opening, the closing, and the sign-off.<br>The list of surveys and reports, the due date, the button, and the sign-in directions always fill in automatically, so an edit can’t break them.<br>Write {session} for the reporting session’s name and {due} for the due date.</p>
         <label for="em-subj">Subject</label><input id="em-subj" type="text" name="subject" value="{{ words.subject }}" maxlength="200">
-        <label for="em-open">Opening sentence</label><textarea id="em-open" name="opening" rows="3" maxlength="600">{{ words.opening }}</textarea>
+        <label for="em-open">Opening, above the list</label><textarea id="em-open" name="opening" rows="3" maxlength="1500">{{ words.opening }}</textarea>
+        <label for="em-close">Closing, below the button</label><textarea id="em-close" name="closing" rows="3" maxlength="1500">{{ words.closing }}</textarea>
+        <label for="em-sign">Sign-off</label><textarea id="em-sign" name="signoff" rows="2" maxlength="300">{{ words.signoff }}</textarea>
         <div class="actions"><button class="btn small" type="submit" name="action" value="wording">Save the wording</button>{% if words.custom %}<button class="btn small ghost" type="submit" name="action" value="wording_reset">Go back to the standard wording</button>{% endif %}</div>
       </form>{% endif %}
     </details>

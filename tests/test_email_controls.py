@@ -66,12 +66,14 @@ def test_skip_and_add_a_day(client, center):
 
 
 def test_wording(client, center):
-    _post(client, center, action="wording", kind="reminder", subject="A friendly note: {session} is due {due}", opening="Hello from the CNAP team. {session} is due {due}.")
+    _post(client, center, action="wording", kind="reminder", subject="A friendly note: {session} is due {due}", opening="Hello from the CNAP team. {session} is due {due}.", closing="Questions? Reply to this email.", signoff="With thanks,\nMorgan")
     center.refresh_from_db()
     text = emails.preview(center, "reminder")
     assert text.startswith(f"Subject: A friendly note: {center.name} is due ")
     assert f"Hello from the CNAP team. {center.name} is due " in text
+    assert "Questions? Reply to this email." in text and text.rstrip().endswith("With thanks,\nMorgan")
     assert "{session}" not in text and "{due}" not in text
+    assert "Questions? Reply to this email." in emails.preview(center, "reminder", html=True)["html"]
     emails.send(center, "reminder", gap=0)
     assert mail.outbox and mail.outbox[-1].subject.startswith("A friendly note:")
     _post(client, center, action="wording_reset", kind="reminder")

@@ -1,0 +1,19 @@
+{# The HTML version of the three reporting-session emails (MW 2026-11-08: the list as a table, for easier reading). The text version stays as the fallback. #}
+<div style="font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.5; color: #221d2b; max-width: 620px;">
+<p style="margin: 0 0 14px;">Hello {{ person.first_name }},</p>
+<p style="margin: 0 0 14px;">{{ opening|linebreaksbr }}<br>{% if kind == 'open' %}You have {{ summary }} to complete by {{ due }}.{% else %}You still have {{ summary }} to complete.{% endif %}{% if total %}<br>{{ total|capfirst }} in all.{% endif %}</p>
+<table class="nosort" role="presentation" cellpadding="0" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 0 0 18px; font-size: 14px;">
+  <thead><tr>
+    <th align="left" style="padding: 8px 12px 8px 0; border-bottom: 2px solid #dcd7e3; font-weight: 600;">{% if kind == 'open' %}Survey or report{% else %}Still to do{% endif %}</th>
+    <th align="left" style="padding: 8px 0; border-bottom: 2px solid #dcd7e3; font-weight: 600; white-space: nowrap;">About how long</th>
+  </tr></thead>
+  <tbody>{% for i in items %}<tr>
+    <td style="padding: 8px 12px 8px 0; border-bottom: 1px solid #ece8f1; vertical-align: top;">{{ i.label }}</td>
+    <td style="padding: 8px 0; border-bottom: 1px solid #ece8f1; vertical-align: top;">{{ i.time|capfirst }}</td>
+  </tr>{% endfor %}</tbody>
+</table>
+<p style="margin: 0 0 14px;"><a href="{{ url }}" style="display: inline-block; background: #512888; color: #ffffff; text-decoration: none; font-weight: 600; padding: 10px 18px; border-radius: 8px;">Open your reporting session</a></p>
+<p style="margin: 0 0 14px; color: #4d4658;">{% if with_link %}This button signs you in.<br>The link works once and expires in {{ days }} days.<br>You can get a new one any time at {{ site }}/accounts/link/{% else %}Sign in with your K-State eID.{% endif %}</p>
+<p style="margin: 0 0 14px;">{{ closing|linebreaksbr }}</p>
+<p style="margin: 0;">{{ signoff|linebreaksbr }}</p>
+</div>

@@ -1945,3 +1945,22 @@ html body.proto .em-ctl .actions, html body.proto .em-word .actions { align-item
 html body.proto .em-ctl .actions .btn, html body.proto .em-word .actions .btn { margin: 0; }
 html body.proto .em-ctl-row.em-stack { flex-direction: column; align-items: flex-start; gap: 6px; }
 html body.proto .em-ctl-row.em-stack label { min-width: 0; }
+
+/* Emails page, simplified (MW 2026-11-08). */
+html body.proto .em-auto .em-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+html body.proto .em-auto .em-head .sectionhead { margin: 0; }
+html body.proto .em-auto .em-head form { margin: 0; }
+html body.proto .em-every { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+html body.proto .em-every input { width: 4em; padding: 4px 6px; }
+html body.proto .em-savenote { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 12px; }
+html body.proto .em-savenote .btn { margin: 0; }
+html body.proto .em-addday { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: var(--px-sub); }
+html body.proto .em-addday label { font-weight: 500; }
+html body.proto .em-addday .btn { margin: 0; }
+html body.proto .em-addday .em-note { flex-basis: 100%; margin: 0; }
+html body.proto .em-auto details.px-tl { margin-bottom: 8px; }
+/* The sample email, shown as members see it (MW 2026-11-08). */
+html body.proto .em-mail { border: 1px solid var(--px-line); border-radius: 12px; overflow: hidden; max-width: 680px; background: #fff; }
+html body.proto .em-mail-subj { margin: 0; padding: 12px 20px; border-bottom: 1px solid var(--px-line); background: var(--px-sunken); font-weight: 600; }
+html body.proto .em-mail-subj span { display: inline-block; min-width: 5em; font-weight: 400; color: var(--px-muted); }
+html body.proto .em-mail-body { padding: 20px; overflow-x: auto; }

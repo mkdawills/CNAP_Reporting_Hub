@@ -12,8 +12,7 @@ This link signs you in. The link works once and expires in {{ days }} days. You 
 {% else %}
 Sign in with your K-State eID.
 {% endif %}
-Your answers are saved as you go, so you can finish across several sittings. Surveys you don't use have a one-click opt-out.
+{{ closing }}
 
-Thank you,
-The CNAP evaluation team
+{{ signoff }}
 {% endautoescape %}

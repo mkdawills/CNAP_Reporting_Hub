@@ -619,6 +619,7 @@ def period_emails(request, pk):
             "today_kind": emails.scheduled_kind(p),
             "etl": _email_timeline(request, p),
             "sample": emails.preview(p, kind),
+            "sample_html": emails.preview(p, kind, html=True),
             "words": emails.wording(p, kind),
         },
     )
@@ -710,12 +711,12 @@ def period_emails_plan(request, pk):
             words.pop(kind, None)
             msg = "Back to the standard wording."
         else:
-            subject = request.POST.get("subject", "").strip()[:200]
-            opening = request.POST.get("opening", "").strip()[:600]
-            if not subject or not opening:
-                messages.error(request, "Write a subject and an opening sentence.")
+            limits = {"subject": 200, "opening": 1500, "closing": 1500, "signoff": 300}
+            new = {k: request.POST.get(k, "").replace("\r\n", "\n").strip()[:n] for k, n in limits.items()}
+            if not new["subject"] or not new["opening"] or not new["signoff"]:
+                messages.error(request, "Write a subject, an opening, and a sign-off.")
                 return redirect(f"{back}?kind={kind}")
-            words[kind] = {"subject": subject, "opening": opening}
+            words[kind] = new
             msg = "Saved the wording. The sample below shows it."
         plan["wording"] = words
         back = f"{back}?kind={kind}"
