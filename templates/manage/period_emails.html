@@ -24,7 +24,7 @@
     <form method="post" action="{% url 'manage:period_emails_plan' p.pk %}" class="em-ctl-box">{% csrf_token %}
       <h3>Add or skip one day</h3>
       <p class="em-note">An added email goes to everyone with surveys or reports still to do, whatever their last email.<br>A skipped day sends nothing.<br>You can also skip or restore any day on the timeline above.</p>
-      <div class="em-ctl-row"><label for="em-d">Day</label><input id="em-d" type="date" name="date" min="{{ sched.opens|date:'Y-m-d' }}"{% if sched.closes %} max="{{ sched.closes|date:'Y-m-d' }}"{% endif %} required></div>
+      <div class="em-ctl-row em-stack"><label for="em-d">Day</label><input id="em-d" type="date" name="date" min="{{ sched.opens|date:'Y-m-d' }}"{% if sched.closes %} max="{{ sched.closes|date:'Y-m-d' }}"{% endif %} required></div>
       <div class="actions"><button class="btn small" type="submit" name="action" value="add">Add an email this day</button><button class="btn small ghost" type="submit" name="action" value="skip">Skip this day</button></div>
     </form>
   </div>
