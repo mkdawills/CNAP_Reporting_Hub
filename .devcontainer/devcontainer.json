@@ -15,5 +15,8 @@
   "postCreateCommand": "python manage.py migrate --noinput && python manage.py seed --fictional",
   "postAttachCommand": {
     "server": "python manage.py migrate --noinput && python manage.py runserver [::]:8000"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
   }
 }
