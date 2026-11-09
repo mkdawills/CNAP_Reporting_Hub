@@ -1,0 +1,54 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Roster check · {{ p.short_label }} · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Roster check, the evaluator's side (MW 2026-11-06): who has replied, and each suggestion to handle. #}
+<div class="rck">
+  <a class="px-link p21-back" href="{% url 'manage:launch' p.pk %}">Back to Review before launch</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Reporting sessions · {{ p.name }}</p>
+    <h1 class="px-title">Roster check</h1>
+    <p class="p21-purpose">Project leaders and core directors check the roster before {{ p.name }} opens.<br>Each suggestion waits here for you.<br>Nothing on the roster changes until you make the change yourself.</p>
+    <ul class="px-facts">
+      <li><span class="px-label">Sent</span><span class="v">{% if s.sent %}{{ s.sent }} of {{ s.links|length }}{% else %}Not yet. Goes out {{ s.send_day|date:"F j" }}{% endif %}</span></li>
+      <li><span class="px-label">Replied</span><span class="v">{{ s.replied }}</span></li>
+      <li><span class="px-label">Not yet replied</span><span class="v">{{ s.waiting|length }}</span></li>
+      <li><span class="px-label">To review</span><span class="v">{{ s.pending }}</span></li>
+    </ul>
+  </header>
+
+  {% if can_manage and draft %}<form method="post" action="{% url 'manage:roster_check_post' p.pk %}" class="rck-send">{% csrf_token %}<input type="hidden" name="action" value="send">
+    <button class="btn small{% if s.sent %} ghost{% endif %}" type="submit">{% if s.sent %}Send to anyone not yet emailed{% else %}Send the roster check now{% endif %}</button>
+    <span class="px-note">{% if s.sent %}Anyone who became a project leader or core director since the first send gets an email.{% else %}It goes automatically on {{ s.send_day|date:"l, F j" }}, three weeks before opening, to {{ recipients_n }} project leaders and core directors.{% endif %}</span>
+  </form>{% endif %}
+
+  <div class="px-page">
+    <section class="px-section" aria-labelledby="rck-1">
+      <h2 class="px-h2 r90-part" id="rck-1"><span>1</span>Suggestions to review</h2>
+      {% if pending %}
+      <ul class="rck-list">{% for x in pending %}<li>
+        <div class="rck-what">
+          <p class="rck-t">{% if x.kind == 'left' %}{{ x.person.full_name }} has left or changed role{% elif x.kind == 'new' %}Someone new: {{ x.name }}{% elif x.kind == 'core_user' %}A new core user: {{ x.name }}{% else %}Something else{% endif %}</p>
+          <p class="px-note">{% if x.role %}{{ x.role }}{% endif %}{% if x.project %}{% if x.role %}, {% endif %}{{ x.project.title }}{% endif %}{% if x.core %}{% if x.role or x.project %}, {% endif %}{{ x.core.name }}{% endif %}{% if x.role or x.project or x.core %}.<br>{% endif %}{% if x.note %}“{{ x.note }}”<br>{% endif %}From {% if x.from_name %}{{ x.from_name }}, through {{ x.link.person.full_name }}’s link{% else %}{{ x.link.person.full_name }}{% endif %}, {{ x.created_at|date:"F j" }}.</p>
+        </div>
+        {% if can_manage %}<div class="rck-acts">
+          {% if x.kind == 'left' and x.person %}<a class="btn small" href="{% url 'manage:person' x.person.pk %}" title="Opens the person’s page, where you can end the role.">Open {{ x.person.first_name }}’s page</a>{% elif x.kind != 'other' %}<a class="btn small" href="{% url 'manage:person_new' %}" title="Opens the form to add a person to the roster.">Add to the roster</a>{% endif %}
+          <form method="post" action="{% url 'manage:roster_check_post' p.pk %}">{% csrf_token %}<input type="hidden" name="id" value="{{ x.pk }}"><button class="btn small ghost" type="submit" name="action" value="done">Mark as handled</button> <button class="btn small ghost" type="submit" name="action" value="declined">Decline</button></form>
+        </div>{% endif %}
+      </li>{% endfor %}</ul>
+      {% else %}<p class="px-note">Nothing to review.</p>{% endif %}
+    </section>
+
+    <section class="px-section" aria-labelledby="rck-2">
+      <h2 class="px-h2 r90-part" id="rck-2"><span>2</span>Who has replied</h2>
+      {% if s.links %}<div class="scroll"><table class="rck-tbl"><colgroup><col><col class="c-sent"><col class="c-reply"></colgroup><thead><tr><th scope="col">Project leader or core director</th><th scope="col">Emailed</th><th scope="col">Reply</th></tr></thead><tbody>
+      {% for l in s.links %}<tr><td>{{ l.person.full_name }}</td><td>{% if l.sent_at %}{{ l.sent_at|date:"F j" }}{% else %}<span class="gap">Not yet</span>{% endif %}</td><td>{% if l.no_changes %}No changes needed{% elif l.replied_at %}{{ l.suggestions.all|length }} suggestion{{ l.suggestions.all|length|pluralize }}{% elif l.sent_at %}<span class="gap">Not yet replied</span>{% else %}—{% endif %}</td></tr>{% endfor %}
+      </tbody></table></div>{% else %}<p class="px-note">The list of project leaders and core directors appears here once the roster check goes out.</p>{% endif %}
+    </section>
+
+    {% if decided %}<section class="px-section" aria-labelledby="rck-3">
+      <h2 class="px-h2 r90-part" id="rck-3"><span>3</span>Handled and declined</h2>
+      <ul class="rck-list done">{% for x in decided %}<li><div class="rck-what"><p class="rck-t">{% if x.kind == 'left' %}{{ x.person.full_name }} has left or changed role{% elif x.kind == 'new' %}Someone new: {{ x.name }}{% elif x.kind == 'core_user' %}A new core user: {{ x.name }}{% else %}Something else{% endif %}</p><p class="px-note">{{ x.get_status_display }} {{ x.decided_at|date:"F j" }}.</p></div>{% if can_manage %}<div class="rck-acts"><form method="post" action="{% url 'manage:roster_check_post' p.pk %}">{% csrf_token %}<input type="hidden" name="id" value="{{ x.pk }}"><button class="btn small ghost" type="submit" name="action" value="pending">Put back on the list</button></form></div>{% endif %}</li>{% endfor %}</ul>
+    </section>{% endif %}
+  </div>
+</div>
+{% endblock %}

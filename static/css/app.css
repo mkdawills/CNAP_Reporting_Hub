@@ -2051,3 +2051,11 @@ details > summary + * { margin-top: 12px; }
 @media (max-width: 760px) { .o33 { padding: 20px 18px; } .o33 .o33-grid b { font-size: 2.3rem; } }
 .o33 .o33-grid li > * { align-items: center; text-align: center; }
 .gcard-links { margin: 8px 0 0; padding-left: 18px; font-size: .92rem; } .gcard p:has(+ .gcard-links) { margin-bottom: 0; font-size: .92rem; line-height: 1.55; }
+
+/* Roster check page behind the emailed link (MW 2026-11-06). */
+.rc-tbl td { vertical-align: top; }
+.rc-tbl details summary { cursor: pointer; color: var(--brand, #512888); }
+.rc-tbl details form { margin-top: 8px; }
+.rc-tbl textarea, .rc-form textarea, .rc-form input[type=text], .rc-form select { width: 100%; max-width: 32rem; box-sizing: border-box; font: inherit; }
+.rc-form fieldset { border: 0; padding: 0; margin: 0 0 12px; }
+.rc-form legend { font-weight: 600; margin-bottom: 6px; }

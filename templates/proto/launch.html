@@ -2,8 +2,8 @@
 {% block title %}Review before launch · {{ platform_name }}{% endblock %}
 {% block content %}
 {% comment %}Review before launch, redesigned (MW 2026-11-06: "needs a lot of work in terms of clarity and visual hierarchy").
-Same view, same data, same launch form and Add to roster forms as manage/launch.html. Four numbered steps:
-check the flags, check the totals, check each person, then approve.{% endcomment %}
+Same view, same data, same launch form and Add to roster forms as manage/launch.html. Five numbered steps (MW 2026-11-06: the roster check replies come first):
+roster check replies, check the flags, check the totals, check each person, then approve.{% endcomment %}
 <div class="lch">
   <a class="px-link p21-back" href="{% url 'manage:periods' %}">Back to reporting sessions</a>
   <header class="px-mast p21-mast">
@@ -24,30 +24,41 @@ check the flags, check the totals, check each person, then approve.{% endcomment
   <nav class="px-onpage" aria-label="On this page">
     <div class="p21-navtop"><p class="px-label">On this page</p><button type="button" class="p21-collapse" data-navtoggle aria-expanded="true" title="Hide this list to give the page more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
     <ol>
-      <li><a href="#lch-1" data-onpage><span class="px-onpage-n">1</span>Check before launching</a></li>
-      <li><a href="#lch-2" data-onpage><span class="px-onpage-n">2</span>What this launch will send</a></li>
-      <li><a href="#lch-3" data-onpage><span class="px-onpage-n">3</span>Who receives which forms</a>
+      <li><a href="#lch-0" data-onpage><span class="px-onpage-n">1</span>Roster check replies</a></li>
+      <li><a href="#lch-1" data-onpage><span class="px-onpage-n">2</span>Check before launching</a></li>
+      <li><a href="#lch-2" data-onpage><span class="px-onpage-n">3</span>What this launch will send</a></li>
+      <li><a href="#lch-3" data-onpage><span class="px-onpage-n">4</span>Who receives which forms</a>
         <ol>{% for g in groups %}<li><a href="#lch-g-{{ g.key }}" data-onpage>{{ g.title }}</a></li>{% endfor %}</ol></li>
-      {% if draft %}<li><a href="#lch-4" data-onpage><span class="px-onpage-n">4</span>Approve and open</a></li>{% endif %}
+      {% if draft %}<li><a href="#lch-4" data-onpage><span class="px-onpage-n">5</span>Approve and open</a></li>{% endif %}
     </ol>
   </nav>
   <div class="px-onpage-main r90">
     <div class="px-rollbar foldall taskfold r90-pagebar"><button type="button" data-pageroll="open" title="Opens every step and every group on this page.">Show all</button><button type="button" data-pageroll="close" title="Rolls the page up to its numbered steps.">Collapse all</button></div>
 
-    {# 1 ---------------------------------------------------------------- flags #}
+    {# 1 ---------------------------------------------------------------- roster check (MW 2026-11-06) #}
+    <section class="px-section" id="lch-0" aria-labelledby="lch-0-h">
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-0-h"><span>1</span>Roster check replies</h2><p class="px-note">{% if rck.sent %}{{ rck.replied }} of {{ rck.sent }} replied.{% if rck.pending %} <b>{{ rck.pending }}</b> suggestion{{ rck.pending|pluralize }} to review.{% endif %}{% else %}Not sent yet. It goes out {{ rck.send_day|date:"F j" }}.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="r90-partbody">
+        <p class="lch-lede">Project leaders and core directors check the roster before the reporting session opens.<br>Their suggestions wait on the roster check page until you handle them.</p>
+        {% if rck.waiting %}<p class="lch-lede"><b>Project leaders and core directors who have not replied yet ({{ rck.waiting|length }}):</b> {% for l in rck.waiting %}{{ l.person.full_name }}{% if not forloop.last %}, {% endif %}{% endfor %}.</p>{% elif rck.sent %}<div class="px-callout ok" role="status"><p><strong>Everyone has replied.</strong></p></div>{% endif %}
+        <p><a class="px-link" href="{% url 'manage:roster_check' p.pk %}">Open the roster check{% if rck.pending %} and review {{ rck.pending }} suggestion{{ rck.pending|pluralize }}{% endif %}</a></p>
+      </div></details>
+    </section>
+
+    {# 2 ---------------------------------------------------------------- flags #}
     <section class="px-section" id="lch-1" aria-labelledby="lch-1-h">
-      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-1-h"><span>1</span>Check before launching</h2><p class="px-note">{% if warnings %}<b>{{ warnings|length }}</b> thing{{ warnings|length|pluralize }} to fix or confirm. This list updates as you fix them.{% else %}Nothing to fix.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-1-h"><span>2</span>Check before launching</h2><p class="px-note">{% if warnings %}<b>{{ warnings|length }}</b> thing{{ warnings|length|pluralize }} to fix or confirm. This list updates as you fix them.{% else %}Nothing to fix.{% endif %}</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="r90-partbody">
         {% if warnings %}<ul class="lch-flags">{% for w in warnings %}<li><span class="lch-flag">To check</span><p>{{ w.text }}</p><a class="px-link" href="{{ w.url }}" title="Opens the page where this can be fixed. Come back here afterward. This list updates.">{% if '/projects/' in w.url %}Open the project{% else %}Open the person’s page{% endif %}</a></li>{% endfor %}</ul>
         {% else %}<div class="px-callout ok" role="status"><p><strong>No problems found.</strong><br>Every project has its people, and everyone on the roster has a role and an email.</p></div>{% endif %}
       </div></details>
     </section>
 
-    {# 2 ---------------------------------------------------------------- totals #}
+    {# 3 ---------------------------------------------------------------- totals #}
     <section class="px-section" id="lch-2" aria-labelledby="lch-2-h">
-      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-2-h"><span>2</span>What this launch will send</h2><p class="px-note"><b>{{ forms_n }}</b> forms to <b>{{ people_n }}</b> people, across <b>{{ totals|length }}</b> kinds of form.</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-2-h"><span>3</span>What this launch will send</h2><p class="px-note"><b>{{ forms_n }}</b> forms to <b>{{ people_n }}</b> people, across <b>{{ totals|length }}</b> kinds of form.</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="r90-partbody">
-        <p class="lch-lede">Each row is one form, with the number of people who will receive it.<br>If a number looks wrong, check the groups in step 3.</p>
+        <p class="lch-lede">Each row is one form, with the number of people who will receive it.<br>If a number looks wrong, check the groups in step 4.</p>
         <div class="px-tablewrap"><table class="px-table lch-totals" title="Each form this launch sends, and how many people receive it.">
           <thead><tr><th scope="col">Form</th><th scope="col" class="num">People who receive it</th></tr></thead>
           <tbody>{% for fd, n in totals %}<tr><th scope="row">{{ fd.name }}</th><td class="num">{{ n }}</td></tr>{% endfor %}</tbody>
@@ -58,7 +69,7 @@ check the flags, check the totals, check each person, then approve.{% endcomment
 
     {# 3 ---------------------------------------------------------------- people #}
     <section class="px-section" id="lch-3" aria-labelledby="lch-3-h">
-      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-3-h"><span>3</span>Who receives which forms</h2><p class="px-note">One group per kind of CNAP member, one row per person.</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <details class="r90-partroll" open><summary class="px-section-head r90-parthead" title="Click to roll this step up, or open it again."><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-3-h"><span>4</span>Who receives which forms</h2><p class="px-note">One group per kind of CNAP member, one row per person.</p></div><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="r90-partbody">
         <div class="lch-tools">
           <div class="lorder" role="group" aria-label="How each group is arranged">
@@ -100,10 +111,10 @@ check the flags, check the totals, check each person, then approve.{% endcomment
 
     {# 4 ---------------------------------------------------------------- approve #}
     {% if draft %}<section class="px-section" id="lch-4" aria-labelledby="lch-4-h">
-      <div class="r90-parthead lch-final"><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-4-h"><span>4</span>Approve and open</h2></div></div>
+      <div class="r90-parthead lch-final"><div class="r90-partt"><h2 class="px-h2 r90-part" id="lch-4-h"><span>5</span>Approve and open</h2></div></div>
       <div class="r90-partbody">
         <p class="lch-lede">Approving assigns <b>{{ forms_n }}</b> forms to <b>{{ people_n }}</b> people and opens {{ p.name }} for preview.<br>People can read their forms right away.<br>Answers open, and the “your reporting session is open” email goes out, on {{ p.opens_at|date:"F j, Y" }}.</p>
-        {% if warnings %}<p class="lch-lede lch-warnline">{{ warnings|length }} thing{{ warnings|length|pluralize }} in step 1 {% if warnings|length == 1 %}is{% else %}are{% endif %} still open. You can launch anyway, but check {% if warnings|length == 1 %}it{% else %}them{% endif %} first.</p>{% endif %}
+        {% if warnings %}<p class="lch-lede lch-warnline">{{ warnings|length }} thing{{ warnings|length|pluralize }} in step 2 {% if warnings|length == 1 %}is{% else %}are{% endif %} still open. You can launch anyway, but check {% if warnings|length == 1 %}it{% else %}them{% endif %} first.</p>{% endif %}
         {% if can_manage %}<form method="post" action="{% url 'manage:launch_go' p.pk %}" class="lch-go">{% csrf_token %}<button class="px-btn" type="submit" data-confirm="Open {{ p.name }} and send each person a list of forms?" data-yes="Yes, approve and open {{ p.name }}" title="Assigns every form listed above and opens {{ p.name }} for preview.">Approve and open {{ p.name }}</button></form>
         {% else %}<p class="px-note">View only. Only the evaluator can launch a reporting session.</p>{% endif %}
       </div>

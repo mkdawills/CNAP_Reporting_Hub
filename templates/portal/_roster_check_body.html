@@ -1,0 +1,42 @@
+{% load cnap %}
+{# The roster check (MW 2026-11-06): names and roles only, never email addresses; suggestions only, nothing changes here. #}
+<div class="panel rc">
+  <h1 class="sectionhead">CNAP roster check before {{ p.name }}</h1>
+  <p>This page lists everyone on the CNAP roster today, so the right people receive the right surveys and reports when the {{ p.name }} reporting session opens on {{ closes|date:"l, F j" }}.<br>It shows names and roles only.<br>Suggest a change below, or press “No changes needed” if everything looks right.<br>Nothing on the roster changes until the CNAP evaluator reviews each suggestion.</p>
+  <p class="small muted">This link was sent to {{ link.person.full_name }}.<br>It works until {{ closes|date:"F j" }}.</p>
+  <form method="post" class="actions">{% csrf_token %}<input type="hidden" name="action" value="none"><button class="btn" type="submit">No changes needed</button></form>
+  {% if link.replied_at %}<p class="okmsg">{% if link.no_changes %}You told the evaluator the roster looks right.{% else %}The evaluator has your suggestions.{% endif %}<br>You can still add more until {{ closes|date:"F j" }}.</p>{% endif %}
+</div>
+
+{% if mine %}<div class="panel">
+  <h2 class="sectionhead">Your suggestions so far</h2>
+  <ul>{% for s in mine %}<li>{% if s.kind == 'left' %}{{ s.person.full_name }} has left or changed role{% elif s.kind == 'new' %}Someone new: {{ s.name }}{% if s.role %}, {{ s.role }}{% endif %}{% elif s.kind == 'core_user' %}A new core user: {{ s.name }}{% if s.core %}, {{ s.core.name }}{% endif %}{% else %}Something else{% endif %}{% if s.note %}. {{ s.note }}{% endif %} <span class="small muted">({{ s.get_status_display|lower }})</span></li>{% endfor %}</ul>
+</div>{% endif %}
+
+<div class="panel">
+  <h2 class="sectionhead">People connected to your project or core ({{ near|length }})</h2>
+  {% include "portal/_roster_check_table.html" with rows=near %}
+</div>
+<div class="panel">
+  <h2 class="sectionhead">Everyone else on the roster ({{ others|length }})</h2>
+  <details><summary>Show everyone else</summary>{% include "portal/_roster_check_table.html" with rows=others %}</details>
+</div>
+
+<div class="panel" id="rc-add">
+  <h2 class="sectionhead">Add someone</h2>
+  <form method="post" class="rc-form">{% csrf_token %}
+    <fieldset><legend>What to add</legend>
+      <label><input type="radio" name="action" value="new" checked> Someone new to CNAP, such as a new student or staff member</label><br>
+      <label><input type="radio" name="action" value="core_user"> A new core user</label><br>
+      <label><input type="radio" name="action" value="other"> Something else</label>
+    </fieldset>
+    <p><label for="rc-name">Name</label><br><input id="rc-name" type="text" name="name" maxlength="200"></p>
+    <p><label for="rc-role">Role, for example graduate student or research assistant</label><br><input id="rc-role" type="text" name="role" maxlength="200"></p>
+    <p><label for="rc-proj">Project, if any</label><br><select id="rc-proj" name="project"><option value="">None</option>{% for x in projects %}<option value="{{ x.pk }}">{{ x.title }}</option>{% endfor %}</select></p>
+    <p><label for="rc-core">Core, if any</label><br><select id="rc-core" name="core"><option value="">None</option>{% for c in cores %}<option value="{{ c.pk }}">{{ c.name }}</option>{% endfor %}</select></p>
+    <p><label for="rc-note">Anything the evaluator should know</label><br><textarea id="rc-note" name="note" rows="3" maxlength="2000"></textarea></p>
+    <p><label for="rc-from">Your name, if you are not {{ link.person.full_name }}</label><br><input id="rc-from" type="text" name="from_name" maxlength="200"></p>
+    <div class="actions"><button class="btn" type="submit">Send this suggestion</button></div>
+  </form>
+  <p class="small muted">Leave email addresses out.<br>The evaluator contacts each new person directly.</p>
+</div>

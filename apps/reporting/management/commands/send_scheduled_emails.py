@@ -29,6 +29,12 @@ class Command(BaseCommand):
                 continue
             for k, n, skipped in emails.run_schedule(p, today):
                 self.stdout.write(f"{p.short_label}: sent {n} {k}; {skipped} skipped.")
+        from apps.reporting.services import roster_check
+
+        if not dry_run:
+            n = roster_check.run(today)
+            if n:
+                self.stdout.write(f"Roster check: sent {n}.")
         from apps.outcomes import cpcheck
 
         if not dry_run:

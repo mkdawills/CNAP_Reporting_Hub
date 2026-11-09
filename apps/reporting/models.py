@@ -543,3 +543,57 @@ class SpeakerTalk(TimestampedModel):
 
     def __str__(self):
         return f"{self.speaker}: {self.title}"
+
+
+# Roster check before each reporting session (MW 2026-11-06, Batch 4) ------------------------------
+class RosterCheckLink(TimestampedModel):
+    """One project leader's or core director's link for one reporting session.
+
+    The link shows names and roles only, never email addresses. Anyone holding it, including a
+    student the person forwards it to, can suggest changes. Nothing on the roster changes until
+    the evaluator handles each suggestion. The link stops working when the reporting session opens.
+    """
+
+    reporting_period = models.ForeignKey(ReportingPeriod, on_delete=models.CASCADE, related_name="roster_links")
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="roster_links")
+    token = models.CharField(max_length=64, unique=True)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    replied_at = models.DateTimeField(null=True, blank=True, help_text="Set by 'No changes' or by the first suggestion.")
+    no_changes = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "roster_check_links"
+        constraints = [models.UniqueConstraint(fields=["reporting_period", "person"], name="roster_link_once")]
+
+    def __str__(self):
+        return f"{self.person} · {self.reporting_period.short_label}"
+
+
+class RosterSuggestion(TimestampedModel):
+    class Kind(models.TextChoices):
+        LEFT = "left", "Has left or changed role"
+        NEW = "new", "Someone new"
+        CORE_USER = "core_user", "A new core user"
+        OTHER = "other", "Something else"
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "To review"
+        DONE = "done", "Handled"
+        DECLINED = "declined", "Declined"
+
+    link = models.ForeignKey(RosterCheckLink, on_delete=models.CASCADE, related_name="suggestions")
+    kind = models.CharField(max_length=12, choices=Kind.choices)
+    person = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    name = models.CharField(max_length=200, blank=True)
+    role = models.CharField(max_length=200, blank=True)
+    project = models.ForeignKey(Project, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    core = models.ForeignKey(Core, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    note = models.TextField(blank=True)
+    from_name = models.CharField(max_length=200, blank=True, help_text="Who filled it in, if not the link's owner.")
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    decided_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    decided_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "roster_suggestions"
+        ordering = ["created_at"]

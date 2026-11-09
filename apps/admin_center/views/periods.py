@@ -23,6 +23,8 @@ from apps.reporting.services import assignments as asg
 from apps.reporting.services import periods as ps
 from apps.reporting.services import responses as rs
 
+from apps.reporting.services import roster_check as roster_check_service
+
 from ..decorators import admin_view, manage_action, manage_page
 
 
@@ -407,6 +409,7 @@ def launch(request, pk):
         request,
         prototype.template(request, "launch", "manage/launch.html"),
         {
+            "rck": roster_check_service.summary(p),
             "p": p,
             "groups": groups,
             "warnings": warnings,
@@ -747,3 +750,50 @@ def period_emails_send(request, pk):
             + (f" {skipped} people were skipped (see the list)." if skipped else ""),
         )
     return redirect(f"/manage/periods/{p.pk}/emails/?kind={kind}")
+
+
+@admin_view
+def roster_check(request, pk):
+    """Roster check replies and suggestions for one reporting session (MW 2026-11-06)."""
+    from apps.reporting.models import RosterSuggestion
+    from apps.reporting.services import roster_check as rc
+
+    p = get_object_or_404(ReportingPeriod, pk=pk)
+    s = rc.summary(p)
+    sugg = list(
+        RosterSuggestion.objects.filter(link__reporting_period=p)
+        .select_related("link__person", "person", "project", "core")
+        .order_by("status", "created_at")
+    )
+    return render(
+        request,
+        "manage/roster_check.html",
+        {"p": p, "s": s, "pending": [x for x in sugg if x.status == "pending"], "decided": [x for x in sugg if x.status != "pending"],
+         "can_manage": access.can_manage(request.user), "draft": p.status == PeriodStatus.DRAFT,
+         "recipients_n": rc.recipients().count()},
+    )
+
+
+@manage_action
+def roster_check_post(request, pk):
+    from apps.reporting.models import RosterSuggestion
+    from apps.reporting.services import roster_check as rc
+
+    p = get_object_or_404(ReportingPeriod, pk=pk)
+    action = request.POST.get("action", "")
+    if action == "send":
+        if p.status != PeriodStatus.DRAFT:
+            messages.error(request, "The roster check goes out only before a reporting session opens.")
+        else:
+            sent, missing = rc.send(p, actor=request.user)
+            msg = f"Sent {sent} roster check email{'s' if sent != 1 else ''}."
+            if missing:
+                msg += f" {missing} {'person has' if missing == 1 else 'people have'} no email address on file."
+            messages.success(request, msg)
+    elif action in ("done", "declined", "pending"):
+        sg = get_object_or_404(RosterSuggestion, pk=request.POST.get("id"), link__reporting_period=p)
+        rc.decide(request.user, sg, action)
+        messages.success(request, {"done": "Marked as handled.", "declined": "Declined.", "pending": "Back on the list to review."}[action])
+    else:
+        raise PermissionDenied
+    return redirect("manage:roster_check", pk)

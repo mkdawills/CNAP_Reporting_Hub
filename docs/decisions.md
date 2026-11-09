@@ -697,3 +697,11 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 
 - My tasks has a "Your year" roll: each reporting session in the current grant year, its opening and due dates, and a two-column table of what the person will be asked to complete. Past and open sessions list the person's real assignments. A session not yet open lists what the assignment rules give the person today (nothing is created), with a note that it can change if the person's roles change. Items appear in the same order in every session.
 - My history (prototype look) has two numbered parts: 1 Surveys and reports, by reporting session, as before; 2 Publications, talks, and grants, by grant year (June 1 through May 31), newest first, from the person's own Hub entries. A resubmitted paper or proposal shows once, as its latest attempt. Each title links to its card on Publications, talks, and grants. Every year's table shares one set of column widths. On phones each row becomes a short block.
+
+## 2026-11-08 - Roster check before each reporting session (Batch 4, requested November 6)
+
+- New tables `roster_check_links` (one per project leader or core director per reporting session: a random token, sent and replied times) and `roster_suggestions` (kind: left or changed role, someone new, a new core user, something else; name, role, project, core, note, who filled it in; status to review, handled, or declined).
+- The daily job sends the roster check 21 days before a draft reporting session opens, once, to everyone who is currently a Research Project Leader, Pilot Project Leader, or Core Director. The evaluator can also send it early, and send again to anyone new.
+- The link needs no sign-in, can be forwarded to a student, shows names and roles only (never email addresses), lists people sharing a project or core with the link's owner first, and stops working when the reporting session opens (it then shows "This roster check has closed").
+- Nothing on the roster changes from a suggestion. The evaluator opens the person's page or the add-person form, makes the change, and marks the suggestion handled, or declines it.
+- Review before launch now begins with step 1, "Roster check replies": who has replied, who is still out, and how many suggestions wait. The other steps moved down one number.

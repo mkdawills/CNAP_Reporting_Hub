@@ -2,6 +2,7 @@
 
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from apps.portal import roster_views
 from django.urls import include, path
 
 from apps.accounts import views as account_views
@@ -17,6 +18,7 @@ urlpatterns = [
     path("ui-preview/<str:view>/", ui_prototype.switch, name="ui_switch"),
     path("admin/login/", account_views.admin_login),
     path("admin/", admin.site.urls),
+    path("roster-check/<str:token>/", roster_views.roster_check, name="roster_check"),
     path("accounts/login/", account_views.LoginView.as_view(), name="login"),
     path("accounts/link/", account_views.link_request, name="link_request"),
     path("accounts/link/<str:token>/", account_views.link_login, name="link_login"),

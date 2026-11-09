@@ -2003,3 +2003,23 @@ html body.proto .h31 .t3-state .px-note { white-space: nowrap; }
   html body.proto .h31 .h31-tbl td { display: block; border: 0; padding: 0; width: auto !important; color: var(--px-ink-2); font-size: var(--px-fs-sm); }
   html body.proto .h31 .h31-tbl td:nth-child(2) { order: -1; flex-basis: 100%; color: var(--px-ink); font-size: inherit; }
 }
+
+/* Roster check, the evaluator's page (MW 2026-11-06). */
+html body.proto .rck .rck-send { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: var(--px-sub) 0; }
+html body.proto .rck .rck-send .btn { margin: 0; }
+html body.proto .rck .px-page > .px-section + .px-section { border-top: 1px solid var(--px-line); margin-top: var(--px-sec); padding-top: var(--px-sec); }
+html body.proto .rck .rck-list { list-style: none; margin: var(--px-sub) 0 0; padding: 0; display: grid; gap: 12px; }
+html body.proto .rck .rck-list li { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: flex-start; padding: 16px 20px; border: 1px solid var(--px-line); border-radius: 12px; background: var(--px-surface, #fff); }
+html body.proto .rck .rck-what { min-width: 0; flex: 1 1 320px; }
+html body.proto .rck .rck-t { margin: 0 0 4px; font-weight: 600; }
+html body.proto .rck .rck-what .px-note { margin: 0; }
+html body.proto .rck .rck-acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+html body.proto .rck .rck-acts form { display: flex; gap: 8px; margin: 0; }
+html body.proto .rck .rck-acts .btn, html body.proto .rck .rck-acts .px-btn { margin: 0; }
+html body.proto .rck .rck-list.done li { opacity: .75; }
+html body.proto .rck .rck-tbl { width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: var(--px-sub); }
+html body.proto .rck .rck-tbl col.c-sent { width: 9em; }
+html body.proto .rck .rck-tbl col.c-reply { width: 12em; }
+html body.proto .rck .rck-tbl th, html body.proto .rck .rck-tbl td { text-align: left; padding: 10px 16px 10px 0; border-bottom: 1px solid var(--px-line); }
+/* A solid button made from a link keeps white text in the prototype, wherever a link color rule would win (MW 2026-11-08). */
+html body.proto a.btn:not(.ghost), html body.proto a.btn:not(.ghost):visited, html body.proto a.btn:not(.ghost):hover { color: #fff; text-decoration: none; }

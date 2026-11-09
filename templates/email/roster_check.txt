@@ -1,0 +1,17 @@
+{% autoescape off %}Hello {{ person.first_name }},
+
+The {{ period.name }} CNAP reporting session opens {{ closes }}. Before it opens, help bring the CNAP roster up to date, so the right people receive the right surveys and reports.
+
+Open the roster:
+{{ url }}
+
+The link shows names and roles only, never email addresses. People connected to your project or core are listed first.
+You can suggest a change in a few clicks: someone who has left, someone new, or a new core user. Nothing changes until the CNAP evaluator reviews each suggestion.
+If everything looks right, press "No changes needed."
+
+You can forward this email to a student or staff member who can make the suggestions for you.
+The link works until the reporting session opens on {{ closes }}.
+
+Thank you,
+The CNAP evaluation team
+{% endautoescape %}
