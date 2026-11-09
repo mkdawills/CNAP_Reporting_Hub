@@ -116,6 +116,28 @@
     </details>
     {% endif %}
 
+    {% if year %}
+    <details class="px-roll t3-year" id="t3-year">
+      <summary title="Every reporting session this grant year, with its dates and what you will be asked to complete. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Your year</h2><span class="px-roll-meta">Year {{ period.grant_year }}: {{ year|length }} reporting sessions</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <p class="px-note t3-year-lede">Each reporting session this grant year, with its dates and what you will be asked to complete.<br>A reporting session that hasn’t opened yet shows what your current roles call for, so it can change if your roles change.</p>
+        <ol class="t3-yl">{% for y in year %}
+          <li class="t3-yl-i is-{{ y.state }}{% if y.current %} is-current{% endif %}">
+            <span class="t3-yl-dot" aria-hidden="true"></span>
+            <div class="t3-yl-body">
+              <h3 class="t3-yl-name">{{ y.p.name }}{% if y.current %} <span class="px-status" data-s="progress">Open now</span>{% elif y.state == 'past' %} <span class="px-status" data-s="submitted">Closed</span>{% else %} <span class="px-status" data-s="none">Not open yet</span>{% endif %}</h3>
+              <p class="t3-yl-dates">Opens {{ y.opens|date:"F j, Y" }}.<br>Due {{ y.due|date:"F j, Y" }}.</p>
+              {% if y.items %}
+              <p class="t3-yl-sum">{{ y.summary|capfirst }}.{% if y.total %}<br>{{ y.total|capfirst }} in all.{% endif %}</p>
+              <div class="scroll"><table class="t3-yl-tbl nosort"><thead><tr><th scope="col">Survey or report</th><th scope="col">About how long</th></tr></thead><tbody>{% for i in y.items %}<tr><td>{{ i.label }}</td><td>{{ i.time|capfirst }}</td></tr>{% endfor %}</tbody></table></div>
+              {% else %}<p class="px-note">Nothing for you in this reporting session.</p>{% endif %}
+            </div>
+          </li>{% endfor %}
+        </ol>
+      </div>
+    </details>
+    {% endif %}
+
     {% if sow_excerpts %}
     <details class="px-roll t3-sow" id="t3-sow">
       <summary title="What you committed to in your Statement of Work. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h" id="t3-sow-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg>Your commitments</h2><span class="px-roll-meta">From your Statement of Work · {{ sow_excerpts|length }} excerpt{{ sow_excerpts|length|pluralize }}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>

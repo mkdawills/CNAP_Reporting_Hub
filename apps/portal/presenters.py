@@ -656,3 +656,53 @@ def period_help(period):
             "A survey you don’t use has a one-click opt-out.",
         ]),
     }
+
+
+def year_plan(person, period):
+    """The grant year on My tasks (MW 2026-11-06): each reporting session, its dates, and what this person
+    will be asked to complete. Past and open sessions list what the person actually had. Sessions not yet
+    open list what the assignment rules give the person today, so the plan can change with the person's roles."""
+    from apps.common.enums import PeriodStatus
+    from apps.reporting.models import Assignment, ReportingPeriod
+    from apps.reporting.services import assignments as asg
+    from apps.reporting.services.emails import _items
+
+    sessions = []
+    for p in ReportingPeriod.objects.filter(grant_year=period.grant_year).order_by("sequence", "opens_at"):
+        if p.status == PeriodStatus.DRAFT:
+            mine = [
+                Assignment(
+                    person=person,
+                    reporting_period=p,
+                    form_definition_id=pa.form_definition_id,
+                    form_version_id=pa.form_version_id,
+                    project_id=pa.project_id,
+                    core_id=pa.core_id,
+                )
+                for pa in asg.plan(p)
+                if pa.person_id == person.pk
+            ]
+            state = "coming"
+        else:
+            mine = list(
+                Assignment.objects.filter(person=person, reporting_period=p)
+                .exclude(status="exempt")
+                .select_related("form_definition", "form_version", "project", "core")
+            )
+            state = "open" if p.status == PeriodStatus.OPEN else "past"
+        # The same order in every session, so the same survey sits in the same place each time.
+        mine.sort(key=lambda a: (a.form_definition.category != FormCategory.SURVEY, a.form_definition.sort_order, a.form_definition.name, a.project_id or 0, a.core_id or 0))
+        items, summary, total = _items(mine) if mine else ([], "", "")
+        sessions.append(
+            {
+                "p": p,
+                "state": state,
+                "current": p.pk == period.pk,
+                "opens": timezone.localtime(p.opens_at).date(),
+                "due": timezone.localtime(p.due_at).date(),
+                "items": items,
+                "summary": summary,
+                "total": total,
+            }
+        )
+    return sessions if len(sessions) > 1 else []

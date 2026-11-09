@@ -105,6 +105,7 @@ def tasks(request):
         )
         if oc:  # the check-in is one of the tasks, so every total names it (MW 2026-11-08: totals must agree)
             ctx["total_summary"] = _with_checkin(ctx.get("total_summary") or "")
+        ctx["year"] = presenters.year_plan(person, ctx["period"])  # Your year (MW 2026-11-06)
     from apps.common import prototype
 
     return render(request, prototype.template(request, "tasks", "portal/tasks.html"), ctx)

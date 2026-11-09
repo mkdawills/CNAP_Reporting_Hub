@@ -1964,3 +1964,18 @@ html body.proto .em-mail { border: 1px solid var(--px-line); border-radius: 12px
 html body.proto .em-mail-subj { margin: 0; padding: 12px 20px; border-bottom: 1px solid var(--px-line); background: var(--px-sunken); font-weight: 600; }
 html body.proto .em-mail-subj span { display: inline-block; min-width: 5em; font-weight: 400; color: var(--px-muted); }
 html body.proto .em-mail-body { padding: 20px; overflow-x: auto; }
+
+/* Your year on My tasks (MW 2026-11-06). A small vertical timeline: one dot per reporting session. */
+html body.proto .t3-year-lede { margin: 0 0 var(--px-sub); }
+html body.proto .t3-yl { list-style: none; margin: 0; padding: 0; }
+html body.proto .t3-yl-i { position: relative; display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 0 16px; padding-bottom: var(--px-sub); }
+html body.proto .t3-yl-i:not(:last-child)::before { content: ""; position: absolute; left: 9px; top: 18px; bottom: 0; width: 2px; background: var(--px-line); }
+html body.proto .t3-yl-dot { width: 14px; height: 14px; margin: 5px 0 0 3px; border-radius: 50%; border: 2px solid var(--px-line-strong); background: var(--px-surface, #fff); box-sizing: border-box; position: relative; z-index: 1; }
+html body.proto .t3-yl-i.is-past .t3-yl-dot { background: var(--px-line-strong); border-color: var(--px-line-strong); }
+html body.proto .t3-yl-i.is-current .t3-yl-dot { border-color: var(--px-brand); background: var(--px-brand); box-shadow: 0 0 0 4px var(--px-brand-tint); }
+html body.proto .t3-yl-name { margin: 0; font: 600 var(--px-fs-md, 1.05rem)/1.35 var(--px-sans); display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+html body.proto .t3-yl-dates, html body.proto .t3-yl-sum { margin: 6px 0 0; color: var(--px-ink-2); }
+html body.proto .t3-yl-tbl { margin-top: 12px; width: 100%; max-width: 720px; border-collapse: collapse; }
+html body.proto .t3-yl-tbl th, html body.proto .t3-yl-tbl td { text-align: left; padding: 8px 16px 8px 0; border-bottom: 1px solid var(--px-line); vertical-align: top; }
+html body.proto .t3-yl-tbl th:last-child, html body.proto .t3-yl-tbl td:last-child { white-space: nowrap; padding-right: 0; }
+@media (max-width: 600px) { html body.proto .t3-yl-tbl th:last-child, html body.proto .t3-yl-tbl td:last-child { white-space: normal; } }
