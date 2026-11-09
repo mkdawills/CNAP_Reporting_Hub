@@ -56,7 +56,7 @@
   {# Which core each kind of product drew on (MW 2026-11-06). Counts only, for the chosen years. #}
   <section class="r33-cores" aria-labelledby="r33-cores-h">
     <h2 class="px-h2" id="r33-cores-h">Which cores the products drew on</h2>
-    <p class="px-note">{{ span }}.<br>Papers, talks, and proposals that used more than one core are counted twice (once under each core used).<br>Therefore, core totals are higher than individual product totals.<br>Those products that indicated they only had “future plans” to use a core resource are not counted.<br>They will be counted after utilization of the core resources has actually taken place.</p>
+    <p class="px-note">{{ span }}.<br>Papers, talks, and proposals that used more than one core are counted twice (once under each core used).<br>Therefore, the sum of the core totals is higher than the individual product counts.<br>Those products that indicated they only had “future plans” to use a core resource are not counted.<br>They will be counted after utilization of the core resources has actually taken place.</p>
     <ul class="r33-legend">{% for code, name, color in core_groups %}<li><i style="background: {{ color }}"></i>{{ name }}</li>{% endfor %}</ul>
     <dl class="r33-bars">
       {% for k in by_core %}<div class="r33-row">
