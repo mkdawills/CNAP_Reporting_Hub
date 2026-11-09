@@ -2052,3 +2052,6 @@ html body.proto .r33-labs span::before { content: ""; position: absolute; left: 
 html body.proto .r33-labs span.r1::before { top: calc(-1.4em - 4px); height: calc(1.4em + 3px); }
 /* MW 2026-11-09: a smaller "i" beside a small label, lifted to the middle of the label's letters. */
 html body.proto .px-label > .whyq.whyi { width: 12px; height: 12px; font-size: 9px; padding-top: 1px; top: -1px; }
+/* MW 2026-11-09: "Change password" and "Log out" sit on one line with room between them, at every width. */
+html body.proto .side .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+@media (max-width: 860px) { html body.proto .side:not(.px-open) .foot { display: none; } }

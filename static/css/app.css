@@ -2065,3 +2065,4 @@ details > summary + * { margin-top: 12px; }
 .resgroup { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
 .resgroup-t { margin: 0 0 8px; font-weight: 600; font-size: .9rem; }
 .resgroup .checkgrid { margin: 0; }
+.side .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
