@@ -1940,7 +1940,7 @@ html body.proto .px-tl-muted .px-tl-t b { color: var(--px-muted); text-decoratio
    and every line of text (the heading, each section, the save note) starts at the same point. */
 @media (max-width: 980px) {
   html body.proto .p21-nav ol a { padding-left: 0; padding-right: 0; margin-left: 0; gap: 10px; }
-  html body.proto .p21-nav .p21-navtop .px-label, html body.proto .p21-nav .p21-savehint { padding-left: 30px; }
+  html body.proto .p21-nav .p21-navtop .px-label, html body.proto .p21-nav .p21-savehint { padding-left: 0; }
 }
 /* Email controls: buttons in a row share one top edge and one height; the short "Day" label sits above its date box. */
 html body.proto .em-ctl .actions, html body.proto .em-word .actions { align-items: center; }
@@ -2069,3 +2069,17 @@ html body.proto .t3-yl-tbl :is(th, td):not(:first-child) { padding-left: 12px; }
 html body.proto .px-tl-list li { grid-template-columns: 96px 22px minmax(0, 1fr); }
 html body.proto .px-tl-list li::before { left: calc(96px + 10px); }
 @media (max-width: 760px) { html body.proto .px-tl-list li { grid-template-columns: 84px 22px minmax(0, 1fr); } html body.proto .px-tl-list li::before { left: calc(84px + 10px); } }
+
+/* MW 2026-11-09 (half screen): "In this survey," each section name, and the save note all start at the same point.
+   A status dot, when there is one, hangs just left of its section name. */
+@media (max-width: 980px) {
+  html body.proto .p21-nav ol a { position: relative; }
+  html body.proto .p21-nav ol a .p21-dot { position: absolute; left: -14px; top: 50%; transform: translateY(-50%); }
+  html body.proto .p21-nav ol a > span:not(.p21-dot):first-of-type { margin-left: 0; }
+}
+/* MW 2026-11-09: the opt-out box sits out to the left, so its words line up with the section titles below it. */
+@media (min-width: 701px) {
+  html body.proto .p21-optout { margin-left: calc(-1 * var(--p21-optpad, 25px)); margin-right: calc(-1 * var(--p21-optpad, 25px)); }
+}
+/* Room between the "In this survey" line and the survey, so the opt-out box can sit out to the left without touching the line. */
+@media (min-width: 981px) { html body.proto .p21-layout { column-gap: calc(var(--px-7) + 24px); } }
