@@ -3,7 +3,7 @@
 {% block content %}
 <div class="head"><div><h1>{{ fd.name }} {% why "A read-only copy of this form’s questions, exactly as respondents see them, so you can check wording without launching anything." %}</h1>
   <p>{{ "Below is a read-only copy of the form, for reference. Respondents see the same wording."|stack }}</p></div>
-  <div><a class="btn ghost" href="{% url 'manage:forms' %}">All forms</a></div></div>
+  <div class="actions"><a class="btn ghost" href="{% url 'manage:form_blank' fd.code %}" title="The blank {{ fd.name }}, ready to print.">Print a blank copy (PDF)</a> <a class="btn ghost" href="{% url 'manage:form_blank' fd.code %}?fmt=docx" title="The blank {{ fd.name }} as a Word file you can edit.">Blank copy (Word)</a> <a class="btn ghost" href="{% url 'manage:forms' %}">All forms</a></div></div>
 {% if fd.description %}<p class="small muted">{{ fd.description|stack }}</p>{% endif %}
 {% if schema.version.intro_text %}<div class="panel"><p>{{ schema.version.intro_text|stack }}</p></div>{% endif %}
 {% for row in sections %}

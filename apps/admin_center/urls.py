@@ -8,6 +8,7 @@ urlpatterns = [
     path("", home.home, name="home"),
     path("forms/", formspec.forms, name="forms"),
     path("forms/<slug:code>/", formspec.form_detail, name="form_detail"),
+    path("forms/<slug:code>/blank/", formspec.form_blank, name="form_blank"),
     path("neurosync/", speakers.talks, name="speakers"),
     path("neurosync/add/", speakers.talk_add, name="speaker_add"),
     path("neurosync/template/", speakers.talk_template, name="speaker_template"),

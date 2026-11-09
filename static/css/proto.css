@@ -227,7 +227,9 @@ body.proto .t3-docs { margin: 0; padding-left: 18px; }
 
 /* ---- Small screens: the sidebar becomes a compact top bar with a Menu button ---------- */
 body.proto .px-menu { display: none; }
-@media (max-width: 760px) {
+/* MW 2026-11-09: the compact bar starts at the same width where the sidebar stops sitting beside the page (860px),
+   so a half-width window never shows the whole menu above the page. */
+@media (max-width: 860px) {
   body.proto .side { position: sticky; top: 0; z-index: 40; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0 var(--px-3); padding: 10px var(--px-4); }
   body.proto .side .brand { margin: 0; padding: 0; border: 0; display: flex; align-items: center; gap: 10px; }
   body.proto .side .brand-logo { width: 108px; }
