@@ -239,6 +239,12 @@ def by_core(years, asof=None):
             for code, name, color in CORE_GROUPS
             if counts[code]
         ]
+        # Each label sits under the middle of its part of the bar (MW 2026-11-09); narrow neighbors alternate rows.
+        x = 0
+        for i, sg in enumerate(segs):
+            sg["mid"] = round(x + sg["w"] / 2, 2)
+            sg["row"] = i % 2
+            x += sg["w"]
         out.append({"key": key, "label": label, "total": len(items), "mentions": mentions, "segments": segs})
     top = max((k["mentions"] for k in out), default=0)
     for k in out:  # bars share one scale, so lengths compare across kinds of product

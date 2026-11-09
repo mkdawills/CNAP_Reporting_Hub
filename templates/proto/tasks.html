@@ -129,7 +129,7 @@
               <p class="t3-yl-dates">Opens {{ y.opens|date:"F j, Y" }}.<br>Due {{ y.due|date:"F j, Y" }}.</p>
               {% if y.items %}
               <p class="t3-yl-sum">{{ y.summary|capfirst }}.{% if y.total %}<br>{{ y.total|capfirst }} in all.{% endif %}</p>
-              <div class="scroll"><table class="t3-yl-tbl nosort"><thead><tr><th scope="col">Survey or report</th><th scope="col">About how long</th></tr></thead><tbody>{% for i in y.items %}<tr><td>{{ i.label }}</td><td>{{ i.time|capfirst }}</td></tr>{% endfor %}</tbody></table></div>
+              <div class="scroll"><table class="t3-yl-tbl nosort"><thead><tr><th scope="col">Survey or report</th><th scope="col">About how long</th></tr></thead><tbody>{% for i in y.items %}<tr><td>{% if i.url %}<a class="px-link" href="{{ i.url }}">{{ i.label }}</a>{% else %}{{ i.label }}{% endif %}</td><td>{{ i.time|capfirst }}</td></tr>{% endfor %}</tbody></table></div>
               {% else %}<p class="px-note">Nothing for you in this reporting session.</p>{% endif %}
             </div>
           </li>{% endfor %}

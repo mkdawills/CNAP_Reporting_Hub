@@ -2043,3 +2043,10 @@ html body.proto .px-label:has(> .whyi) { gap: 2px; }
 html body.proto .px-label > .whyq.whyi { width: 14px; height: 14px; }
 html body.proto .whyq.whyi { margin-left: 2px; }
 html body.proto .px-label > .whyq.whyi, html body.proto .r33-asof .px-label > .whyq.whyi { margin-left: 0; }
+/* MW 2026-11-09: each label sits directly under its part of the bar. */
+html body.proto .r33-labs { position: relative; min-width: 2.2rem; height: 1.4em; margin-top: 4px; font-size: var(--px-fs-xs); line-height: 1.3; }
+html body.proto .r33-labs.two { height: 2.8em; }
+html body.proto .r33-labs span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; color: var(--px-muted); }
+html body.proto .r33-labs span.r1 { top: 1.4em; }
+html body.proto .r33-labs span::before { content: ""; position: absolute; left: 50%; top: -4px; width: 1px; height: 3px; background: var(--px-line-strong); }
+html body.proto .r33-labs span.r1::before { top: calc(-1.4em - 4px); height: calc(1.4em + 3px); }

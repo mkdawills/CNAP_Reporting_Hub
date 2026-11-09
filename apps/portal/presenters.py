@@ -693,6 +693,12 @@ def year_plan(person, period):
         # The same order in every session, so the same survey sits in the same place each time.
         mine.sort(key=lambda a: (a.form_definition.category != FormCategory.SURVEY, a.form_definition.sort_order, a.form_definition.name, a.project_id or 0, a.core_id or 0))
         items, summary, total = _items(mine) if mine else ([], "", "")
+        if state != "coming" and len(items) == len(mine):
+            # Each survey or report opens from Your year, the same as from the list above (MW 2026-11-09).
+            from django.urls import reverse
+
+            for item, a in zip(items, mine):
+                item["url"] = reverse("portal:form", args=[a.pk])
         sessions.append(
             {
                 "p": p,

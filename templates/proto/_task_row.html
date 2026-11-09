@@ -6,7 +6,7 @@
     {% if r.a.status == 'in_progress' %}<p class="t3-sub">{% if r.progress and r.progress.1 > 1 and r.progress.0 > 0 %}{{ r.progress.0 }} of {{ r.progress.1 }} sections finished. Your answers are saved.{% else %}Started. Your answers are saved.{% endif %}</p>{% endif %}
     {% if r.a.status == 'completed_opt_out' %}<p class="t3-sub">You opted out of this survey ({{ r.opt_out_note|default:r.pathway|lower }}).</p>{% endif %}
     {% if r.a.status == 'exempt' %}<p class="t3-sub">This {{ r.noun }} isn’t needed this reporting session.</p>{% endif %}
-    {% if r.about %}<details class="px-more t3-about"><summary>What this {{ r.noun }} is</summary><div class="t3-aboutbody">{% for p in r.about %}<p>{{ p|stack }}</p>{% endfor %}</div></details>{% endif %}
+    {% if r.about %}<details class="px-more t3-about"><summary>About this {{ r.noun }}</summary><div class="t3-aboutbody">{% for p in r.about %}<p>{{ p|stack }}</p>{% endfor %}</div></details>{% endif %}
   </div>
   <div class="t3-state">
     {% if r.a.status == 'submitted' %}<span class="px-status" data-s="submitted">Submitted</span>

@@ -62,7 +62,7 @@
       {% for k in by_core %}<div class="r33-row">
         <dt><b>{{ k.label }}</b><span>{{ k.total }} product{{ k.total|pluralize }}</span></dt>
         <dd>{% if k.total %}<div class="r90-bar r33-bar" style="width: {{ k.scale }}%" role="img" aria-label="{{ k.label }}: {% for sg in k.segments %}{{ sg.label }} {{ sg.n }}{% if not forloop.last %}, {% endif %}{% endfor %}">{% for sg in k.segments %}<span style="width: {{ sg.w }}%; background: {{ sg.color }}" title="{{ sg.label }}: {{ sg.n }}">{% if sg.w >= 8 %}<b{% if sg.code == 'bn_core' or sg.code == 'ni_core' or sg.code == 'admin_core' %} class="d"{% endif %}>{{ sg.n }}</b>{% endif %}</span>{% endfor %}</div>
-          <p class="r33-nums">{% for sg in k.segments %}{{ sg.label }} {{ sg.n }}{% if not forloop.last %} · {% endif %}{% endfor %}</p>
+          <div class="r33-labs{% if k.segments|length > 1 %} two{% endif %}" style="width: {{ k.scale }}%" aria-hidden="true">{% for sg in k.segments %}<span class="r{{ sg.row }}" style="left: {{ sg.mid }}%">{{ sg.label }} {{ sg.n }}</span>{% endfor %}</div>
         {% else %}<p class="px-note">None in {{ span }}.</p>{% endif %}</dd>
       </div>{% endfor %}
     </dl>
