@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends postgresql-clie
 COPY pyproject.toml ./
 RUN pip install --no-cache-dir "Django==5.2.18" "psycopg[binary]==3.3.6" "django-environ==0.12.0" \
     "openpyxl==3.1.5" "gunicorn==23.0.0" "whitenoise==6.11.0" \
+    "reportlab==5.0.1" "pypdf==6.17.0" "python-docx==1.2.0" "Pillow==12.3.0" \
     "pytest==8.4.2" "pytest-django==4.11.1" "factory-boy==3.3.3" "ruff==0.14.2"
 
 COPY . .

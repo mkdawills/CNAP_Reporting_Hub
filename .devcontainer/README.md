@@ -20,5 +20,14 @@ Fictional accounts:
 | adeyemi | Pilot Project Leader |
 | lindqvist | Core user |
 
+## Letting someone without a GitHub account use it
+
+1. Start the codespace as above.
+2. Open the Ports tab, right-click "CNAP Reporting Hub," and choose Port Visibility, then Public.
+3. Copy the address and send it, with a fictional username and the password.
+
+The address works only while your codespace is running.
+A codespace stops after 30 minutes without use; you can raise that to 4 hours at github.com/settings/codespaces.
+
 Emails, including sign-in links, print in the Codespace terminal instead of being sent.
 When you finish, stop the codespace from github.com/codespaces, so it doesn't use your free hours.
