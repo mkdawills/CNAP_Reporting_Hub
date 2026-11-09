@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="{% static 'css/proto.css' %}">{% endif %}
 </head>
 <body{% if request.proto_active %} class="proto{% if request.proto_admin and not request.proto_own %} pa{% endif %}"{% endif %}>
+{% if demo_site %}<div role="note" style="background:#fff4d6;color:#4a3500;border-bottom:1px solid #e8d49a;padding:8px 16px;text-align:center;font:500 14px/1.4 system-ui,sans-serif">Test copy with fictional data only. Every account uses the password Demo-Password-2026. Emails are not sent.</div>{% endif %}
 {% if user.is_authenticated %}
 <div class="app">
   <aside class="side">{% if request.proto_active %}<button type="button" class="px-menu" aria-expanded="false" aria-controls="px-sidenav" onclick="var o=this.getAttribute('aria-expanded')==='true';this.setAttribute('aria-expanded',String(!o));this.closest('.side').classList.toggle('px-open',!o)">Menu</button>{% endif %}
