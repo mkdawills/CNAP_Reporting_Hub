@@ -2055,3 +2055,7 @@ html body.proto .px-label > .whyq.whyi { width: 12px; height: 12px; font-size: 9
 /* MW 2026-11-09: "Change password" and "Log out" sit on one line with room between them, at every width. */
 html body.proto .side .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 @media (max-width: 860px) { html body.proto .side:not(.px-open) .foot { display: none; } }
+/* MW 2026-11-09: in a numbered roll heading, the number circle is centered on the title's line,
+   and the line below starts exactly under the title's first letter. */
+html body.proto .px-roll-h.r90-part > span { transform: translateY(-1px); }
+html body.proto .px-roll-h.r90-part + .px-roll-meta, html body.proto .px-roll-h.r90-part + .px-roll-figs { padding-left: 36px; }
