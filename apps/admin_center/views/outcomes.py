@@ -428,7 +428,7 @@ class PublicationForm(forms.ModelForm):
         help_texts = {
             "author_display_text": (
                 "List every author, in order, exactly as they appear on the paper. "
-                "For example: Okafor A, Kim H, Moreau C."
+                "For example: Okafor A, Brandt H, Moreau C."
             )
         }
 

@@ -166,7 +166,7 @@ class PubPublished(_Resources):
         label="Authors",
         help_text=(
             "List every author, in order, exactly as they appear on the paper. "
-            "For example: Okafor A, Kim H, Moreau C. "
+            "For example: Okafor A, Brandt H, Moreau C. "
             "“Fill in from PubMed” fills this for you."
         ),
         widget=forms.Textarea(attrs={"rows": 2}),
@@ -558,7 +558,7 @@ class PresentationForm(_Resources):
     )
     author_display_text = forms.CharField(
         label="Presenters and authors",
-        help_text="List them in the order shown on the talk or poster, for example: Okafor A, Kim H, Moreau C.",
+        help_text="List them in the order shown on the talk or poster, for example: Okafor A, Brandt H, Moreau C.",
         widget=forms.Textarea(attrs={"rows": 2}),
         required=False,
     )
@@ -615,7 +615,7 @@ NEXT = {
 PLACEHOLDERS = {
     "title": "For example: Sleep and memory consolidation in adolescent mice",
     "journal": "For example: Journal of Neurophysiology",
-    "author_display_text": "For example: Okafor A, Kim H, Moreau C",
+    "author_display_text": "For example: Okafor A, Brandt H, Moreau C",
     "pubmed_url": "For example: https://pubmed.ncbi.nlm.nih.gov/12345678/",
     "comments": "Anything you would like us to know.",
     "federal_agency_other": "For example: Department of Energy (DOE)",

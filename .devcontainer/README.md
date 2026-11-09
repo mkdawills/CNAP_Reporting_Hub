@@ -15,7 +15,7 @@ Fictional accounts:
 |---|---|
 | mwills | Evaluator, full administrator access |
 | okafor | Pilot Project Leader |
-| kim | Research Project Leader |
+| brandt | Research Project Leader |
 | varga | Core Director |
 | adeyemi | Pilot Project Leader |
 | lindqvist | Core user |

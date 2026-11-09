@@ -14,7 +14,7 @@ from django.test import override_settings
 from apps.accounts.models import User
 from apps.reporting.models import Assignment, ReportingPeriod
 
-PEOPLE = ["okafor", "reyes", "varga", "santos", "bell", "kim", "chen", "adeyemi", "natarajan"]
+PEOPLE = ["okafor", "reyes", "varga", "santos", "bell", "brandt", "chen", "adeyemi", "natarajan"]
 
 
 @pytest.fixture

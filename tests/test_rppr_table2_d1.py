@@ -51,7 +51,7 @@ def test_submitted_rows_build_table2(client, center):
     post = {
         "rep-users-count": "2",
         "rep-users-0-user_type": "rpl",
-        "rep-users-0-lab": "Kim lab",
+        "rep-users-0-lab": "Brandt lab",
         "rep-users-0-project_name": "Project A",
         "rep-users-0-services": "Behavior suite",
         "rep-users-0-n_users": "3",
@@ -60,7 +60,7 @@ def test_submitted_rows_build_table2(client, center):
         "rep-users-0-core_data_used": "yes",
         "rep-users-1-user_type": "external",
         "rep-users-1-n_users": "1",
-        "rep-users-1-lab": " kim  LAB ",
+        "rep-users-1-lab": " brandt  LAB ",
         "rep-users-1-project_name": "Project B",
         "rep-users-1-payment": "voucher",
         "action": "submit",
@@ -203,7 +203,7 @@ def test_admin_sets_months(client, center):
     from apps.people.models import Person, PersonEffort
 
     login(client, "mwills")
-    p = Person.objects.get(last_name="Kim")
+    p = Person.objects.get(last_name="Brandt")
     client.post(f"/manage/people/{p.pk}/effort/", {"grant_year": "10", "calendar_months": "3"})
     assert PersonEffort.objects.get(person=p, grant_year=10).calendar_months == 3
     assert (

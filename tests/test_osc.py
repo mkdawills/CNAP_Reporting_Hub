@@ -71,7 +71,7 @@ def test_nih_documents_directions_fit_the_person(client, center):
 
     asg.generate(ReportingPeriod.objects.get(status="open"))
     want = {
-        "Kim": "from people named on the Notice of Award",
+        "Brandt": "from people named on the Notice of Award",
         "Varga": "collects the Current and Pending (Other) Support of each Core Director",
     }
     for last, text in want.items():

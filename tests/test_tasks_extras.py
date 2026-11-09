@@ -157,19 +157,19 @@ def test_respondent_can_edit_a_submitted_form_while_open_and_sees_the_list(clien
     from apps.forms_engine.runtime import FormSchema
 
     sec = next(s for s in FormSchema(a.form_version).sections if s.is_repeatable)
-    post = {f"rep-{sec.code}-count": "1", f"rep-{sec.code}-0-lab": "Kim lab",
+    post = {f"rep-{sec.code}-count": "1", f"rep-{sec.code}-0-lab": "Brandt lab",
             f"rep-{sec.code}-0-project_name": "Sleep study", f"rep-{sec.code}-0-user_type": "rpl",
             f"rep-{sec.code}-0-n_users": "2"}
     rs.save_draft(a, u, post, {})
     page = client.get(f"/tasks/{a.pk}/").content.decode()
-    assert "What you’ve listed so far (1)" in page and "<td>Kim lab</td>" in page
+    assert "What you’ve listed so far (1)" in page and "<td>Brandt lab</td>" in page
     rs.submit(a, u)
     page = client.get(f"/tasks/{a.pk}/").content.decode()
     assert "Edit my answers" in page and "What you listed (1)" in page
     client.post(f"/tasks/{a.pk}/edit/")
     a.refresh_from_db()
     assert a.status == "in_progress"
-    assert "Kim lab" in client.get(f"/tasks/{a.pk}/").content.decode()
+    assert "Brandt lab" in client.get(f"/tasks/{a.pk}/").content.decode()
     # someone else can't
     other = User.objects.exclude(person=a.person).filter(person__isnull=False).first()
     client.force_login(other)

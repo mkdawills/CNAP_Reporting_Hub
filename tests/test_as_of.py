@@ -41,7 +41,7 @@ def test_center_totals_shrink_to_the_day(demo):
 
 @override_settings(UI_PROTOTYPE=True)
 def test_pages_render_as_of(client, demo):
-    for username, url in (("kim", "/outcomes/?asof=2025-12-31"), ("okafor", "/results/?view=products&asof=2026-05-31")):
+    for username, url in (("brandt", "/outcomes/?asof=2025-12-31"), ("okafor", "/results/?view=products&asof=2026-05-31")):
         client.force_login(User.objects.get(username=username))
         s = client.session
         s["ui_view"] = "after"
