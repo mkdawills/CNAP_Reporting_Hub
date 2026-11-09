@@ -3,20 +3,12 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspaces/cnap-platform",
-  "forwardPorts": [
-    8000
-  ],
+  "forwardPorts": [8000],
   "portsAttributes": {
-    "8000": {
-      "label": "CNAP Reporting Hub",
-      "onAutoForward": "openBrowser"
-    }
+    "8000": { "label": "CNAP Reporting Hub", "protocol": "http", "onAutoForward": "notify" }
   },
-  "postCreateCommand": "python manage.py migrate --noinput && python manage.py seed --fictional",
+  "postCreateCommand": "pip install --user -r .devcontainer/requirements.txt && python manage.py migrate --noinput && python manage.py seed --fictional",
   "postAttachCommand": {
-    "server": "python manage.py migrate --noinput && python manage.py runserver [::]:8000"
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/git:1": {}
+    "server": "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
   }
 }

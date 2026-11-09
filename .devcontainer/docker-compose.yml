@@ -1,15 +1,13 @@
 # GitHub Codespaces test copy (MW 2026-11-08). Fictional data only. Not for production.
+# Modeled on GitHub's own "Python 3 & PostgreSQL" dev container template.
 services:
   app:
-    build:
-      context: ..
-      dockerfile: Dockerfile
+    image: mcr.microsoft.com/devcontainers/python:1-3.12-bookworm
     command: sleep infinity
-    # Share the database container's network, so GitHub's port forwarding reaches the site
-    # (the same arrangement as GitHub's own Python and PostgreSQL template).
-    network_mode: service:db
     volumes:
       - ..:/workspaces/cnap-platform:cached
+    # Share the database container's network, so GitHub's port forwarding reaches the site.
+    network_mode: service:db
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.dev
       SECRET_KEY: codespaces-test-only-not-a-real-secret
@@ -21,17 +19,14 @@ services:
       MEDIA_ROOT: /tmp/media
       UI_PROTOTYPE: "true"
       SSO_ENABLED: "false"
-    depends_on:
-      db:
-        condition: service_healthy
   db:
     image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_DB: cnap
       POSTGRES_USER: cnap
       POSTGRES_PASSWORD: cnap
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cnap -d cnap"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
