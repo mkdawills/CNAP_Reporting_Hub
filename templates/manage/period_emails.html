@@ -34,7 +34,7 @@
     <li>No one gets more than one email in a day.</li>
     <li>Anyone added during the reporting session gets the “your reporting session is open” email first.</li>
   </ul>
-  {% if today_kind %}<p class="em-today"><span>Today’s scheduled email</span><b>{% if today_kind == 'open' %}“Your reporting session is open”{% elif today_kind == 'reminder' %}The reminder{% else %}The past-due email{% endif %}</b></p>{% endif %}
+  {% if today_kind %}<p class="em-today">Today’s scheduled email is {% if today_kind == 'open' %}the “your reporting session is open” email{% elif today_kind == 'reminder' %}the reminder{% else %}the past-due email{% endif %}.</p>{% endif %}
   {% if can_manage %}<form method="post" action="{% url 'manage:period_emails_auto' p.pk %}">{% csrf_token %}<input type="hidden" name="on" value="{% if p.auto_emails %}0{% else %}1{% endif %}"><div class="actions"><button class="btn small ghost" type="submit">{% if p.auto_emails %}Pause automatic emails{% else %}Turn automatic emails on{% endif %}</button></div></form>{% endif %}
 </div>
 <div class="panel em-hand">
