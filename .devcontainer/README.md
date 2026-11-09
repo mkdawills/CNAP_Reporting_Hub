@@ -7,13 +7,14 @@ It is for trying the site only, never for real CNAP data.
 2. Wait for the setup to finish (a few minutes the first time).
 3. The site opens in a new browser tab. If it doesn't, open the Ports tab and select the address beside "CNAP Reporting Hub".
 4. Sign in with any fictional account below. Every account uses the password Demo-Password-2026.
-5. Use the "Design preview" switch at the bottom of each page to compare the current design with the redesign.
 
 Fictional accounts:
 
 | Username | Who |
 |---|---|
 | mwills | Evaluator, full administrator access |
+| hbailey | Center leadership (Heather Bailey) |
+| cade | Center leadership (Carl Ade, Associate Director) |
 | okafor | Pilot Project Leader |
 | brandt | Research Project Leader |
 | varga | Core Director |
