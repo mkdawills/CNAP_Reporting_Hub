@@ -379,6 +379,7 @@ def seed_demo(stdout=None):
                 a.save(update_fields=["status", "started_at"])
                 Response.objects.create(assignment=a)
     _seed_outcomes(people)
+    _seed_year10_outcomes(people)
     log(f"Sample center ready. Logins use the password {DEMO_PASSWORD}.")
 
 
@@ -529,3 +530,85 @@ def _seed_outcomes(people):
             r = next((x for x in core_res if x.core.code == c), None)
             if r:
                 GrantSubmissionResource.objects.create(grant_submission=g, resource=r)
+
+
+def _seed_year10_outcomes(people):
+    """Fictional Year 10 papers, talks, and proposals, so Center results has a year to chart (MW 2026-11-09).
+    Idempotent: skipped once the first sample title exists. Titles all start with "Sample"."""
+    from apps.outcomes.models import (
+        GrantFamily,
+        GrantSubmission,
+        GrantSubmissionPerson,
+        GrantSubmissionResource,
+        Presentation,
+        PresentationPerson,
+        PresentationResource,
+        Publication,
+        PublicationPerson,
+        PublicationResource,
+        Resource,
+    )
+
+    if Publication.objects.filter(title__startswith="Sample Year 10").exists():
+        return
+    res = {r.code: r for r in Resource.objects.all()}
+    P = people
+    d = dt.date
+    pubs = [
+        ("Sample Year 10 paper: sleep spindles and memory in adolescent mice", "Sample Journal of Sleep", d(2026, 6, 20), ["okafor", "whitfield"], ["bn_core"]),
+        ("Sample Year 10 paper: reward learning under uncertainty", "Sample Cognition", d(2026, 7, 14), ["adeyemi"], ["cn_core", "bn_core"]),
+        ("Sample Year 10 paper: open tools for neuroimaging quality checks", "Sample NeuroImage Methods", d(2026, 8, 3), ["natarajan", "kim"], ["ni_core", "cn_core"]),
+        ("Sample Year 10 paper: attention control in older adults", "Sample Aging Brain", d(2026, 8, 28), ["kim", "moreau"], ["cn_core"]),
+        ("Sample Year 10 paper: building a mentoring culture in a new center", "Sample Research Development", d(2026, 9, 18), ["bell"], ["admin_core", "mentorship"]),
+        ("Sample Year 10 paper: video pipelines for rodent behavior", "Sample Methods Letters", d(2026, 10, 9), ["varga", "reyes"], ["bn_core", "ni_core"]),
+        ("Sample Year 10 paper: a field guide to shared lab spaces", "Sample Lab Practice", d(2026, 10, 30), ["lee"], ["connect_lab"]),
+    ]
+    for i, (title, journal, when, who, codes) in enumerate(pubs):
+        p = Publication.objects.create(
+            title=title, publication_type="journal_article", status="published", journal=journal, publication_date=when, cnap_cited=True
+        )
+        for n, u in enumerate(who):
+            if u in P:
+                PublicationPerson.objects.create(publication=p, person=P[u], author_order=n)
+        for c in codes:
+            if c in res:
+                r = res[c]
+                PublicationResource.objects.create(publication=p, resource=r, rrid_cited="yes" if r.core_id and r.core.rrid else "")
+    # A planned paper that only anticipates a core: Center results leaves it out.
+    planned = Publication.objects.create(title="Sample Year 10 planned paper: future work with the NI Core", publication_type="journal_article", status="planned")
+    if "ni_core" in res:
+        PublicationResource.objects.create(publication=planned, resource=res["ni_core"], is_anticipated=True)
+    if "natarajan" in P:
+        PublicationPerson.objects.create(publication=planned, person=P["natarajan"], author_order=0)
+    talks = [
+        ("Sample Year 10 talk: adolescent sleep and memory", "conference", "Sample Society for Neuroscience meeting", d(2026, 6, 12), ["okafor"], ["bn_core"]),
+        ("Sample Year 10 poster: reward learning in the scanner", "poster_or_flyer", "Sample Midwest Cognition Meeting", d(2026, 7, 22), ["adeyemi"], ["cn_core"]),
+        ("Sample Year 10 talk: quality checks for shared imaging data", "invited_talk", "Sample University seminar", d(2026, 9, 4), ["natarajan"], ["ni_core"]),
+        ("Sample Year 10 poster: behavior scoring at scale", "poster_or_flyer", "Sample Society for Neuroscience meeting", d(2026, 10, 17), ["varga"], ["bn_core", "ni_core"]),
+        ("Sample Year 10 talk: mentoring new investigators", "invited_talk", "Sample COBRE network meeting", d(2026, 10, 24), ["bell"], ["mentorship"]),
+    ]
+    for title, kind, event, when, who, codes in talks:
+        t = Presentation.objects.create(presentation_type=kind, title=title, event=event, presented_on=when, cnap_cited=True)
+        for n, u in enumerate(who):
+            if u in P:
+                PresentationPerson.objects.create(presentation=t, person=P[u], author_order=n, is_presenter=n == 0)
+        for c in codes:
+            if c in res:
+                PresentationResource.objects.create(presentation=t, resource=res[c])
+    grants = [
+        ("Sample Year 10 R01: sleep and learning across adolescence", "NIH", "R01", "submitted", d(2026, 6, 5), None, "okafor", ["bn_core"]),
+        ("Sample Year 10 R21: reward signals in decision making", "NIH", "R21", "awarded", d(2026, 6, 16), d(2026, 10, 2), "adeyemi", ["cn_core"]),
+        ("Sample Year 10 NSF award: open imaging tools", "NSF", "Standard grant", "submitted", d(2026, 8, 18), None, "natarajan", ["ni_core", "cn_core"]),
+        ("Sample Year 10 R03: attention in aging", "NIH", "R03", "submitted", d(2026, 10, 16), None, "kim", ["cn_core"]),
+    ]
+    for title, agency, mech, status, sub, notice, pi, codes in grants:
+        fam = GrantFamily.objects.create(title=title)
+        g = GrantSubmission.objects.create(
+            grant_family=fam, project_title=title, funding_agency=agency, mechanism=mech, status=status,
+            submission_date=sub, award_notice_date=notice, award_total=275000 if status == "awarded" else None, cnap_acknowledged=True,
+        )
+        if pi in P:
+            GrantSubmissionPerson.objects.create(grant_submission=g, person=P[pi], role="pi", is_primary_cnap_contact=True)
+        for c in codes:
+            if c in res:
+                GrantSubmissionResource.objects.create(grant_submission=g, resource=res[c])
