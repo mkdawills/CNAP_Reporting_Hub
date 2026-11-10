@@ -21,8 +21,7 @@ from .outcome_forms import GRANT_FORMS, NEXT, PUB_FORMS
 NOT_FUNDED_NOTE = (
     "Thank you for the update. Submitting a proposal is a real accomplishment and something that should always be "
     "celebrated! A not-funded decision is part of every researcher’s journey toward funding. Your reviewers’ feedback "
-    "is valuable for the next round, and we’re here to help you think through its application. We are very proud of "
-    "you and excited for your next steps!"
+    "is valuable for the next round, and we’re here to help you think through its application."
 )
 
 STATUS_WORDS = {

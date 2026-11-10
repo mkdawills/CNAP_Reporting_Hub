@@ -718,4 +718,4 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - Matches to real investigators are not seeded (fictional data only until K-State hosting and security review); the public opportunity catalog is seeded from `fixtures/funding/opportunities.json`.
 - Nothing is emailed automatically: every follow-up letter waits for MW's review and Send.
 - Full spec: `docs/funding-follow-up-spec.md`. Built on branch `feature/funding-follow-up`.
-
+- 2026-11-10: MW removed the last sentence of the not-funded note ("We are very proud of you and excited for your next steps!"). The note now ends with "...help you think through its application."
