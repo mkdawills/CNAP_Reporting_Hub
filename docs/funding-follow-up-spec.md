@@ -244,7 +244,10 @@ email inside the Hub's sidebar frame, with fictional people. Build to it. Detail
      strong pitch for your proposed project? Do you need to source other cores or resources outside of
      K-State? Each section header has a thin line icon (not a number, since the
   sections are not a sequence) and its key figures in soft ovals.
-- Long pages (the funding page and the letter page) have "On this page" with Hide and Show.
+- Long pages (the funding page and the letter page) have "On this page" with Hide and Show, built
+  from the existing `px-onpage-layout`, `px-onpage`, `p21-navtop`, and `p21-collapse` markup and classes,
+  exactly as on Publications, talks, and grants. Never restyle a component that proto.css already has:
+  reuse `px-roll`, `px-rollbar`, `px-btn quiet`, `px-callout`, `px-status`, `px-seg`, and the title panel.
 - Opportunity rows: name as the link, status and milestone words as dot labels, then fixed label
   columns (Deadline, Amount, Sponsor, Why this fits or Notes). The same list keeps the same order
   (soonest deadline first) on the page, the letter, and the email.
