@@ -169,7 +169,12 @@ The home dashboard gets a count chip: "Funding follow-ups to review: N" and "Sug
 
 **Composer** (MW only), on the follow-up's page:
 - Pre-filled subject: "Your next steps after {proposal title}".
-- Pre-filled opening (editable): warm, in MW's voice, adapted from `NOT_FUNDED_NOTE`.
+- Pre-filled opening (editable), MW's exact words (approved 2026-11-10), with the agency filled in:
+  "Dear {first name},"
+  "Submitting a proposal to the {funding agency} is a major accomplishment. We hope you've taken a moment
+  to celebrate! And although it's never easy, please be reminded that a non-award is part of every
+  researcher's journey toward funding."
+  On the page and in the email each sentence sits on its own line.
 - MW's personal paragraph (blank, optional).
 - Featured opportunities: tick boxes, pre-ticked with the person's open matches plus any
   `audience=everyone` item whose deadline is within 120 days. Each shows its summary.
@@ -200,7 +205,6 @@ Templates: `email/funding_letter.html` and `.txt`, `proto/portal/funding.html`,
 
 ## Wording to confirm with MW before building
 
-- The pre-filled opening sentence for the letter.
 - The three milestone labels (proposed above under Design rules).
 - The "For you" empty-state sentence.
 

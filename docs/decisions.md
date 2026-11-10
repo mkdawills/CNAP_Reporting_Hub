@@ -720,3 +720,4 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - Full spec: `docs/funding-follow-up-spec.md`. Built on branch `feature/funding-follow-up`.
 - 2026-11-10: MW removed the last sentence of the not-funded note ("We are very proud of you and excited for your next steps!"). The note now ends with "...help you think through its application."
 - 2026-11-10: MW changed "a real accomplishment" to "a major accomplishment" everywhere it appears (the not-funded note and the submitted message), and in the funding letter and email.
+- 2026-11-10: MW approved the funding letter's opening: "Dear {first name}, Submitting a proposal to the {funding agency} is a major accomplishment. We hope you've taken a moment to celebrate! And although it's never easy, please be reminded that a non-award is part of every researcher's journey toward funding."
