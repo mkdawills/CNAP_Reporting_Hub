@@ -568,9 +568,6 @@ def _seed_funding(people, users):
     )
     GrantSubmissionPerson.objects.create(grant_submission=g, person=okafor, role="pi", is_primary_cnap_contact=True)
     funding.ensure_followup(g, mw)
-    from apps.outcomes import services as outcome_services
-
-    outcome_services.start_resubmission(mw, g)  # the A1, already started, as when a person plans to resubmit
     picks = [
         ("bbrf", "Fear extinction research relates directly to anxiety disorders, a stated focus of the foundation."),
         ("katz", "A second R01 on a new direction, separate from the sleep work, would not need preliminary data."),
