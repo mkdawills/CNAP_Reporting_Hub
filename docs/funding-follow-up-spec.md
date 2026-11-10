@@ -226,9 +226,9 @@ email inside the Hub's sidebar frame, with fictional people. Build to it. Detail
 - Sidebar: "Funding opportunities" sits under My work, after "Publications, talks, and grants."
 - Section order: Before you apply, Picked for you, Relevant to most members, Discussion, Funding news,
   Letters from the Center, Suggest an opportunity.
-- Before you apply: MW's six questions for weighing any opportunity (2026-11-10), as a numbered list,
+- Before you apply: MW's seven questions for weighing any opportunity (2026-11-10), as a numbered list,
   each with a short title. The letter page repeats them as "Questions for weighing each option," and each
-  Picked for you row links to them ("Weigh the opportunity with the six questions"). Store the questions
+  Picked for you row links to them ("Weigh the opportunity with the seven questions"). Store the questions
   as editable reference data so MW can change them without a code change:
   1. Eligibility. Are you eligible for the funding opportunity?
   2. Preliminary data. Do you have sufficient preliminary data to be competitive for the funding opportunity?
@@ -239,7 +239,10 @@ email inside the Hub's sidebar frame, with fictional people. Build to it. Detail
   5. Advancing the field. Will your research question advance the field? Does the question sit at the
      intersection of current knowledge in the field and the next frontier of the field?
   6. Available effort. Do you have available person months of effort for the project? Count current and
-     pending commitments, including CNAP effort. Each section header has a thin line icon (not a number, since the
+     pending commitments, including CNAP effort.
+  7. Equipment and infrastructure. Do you have the equipment and infrastructure necessary to make a
+     strong pitch for your proposed project? Do you need to source other cores or resources outside of
+     K-State? Each section header has a thin line icon (not a number, since the
   sections are not a sequence) and its key figures in soft ovals.
 - Long pages (the funding page and the letter page) have "On this page" with Hide and Show.
 - Opportunity rows: name as the link, status and milestone words as dot labels, then fixed label
