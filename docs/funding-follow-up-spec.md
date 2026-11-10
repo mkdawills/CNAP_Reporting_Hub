@@ -168,7 +168,8 @@ The home dashboard gets a count chip: "Funding follow-ups to review: N" and "Sug
 ### 4. The follow-up letter (email + Hub page)
 
 **Composer** (MW only), on the follow-up's page:
-- Pre-filled subject: "Your next steps after {proposal title}".
+- The letter's name, identical as the email subject, the letter page title, and the list entry:
+  "Next steps after {proposal title}" (titles carry no pronouns, checklist A).
 - Pre-filled opening (editable), MW's exact words (approved 2026-11-10), with the agency filled in:
   "Dear {first name},"
   "Submitting a proposal to the {funding agency} is a major accomplishment. We hope you've taken a moment
@@ -191,7 +192,7 @@ The home dashboard gets a count chip: "Funding follow-ups to review: N" and "Sug
   `sent_*`, writes the audit event, and marks the follow-up `sent`. Nothing is ever sent automatically.
 
 **Email** (newsletter style, short): greeting, the opening, MW's paragraph, up to three featured
-opportunities as compact cards (name, deadline, one line), a button "Read your full funding update", and
+opportunities as a two-column table (opportunity, deadline), a button "Read the full letter", and
 the sign-off. The button is a sign-in link (`signin.make_link(..., purpose="funding_letter",
 next_path=...)`) when `signin.may_use_link(person)`, else the plain site URL, exactly as nudges do.
 
@@ -215,6 +216,50 @@ Show MW these on a preview before the commit, per working rule 5.
 - `manage.py seed` loads `fixtures/funding/opportunities.json` (idempotent, keyed on `name`).
 - Sample matches only to fictional seeded people, plus one fictional Not funded proposal with a
   `to_review` follow-up and one `to_review` suggestion, so every screen has something to show.
+
+## Approved preview (match it)
+
+MW's preview of the investigator's view: https://claude.ai/artifact/YR5LkApyGiTcJ6VgjiRWgu (claude.ai
+artifact "Investigator Funding View", 2026-11-10). It shows the funding page, the letter page, and the
+email inside the Hub's sidebar frame, with fictional people. Build to it. Details settled there:
+
+- Sidebar: "Funding opportunities" sits under My work, after "Publications, talks, and grants."
+- Section order: Picked for you, Relevant to most members, Discussion, Funding news, Letters from the
+  Center, Suggest an opportunity. Each section header has a thin line icon (not a number, since the
+  sections are not a sequence) and its key figures in soft ovals.
+- Long pages (the funding page and the letter page) have "On this page" with Hide and Show.
+- Opportunity rows: name as the link, status and milestone words as dot labels, then fixed label
+  columns (Deadline, Amount, Sponsor, Why this fits or Notes). The same list keeps the same order
+  (soonest deadline first) on the page, the letter, and the email.
+- Forms mark optional fields "(optional)", the same as the Hub's other forms. Buttons are outlined;
+  no dark purple action on these pages.
+- A note at the bottom of each page says who can see it.
+- Letter sign-off defaults to "With best wishes," and "The CNAP evaluation team" (editable).
+
+## Discussion (phase 2, MW 2026-11-10)
+
+A moderated discussion on the funding page where CNAP members ask questions and share ideas about
+funding. Build after the phase 1 screens pass MW's review.
+
+- Who: every signed-in person with a current CNAP relationship reads, posts, and replies. Nothing is
+  visible outside CNAP. The page note says so.
+- Data: `FundingPost` (`funding_posts`: author FK Person, `kind` question or idea, `body`, `pinned`,
+  `hidden_at`, `hidden_by`, `hidden_reason`, timestamps), `FundingReply` (`funding_replies`: post FK,
+  author, body, `hidden_*`), `FundingPostReport` (`funding_post_reports`: post or reply, reporter,
+  note, `handled_at`, `handled_by`). Archive-not-delete, like the rest of the Hub.
+- Page: segmented filter All posts, Questions, Ideas ("Showing ... newest first, with pinned posts at
+  the top"); each post shows first and last name, role, date, a Question or Idea label, Pinned when
+  pinned, the text one sentence per line, replies indented beneath, then Reply and "Report to the
+  CNAP office." Posting form: Type of post (two round choices) and Post text, with help text "Every
+  CNAP member can read and reply to the post." and "Keep unpublished data and specific aims out of
+  the post." Success message "Posted."
+- CNAP office (new "Discussion" tab on `/manage/funding/`): pin, unpin, hide with a reason, restore,
+  and a queue of reports. The office can post as "CNAP evaluation team." Every action is audited.
+- Settled-rule note for decisions.md: the discussion is voluntary posting, separate from survey
+  answers, which respondents still never see from one another.
+- Optional later: an email digest of new posts, off by default.
+- Tests: members read and post; non-members get 403; hidden posts and replies disappear for members
+  but stay visible to the office; reports reach the queue; only admins pin or hide.
 
 ## Tests (new `tests/test_funding.py`)
 

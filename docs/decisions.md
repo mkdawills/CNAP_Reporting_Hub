@@ -721,3 +721,6 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - 2026-11-10: MW removed the last sentence of the not-funded note ("We are very proud of you and excited for your next steps!"). The note now ends with "...help you think through its application."
 - 2026-11-10: MW changed "a real accomplishment" to "a major accomplishment" everywhere it appears (the not-funded note and the submitted message), and in the funding letter and email.
 - 2026-11-10: MW approved the funding letter's opening: "Dear {first name}, Submitting a proposal to the {funding agency} is a major accomplishment. We hope you've taken a moment to celebrate! And although it's never easy, please be reminded that a non-award is part of every researcher's journey toward funding."
+- 2026-11-10: MW asked for a moderated discussion where investigators toss around questions and ideas about funding. It is phase 2 of the funding work (spec section "Discussion"). Posts are voluntary and visible to CNAP members only. Survey answers stay private between respondents, as before.
+- 2026-11-10: The investigator preview (claude.ai artifact "Investigator Funding View") is the reference for the funding screens. Letter name: "Next steps after {proposal title}," identical in the email subject, the letter page, and the list.
+
