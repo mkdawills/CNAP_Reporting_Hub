@@ -30,7 +30,7 @@
             {% else %}<dt>Already have an eRA Commons ID?</dt><dd>Great. You’ll keep it.<br>Type it above.</dd>
             <dt>Need an eRA Commons ID?</dt><dd>Your institution’s research office creates your eRA Commons ID on your behalf.<br>You can’t create it yourself.<br>Contact your institution’s research office to create one.</dd>{% endif %}
           </dl>
-          {% if person.era_commons_help_requested_at %}<p class="small ok-note">You asked for help on {{ person.era_commons_help_requested_at|date:"M j, Y" }}.<br>The Center evaluator will be in touch by email.</p>
+          {% if person.era_commons_help_requested_at %}<p class="small ok-note">You asked for help on {{ person.era_commons_help_requested_at|date:"F j, Y" }}.<br>The Center evaluator will be in touch by email.</p>
           {% else %}<div class="fieldrow" style="gap:8px">
             <button class="btn small" type="submit" form="commonshelp" name="kind" value="setup">I need help setting up eRA Commons</button>
             <button class="btn small ghost" type="submit" form="commonshelp" name="kind" value="unsure">I’m not sure I need eRA Commons</button>

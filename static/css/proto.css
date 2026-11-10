@@ -997,7 +997,7 @@ body.proto .r33-date { flex: none; color: var(--px-muted); font-variant-numeric:
   body.proto .r65-period, body.proto .r65-period select { width: 100%; min-width: 0; }
   body.proto .r33-cta { align-items: flex-start; }
   body.proto .r33-list li { flex-direction: column; gap: 2px; }
-  body.proto .px-seg { display: flex; } body.proto .px-seg a { flex: 1; text-align: center; padding: 8px 10px; }
+  body.proto .px-seg { display: flex; } body.proto .px-seg a { flex: 1 1 auto; text-align: center; padding: 8px 10px; } /* equal space added to each tab, so the gaps between labels match (MW 2026-11-10) */
 }
 /* Phones (Batch 2): the results list stacks each form as a short block with labeled lines, so the page
    never scrolls sideways; numbered circles stay round when a long title wraps. */

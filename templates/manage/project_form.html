@@ -15,7 +15,7 @@
   <div class="panel scroll">
     <h2 class="sectionhead">People on this project</h2>
     <button type="button" class="btn small ghost" id="pf-detail" style="margin-bottom:10px">Show effort, eRA Commons IDs, and ORCID iDs</button>
-    <table title="Everyone with a current or past relationship to this project."><thead><tr><th>Person</th><th>Relationship</th><th>Since</th></tr></thead><tbody>{% for r in rels %}<tr class="{% if r.effective_to %}muted{% endif %}"><td><a href="{% url 'manage:person' r.person.pk %}">{{ r.person }}</a></td><td>{{ r.relationship_type.name }}</td><td class="small">{{ r.effective_from|date:"M j, Y" }}{% if r.effective_to %} to {{ r.effective_to|date:"M j, Y" }}{% else %} to now{% endif %}</td></tr>
+    <table title="Everyone with a current or past relationship to this project."><thead><tr><th>Person</th><th>Relationship</th><th>Since</th></tr></thead><tbody>{% for r in rels %}<tr class="{% if r.effective_to %}muted{% endif %}"><td><a href="{% url 'manage:person' r.person.pk %}">{{ r.person }}</a></td><td>{{ r.relationship_type.name }}</td><td class="small">{{ r.effective_from|date:"F j, Y" }}{% if r.effective_to %} to {{ r.effective_to|date:"F j, Y" }}{% else %} to now{% endif %}</td></tr>
     {% empty %}<tr><td class="muted">{{ "No one yet. Open a person’s page and add a relationship to this project."|stack }}</td></tr>{% endfor %}</tbody></table>
     <div id="pf-sub" hidden style="margin-top:12px">
       <table class="subtab" title="Each current person’s identifiers and effort, the inputs for RPPR section D.1."><thead><tr><th>Person</th><th>Role</th><th>eRA Commons ID</th><th>ORCID iD</th><th>Effort in Year {{ gy }}</th></tr></thead><tbody>

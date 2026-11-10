@@ -1995,7 +1995,8 @@ main ul:not([class]) > li + li, main ol:not([class]) > li + li { margin-top: 6px
 .fieldrow { gap: 12px; }
 details > summary + * { margin-top: 12px; }
 .rollup > .panel, .profsecs > .panel { margin-bottom: 16px; }
-.small + .small { margin-top: 6px; }
+/* Lines of small text get room between them. Buttons are left out, so small buttons side by side share one top line (MW 2026-11-10). */
+.small:not(.btn, .px-btn) + .small:not(.btn, .px-btn) { margin-top: 6px; }
 @media (max-width: 560px) { .panel { padding: 20px 18px; } }
 /* Profile form: the same label > hint hierarchy as the entry forms, with no dead space (MW 2026-11-04). */
 .profsecs form .field > label { display: block; font-size: 1rem; font-weight: 600; color: var(--ink); }

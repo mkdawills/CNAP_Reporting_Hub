@@ -195,13 +195,13 @@ def plan(period, kind, gap=None):
         elif not forms:
             skip = "Nothing left to do"
         elif kind == "open" and p.pk in sent:
-            skip = f"Already sent {timezone.localtime(sent[p.pk]):%b %-d}"
+            skip = f"Already sent {timezone.localtime(sent[p.pk]):%B %-d}"
         elif (
             kind != "open"
             and p.pk in last
             and (today - timezone.localtime(last[p.pk]).date()).days < gap_days
         ):
-            skip = f"Emailed {timezone.localtime(last[p.pk]):%b %-d}"
+            skip = f"Emailed {timezone.localtime(last[p.pk]):%B %-d}"
         rows.append(
             {
                 "person": p,

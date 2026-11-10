@@ -8,13 +8,13 @@
   {% if rows %}<div class="scroll"><table title="Every note sent with the Feedback button, with the page it came from and whether it has been addressed.">
     <thead><tr><th title="When the note was sent.">Sent</th><th title="Who sent it.">From</th><th title="The page they were on when they sent it. Click to open that page.">Page</th><th title="What the note is about, as the sender chose.">Topic</th><th title="How the sender rated the page, from 1 (poor) to 5 (excellent), if they chose to.">Rating</th><th title="What they wrote.">Note</th><th title="Whether the note has been addressed. Click the button to mark it done, or to reopen it.">Done?</th></tr></thead>
     <tbody>{% for f in rows %}<tr{% if f.resolved_at %} class="muted"{% endif %}>
-      <td class="small nowrap">{{ f.created_at|date:"M j, Y g:i A" }} Central Time</td>
+      <td class="small nowrap">{{ f.created_at|date:"F j, Y g:i A" }} Central Time</td>
       <td class="small">{% if f.user.person %}{{ f.user.person }}{% else %}{{ f.user|default:"Someone" }}{% endif %}</td>
       <td class="small"><a href="{{ f.path }}">{{ f.page_title|default:f.path }}</a></td>
       <td class="small">{{ f.get_topic_display }}</td>
       <td class="small num">{% if f.rating %}{{ f.rating }} of 5{% else %}<span class="muted">–</span>{% endif %}</td>
       <td class="small">{{ f.comment|linebreaksbr }}</td>
-      <td class="small">{% if can_edit %}<form method="post">{% csrf_token %}<input type="hidden" name="pk" value="{{ f.pk }}"><button class="btn small ghost" title="{% if f.resolved_at %}Reopens this note.{% else %}Marks this note as addressed.{% endif %}">{% if f.resolved_at %}Done {{ f.resolved_at|date:"M j" }} · reopen{% else %}Mark done{% endif %}</button></form>{% elif f.resolved_at %}Done{% else %}Open{% endif %}</td>
+      <td class="small">{% if can_edit %}<form method="post">{% csrf_token %}<input type="hidden" name="pk" value="{{ f.pk }}"><button class="btn small ghost" title="{% if f.resolved_at %}Reopens this note.{% else %}Marks this note as addressed.{% endif %}">{% if f.resolved_at %}Done {{ f.resolved_at|date:"F j" }} · reopen{% else %}Mark done{% endif %}</button></form>{% elif f.resolved_at %}Done{% else %}Open{% endif %}</td>
     </tr>{% endfor %}</tbody></table></div>
   {% else %}<p class="muted">No notes yet. The Feedback button sits at the bottom right of every page.</p>{% endif %}
 </div>

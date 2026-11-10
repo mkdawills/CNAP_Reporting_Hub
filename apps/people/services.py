@@ -188,7 +188,7 @@ def hand_off(actor, rel, new_person, *, start=None, reason=""):
     start = start or _today()
     if start <= rel.effective_from:
         raise RelationshipError(
-            f"The handoff date must be after {rel.effective_from:%b %-d, %Y}, "
+            f"The handoff date must be after {rel.effective_from:%B %-d, %Y}, "
             "when the current holder started."
         )
     rel.effective_to = start - dt.timedelta(days=1)

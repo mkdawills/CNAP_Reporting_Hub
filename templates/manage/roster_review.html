@@ -2,7 +2,7 @@
 {% block title %}Review roster import · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>Review roster import {% why "The uploaded roster against what the Hub already has: accept a row to add or update that member. Nothing changes until you accept." %}</h1>
-  <p>{{ imp.original_filename }} · uploaded {{ imp.created_at|date:"M j, Y g:i A" }} Central Time · {{ imp.get_status_display }}</p></div></div>
+  <p>{{ imp.original_filename }} · uploaded {{ imp.created_at|date:"F j, Y g:i A" }} Central Time · {{ imp.get_status_display }}</p></div></div>
 {% if parsed and undecided %}<div class="banner">{{ undecided }} row{{ undecided|pluralize }} need{{ undecided|pluralize:"s," }} a choice before you can commit.</div>{% endif %}
 {% if imp.summary.result %}<div class="okmsg">Committed: {{ imp.summary.result.created }} created, {{ imp.summary.result.added_to_roster }} added to the roster, {{ imp.summary.result.merged }} merged, {{ imp.summary.result.ended }} memberships ended.</div>{% endif %}
 <form method="post" action="{% url 'manage:roster_decide' imp.pk %}">{% csrf_token %}

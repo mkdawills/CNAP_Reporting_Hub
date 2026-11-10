@@ -11,7 +11,7 @@
     {% for r in g.rows %}<tr>
       <td><strong>{{ r.name }}</strong>{% if r.context %}<div class="small muted">{{ r.context }}</div>{% endif %}{% if r.opted %}<div class="small muted">You opted out of this survey ({{ r.pathway|lower }}).</div>{% endif %}</td>
       <td class="acts"><a class="btn small ghost" href="{% url 'portal:form' r.a.pk %}">View</a></td>
-      <td class="mins">{% if r.a.submitted_at %}Submitted {{ r.a.submitted_at|date:"M j, Y" }}{% endif %}</td>
+      <td class="mins">{% if r.a.submitted_at %}Submitted {{ r.a.submitted_at|date:"F j, Y" }}{% endif %}</td>
     </tr>{% endfor %}
   {% endfor %}
   </tbody></table></div>

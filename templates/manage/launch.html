@@ -2,7 +2,7 @@
 {% block title %}Review before launch · {{ platform_name }}{% endblock %}
 {% block content %}
 <div class="head"><div><h1>Review before launch{% why "Nothing goes out until you approve this page. This page shows exactly who will receive which forms, so a missing mentor or a misassigned survey gets caught before anyone is emailed." %}</h1>
-  <p>{{ p.name }}{% if draft %} · opens {{ p.opens_at|date:"M j, Y" }}{% else %} · already open{% endif %}</p>
+  <p>{{ p.name }}{% if draft %} · opens {{ p.opens_at|date:"F j, Y" }}{% else %} · already open{% endif %}</p>
   <p>{{ "Nothing is sent until you approve the launch. Review what every respondent receives, fix anything flagged, and then launch."|stack }}</p></div></div>
 {% if warnings %}<div class="panel warnbox"><h2 class="sectionhead">Check before launching ({{ warnings|length }})</h2>
   <ul>{% for w in warnings %}<li><a href="{{ w.url }}">{{ w.text }}</a></li>{% endfor %}</ul>

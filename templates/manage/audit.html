@@ -5,7 +5,7 @@
   <form method="get"><label class="small muted">Action <select name="action" onchange="this.form.submit()"><option value="">All</option>{% for v,l in actions %}<option value="{{ v }}" {% if v == action %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></label></form></div>
 <div class="panel scroll">
   <table title="Every change anyone makes in the Hub, newest first, so any question about who changed what has an answer."><thead><tr><th>When</th><th>Who</th><th>Action</th><th>What</th><th>Details</th></tr></thead><tbody>
-  {% for e in page %}<tr><td class="small nowrap">{{ e.at|date:"M j, Y g:i A" }} Central Time</td><td class="small">{{ e.actor|default:"System" }}</td><td class="small">{{ e.get_action_display }}</td><td>{{ e.entity_repr|default:e.entity_type }}</td><td class="small muted">{% if e.reason %}{{ e.reason }}{% endif %}{% if e.new_value %} {{ e.new_value }}{% endif %}</td></tr>
+  {% for e in page %}<tr><td class="small nowrap">{{ e.at|date:"F j, Y g:i A" }} Central Time</td><td class="small">{{ e.actor|default:"System" }}</td><td class="small">{{ e.get_action_display }}</td><td>{{ e.entity_repr|default:e.entity_type }}</td><td class="small muted">{% if e.reason %}{{ e.reason }}{% endif %}{% if e.new_value %} {{ e.new_value }}{% endif %}</td></tr>
   {% empty %}<tr><td colspan="5" class="muted">Nothing recorded yet.</td></tr>{% endfor %}
   </tbody></table>
   {% if page.has_other_pages %}<div class="actions">{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&action={{ action }}">Newer</a>{% endif %}<span class="small muted">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>{% if page.has_next %}<a href="?page={{ page.next_page_number }}&action={{ action }}">Older</a>{% endif %}</div>{% endif %}
