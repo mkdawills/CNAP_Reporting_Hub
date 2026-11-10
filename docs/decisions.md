@@ -711,3 +711,11 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - Display only; no data change. `apps/outcomes/asof.py` works out where each paper and proposal stood at the end of any past day from its status history, using the date the person gave for each step (submission, publication, decline, award notice, decision) and the day the Hub recorded the step otherwise. Records imported later still count from their own dates. A talk counts from the day it was given. Future days and invalid dates are refused.
 - Publications, talks, and grants: an "As of" control under the page introduction (a date box, quick picks for the last day of each past reporting session, Show, Back to today). Choosing a day opens a read-only page with three tables (papers, proposals, talks), each showing the status on that day and today. Titles link back to their cards.
 - Center results, Research outputs: the same control. The totals, the core chart, and the lists end at the chosen day, for the grant year that holds that day. A day before the chosen grant year began says so. Survey and report results keep their frozen snapshots and are unchanged.
+
+## 2026-11-10 - Funding opportunities, not-funded follow-up letters, and funding news (requested, not yet built)
+
+- MW asked for a funding page for each investigator, to send people there the moment a proposal is marked Not funded, a newsletter-style follow-up email she reviews before it is sent (linking to a fuller page in the Hub), an "Open to everyone" section with researcher suggestions, and a funding news section.
+- Matches to real investigators are not seeded (fictional data only until K-State hosting and security review); the public opportunity catalog is seeded from `fixtures/funding/opportunities.json`.
+- Nothing is emailed automatically: every follow-up letter waits for MW's review and Send.
+- Full spec: `docs/funding-follow-up-spec.md`. Built on branch `feature/funding-follow-up`.
+

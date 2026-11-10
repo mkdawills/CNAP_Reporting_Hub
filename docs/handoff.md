@@ -62,6 +62,11 @@ working in, this repository is sufficient on its own.
 - Never fabricate row-level data from aggregates. Imported Year 6–9 aggregates are stored as
   aggregates with provenance `historical` and have no drill-down.
 
+## Next up (2026-11-10)
+
+Build `docs/funding-follow-up-spec.md` on branch `feature/funding-follow-up` (MW's request: funding
+opportunities page, not-funded follow-up letters, researcher suggestions, funding news).
+
 ## Milestone status
 
 | # | Milestone | Status |
