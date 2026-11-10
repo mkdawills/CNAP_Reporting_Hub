@@ -2139,3 +2139,7 @@ body.proto .fm .fm-decline[open] > form { margin-top: var(--px-4); }
 body.proto .fm .fm-q { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; }
 body.proto .fm .fm-addmatch { margin-top: var(--px-6); }
 body.proto .fm .fm-picks .fv-choice > span { min-width: 0; }
+/* Buttons in a row share one top line (MW 2026-11-10): Decline sits level with Add to the list. */
+body.proto .fm .fm-acts { align-items: flex-start; }
+body.proto .fm .fm-acts > .fm-decline { margin-top: 0; }
+body.proto .fm .fm-acts > .fm-decline[open] { flex-basis: 100%; }
