@@ -65,8 +65,9 @@ working in, this repository is sufficient on its own.
 ## Next up (2026-11-10)
 
 Phase 1 of `docs/funding-follow-up-spec.md` is built on branch `feature/funding-follow-up` (funding page,
-letter page, not-funded follow-up letters, suggestions, news, the seven questions). Waiting on MW's review.
-Phase 2, the discussion, comes after that review; posts must allow links to other websites.
+letter page, not-funded follow-up letters, suggestions, news, the seven questions). MW approved it and it is
+on main (2026-11-10). Next: resources (spec section "Resources"), then phase 2, the discussion, whose posts must
+allow links to other websites.
 
 ## Milestone status
 

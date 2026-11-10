@@ -310,11 +310,11 @@ funding. Build after the phase 1 screens pass MW's review.
   weekly scheduled Claude task that drafts news items and new opportunities for MW to review and post;
   nothing would appear in the Hub until she approves it.
 
-## Resources (proposed, MW 2026-11-10, awaiting her choice)
+## Resources (MW 2026-11-10: build after phase 1, shown in both places)
 
 MW plans to put resources together (guides, templates, and similar) that could go into the follow-up letters.
 Proposed, not built: a Resources tab on `/manage/funding/` (title, link or uploaded file, one or two sentences),
 a Resources step in the letter composer with tick boxes like the featured options, a short list in the email,
-and a "Resources from the CNAP team" section on the letter page. Open choices for MW: whether resources also
-appear on every member's Funding opportunities page, and whether to build before or after her phase 1 review.
-One new table (`funding_resources`) needs her approval first.
+and a "Resources from the CNAP team" section on the letter page. MW's choices (2026-11-10): resources appear in both
+places, inside letters and as a section on every member's Funding opportunities page. Build after phase 1, which
+MW approved and merged to main on 2026-11-10. The new table (`funding_resources`) is shown to MW before it is built.
