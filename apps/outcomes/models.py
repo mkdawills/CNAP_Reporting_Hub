@@ -727,6 +727,27 @@ class FundingQuestion(ArchivableModel):
         return self.title
 
 
+class FundingBulletin(TimestampedModel):
+    """One issue of a newsletter the CNAP office draws items from, such as K-State Research Weekly
+    (MW 2026-11-10). Items from an issue sit under its heading on the funding page."""
+
+    name = models.CharField(max_length=200, help_text="Such as K-State Research Weekly.")
+    issue_date = models.DateField()
+    url = models.URLField(max_length=500, blank=True, help_text="The issue's web version.")
+
+    class Meta:
+        db_table = "funding_bulletins"
+        ordering = ["-issue_date"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "issue_date"], name="funding_bulletins_one_per_issue"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.name}, {self.issue_date:%B} {self.issue_date.day}, {self.issue_date.year}"
+
+
 class FundingOpportunity(ArchivableModel):
     """One funding opportunity in the catalog: public facts, with a source link and the day they were checked."""
 
@@ -758,6 +779,13 @@ class FundingOpportunity(ArchivableModel):
     checked_on = models.DateField(null=True, blank=True)
     source_url = models.URLField(max_length=500, blank=True)
     tracker_id = models.CharField(max_length=60, blank=True)
+    bulletin = models.ForeignKey(
+        FundingBulletin,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="opportunities",
+    )
     suggested_by = models.ForeignKey(
         Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -867,6 +895,9 @@ class FundingNewsItem(ArchivableModel):
     )
     source_name = models.CharField(max_length=200, blank=True)
     source_url = models.URLField(max_length=500, blank=True)
+    bulletin = models.ForeignKey(
+        FundingBulletin, null=True, blank=True, on_delete=models.SET_NULL, related_name="news"
+    )
     pinned = models.BooleanField(default=False)
     posted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
@@ -919,3 +950,42 @@ class FundingFollowUp(TimestampedModel):
                 name="funding_followups_status_valid",
             )
         ]
+
+
+class FundingEvent(ArchivableModel):
+    """A research event or talk on the funding page (MW 2026-11-10): office hours, information sessions,
+    seminars, symposia. Shown until its last day passes."""
+
+    title = models.CharField(max_length=300)
+    starts_on = models.DateField()
+    ends_on = models.DateField(
+        null=True, blank=True, help_text="Only for events that run several days."
+    )
+    time_text = models.CharField(max_length=120, blank=True, help_text="Such as 2 to 4 p.m.")
+    place = models.CharField(max_length=300, blank=True)
+    summary = models.TextField(blank=True, help_text="One or two sentences. One sentence per line.")
+    url = models.URLField(max_length=500, blank=True)
+    host = models.CharField(max_length=200, blank=True, help_text="Who runs the event.")
+    bulletin = models.ForeignKey(
+        FundingBulletin, null=True, blank=True, on_delete=models.SET_NULL, related_name="events"
+    )
+    posted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "funding_events"
+        ordering = ["starts_on", "title"]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(ends_on__isnull=True) | Q(ends_on__gte=models.F("starts_on")),
+                name="funding_events_ends_after_start",
+            )
+        ]
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def last_day(self):
+        return self.ends_on or self.starts_on

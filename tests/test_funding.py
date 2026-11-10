@@ -352,3 +352,49 @@ def test_opportunities_tab_names_who_each_is_picked_for_and_lists_by_member(clie
     assert "Picked for" in html and okafor.full_name in html
     html = unescape(client.get("/manage/funding/?tab=opportunities&view=members").content.decode())
     assert okafor.full_name in html and m.opportunity.name in html and m.why in html
+
+
+# K-State Research Weekly headings and Events and talks (MW 2026-11-10) -------------------------------
+
+
+def test_kstate_updates_load_once_and_sit_under_the_research_weekly_heading(client, center):
+    from apps.outcomes.models import FundingBulletin, FundingEvent
+
+    assert funding.load_updates() == 0  # seed already loaded them; nothing twice
+    b = FundingBulletin.objects.get(name="K-State Research Weekly")
+    assert b.news.exists() and b.events.exists() and b.opportunities.exists()
+    _login(client, "okafor")
+    html = unescape(client.get("/funding/").content.decode())
+    assert "From K-State Research Weekly" in html and "Read the full issue" in html
+    assert "Events and talks" in html
+    assert html.index("From K-State Research Weekly") < html.index("From other sources")
+    past = FundingEvent.objects.create(title="A fictional past talk", starts_on=dt.date(2020, 1, 1))
+    html = client.get("/funding/").content.decode()
+    assert past.title not in html  # past events leave the member page
+
+
+def test_events_and_new_issues_are_added_by_the_cnap_office_only(client, center):
+    from apps.outcomes.models import FundingBulletin, FundingEvent
+
+    data = {
+        "title": "A fictional seminar",
+        "starts_on": "2027-01-20",
+        "time_text": "4 p.m.",
+        "bulletin": "new",
+        "bulletin_name": "K-State Research Weekly",
+        "bulletin_date": "2027-01-13",
+    }
+    _login(client, "okafor")
+    assert client.post("/manage/funding/events/new/do/", data).status_code == 403
+    client.logout()
+    _login(client, "hbailey")
+    assert client.post("/manage/funding/events/new/do/", data).status_code == 403
+    client.logout()
+    _login(client, "mwills")
+    client.post("/manage/funding/events/new/do/", data)
+    e = FundingEvent.objects.get(title="A fictional seminar")
+    assert e.bulletin == FundingBulletin.objects.get(issue_date=dt.date(2027, 1, 13))
+    bad = {**data, "title": "A fictional backward event", "ends_on": "2027-01-01", "bulletin": ""}
+    client.post("/manage/funding/events/new/do/", bad)
+    assert not FundingEvent.objects.filter(title="A fictional backward event").exists()
+    assert client.get("/manage/funding/?tab=events").status_code == 200

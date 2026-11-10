@@ -8,7 +8,7 @@
     {% include "proto/_mast_art.html" %}
     <p class="px-eyebrow">Your funding</p>
     <h1 class="px-title">{% if acting_for_other %}Funding opportunities for {{ owner }}{% else %}Funding opportunities{% endif %}</h1>
-    <p class="p21-purpose">This page lists funding opportunities picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}, opportunities relevant to most members, and funding news.</p>
+    <p class="p21-purpose">This page lists funding opportunities picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}, opportunities relevant to most members, funding news, and research events and talks.</p>
     <ul class="px-facts">
       <li><span class="px-label">Picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}</span><span class="v">{{ picked|length }} opportunit{{ picked|length|pluralize:"y,ies" }}</span></li>
       <li><span class="px-label">Relevant to most members</span><span class="v">{{ everyone|length }} opportunit{{ everyone|length|pluralize:"y,ies" }}</span></li>
@@ -24,6 +24,7 @@
       <li><a href="#s-for" data-onpage title="Go to the section Picked for you.">Picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}</a></li>
       <li><a href="#s-most" data-onpage title="Go to the section Relevant to most members.">Relevant to most members</a></li>
       <li><a href="#s-news" data-onpage title="Go to the section Funding news.">Funding news</a></li>
+      <li><a href="#s-events" data-onpage title="Go to the section Events and talks.">Events and talks</a></li>
       <li><a href="#s-letters" data-onpage title="Go to the section Letters from the Center.">Letters from the Center</a></li>
       <li><a href="#s-suggest" data-onpage title="Go to the section Suggest an opportunity.">Suggest an opportunity</a></li>
     </ol>
@@ -63,8 +64,20 @@
     <details class="px-roll" id="s-news" open>
       <summary title="Funding news the CNAP team posts, with links to each source. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M8 9h8M8 12.5h8M8 16h5"/></svg>Funding news</h2><span class="px-roll-figs"><span><b>{{ news|length }}</b> item{{ news|length|pluralize }}</span>{% if n_pinned %}<span><b>{{ n_pinned }}</b> pinned</span>{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="px-roll-body">
-        {% if news %}<ul class="fv-recs">{% for n in news %}{% include "proto/portal/_funding_news.html" %}{% endfor %}</ul>
-        {% else %}<p class="px-note">No funding news yet.</p>{% endif %}
+        {% if news %}{% with loose=news_groups.0 issues=news_groups.1 %}
+        {% for g in issues %}{% include "proto/portal/_funding_issue_head.html" with b=g.b %}<ul class="fv-recs">{% for n in g.items %}{% include "proto/portal/_funding_news.html" %}{% endfor %}</ul>{% endfor %}
+        {% if loose %}{% if issues %}<div class="fv-issue"><h3 class="px-h3">From other sources</h3></div>{% endif %}<ul class="fv-recs">{% for n in loose %}{% include "proto/portal/_funding_news.html" %}{% endfor %}</ul>{% endif %}
+        {% endwith %}{% else %}<p class="px-note">No funding news yet.</p>{% endif %}
+      </div>
+    </details>
+
+    <details class="px-roll" id="s-events" open>
+      <summary title="Research events and talks coming up at K-State and online. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>Events and talks</h2><span class="px-roll-figs"><span><b>{{ events|length }}</b> coming up</span>{% if events %}<span>Next {{ events.0.starts_on|date:"F j, Y" }}</span>{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        {% if events %}{% with loose=event_groups.0 issues=event_groups.1 %}
+        {% for g in issues %}{% include "proto/portal/_funding_issue_head.html" with b=g.b %}<ul class="fv-recs">{% for e in g.items %}{% include "proto/portal/_funding_event.html" %}{% endfor %}</ul>{% endfor %}
+        {% if loose %}{% if issues %}<div class="fv-issue"><h3 class="px-h3">From other sources</h3></div>{% endif %}<ul class="fv-recs">{% for e in loose %}{% include "proto/portal/_funding_event.html" %}{% endfor %}</ul>{% endif %}
+        {% endwith %}{% else %}<p class="px-note">No events are listed right now.</p>{% endif %}
       </div>
     </details>
 

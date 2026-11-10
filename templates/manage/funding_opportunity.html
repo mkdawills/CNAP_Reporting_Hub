@@ -35,6 +35,7 @@
         <div class="fv-field"><label for="fo-ms">Milestone</label><select id="fo-ms" name="counts_toward_milestone">{% for v, l in milestones %}<option value="{{ v }}"{% if o.counts_toward_milestone == v or not o and v == 'no' %} selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
         <div class="fv-field"><label for="fo-aud">Shown to</label><select id="fo-aud" name="audience">{% for v, l in audiences %}<option value="{{ v }}"{% if o.audience == v or not o and initial.audience == v or not o and not initial.audience and v == 'matched' %} selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
         <label class="fv-choice"><input type="checkbox" name="esi_only" value="1"{% if o.esi_only %} checked{% endif %}> For Early Stage Investigators only</label>
+        {% include "manage/_funding_issue_field.html" with obj=o %}
         <div class="fv-field"><label for="fo-source">Where the facts came from <span class="fv-opt">(optional)</span></label><input id="fo-source" name="source_url" value="{{ o.source_url }}" maxlength="500"></div>
         <div class="fv-field"><label for="fo-checked">Facts last checked <span class="fv-opt">(optional)</span></label><input id="fo-checked" name="checked_on" type="date" value="{{ o.checked_on|date:'Y-m-d' }}"></div>
         {% if suggestion %}<div class="fv-field"><label for="fo-note">Note to {{ suggestion.person.first_name }} <span class="fv-opt">(optional)</span></label><textarea id="fo-note" name="note_to_person" rows="2">Thank you. The opportunity is now listed.</textarea></div>{% endif %}

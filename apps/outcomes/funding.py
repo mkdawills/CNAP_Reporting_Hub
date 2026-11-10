@@ -24,6 +24,8 @@ from apps.common.enums import FundingAudience, FundingMilestone, GrantStatus
 
 from . import nudges
 from .models import (
+    FundingBulletin,
+    FundingEvent,
     FundingFollowUp,
     FundingMatch,
     FundingNewsItem,
@@ -35,6 +37,7 @@ from .models import (
 )
 
 FIXTURE = Path(settings.BASE_DIR) / "fixtures" / "funding" / "opportunities.json"
+UPDATES = Path(settings.BASE_DIR) / "fixtures" / "funding" / "kstate_updates.json"
 
 # MW's seven questions for weighing any funding opportunity (2026-11-10). Seeded once; MW edits them in the Hub.
 QUESTIONS = [
@@ -123,6 +126,74 @@ def load_catalog(stdout=None, path=FIXTURE):
     return made
 
 
+def load_updates(stdout=None, path=UPDATES):
+    """Load the public K-State and NIH items (newsletter issues, news, opportunities, events). Each item is added
+    once, keyed on its newsletter issue, headline, opportunity key, or title and day, and never overwritten."""
+    data = json.loads(Path(path).read_text())
+    issues = {}
+    for b in data.get("bulletins", []):
+        issues[b["key"]], _ = FundingBulletin.objects.get_or_create(
+            name=b["name"], issue_date=b["issue_date"], defaults={"url": b.get("url", "")}
+        )
+    made = 0
+    for n in data.get("news", []):
+        if FundingNewsItem.objects.filter(headline=n["headline"]).exists():
+            continue
+        FundingNewsItem.objects.create(
+            headline=n["headline"],
+            news_date=n.get("news_date"),
+            date_text=n.get("date_text", ""),
+            summary=n["summary"],
+            source_name=n.get("source_name", ""),
+            source_url=n.get("source_url", ""),
+            pinned=bool(n.get("pinned")),
+            bulletin=issues.get(n.get("bulletin")),
+        )
+        made += 1
+    fields = {f.name for f in FundingOpportunity._meta.get_fields()}
+    for o in data.get("opportunities", []):
+        if FundingOpportunity.objects.filter(tracker_id=o["tracker_id"]).exists():
+            continue
+        row = {k: v for k, v in o.items() if k in fields and k != "bulletin" and v is not None}
+        FundingOpportunity.objects.create(bulletin=issues.get(o.get("bulletin")), **row)
+        made += 1
+    for e in data.get("events", []):
+        if FundingEvent.objects.filter(title=e["title"], starts_on=e["starts_on"]).exists():
+            continue
+        FundingEvent.objects.create(
+            title=e["title"],
+            starts_on=e["starts_on"],
+            ends_on=e.get("ends_on"),
+            time_text=e.get("time_text", ""),
+            place=e.get("place", ""),
+            host=e.get("host", ""),
+            summary=e.get("summary", ""),
+            url=e.get("url", ""),
+            bulletin=issues.get(e.get("bulletin")),
+        )
+        made += 1
+    if stdout:
+        stdout.write(f"funding updates: {made} items added")
+    return made
+
+
+def upcoming_events(today=None):
+    today = today or timezone.localdate()
+    qs = FundingEvent.objects.active().select_related("bulletin").order_by("starts_on", "title")
+    return [e for e in qs if e.last_day >= today]
+
+
+def grouped(items):
+    """(items without a newsletter issue, [each issue's items, newest issue first]). The page shows each issue
+    under its heading first, then the rest under From other sources (MW 2026-11-10)."""
+    loose = [x for x in items if not x.bulletin_id]
+    issues = {}
+    for x in items:
+        if x.bulletin_id:
+            issues.setdefault(x.bulletin_id, {"b": x.bulletin, "items": []})["items"].append(x)
+    return loose, sorted(issues.values(), key=lambda g: g["b"].issue_date, reverse=True)
+
+
 def questions():
     return list(FundingQuestion.objects.active())
 
@@ -196,7 +267,11 @@ def next_deadline(rows):
 
 
 def news(limit=None):
-    qs = FundingNewsItem.objects.active().order_by("-pinned", "-news_date", "-created_at")
+    qs = (
+        FundingNewsItem.objects.active()
+        .select_related("bulletin")
+        .order_by("-pinned", "-news_date", "-created_at")
+    )
     return list(qs[:limit] if limit else qs)
 
 

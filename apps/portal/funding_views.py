@@ -39,6 +39,7 @@ def page(request):
     picked = funding.picked_for(owner)
     everyone = funding.for_everyone()
     news = funding.news()
+    events = funding.upcoming_events()
     sugs = list(FundingSuggestion.objects.filter(person=owner).select_related("opportunity"))
     letters = funding.letters_for(owner)
     nxt = funding.next_deadline(picked + everyone)
@@ -57,6 +58,9 @@ def page(request):
             "everyone_next": funding.next_deadline(everyone),
             "next_deadline": nxt,
             "news": news,
+            "news_groups": funding.grouped(news),
+            "events": events,
+            "event_groups": funding.grouped(events),
             "n_pinned": sum(1 for n in news if n.pinned),
             "letters": letters,
             "suggestions": sugs,

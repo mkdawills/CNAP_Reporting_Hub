@@ -318,3 +318,11 @@ a Resources step in the letter composer with tick boxes like the featured option
 and a "Resources from the CNAP team" section on the letter page. MW's choices (2026-11-10): resources appear in both
 places, inside letters and as a section on every member's Funding opportunities page. Build after phase 1, which
 MW approved and merged to main on 2026-11-10. The new table (`funding_resources`) is shown to MW before it is built.
+
+## Research Weekly headings, Events and talks, and the Wednesday task (built 2026-11-10)
+
+See decisions.md 2026-11-10. Resources (still to build) start with MW's search sites: https://www.grants.gov/,
+https://www.nsf.gov/funding/opportunities, https://science.osti.gov/grants/FOAs,
+https://grants.nih.gov/funding/nih-guide-for-grants-and-contracts?scope=pa&year=active,
+https://www.nifa.usda.gov/apply-grant, https://www.k-state.edu/research/faculty/funding/, and
+https://www.k-state.edu/research/faculty/funding/connection/.

@@ -83,10 +83,23 @@
       <span class="fv-name"><a class="px-link" href="{% url 'manage:funding_news_edit' n.pk %}" title="Opens the news item to edit it.">{{ n.headline }}</a></span>
       {% if n.pinned %}<span class="fv-chips"><span class="px-status">Pinned</span></span>{% endif %}
       <span>{{ n.summary|linebreaksbr }}</span>
-      <dl class="fv-kv"><dt>Date</dt><dd>{% if n.date_text %}{{ n.date_text }}{% elif n.news_date %}{{ n.news_date|date:"F j, Y" }}{% else %}Not dated{% endif %}</dd>{% if n.source_url %}<dt>Source</dt><dd><a class="px-link" href="{{ n.source_url }}" target="_blank" rel="noopener">{{ n.source_name|default:"The source" }}</a></dd>{% endif %}</dl>
+      <dl class="fv-kv"><dt>Date</dt><dd>{% if n.date_text %}{{ n.date_text }}{% elif n.news_date %}{{ n.news_date|date:"F j, Y" }}{% else %}Not dated{% endif %}</dd>{% if n.bulletin %}<dt>From</dt><dd>{{ n.bulletin }}</dd>{% endif %}{% if n.source_url %}<dt>Source</dt><dd><a class="px-link" href="{{ n.source_url }}" target="_blank" rel="noopener">{{ n.source_name|default:"The source" }}</a></dd>{% endif %}</dl>
       {% if can_manage %}<form method="post" action="{% url 'manage:funding_news_post' n.pk %}" class="fm-acts">{% csrf_token %}<button class="btn small ghost" type="submit" name="action" value="{% if n.pinned %}unpin{% else %}pin{% endif %}" title="{% if n.pinned %}Stops showing the item first.{% else %}Shows the item first on the page.{% endif %}">{% if n.pinned %}Unpin{% else %}Pin{% endif %}</button><button class="btn small ghost" type="submit" name="action" value="archive" title="Hides the item from members and keeps it for history.">Archive</button></form>{% endif %}
     </li>{% endfor %}</ul>
     {% else %}<p class="px-note">No news yet.</p>{% endif %}
+  </section>
+
+  {% elif tab == 'events' %}
+  <section class="px-section" aria-labelledby="fm-ev">
+    <div class="fm-head"><h2 class="px-h2" id="fm-ev">Events and talks</h2>{% if can_manage %}<a class="btn small ghost" href="{% url 'manage:funding_event_new' %}" title="Opens the form to add an event or talk.">Add an event</a>{% endif %}</div>
+    <p class="px-note">Every signed-in member sees upcoming events on the Funding opportunities page.<br>An event leaves that page after its last day and stays here for history.</p>
+    {% if events %}<ul class="fv-recs">{% for e in events %}<li class="fv-rec">
+      <span class="fv-name"><a class="px-link" href="{% url 'manage:funding_event_edit' e.pk %}" title="Opens the event to edit it.">{{ e.title }}</a></span>
+      {% if e.last_day < today %}<span class="fv-chips"><span class="px-status">Past</span></span>{% endif %}
+      <dl class="fv-kv"><dt>Date</dt><dd>{% if e.ends_on %}{{ e.starts_on|date:"F j" }} to {{ e.ends_on|date:"F j, Y" }}{% else %}{{ e.starts_on|date:"l, F j, Y" }}{% endif %}</dd>{% if e.time_text %}<dt>Time</dt><dd>{{ e.time_text }}</dd>{% endif %}{% if e.place %}<dt>Place</dt><dd>{{ e.place }}</dd>{% endif %}{% if e.bulletin %}<dt>From</dt><dd>{{ e.bulletin }}</dd>{% endif %}</dl>
+      {% if can_manage %}<form method="post" action="{% url 'manage:funding_event_post' e.pk %}" class="fm-acts">{% csrf_token %}<button class="btn small ghost" type="submit" name="action" value="archive" title="Hides the event from members and keeps it for history.">Archive</button></form>{% endif %}
+    </li>{% endfor %}</ul>
+    {% else %}<p class="px-note">No events yet.</p>{% endif %}
   </section>
 
   {% else %}

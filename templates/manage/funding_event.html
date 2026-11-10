@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{% if e %}{{ e.title }}{% else %}Add an event{% endif %} · Funding · {{ platform_name }}{% endblock %}
+{% block content %}
+{# One research event or talk (MW 2026-11-10). #}
+<div class="fv fm">
+  <a class="px-link p21-back" href="{% url 'manage:funding_manage' %}?tab=events" title="Returns to the events.">Back to Events and talks</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Administration · Funding</p>
+    <h1 class="px-title">{% if e %}{{ e.title }}{% else %}Add an event{% endif %}</h1>
+    <p class="p21-purpose">Every signed-in member sees upcoming events on the Funding opportunities page.</p>
+  </header>
+  <form method="post" action="{% if e %}{% url 'manage:funding_event_post' e.pk %}{% else %}{% url 'manage:funding_event_create' %}{% endif %}" class="px-page">{% csrf_token %}
+    <div class="fv-form fm-wide">
+      <div class="fv-field"><label for="ev-title">Title</label><input id="ev-title" name="title" value="{{ e.title }}" maxlength="300" required></div>
+      <div class="fv-field"><label for="ev-start">Date</label><input id="ev-start" name="starts_on" type="date" value="{{ e.starts_on|date:'Y-m-d' }}" required></div>
+      <div class="fv-field"><label for="ev-end">Last day <span class="fv-opt">(optional)</span></label><p class="fv-help">Only for an event that runs several days.</p><input id="ev-end" name="ends_on" type="date" value="{{ e.ends_on|date:'Y-m-d' }}"></div>
+      <div class="fv-field"><label for="ev-time">Time <span class="fv-opt">(optional)</span></label><p class="fv-help">Write it out, such as 2 to 4 p.m.</p><input id="ev-time" name="time_text" value="{{ e.time_text }}" maxlength="120"></div>
+      <div class="fv-field"><label for="ev-place">Place <span class="fv-opt">(optional)</span></label><input id="ev-place" name="place" value="{{ e.place }}" maxlength="300"></div>
+      <div class="fv-field"><label for="ev-host">Host <span class="fv-opt">(optional)</span></label><input id="ev-host" name="host" value="{{ e.host }}" maxlength="200"></div>
+      <div class="fv-field"><label for="ev-sum">About <span class="fv-opt">(optional)</span></label><p class="fv-help">One or two sentences, one per line.</p><textarea id="ev-sum" name="summary" rows="3">{{ e.summary }}</textarea></div>
+      <div class="fv-field"><label for="ev-url">Link to the details <span class="fv-opt">(optional)</span></label><input id="ev-url" name="url" value="{{ e.url }}" maxlength="500"></div>
+      {% include "manage/_funding_issue_field.html" with obj=e %}
+      {% if can_manage %}<div class="fm-acts"><button class="btn small ghost" type="submit" title="Saves the event. Members see it right away.">{% if e %}Save{% else %}Add the event{% endif %}</button></div>{% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

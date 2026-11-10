@@ -1,0 +1,15 @@
+{# Which newsletter issue an item came from (MW 2026-11-10). Items from an issue sit under its heading, such as From K-State Research Weekly. #}
+<fieldset class="fv-field fm-issue"><legend class="fm-legend">From a newsletter issue <span class="fv-opt">(optional)</span></legend>
+  <p class="fv-help">Choose the issue when the item came from a newsletter.<br>Members see it under the heading From {{ bulletin_name }}, with a link to the full issue.</p>
+  <select name="bulletin" id="fm-bulletin" title="The issue the item came from.">
+    <option value="">Not from a newsletter</option>
+    {% for b in bulletins %}<option value="{{ b.pk }}"{% if obj.bulletin_id == b.pk %} selected{% endif %}>{{ b }}</option>{% endfor %}
+    <option value="new">A new issue</option>
+  </select>
+  <div class="fm-newissue">
+    <p class="fv-help">For a new issue, fill in these three.</p>
+    <label class="fv-field"><span>Newsletter name</span><input name="bulletin_name" value="{{ bulletin_name }}" maxlength="200"></label>
+    <label class="fv-field"><span>Issue date</span><input name="bulletin_date" type="date"></label>
+    <label class="fv-field"><span>Link to the issue <span class="fv-opt">(optional)</span></span><input name="bulletin_url" maxlength="500"></label>
+  </div>
+</fieldset>

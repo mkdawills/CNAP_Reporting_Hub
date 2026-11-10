@@ -1,0 +1,11 @@
+{# One research event or talk (MW 2026-11-10). #}
+<li class="fv-rec">
+  <span class="fv-name">{% if e.url %}<a class="px-link" href="{{ e.url }}" target="_blank" rel="noopener" title="Opens the event's details in a new tab.">{{ e.title }}</a>{% else %}{{ e.title }}{% endif %}</span>
+  <dl class="fv-kv">
+    <dt>Date</dt><dd>{% if e.ends_on %}{{ e.starts_on|date:"F j" }} to {{ e.ends_on|date:"F j, Y" }}{% else %}{{ e.starts_on|date:"l, F j, Y" }}{% endif %}</dd>
+    {% if e.time_text %}<dt>Time</dt><dd>{{ e.time_text }}</dd>{% endif %}
+    {% if e.place %}<dt>Place</dt><dd>{{ e.place }}</dd>{% endif %}
+    {% if e.host %}<dt>Host</dt><dd>{{ e.host }}</dd>{% endif %}
+    {% if e.summary %}<dt>About</dt><dd>{{ e.summary|linebreaksbr }}</dd>{% endif %}
+  </dl>
+</li>

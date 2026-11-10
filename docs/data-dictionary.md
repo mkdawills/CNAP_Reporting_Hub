@@ -1261,6 +1261,21 @@ MW's questions for weighing any funding opportunity. Reference data she can edit
 | title | CharField | no |  |
 | text | TextField | no | One sentence per line. |
 
+### `funding_bulletins` — FundingBulletin
+
+One issue of a newsletter the CNAP office draws items from, such as K-State Research Weekly (MW 2026-11-10). Items from an issue sit under its heading on the funding page.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| name | CharField | no | Such as K-State Research Weekly. |
+| issue_date | DateField | no |  |
+| url | CharField | no | The issue's web version. |
+
+Constraints: `funding_bulletins_one_per_issue`
+
 ### `funding_opportunities` — FundingOpportunity
 
 One funding opportunity in the catalog: public facts, with a source link and the day they were checked.
@@ -1287,6 +1302,7 @@ One funding opportunity in the catalog: public facts, with a source link and the
 | checked_on | DateField | yes |  |
 | source_url | CharField | no |  |
 | tracker_id | CharField | no |  |
+| bulletin_id | FK → funding_bulletins | yes |  |
 | suggested_by_id | FK → people | yes |  |
 | created_by_id | FK → users | yes |  |
 
@@ -1348,6 +1364,7 @@ A funding news item MW posts: a summary in her own words with the source link.
 | summary | TextField | no | Two or three sentences in your own words. One sentence per line. |
 | source_name | CharField | no |  |
 | source_url | CharField | no |  |
+| bulletin_id | FK → funding_bulletins | yes |  |
 | pinned | BooleanField | no |  |
 | posted_by_id | FK → users | yes |  |
 
@@ -1375,6 +1392,29 @@ One per proposal marked Not funded: the letter MW reviews, edits, and sends hers
 | opportunities | FK → funding_opportunities | no |  |
 
 Constraints: `funding_followups_status_valid`
+
+### `funding_events` — FundingEvent
+
+A research event or talk on the funding page (MW 2026-11-10): office hours, information sessions, seminars, symposia. Shown until its last day passes.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| archived_at | DateTimeField | yes |  |
+| title | CharField | no |  |
+| starts_on | DateField | no |  |
+| ends_on | DateField | yes | Only for events that run several days. |
+| time_text | CharField | no | Such as 2 to 4 p.m. |
+| place | CharField | no |  |
+| summary | TextField | no | One or two sentences. One sentence per line. |
+| url | CharField | no |  |
+| host | CharField | no | Who runs the event. |
+| bulletin_id | FK → funding_bulletins | yes |  |
+| posted_by_id | FK → users | yes |  |
+
+Constraints: `funding_events_ends_after_start`
 
 ## Audit log (`audit`)
 

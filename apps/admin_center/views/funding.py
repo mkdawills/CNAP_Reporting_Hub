@@ -16,6 +16,8 @@ from apps.audit.models import AuditLog, record_event
 from apps.common.enums import FundingAudience, FundingMilestone, FundingSourceKind
 from apps.outcomes import funding
 from apps.outcomes.models import (
+    FundingBulletin,
+    FundingEvent,
     FundingFollowUp,
     FundingMatch,
     FundingNewsItem,
@@ -32,6 +34,7 @@ TABS = [
     ("opportunities", "Opportunities and matches"),
     ("suggestions", "Suggestions"),
     ("news", "News"),
+    ("events", "Events and talks"),
     ("questions", "Questions"),
 ]
 
@@ -45,6 +48,36 @@ def _date(value):
         return date.fromisoformat((value or "").strip()) if value else None
     except ValueError:
         return None
+
+
+BULLETIN_NAME = "K-State Research Weekly"
+
+
+def _bulletin(request):
+    """The newsletter issue an item came from: an existing issue, a new one, or none (MW 2026-11-10)."""
+    pick = request.POST.get("bulletin", "")
+    if pick.isdigit():
+        return FundingBulletin.objects.filter(pk=pick).first()
+    if pick == "new":
+        day = _date(request.POST.get("bulletin_date"))
+        if not day:
+            return None
+        name = request.POST.get("bulletin_name", "").strip()[:200] or BULLETIN_NAME
+        url = request.POST.get("bulletin_url", "").strip()[:500]
+        if url and not url.startswith(("http://", "https://")):
+            url = "https://" + url
+        b, _ = FundingBulletin.objects.get_or_create(
+            name=name, issue_date=day, defaults={"url": url}
+        )
+        if url and not b.url:
+            b.url = url
+            b.save(update_fields=["url", "updated_at"])
+        return b
+    return None
+
+
+def _bulletins():
+    return FundingBulletin.objects.order_by("-issue_date")[:20]
 
 
 @admin_view
@@ -106,7 +139,13 @@ def home(request):
             "suggestions": FundingSuggestion.objects.select_related(
                 "person", "opportunity"
             ).order_by("status", "-created_at"),
-            "news": FundingNewsItem.objects.active().order_by("-pinned", "-news_date"),
+            "news": FundingNewsItem.objects.active()
+            .select_related("bulletin")
+            .order_by("-pinned", "-news_date"),
+            "events": FundingEvent.objects.active()
+            .select_related("bulletin")
+            .order_by("starts_on"),
+            "today": today,
             "questions": FundingQuestion.objects.active(),
             "counts": c,
             "can_manage": access.can_manage(request.user),
@@ -273,6 +312,8 @@ def opportunity(request, pk=None):
             .order_by("last_name", "first_name"),
             "can_manage": access.can_manage(request.user),
             "stale": funding.stale(o) if o else False,
+            "bulletins": _bulletins(),
+            "bulletin_name": BULLETIN_NAME,
         },
     )
 
@@ -337,6 +378,7 @@ def opportunity_post(request, pk=None):
         esi_only=bool(request.POST.get("esi_only")),
         deadline=_date(request.POST.get("deadline")),
         checked_on=_date(request.POST.get("checked_on")),
+        bulletin=_bulletin(request),
     )
     if o:
         old = {k: getattr(o, k) for k in data}
@@ -422,7 +464,14 @@ def suggestion_post(request, pk):
 def news_edit(request, pk=None):
     n = get_object_or_404(FundingNewsItem, pk=pk) if pk else None
     return render(
-        request, "manage/funding_news.html", {"n": n, "can_manage": access.can_manage(request.user)}
+        request,
+        "manage/funding_news.html",
+        {
+            "n": n,
+            "can_manage": access.can_manage(request.user),
+            "bulletins": _bulletins(),
+            "bulletin_name": BULLETIN_NAME,
+        },
     )
 
 
@@ -450,6 +499,7 @@ def news_post(request, pk=None):
         "source_name": request.POST.get("source_name", "").strip()[:200],
         "source_url": request.POST.get("source_url", "").strip()[:500],
         "pinned": bool(request.POST.get("pinned")),
+        "bulletin": _bulletin(request),
     }
     if not data["headline"] or not data["summary"]:
         messages.error(request, "Write the headline and the summary, then select Save again.")
@@ -467,6 +517,71 @@ def news_post(request, pk=None):
         record_event(request.user, AuditLog.Action.CREATE, n, new={"headline": n.headline})
         messages.success(request, "Added.")
     return redirect(_tab_url("news"))
+
+
+# --------------------------------------------------------------------------- events and talks
+
+
+@admin_view
+def event_edit(request, pk=None):
+    e = get_object_or_404(FundingEvent, pk=pk) if pk else None
+    return render(
+        request,
+        "manage/funding_event.html",
+        {
+            "e": e,
+            "can_manage": access.can_manage(request.user),
+            "bulletins": _bulletins(),
+            "bulletin_name": BULLETIN_NAME,
+        },
+    )
+
+
+@manage_action
+def event_post(request, pk=None):
+    e = get_object_or_404(FundingEvent, pk=pk) if pk else None
+    if e and request.POST.get("action") == "archive":
+        e.archived_at = timezone.now()
+        e.save(update_fields=["archived_at", "updated_at"])
+        record_event(request.user, AuditLog.Action.UPDATE, e, new={"archived": True})
+        messages.success(request, "Archived.")
+        return redirect(_tab_url("events"))
+    starts, ends = _date(request.POST.get("starts_on")), _date(request.POST.get("ends_on"))
+    title = request.POST.get("title", "").strip()[:300]
+    if not title or not starts:
+        messages.error(request, "Write the title and pick the date, then select Save again.")
+        return redirect(request.META.get("HTTP_REFERER") or reverse("manage:funding_event_new"))
+    if ends and ends < starts:
+        messages.error(
+            request,
+            "The last day comes before the first day. Fix the dates, then select Save again.",
+        )
+        return redirect(request.META.get("HTTP_REFERER") or reverse("manage:funding_event_new"))
+    url = request.POST.get("url", "").strip()[:500]
+    if url and not url.startswith(("http://", "https://")):
+        url = "https://" + url
+    data = {
+        "title": title,
+        "starts_on": starts,
+        "ends_on": ends if ends and ends != starts else None,
+        "time_text": request.POST.get("time_text", "").strip()[:120],
+        "place": request.POST.get("place", "").strip()[:300],
+        "host": request.POST.get("host", "").strip()[:200],
+        "summary": request.POST.get("summary", "").strip(),
+        "url": url,
+        "bulletin": _bulletin(request),
+    }
+    if e:
+        for k, v in data.items():
+            setattr(e, k, v)
+        e.save()
+        record_event(request.user, AuditLog.Action.UPDATE, e, new={"title": e.title})
+        messages.success(request, "Saved.")
+    else:
+        e = FundingEvent.objects.create(posted_by=request.user, **data)
+        record_event(request.user, AuditLog.Action.CREATE, e, new={"title": e.title})
+        messages.success(request, "Added.")
+    return redirect(_tab_url("events"))
 
 
 # --------------------------------------------------------------------------- the seven questions

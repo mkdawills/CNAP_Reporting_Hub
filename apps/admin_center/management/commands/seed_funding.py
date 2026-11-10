@@ -20,6 +20,7 @@ class Command(BaseCommand):
 
         funding.load_questions(self.stdout)
         funding.load_catalog(self.stdout)
+        funding.load_updates(self.stdout)
         if options["fictional"]:
             from apps.accounts.models import User
             from apps.admin_center.demo import PEOPLE, _seed_funding

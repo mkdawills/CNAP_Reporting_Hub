@@ -6,6 +6,7 @@
     <dt>Deadline</dt><dd>{{ r.when }}</dd>
     <dt>Amount</dt><dd>{{ r.o.amount_text|default:"See the announcement" }}</dd>
     {% if r.o.sponsor %}<dt>Sponsor</dt><dd>{{ r.o.sponsor }}</dd>{% endif %}
+    {% if r.o.bulletin %}<dt>From</dt><dd>{% if r.o.bulletin.url %}<a class="px-link" href="{{ r.o.bulletin.url }}" target="_blank" rel="noopener" title="Opens the full issue in a new tab.">{{ r.o.bulletin }}</a>{% else %}{{ r.o.bulletin }}{% endif %}</dd>{% endif %}
     {% if mode == 'picked' %}{% if r.why %}<dt>Why this fits</dt><dd>{{ r.why|linebreaksbr }}</dd>{% endif %}
     <dt>Next step</dt><dd><a class="px-link" href="#s-before" data-onpage title="Opens the seven questions in Before you apply.">Weigh the opportunity with the seven questions</a></dd>
     {% elif mode == 'letter' %}{% if r.why %}<dt>Why this fits</dt><dd>{{ r.why|linebreaksbr }}</dd>{% endif %}<dt>Details</dt><dd>{{ r.o.fuller_text|default:r.o.summary|linebreaksbr }}</dd>
