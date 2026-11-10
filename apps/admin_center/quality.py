@@ -22,7 +22,11 @@ CHECKS = [
         "Projects with no leader",
         "No progress report or Mentee Survey goes out for them.",
     ),
-    ("project_no_mentor", "Projects with no mentor", "No mentor report goes out for these projects."),
+    (
+        "project_no_mentor",
+        "Projects with no mentor",
+        "No mentor report goes out for these projects.",
+    ),
     (
         "ended_but_open",
         "Forms still open for people who have left the role",
@@ -131,7 +135,9 @@ def run():
     from apps.common.enums import PublicationStatus
     from apps.outcomes.models import Publication
 
-    published = Publication.objects.filter(archived_at__isnull=True, status=PublicationStatus.PUBLISHED)
+    published = Publication.objects.filter(
+        archived_at__isnull=True, status=PublicationStatus.PUBLISHED
+    )
     from apps.outcomes.services import rrid_missing_ids
 
     missing = published.filter(pk__in=rrid_missing_ids())
@@ -159,7 +165,9 @@ def run():
     result = []
     for code, title, note in CHECKS:
         rows = [r for r in out[code] if (code, r[0], r[1]) not in dismissed]
-        result.append({"code": code, "title": title, "note": note, "rows": rows, "why": WHY.get(code, note)})
+        result.append(
+            {"code": code, "title": title, "note": note, "rows": rows, "why": WHY.get(code, note)}
+        )
     return result
 
 

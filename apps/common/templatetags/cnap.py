@@ -41,26 +41,98 @@ def _put_terms(text, held):
 
 _FIELD_GROUPS = {
     "Progress": ("status", "resubmission_of", "substatus"),
-    "The funder": ("funding_source_type", "funding_source", "federal_agency", "federal_agency_other", "funding_agency", "opportunity_url", "mechanism"),
-    "Dates": ("anticipated_submission_date", "anticipated_day", "submission_date", "anticipated_submission_month",
-              "anticipated_publication_date", "publication_date", "award_notice_date", "project_start_date",
-              "project_end_date", "decision_date", "decline_date", "presented_on"),
-    "The proposal": ("project_title", "pi", "role", "role_other", "cayuse_ipf", "grant_number", "prime_or_subaward"),
-    "Budget": ("anticipated_total", "planned_estimated_direct", "requested_total", "requested_direct", "requested_indirect",
-               "award_total", "award_direct", "award_indirect", "cnap_portion"),
+    "The funder": (
+        "funding_source_type",
+        "funding_source",
+        "federal_agency",
+        "federal_agency_other",
+        "funding_agency",
+        "opportunity_url",
+        "mechanism",
+    ),
+    "Dates": (
+        "anticipated_submission_date",
+        "anticipated_day",
+        "submission_date",
+        "anticipated_submission_month",
+        "anticipated_publication_date",
+        "publication_date",
+        "award_notice_date",
+        "project_start_date",
+        "project_end_date",
+        "decision_date",
+        "decline_date",
+        "presented_on",
+    ),
+    "The proposal": (
+        "project_title",
+        "pi",
+        "role",
+        "role_other",
+        "cayuse_ipf",
+        "grant_number",
+        "prime_or_subaward",
+    ),
+    "Budget": (
+        "anticipated_total",
+        "planned_estimated_direct",
+        "requested_total",
+        "requested_direct",
+        "requested_indirect",
+        "award_total",
+        "award_direct",
+        "award_indirect",
+        "cnap_portion",
+    ),
     "Credit to CNAP": ("resources", "resources_other_text", "projects"),
-    "Acknowledging CNAP": ("cnap_cited_tri", "cnap_index_tri", "ack_tri", "cnap_cited", "cnap_acknowledged", "cnap_credited_in_publications", "cnap_in_grant_index"),
-    "Foreign components": ("has_foreign_authors", "foreign_component_approved", "has_non_idea_coauthors", "has_foreign_component"),
-    "Outcome and next steps": ("decision_comments", "discussed_with_program_officer", "program_officer_name", "discussion_date",
-                      "feedback_shared_with_cnap", "plans_to_resubmit", "comments", "resubmission_intent"),
+    "Acknowledging CNAP": (
+        "cnap_cited_tri",
+        "cnap_index_tri",
+        "ack_tri",
+        "cnap_cited",
+        "cnap_acknowledged",
+        "cnap_credited_in_publications",
+        "cnap_in_grant_index",
+    ),
+    "Foreign components": (
+        "has_foreign_authors",
+        "foreign_component_approved",
+        "has_non_idea_coauthors",
+        "has_foreign_component",
+    ),
+    "Outcome and next steps": (
+        "decision_comments",
+        "discussed_with_program_officer",
+        "program_officer_name",
+        "discussion_date",
+        "feedback_shared_with_cnap",
+        "plans_to_resubmit",
+        "comments",
+        "resubmission_intent",
+    ),
 }
-_ITEM_FIELDS = ("title", "journal", "pubmed_url", "author_display_text", "publication_type", "publication_type_other",
-                "presentation_type", "presentation_type_other",
-                "event", "venue", "city", "state_region", "country")
+_ITEM_FIELDS = (
+    "title",
+    "journal",
+    "pubmed_url",
+    "author_display_text",
+    "publication_type",
+    "publication_type_other",
+    "presentation_type",
+    "presentation_type_other",
+    "event",
+    "venue",
+    "city",
+    "state_region",
+    "country",
+)
 
 
-_OTHER_OF = {"publication_type_other": "publication_type", "presentation_type_other": "presentation_type",
-             "role_other": "role"}
+_OTHER_OF = {
+    "publication_type_other": "publication_type",
+    "presentation_type_other": "presentation_type",
+    "role_other": "role",
+}
 
 
 @register.filter
@@ -94,7 +166,9 @@ def at(seq, i):
 @register.filter
 def sum_key(rows, key):
     """Add up one number across a list of dicts, e.g. opt-outs across the per-form rows already shown."""
-    return sum(int((r.get(key) if isinstance(r, dict) else getattr(r, key, 0)) or 0) for r in rows or [])
+    return sum(
+        int((r.get(key) if isinstance(r, dict) else getattr(r, key, 0)) or 0) for r in rows or []
+    )
 
 
 @register.filter
@@ -117,18 +191,13 @@ def minus(a, b):
 
 
 @register.filter
-def pct(n, total):
-    """n as a whole-number percent of total (0 when total is 0)."""
-    try:
-        return round(100 * int(n) / int(total)) if int(total) else 0
-    except (TypeError, ValueError):
-        return 0
-
-
-@register.filter
 def status_count(rows, status):
     """How many task rows have this assignment status (prototype: submitted vs opted out)."""
-    return sum(1 for r in rows or [] if getattr(r.get("a") if isinstance(r, dict) else None, "status", None) == status)
+    return sum(
+        1
+        for r in rows or []
+        if getattr(r.get("a") if isinstance(r, dict) else None, "status", None) == status
+    )
 
 
 @register.filter
@@ -166,7 +235,9 @@ def reveal(value):
     parts = _SPLIT.sub("\\1\x00", text).split("\x00")
     return mark_safe(
         "".join(
-            f'<span class="rl" style="--i:{i}">{_put_terms(p, held)}</span>' for i, p in enumerate(parts) if p.strip()
+            f'<span class="rl" style="--i:{i}">{_put_terms(p, held)}</span>'
+            for i, p in enumerate(parts)
+            if p.strip()
         )
     )
 
@@ -219,11 +290,22 @@ def guidance(value):
                 out.append(f'<ul class="guide">{items}</ul>')
                 bullets.clear()
             more = "".join(
-                format_html('<li><a href="{}" target="_blank" rel="noopener">{} (opens in a new tab)</a></li>', u, t)
+                format_html(
+                    '<li><a href="{}" target="_blank" rel="noopener">{} (opens in a new tab)</a></li>',
+                    u,
+                    t,
+                )
                 for t, u in CARD_LINKS.get(label.strip().replace("’", "'"), [])
             )
             more = f'<ul class="gcard-links">{more}</ul>' if more else ""
-            cards.append(format_html('<div class="gcard"><p class="gcard-h">{}</p><p>{}</p>{}</div>', label.strip(), stack(body.strip()), mark_safe(more)))
+            cards.append(
+                format_html(
+                    '<div class="gcard"><p class="gcard-h">{}</p><p>{}</p>{}</div>',
+                    label.strip(),
+                    stack(body.strip()),
+                    mark_safe(more),
+                )
+            )
             continue
         if line.startswith("- "):
             bullets.append(line[2:])
@@ -265,6 +347,8 @@ def status_chip(status, respondent=False):
 
 @register.filter
 def pct(part, whole):
+    """part as a whole-number percent of whole (0 when whole is 0). The only pct filter (an older int-only
+    copy above was never in effect, because this later definition replaced it)."""
     try:
         return round(100 * float(part) / float(whole)) if float(whole) else 0
     except (TypeError, ValueError, ZeroDivisionError):
@@ -351,7 +435,9 @@ def core_rrids():
 def title_break(value):
     """Form titles on two lines (MW 2026-11-02): after a colon, or before "User Survey"."""
     text = str(conditional_escape(value or ""))
-    if ": " in text:  # "NIH Documents: Biosketch, …": what follows the colon goes on the second line
+    if (
+        ": " in text
+    ):  # "NIH Documents: Biosketch, …": what follows the colon goes on the second line
         head, tail = text.split(": ", 1)
         return mark_safe(f"{head}:<br>{tail}")
     for tail in (" Facility User Survey", " User Survey"):
@@ -393,7 +479,9 @@ def coverage(p):
     from apps.reporting.models import ReportingPeriod
 
     prev = (
-        ReportingPeriod.objects.filter(display_order__lt=p.display_order).order_by("-display_order").first()
+        ReportingPeriod.objects.filter(display_order__lt=p.display_order)
+        .order_by("-display_order")
+        .first()
         if getattr(p, "display_order", None) is not None
         else None
     )
@@ -446,7 +534,12 @@ def nih_ack(kind="publication"):
         "The content is solely the responsibility of the authors and does not necessarily represent the "
         "official views of the National Institutes of Health."
     )
-    return {"support": support, "level": level, "disclaimer": disclaimer, "all": f"{support} {level} {disclaimer}"}
+    return {
+        "support": support,
+        "level": level,
+        "disclaimer": disclaimer,
+        "all": f"{support} {level} {disclaimer}",
+    }
 
 
 @register.simple_tag
@@ -536,7 +629,7 @@ def soft_lower(value):
 
 @register.filter
 def duration(minutes):
-    """"About 45 minutes", "About 1 hour", "About 1 hour 15 minutes" (MW 2026-11-07)."""
+    """ "About 45 minutes", "About 1 hour", "About 1 hour 15 minutes" (MW 2026-11-07)."""
     try:
         m = int(minutes)
     except (TypeError, ValueError):

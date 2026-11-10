@@ -30,7 +30,10 @@ class ProjectChoiceField(forms.ModelMultipleChoiceField):
                 -(r.effective_from.toordinal() if r.effective_from else 0),
             )
         )
-        parts = [f"{p.title} ({p.get_kind_display()})" + (" (your project)" if p.pk in getattr(self, "own", ()) else "")]
+        parts = [
+            f"{p.title} ({p.get_kind_display()})"
+            + (" (your project)" if p.pk in getattr(self, "own", ()) else "")
+        ]
         if leads:
             parts.append(f"PI: {leads[0].person.first_name} {leads[0].person.last_name}")
         if p.start_date:

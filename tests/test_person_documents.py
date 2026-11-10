@@ -26,7 +26,11 @@ def test_admin_adds_and_person_sees(client, center):
     p = Person.objects.get(user__username="okafor")
     r = client.post(
         f"/manage/people/{p.pk}/documents/add/",
-        {"title": "Statement of Work, Year 10", "excerpt": "Deliver one presentation that cites CNAP support.", "file": _pdf()},
+        {
+            "title": "Statement of Work, Year 10",
+            "excerpt": "Deliver one presentation that cites CNAP support.",
+            "file": _pdf(),
+        },
         follow=True,
     )
     assert r.status_code == 200

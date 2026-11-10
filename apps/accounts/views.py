@@ -107,7 +107,9 @@ def link_code(request):
         if signin.check_code(person, request.POST.get("code", "")):
             request.session["code_verified"] = True
             return redirect(nxt)
-        error = "That code didn’t match, or it has expired. Check the newest email, or send a new code."
+        error = (
+            "That code didn’t match, or it has expired. Check the newest email, or send a new code."
+        )
     elif not request.session.get("code_sent"):
         signin.send_code(person, request.session.get("link_email"))
         request.session["code_sent"] = True

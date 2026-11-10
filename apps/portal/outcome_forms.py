@@ -3,7 +3,6 @@
 from django import forms
 
 from apps.common.enums import (
-    FundingSourceType,
     GrantRole,
     PresentationType,
     PrimeOrSubaward,
@@ -67,7 +66,10 @@ class _PlannedDay:
 
 def planned_day():
     return forms.IntegerField(
-        label="Day (optional)", min_value=1, max_value=31, required=False,
+        label="Day (optional)",
+        min_value=1,
+        max_value=31,
+        required=False,
         widget=forms.NumberInput(attrs={"style": "max-width:6em", "inputmode": "numeric"}),
         help_text="Add the day if you know it.",
     )
@@ -92,7 +94,9 @@ class _Resources(forms.Form):
         super().__init__(*a, **kw)
         if self.anticipated:
             self.fields["resources"].label = "Center resources you anticipate using"
-            self.fields["projects"].label = "Which CNAP projects will this draw on? (choose any that apply)"
+            self.fields[
+                "projects"
+            ].label = "Which CNAP projects will this draw on? (choose any that apply)"
         # the person's own CNAP project is marked "(your project)" (MW 2026-11-03)
         self.fields["projects"].own = {p.pk for p in own_projects}
 
@@ -109,7 +113,10 @@ class _Resources(forms.Form):
         kinds |= {"pilot"} if "pilot_project" in codes else set()
         prj = [p for p in (data.get("projects") or []) if p.kind in kinds]
         data["projects"] = prj
-        for code, kind, what in (("research_project", "primary", "research"), ("pilot_project", "pilot", "pilot")):
+        for code, kind, what in (
+            ("research_project", "primary", "research"),
+            ("pilot_project", "pilot", "pilot"),
+        ):
             if code in codes and not any(p.kind == kind for p in prj):
                 self.add_error("projects", f"Choose which {what} project or projects.")
         return data
@@ -130,8 +137,20 @@ class PubPlanned(_PlannedDay, _Resources):
     publication_type = forms.ChoiceField(
         choices=PublicationType.choices, initial="journal_article", label="Type"
     )
-    publication_type_other = forms.CharField(label="Describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: data descriptor.")
-    field_order = ["title", "journal", "anticipated_submission_month", "anticipated_day", "publication_type", "publication_type_other"]
+    publication_type_other = forms.CharField(
+        label="Describe",
+        max_length=200,
+        required=False,
+        help_text="Shown when you choose Other. For example: data descriptor.",
+    )
+    field_order = [
+        "title",
+        "journal",
+        "anticipated_submission_month",
+        "anticipated_day",
+        "publication_type",
+        "publication_type_other",
+    ]
 
     def clean(self):
         return self._combine_day(super().clean())
@@ -173,7 +192,9 @@ class PubPublished(_Resources):
         required=False,
     )
     publication_date = forms.DateField(label="Publication date", widget=DATE, required=False)
-    cnap_cited = yn("Did your journal article acknowledge CNAP in alignment with the Stevens Amendment?")
+    cnap_cited = yn(
+        "Did your journal article acknowledge CNAP in alignment with the Stevens Amendment?"
+    )
     cnap_cited.help_text = "The “How to acknowledge CNAP” box at the top of this page explains the Stevens Amendment and gives the wording. If your article did not acknowledge CNAP, continue to report it. However, be very careful that you select No. We will reach out to determine if this can be remedied retrospectively."
     cnap_in_grant_index = yn("Did you list CNAP in the grant index portion of your PubMed entry?")
     cnap_in_grant_index.help_text = "PubMed lists a paper’s grants in its Grant support section. Choose Yes if P20GM113109 appears there."
@@ -380,7 +401,12 @@ class GrantPlanned(_Funding, _PlannedDay, _Resources):
         initial=GrantRole.PI,
         help_text="Give your role on this proposal, for example Principal Investigator (PI) or Co-Investigator.",
     )
-    role_other = forms.CharField(label="Describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
+    role_other = forms.CharField(
+        label="Describe",
+        max_length=200,
+        required=False,
+        help_text="Shown when you choose Other. For example: Senior Personnel.",
+    )
     anticipated_total = money("Anticipated total budget (optional)")
     planned_estimated_direct = money("Estimated direct costs (optional, preliminary)")
     field_order = [
@@ -427,7 +453,12 @@ class GrantSubmitted(_Funding, _Resources):
         help_text="Give the title of the proposal you submitted, not your CNAP project’s title.",
     )
     role = forms.ChoiceField(label="Your role", choices=GrantRole.choices)
-    role_other = forms.CharField(label="Describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: Senior Personnel.")
+    role_other = forms.CharField(
+        label="Describe",
+        max_length=200,
+        required=False,
+        help_text="Shown when you choose Other. For example: Senior Personnel.",
+    )
     requested_total = money("Total requested budget", required=True)
     requested_direct = money("Estimated direct costs (optional)")
     requested_indirect = money("Estimated indirect costs (optional)")
@@ -533,7 +564,9 @@ class GrantNotFunded(forms.Form):
         help_text="If you like, share your own first thoughts about the decision here. Don’t paste your reviewer comments here. Reviewer comments go to the Center Director by email.",
     )
     discussed_with_program_officer = yn("Was this submission discussed with a Program Officer?")
-    feedback_shared_with_cnap = yn("Have you emailed your reviewer feedback to the Center Director?")
+    feedback_shared_with_cnap = yn(
+        "Have you emailed your reviewer feedback to the Center Director?"
+    )
     feedback_shared_with_cnap.help_text = (
         "The dropdown at the top of this page explains what happens with your feedback. "
         "If you haven’t sent it yet, please choose No, and please email it when you can."
@@ -550,7 +583,9 @@ class PresentationForm(_Resources):
     venue = forms.CharField(label="University or venue", max_length=300, required=False)
     city = forms.CharField(label="City", max_length=120, required=False)
     state_region = forms.CharField(label="State or province", max_length=120, required=False)
-    country = forms.CharField(label="Country", max_length=120, required=False, initial="United States")
+    country = forms.CharField(
+        label="Country", max_length=120, required=False, initial="United States"
+    )
     presented_on = forms.DateField(
         label="Date presented",
         widget=DATE,
@@ -562,9 +597,16 @@ class PresentationForm(_Resources):
         widget=forms.Textarea(attrs={"rows": 2}),
         required=False,
     )
-    cnap_cited = yn("Did your presentation acknowledge CNAP in alignment with the Stevens Amendment?")
+    cnap_cited = yn(
+        "Did your presentation acknowledge CNAP in alignment with the Stevens Amendment?"
+    )
     cnap_cited.help_text = "The “How to acknowledge CNAP” box at the top of this page explains the Stevens Amendment and gives the wording. If your presentation did not acknowledge CNAP, continue to report it. However, be very careful that you select No. We will reach out to determine if this can be remedied retrospectively."
-    presentation_type_other = forms.CharField(label="Describe", max_length=200, required=False, help_text="Shown when you choose Other. For example: panel discussion.")
+    presentation_type_other = forms.CharField(
+        label="Describe",
+        max_length=200,
+        required=False,
+        help_text="Shown when you choose Other. For example: panel discussion.",
+    )
     field_order = [
         "presentation_type",
         "presentation_type_other",

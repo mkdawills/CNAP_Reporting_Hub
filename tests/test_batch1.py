@@ -25,7 +25,9 @@ def demo(db):
 
 def _names(html):
     m = re.search(r'<form[^>]*id="runner".*?</form>', html, re.S)
-    return sorted(set(re.findall(r'name="([^"]+)"', m.group(0) if m else "")) - {"csrfmiddlewaretoken"})
+    return sorted(
+        set(re.findall(r'name="([^"]+)"', m.group(0) if m else "")) - {"csrfmiddlewaretoken"}
+    )
 
 
 def _view(client, mode):
@@ -42,9 +44,14 @@ def test_off_by_default_sign_in_is_unchanged(client, demo):
 
 @override_settings(UI_PROTOTYPE=True)
 def test_sign_in_pages_keep_their_fields(client, demo):
-    for url, fields in (("/accounts/login/", {"username", "password", "next"}), ("/accounts/link/", {"email"})):
+    for url, fields in (
+        ("/accounts/login/", {"username", "password", "next"}),
+        ("/accounts/link/", {"email"}),
+    ):
         _view(client, "before")
-        before = set(re.findall(r'name="([^"]+)"', client.get(url).content.decode())) - {"csrfmiddlewaretoken"}
+        before = set(re.findall(r'name="([^"]+)"', client.get(url).content.decode())) - {
+            "csrfmiddlewaretoken"
+        }
         _view(client, "after")
         r = client.get(url)
         after = set(re.findall(r'name="([^"]+)"', r.content.decode())) - {"csrfmiddlewaretoken"}
@@ -63,7 +70,9 @@ def test_every_form_keeps_every_field_for_every_person(client, demo):
         if not user:
             continue
         client.force_login(user)
-        for a in Assignment.objects.filter(person=user.person, reporting_period=demo).exclude(status="exempt"):
+        for a in Assignment.objects.filter(person=user.person, reporting_period=demo).exclude(
+            status="exempt"
+        ):
             _view(client, "before")
             r1 = client.get(f"/tasks/{a.pk}/")
             if r1.status_code != 200:
@@ -71,7 +80,9 @@ def test_every_form_keeps_every_field_for_every_person(client, demo):
             _view(client, "after")
             r2 = client.get(f"/tasks/{a.pk}/")
             before, after = r1.content.decode(), r2.content.decode()
-            assert "proto/progress_form.html" in {t.name for t in r2.templates if t.name}, a.form_definition.code
+            assert "proto/progress_form.html" in {t.name for t in r2.templates if t.name}, (
+                a.form_definition.code
+            )
             assert _names(before) == _names(after), a.form_definition.code
             if 'value="submit"' in before:
                 assert 'value="submit"' in after and 'value="save"' in after
@@ -84,7 +95,9 @@ def test_every_form_keeps_every_field_for_every_person(client, demo):
 def test_preview_uses_the_new_design_and_saves_nothing(client, demo):
     okafor = User.objects.get(username="okafor")
     client.force_login(okafor)
-    a = Assignment.objects.filter(person=okafor.person, reporting_period=demo, status="not_started").first()
+    a = Assignment.objects.filter(
+        person=okafor.person, reporting_period=demo, status="not_started"
+    ).first()
     r = client.get(f"/tasks/{a.pk}/preview/")
     html = r.content.decode()
     assert "proto/progress_form.html" in {t.name for t in r.templates if t.name}

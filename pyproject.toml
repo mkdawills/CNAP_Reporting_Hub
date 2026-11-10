@@ -21,8 +21,13 @@ dev = [
     "pytest==8.4.2",
     "pytest-django==4.11.1",
     "factory-boy==3.3.3",
-    "ruff==0.14.2",
+    "ruff==0.16.9",
 ]
+
+# The Hub is a Django project, not a library: nothing to package. An editable install only pulls in the
+# dependencies (CI runs pip install -e ".[dev]").
+[tool.setuptools]
+packages = []
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
@@ -41,4 +46,11 @@ select = ["E", "F", "I", "B", "UP", "DJ"]
 # DJ001: nullable CharFields are deliberate where NULL carries meaning for a
 # composite foreign key or a CHECK (project_kind, scale_kind, substatus, from_status).
 # DJ008: join tables need no __str__.
-ignore = ["E501", "DJ001", "DJ008"]
+# B905: zip() without strict= keeps today's behavior (stops at the shorter list); strict= could raise mid-page.
+# B023: each closure is called inside the same loop iteration that defines it, so it sees the right value.
+# E731: short lambdas assigned to a name are kept as written.
+ignore = ["E501", "DJ001", "DJ008", "B905", "B023", "E731"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests import a pytest fixture and then take it as a parameter (F811), and use l for a link in short loops (E741).
+"tests/*" = ["F811", "E741"]

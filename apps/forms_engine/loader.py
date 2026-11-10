@@ -306,7 +306,9 @@ def sync_wording(fd):
             if students_apart and s.code == "users":
                 continue
             if c and (s.title, s.instructions) != (c.title, c.instructions):
-                FormSection.objects.filter(pk=s.pk).update(title=c.title, instructions=c.instructions)
+                FormSection.objects.filter(pk=s.pk).update(
+                    title=c.title, instructions=c.instructions
+                )
                 hit = True
         for q in Question.objects.filter(form_version=v):
             c = qs.get(q.code)

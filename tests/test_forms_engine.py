@@ -109,7 +109,10 @@ def test_progress_report_file_required(instruments):
 
 
 def test_time_estimates_are_sensible(instruments):
-    assert schema("bn_core_survey").minutes() % 5 == 0 and 10 <= schema("bn_core_survey").minutes() <= 25
+    assert (
+        schema("bn_core_survey").minutes() % 5 == 0
+        and 10 <= schema("bn_core_survey").minutes() <= 25
+    )
     assert schema("ni_core_survey").minutes() <= schema("bn_core_survey").minutes()
 
 

@@ -297,7 +297,9 @@ def create_publication(user, owner, data, resources=(), projects=(), other_text=
         title=data["title"],
         journal=data.get("journal", ""),
         publication_type=data.get("publication_type") or "journal_article",
-        publication_type_other=(data.get("publication_type_other") or "") if data.get("publication_type") == "other" else "",
+        publication_type_other=(data.get("publication_type_other") or "")
+        if data.get("publication_type") == "other"
+        else "",
         anticipated_submission_month=data.get("anticipated_submission_month"),
         anticipated_day_known=bool(data.get("anticipated_day_known")),
         status=PublicationStatus.PLANNED,
@@ -488,7 +490,8 @@ def update_grant(
     g.save()
     if "role" in data and owner:
         GrantSubmissionPerson.objects.filter(grant_submission=g, person=owner).update(
-            role=data["role"], role_other=(data.get("role_other") or "") if data["role"] == "other" else ""
+            role=data["role"],
+            role_other=(data.get("role_other") or "") if data["role"] == "other" else "",
         )
     if resources is not None:
         _set_resources(
@@ -609,8 +612,12 @@ def save_presentation(user, owner, data, resources=(), projects=(), other_text="
     obj.resources_other_text = other_text
     if obj.presentation_type != "other":
         obj.presentation_type_other = ""
-    if any(f in data for f in ("venue", "city", "state_region", "country")):  # one line for lists and exports
-        obj.location = ", ".join(x for x in (obj.venue, obj.city, obj.state_region, obj.country) if x)
+    if any(
+        f in data for f in ("venue", "city", "state_region", "country")
+    ):  # one line for lists and exports
+        obj.location = ", ".join(
+            x for x in (obj.venue, obj.city, obj.state_region, obj.country) if x
+        )
     obj.save()
     if created:
         PresentationPerson.objects.create(presentation=obj, person=owner, is_presenter=True)

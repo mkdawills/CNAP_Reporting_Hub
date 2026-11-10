@@ -23,7 +23,11 @@ def test_osc_listed_at_zero_months(center):
     PersonRelationship.objects.create(person=p, relationship_type=osc, effective_from=start)
     d1 = rppr.d1(gy)
     row = next(x for x in d1["rows"] if x["person"] == p)
-    assert row["category"] == "Other" and row["label"] == "Other (Other Significant Contributor)" and row["months"] == 0
+    assert (
+        row["category"] == "Other"
+        and row["label"] == "Other (Other Significant Contributor)"
+        and row["months"] == 0
+    )
     assert p not in [x["person"] for x in d1["missing_months"]]
     # a staff member at 0.5 months is set aside; the same person as an OSC is listed
     staff = RelationshipType.objects.get(code="collaborator")
@@ -32,7 +36,9 @@ def test_osc_listed_at_zero_months(center):
     from apps.people.models import Project
 
     pr = Project.objects.first()
-    PersonRelationship.objects.create(person=q, relationship_type=staff, project=pr, effective_from=start)
+    PersonRelationship.objects.create(
+        person=q, relationship_type=staff, project=pr, effective_from=start
+    )
     assert q in [x["person"] for x in rppr.d1(gy)["below"]]
     PersonRelationship.objects.create(person=q, relationship_type=osc, effective_from=start)
     row = next(x for x in rppr.d1(gy)["rows"] if x["person"] == q)
@@ -47,7 +53,8 @@ def test_osc_gets_no_tasks(center):
     period = ReportingPeriod.objects.get(status="open")
     p = Person.objects.create(first_name="Ines", last_name="Halvorsen")
     PersonRelationship.objects.create(
-        person=p, relationship_type=RelationshipType.objects.get(code="osc"),
+        person=p,
+        relationship_type=RelationshipType.objects.get(code="osc"),
         effective_from=dt.date(2020, 1, 1),
     )
     asg.generate(period)
@@ -61,7 +68,9 @@ def test_osc_only_person_is_not_asked_for_nih_documents(center):
 
     asg.generate(ReportingPeriod.objects.get(status="open"))
     rowe = Person.objects.get(last_name="Rowe")
-    assert not Assignment.objects.filter(person=rowe, form_definition__code="nih_documents").exists()
+    assert not Assignment.objects.filter(
+        person=rowe, form_definition__code="nih_documents"
+    ).exists()
 
 
 def test_nih_documents_directions_fit_the_person(client, center):
@@ -77,9 +86,13 @@ def test_nih_documents_directions_fit_the_person(client, center):
     for last, text in want.items():
         p = Person.objects.get(last_name=last)
         a = Assignment.objects.get(person=p, form_definition__code="nih_documents")
-        u = User.objects.filter(person=p).first() or User.objects.create(username=f"u{last}", person=p)
+        u = User.objects.filter(person=p).first() or User.objects.create(
+            username=f"u{last}", person=p
+        )
         client.force_login(u)
         page = client.get(f"/tasks/{a.pk}/").content.decode()
         assert text in page, last
-        others = [t for k, t in want.items() if k != last] + ["from each Other Significant Contributor"]
+        others = [t for k, t in want.items() if k != last] + [
+            "from each Other Significant Contributor"
+        ]
         assert not any(t in page for t in others), last

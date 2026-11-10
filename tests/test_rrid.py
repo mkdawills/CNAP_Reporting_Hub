@@ -73,15 +73,20 @@ def _published(client, p, resources, **extra):
 def test_asked_only_for_ticked_cores_that_have_an_rrid(client, center):
     u = User.objects.get(username="okafor")
     client.force_login(u)
-    client.post("/outcomes/new/pub/", {"title": "RRID paper", "publication_type": "journal_article"})
+    client.post(
+        "/outcomes/new/pub/", {"title": "RRID paper", "publication_type": "journal_article"}
+    )
     p = Publication.objects.get(title="RRID paper")
     Publication.objects.filter(pk=p.pk).update(status="submitted")
     bn = Resource.objects.get(code="bn_core")
     cn = Resource.objects.get(code="cn_core")
     assert bn.core.rrid and not cn.core.rrid
     page = client.get(f"/outcomes/pub/{p.pk}/?to=published").content.decode()
-    assert f"Did you cite the {bn.core.name}’s Research Resource Identifier (RRID), {bn.core.rrid}," in page
-    assert f"data-show-res=\"{bn.pk}\"" in page and f"{cn.core.name}’s RRID" not in page
+    assert (
+        f"Did you cite the {bn.core.name}’s Research Resource Identifier (RRID), {bn.core.rrid},"
+        in page
+    )
+    assert f'data-show-res="{bn.pk}"' in page and f"{cn.core.name}’s RRID" not in page
     assert bn.core.rrid in page  # in the "how to acknowledge" box too
     # ticked but unanswered: asked to answer
     r = _published(client, p, [bn, cn])
@@ -113,13 +118,17 @@ def test_no_rrid_no_question(client, center):
     p = Publication.objects.get(title="Plain")
     Publication.objects.filter(pk=p.pk).update(status="submitted")
     page = client.get(f"/outcomes/pub/{p.pk}/?to=published").content.decode()
-    assert "’s RRID (" not in page and "data-show-res=\"" not in page
+    assert "’s RRID (" not in page and 'data-show-res="' not in page
 
 
 def test_foreign_coauthor_citing_the_grant_is_flagged(center):
     p = Publication.objects.create(
-        title="Abroad", publication_type="journal_article", status="published",
-        has_foreign_authors=True, cnap_cited=True, foreign_component_approved=False,
+        title="Abroad",
+        publication_type="journal_article",
+        status="published",
+        has_foreign_authors=True,
+        cnap_cited=True,
+        foreign_component_approved=False,
     )
     rows = next(c for c in quality.run() if c["code"] == "foreign_cites_grant")["rows"]
     assert p.pk in [r[1] for r in rows]

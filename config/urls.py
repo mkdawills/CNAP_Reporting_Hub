@@ -2,17 +2,17 @@
 
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from apps.portal import roster_views
 from django.urls import include, path
 
 from apps.accounts import views as account_views
+from apps.portal import roster_views
 from apps.portal.views import home
 
 admin.site.site_header = "CNAP Reporting Hub: database administration"
 admin.site.site_title = "CNAP Reporting Hub"
 admin.site.index_title = "Administration"
 
-from apps.common import prototype as ui_prototype
+from apps.common import prototype as ui_prototype  # noqa: E402
 
 urlpatterns = [
     path("ui-preview/<str:view>/", ui_prototype.switch, name="ui_switch"),
@@ -34,8 +34,16 @@ urlpatterns = [
         auth_views.PasswordChangeDoneView.as_view(),
         name="password_change_done",
     ),
-    path("site-photo/", __import__("apps.common.feedback", fromlist=["site_photo"]).site_photo, name="site_photo"),
-    path("feedback/", __import__("apps.common.feedback", fromlist=["send"]).send, name="page_feedback"),
+    path(
+        "site-photo/",
+        __import__("apps.common.feedback", fromlist=["site_photo"]).site_photo,
+        name="site_photo",
+    ),
+    path(
+        "feedback/",
+        __import__("apps.common.feedback", fromlist=["send"]).send,
+        name="page_feedback",
+    ),
     path("manage/", include("apps.admin_center.urls")),
     path("", include("apps.portal.urls")),
     path("", home, name="home"),

@@ -30,9 +30,7 @@ def _grant(person, title="Sample R01: planned work", status=GrantStatus.PLANNED,
         status=status,
         project_title=title,
         funding_agency=kw.pop("funding_agency", "NIH"),
-        anticipated_submission_date=kw.pop(
-            "anticipated_submission_date", dt.date(2027, 2, 5)
-        ),
+        anticipated_submission_date=kw.pop("anticipated_submission_date", dt.date(2027, 2, 5)),
         **kw,
     )
     GrantSubmissionPerson.objects.create(
@@ -96,9 +94,7 @@ def test_answer_page(client, settings):
     n = GrantNudge.objects.get()
     from django.contrib.auth import get_user_model
 
-    user = get_user_model().objects.create_user(
-        username="nplanner", password="x", person=person
-    )
+    user = get_user_model().objects.create_user(username="nplanner", password="x", person=person)
     client.force_login(user)
     r = client.get(f"/outcomes/nudge/{n.pk}/?choice=block")
     assert r.status_code == 200
@@ -110,9 +106,7 @@ def test_answer_page(client, settings):
     n.refresh_from_db()
     assert not n.answered_at
     # a real answer lands
-    r = client.post(
-        f"/outcomes/nudge/{n.pk}/", {"choice": "timeline", "comments": "Drafting now."}
-    )
+    r = client.post(f"/outcomes/nudge/{n.pk}/", {"choice": "timeline", "comments": "Drafting now."})
     assert r.status_code == 302
     n.refresh_from_db()
     assert n.choice == "timeline" and n.comments == "Drafting now."
@@ -166,12 +160,16 @@ def test_evaluator_leaves_a_proposal_out_of_table1_with_a_reason(client):
     client.force_login(User.objects.get(username="mwills"))
     g = GrantSubmission.objects.exclude(status=GrantStatus.PLANNED).first()
     # not on the data-entry form any more
-    assert "exclude_from_table1" not in client.get(f"/manage/outcomes/grants/{g.pk}/").content.decode()
+    assert (
+        "exclude_from_table1" not in client.get(f"/manage/outcomes/grants/{g.pk}/").content.decode()
+    )
     # a reason is required
     client.post(f"/manage/outcomes/grants/{g.pk}/table1/", {"reason": ""})
     g.refresh_from_db()
     assert not g.exclude_from_table1
-    client.post(f"/manage/outcomes/grants/{g.pk}/table1/", {"reason": "Core staff grant unrelated to IDeA"})
+    client.post(
+        f"/manage/outcomes/grants/{g.pk}/table1/", {"reason": "Core staff grant unrelated to IDeA"}
+    )
     g.refresh_from_db()
     assert g.exclude_from_table1 and g.table1_exclusion_reason.startswith("Core staff")
     client.post(f"/manage/outcomes/grants/{g.pk}/table1/", {"action": "restore"})

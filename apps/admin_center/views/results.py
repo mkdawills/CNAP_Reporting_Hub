@@ -7,13 +7,14 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
-from apps.common import prototype
 from apps.accounts import access
 from apps.analytics import report as rpt
 from apps.analytics import snapshots
 from apps.analytics.models import CoreReport
 from apps.audit.models import AuditLog, record_event
+from apps.common import prototype
 from apps.common.enums import COMPLETE_STATUSES, ConfidentialityClass, FormCategory, PeriodStatus
 from apps.forms_engine.models import FormDefinition
 from apps.portal import presenters
@@ -27,7 +28,6 @@ from apps.reporting.access import (
 )
 from apps.reporting.models import Assignment, ReportingPeriod
 from apps.reporting.services import exports
-from django.utils import timezone
 
 from ..decorators import admin_view, manage_action
 
@@ -152,9 +152,7 @@ def form_report(request, label, code):
         }
     return render(
         request,
-        prototype.template(
-            request, f"results:{fd.code}", "manage/report.html"
-        ),
+        prototype.template(request, f"results:{fd.code}", "manage/report.html"),
         {
             **data,
             "mode": mode,
@@ -163,8 +161,12 @@ def form_report(request, label, code):
             "who": who,
             "deid_blocked": mode == DEIDENTIFIED and not deidentified_rows_allowed(fd, p),
             # The core report for this core's directors (MW 2026-11-08).
-            "core_report": CoreReport.objects.filter(reporting_period=p, form_definition=fd).first(),
-            "is_core_survey": bool(fd.about_core_id) and fd.category == FormCategory.SURVEY and p.assignments.exists(),
+            "core_report": CoreReport.objects.filter(
+                reporting_period=p, form_definition=fd
+            ).first(),
+            "is_core_survey": bool(fd.about_core_id)
+            and fd.category == FormCategory.SURVEY
+            and p.assignments.exists(),
             "can_edit_themes": access.can_manage(request.user)
             and data["snapshot"] is not None
             and data["snapshot"].provenance != "aggregate_import",
@@ -279,8 +281,12 @@ def export_report(request, label, code):
     record_event(request.user, AuditLog.Action.EXPORT, f"report:{label}:{code}")
     resp = HttpResponse(buf.getvalue(), content_type="text/csv")
     resp["Content-Disposition"] = f'attachment; filename="{code}_{label.replace(" ", "_")}.csv"'
-    if request.GET.get("format") == "xlsx":  # the same cells as the CSV, as a formatted workbook (MW 2026-11-05)
-        return exports.csv_to_xlsx(resp, f'{code}_{label.replace(" ", "_")}.xlsx', title=f"{fd.name}, {p.name}")
+    if (
+        request.GET.get("format") == "xlsx"
+    ):  # the same cells as the CSV, as a formatted workbook (MW 2026-11-05)
+        return exports.csv_to_xlsx(
+            resp, f"{code}_{label.replace(' ', '_')}.xlsx", title=f"{fd.name}, {p.name}"
+        )
     return resp
 
 
@@ -301,7 +307,13 @@ def export_everything(request, label):
     and the papers, talks, and grants lists (MW 2026-11-05)."""
     from openpyxl import Workbook
 
-    from apps.reporting.services.exports import _safe_title, add_form_sheets, csv_rows, write_csv_sheet, write_sheet
+    from apps.reporting.services.exports import (
+        _safe_title,
+        add_form_sheets,
+        csv_rows,
+        write_csv_sheet,
+        write_sheet,
+    )
 
     from . import outcomes as outcome_views
 
@@ -311,14 +323,27 @@ def export_everything(request, label):
     contents = wb.active
     contents.title = "Contents"
     lines = []
-    forms = FormDefinition.objects.filter(assignments__reporting_period=p).distinct().order_by("sort_order")
+    forms = (
+        FormDefinition.objects.filter(assignments__reporting_period=p)
+        .distinct()
+        .order_by("sort_order")
+    )
     for fd in forms:
         if not form_access(request.user, fd):
-            lines.append([fd.name, "Not included: your access doesn’t include individual responses to this form."])
+            lines.append(
+                [
+                    fd.name,
+                    "Not included: your access doesn’t include individual responses to this form.",
+                ]
+            )
             continue
         sheet, note = add_form_sheets(wb, request.user, fd, p, used)
         lines.append([fd.name, f"Sheet “{sheet}”: {note}."])
-    for kind, name in (("publications", "Papers"), ("talks", "Talks and posters"), ("grants", "Grant proposals")):
+    for kind, name in (
+        ("publications", "Papers"),
+        ("talks", "Talks and posters"),
+        ("grants", "Grant proposals"),
+    ):
         try:
             csv_resp = outcome_views.export(request, kind)
         except PermissionDenied:
@@ -326,14 +351,23 @@ def export_everything(request, label):
             continue
         ws = wb.create_sheet()
         ws.title = _safe_title(name, used)
-        write_csv_sheet(ws, csv_rows(csv_resp.content.decode("utf-8-sig")), title=f"{name}: every entry in the Hub")
-        lines.append([name, f"Sheet “{ws.title}”: every entry in the Hub, not only this reporting session."])
+        write_csv_sheet(
+            ws,
+            csv_rows(csv_resp.content.decode("utf-8-sig")),
+            title=f"{name}: every entry in the Hub",
+        )
+        lines.append(
+            [name, f"Sheet “{ws.title}”: every entry in the Hub, not only this reporting session."]
+        )
     write_sheet(
         contents,
         f"Everything for {p.name}",
         ["Part", "Where to find it"],
         lines,
-        notes=[f"Downloaded {timezone.localdate():%B %-d, %Y} by {request.user.get_full_name() or request.user.get_username()}.", "Each sheet follows the same access rules as the screens: names appear only where your access shows names."],
+        notes=[
+            f"Downloaded {timezone.localdate():%B %-d, %Y} by {request.user.get_full_name() or request.user.get_username()}.",
+            "Each sheet follows the same access rules as the screens: names appear only where your access shows names.",
+        ],
         widths=[44, 90],
     )
     record_event(request.user, AuditLog.Action.EXPORT, f"everything:{label}")
@@ -345,24 +379,42 @@ def print_response(request, pk):
     """One completed form as PDF or Word, with the same access as reading it on screen (MW 2026-11-05)."""
     from apps.reporting.services import documents
 
-    a = get_object_or_404(Assignment.objects.select_related("form_definition", "form_version", "reporting_period", "person"), pk=pk)
+    a = get_object_or_404(
+        Assignment.objects.select_related(
+            "form_definition", "form_version", "reporting_period", "person"
+        ),
+        pk=pk,
+    )
     mode = response_access(request.user, a)
     if not mode:
         raise PermissionDenied
-    if mode == DEIDENTIFIED and not deidentified_rows_allowed(a.form_definition, a.reporting_period):
+    if mode == DEIDENTIFIED and not deidentified_rows_allowed(
+        a.form_definition, a.reporting_period
+    ):
         raise PermissionDenied("Fewer than 5 people completed this survey.")
     ctx = presenters.form_page(request, a, editable=False)
     named = mode == IDENTIFIED
     label = None
     if not named:
-        done = list(Assignment.objects.filter(form_definition=a.form_definition, reporting_period=a.reporting_period, status__in=COMPLETE_STATUSES))
+        done = list(
+            Assignment.objects.filter(
+                form_definition=a.form_definition,
+                reporting_period=a.reporting_period,
+                status__in=COMPLETE_STATUSES,
+            )
+        )
         order = respondent_label_order(done, a.form_definition, a.reporting_period)
         label = f"Respondent {next((i for i, x in enumerate(order, 1) if x.pk == a.pk), '')}"
     fmt = "docx" if request.GET.get("fmt") == "docx" else "pdf"
     blocks = documents.response_blocks(ctx, named=named, label=label)
     record_event(request.user, AuditLog.Action.EXPORT, f"print:response:{a.pk}")
     who = a.person.last_name if named else (label or "response")
-    return documents.file_response([blocks], a.form_definition.name, f"{a.form_definition.name} {a.reporting_period.short_label} {who}", fmt)
+    return documents.file_response(
+        [blocks],
+        a.form_definition.name,
+        f"{a.form_definition.name} {a.reporting_period.short_label} {who}",
+        fmt,
+    )
 
 
 @admin_view
@@ -375,22 +427,59 @@ def print_form_all(request, label, code):
     fd = get_object_or_404(FormDefinition, code=code)
     fmt = "docx" if request.GET.get("fmt") == "docx" else "pdf"
     if request.GET.get("blank"):
-        if fd.confidentiality_class == ConfidentialityClass.MENTORING and not access.can_read_mentoring(request.user):
+        if (
+            fd.confidentiality_class == ConfidentialityClass.MENTORING
+            and not access.can_read_mentoring(request.user)
+        ):
             raise PermissionDenied
         version = fd.versions.order_by("-version_no").first() if hasattr(fd, "versions") else None
-        a0 = Assignment.objects.filter(form_definition=fd, reporting_period=p).select_related("form_version").first()
+        a0 = (
+            Assignment.objects.filter(form_definition=fd, reporting_period=p)
+            .select_related("form_version")
+            .first()
+        )
         version = a0.form_version if a0 else version
-        return documents.file_response([documents.blank_blocks(version)], fd.name, f"{fd.name} blank", fmt)
+        return documents.file_response(
+            [documents.blank_blocks(version)], fd.name, f"{fd.name} blank", fmt
+        )
     mode = form_access(request.user, fd)
     if not mode:
         raise PermissionDenied("Your access doesn’t include individual responses to this form.")
-    done = list(Assignment.objects.filter(form_definition=fd, reporting_period=p, status__in=COMPLETE_STATUSES).select_related("person", "form_version", "reporting_period", "form_definition"))
+    done = list(
+        Assignment.objects.filter(
+            form_definition=fd, reporting_period=p, status__in=COMPLETE_STATUSES
+        ).select_related("person", "form_version", "reporting_period", "form_definition")
+    )
     if mode == DEIDENTIFIED and not deidentified_rows_allowed(fd, p):
         raise PermissionDenied("Fewer than 5 people completed this survey.")
     named = mode == IDENTIFIED
-    ordered = sorted(done, key=lambda a: (a.person.last_name, a.person.first_name)) if named else respondent_label_order(done, fd, p)
-    cover = [("title", fd.name), ("meta", [("CNAP reporting session", p.name), ("Completed forms", len(ordered)), ("Names", "Shown" if named else "Not shown. Respondents are numbered as on the results page.")])]
-    docs = [cover] + [documents.response_blocks(presenters.form_page(request, a, editable=False), named=named, label=f"Respondent {i}") for i, a in enumerate(ordered, 1)]
+    ordered = (
+        sorted(done, key=lambda a: (a.person.last_name, a.person.first_name))
+        if named
+        else respondent_label_order(done, fd, p)
+    )
+    cover = [
+        ("title", fd.name),
+        (
+            "meta",
+            [
+                ("CNAP reporting session", p.name),
+                ("Completed forms", len(ordered)),
+                (
+                    "Names",
+                    "Shown"
+                    if named
+                    else "Not shown. Respondents are numbered as on the results page.",
+                ),
+            ],
+        ),
+    ]
+    docs = [cover] + [
+        documents.response_blocks(
+            presenters.form_page(request, a, editable=False), named=named, label=f"Respondent {i}"
+        )
+        for i, a in enumerate(ordered, 1)
+    ]
     record_event(request.user, AuditLog.Action.EXPORT, f"print:all:{label}:{code}")
     return documents.file_response(docs, f"{fd.name}, {p.name}", f"{fd.name} {label} all", fmt)
 
@@ -416,7 +505,14 @@ def export_builder(request):
                 return None
             return r.content.decode("utf-8-sig") if r.status_code == 200 else None
 
-        record_event(request.user, AuditLog.Action.EXPORT, "custom:" + ",".join(p.short_label for p in choice["periods"]) + ";" + ",".join(f.code for f in choice["forms"]))
+        record_event(
+            request.user,
+            AuditLog.Action.EXPORT,
+            "custom:"
+            + ",".join(p.short_label for p in choice["periods"])
+            + ";"
+            + ",".join(f.code for f in choice["forms"]),
+        )
         return builder.build(request.user, choice, tables_csv=tables_csv)
     ctx = builder.options(request.user)
     from apps.outcomes.rppr import current_year

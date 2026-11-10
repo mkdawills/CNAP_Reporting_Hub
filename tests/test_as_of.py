@@ -32,7 +32,11 @@ def test_person_given_dates_decide_the_status(demo):
 
 
 def test_center_totals_shrink_to_the_day(demo):
-    p = Publication.objects.filter(status="published", publication_date__isnull=False).order_by("-publication_date").first()
+    p = (
+        Publication.objects.filter(status="published", publication_date__isnull=False)
+        .order_by("-publication_date")
+        .first()
+    )
     gy = snapshot.current_year(p.publication_date)
     full = len(snapshot.products(gy)["papers"])
     earlier = len(snapshot.products(gy, p.publication_date - dt.timedelta(days=1))["papers"])
@@ -41,7 +45,10 @@ def test_center_totals_shrink_to_the_day(demo):
 
 @override_settings(UI_PROTOTYPE=True)
 def test_pages_render_as_of(client, demo):
-    for username, url in (("brandt", "/outcomes/?asof=2025-12-31"), ("okafor", "/results/?view=products&asof=2026-05-31")):
+    for username, url in (
+        ("brandt", "/outcomes/?asof=2025-12-31"),
+        ("okafor", "/results/?view=products&asof=2026-05-31"),
+    ):
         client.force_login(User.objects.get(username=username))
         s = client.session
         s["ui_view"] = "after"

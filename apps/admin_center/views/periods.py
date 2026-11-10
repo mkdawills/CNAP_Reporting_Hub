@@ -9,10 +9,10 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from apps.common import prototype
 from apps.accounts import access
 from apps.analytics import snapshots
 from apps.audit.models import AuditLog, record_event
+from apps.common import prototype
 from apps.common.enums import COMPLETE_STATUSES, AssignmentStatus, PeriodStatus
 from apps.forms_engine.models import FormDefinition
 from apps.people.models import Person, Project
@@ -22,7 +22,6 @@ from apps.reporting.models import Assignment, ReportingPeriod
 from apps.reporting.services import assignments as asg
 from apps.reporting.services import periods as ps
 from apps.reporting.services import responses as rs
-
 from apps.reporting.services import roster_check as roster_check_service
 
 from ..decorators import admin_view, manage_action, manage_page
@@ -53,7 +52,12 @@ STAGE_HELP = {
 
 def _timeline(request, period):
     """The full dated timeline, shown only in the redesign (MW 2026-11-06); read-only."""
-    if not getattr(request, "proto_active", False) or period is None or period.status == PeriodStatus.DRAFT and not period.assignments.exists():
+    if (
+        not getattr(request, "proto_active", False)
+        or period is None
+        or period.status == PeriodStatus.DRAFT
+        and not period.assignments.exists()
+    ):
         return None
     from apps.reporting.services.timeline import period_timeline
 
@@ -172,7 +176,8 @@ def period_new(request):
         p.save()
         record_event(request.user, AuditLog.Action.CREATE, p)
         messages.success(
-            request, f"{p.short_label} created. Review who will receive forms before you launch the reporting session."
+            request,
+            f"{p.short_label} created. Review who will receive forms before you launch the reporting session.",
         )
         return redirect("manage:launch", p.pk)
     # Earlier names, newest first, shown beside the form so a new name follows the pattern (MW 2026-11-06). Display only.
@@ -228,7 +233,11 @@ GROUPS = [
         "Mentors",
         "Internal and external. People outside K-State sign in with an emailed link.",
     ),
-    ("director", "Core directors", "Core directors don’t receive the survey about the core each one directs."),
+    (
+        "director",
+        "Core directors",
+        "Core directors don’t receive the survey about the core each one directs.",
+    ),
     (
         "extcore",
         "External core users",
@@ -319,8 +328,11 @@ def launch(request, pk):
                 ):
                     skips.append(
                         f"{(fd.display or {}).get('short_name') or fd.name}, because this person is "
-                        + (f"the {r.core.code} Core’s {r.relationship_type.name.lower()}" if r.core_id
-                           else f"a {r.relationship_type.name.lower()}")
+                        + (
+                            f"the {r.core.code} Core’s {r.relationship_type.name.lower()}"
+                            if r.core_id
+                            else f"a {r.relationship_type.name.lower()}"
+                        )
                     )
                     break
         row = {
@@ -402,7 +414,9 @@ def launch(request, pk):
         for k, t, n in GROUPS
         if aligned[k]["rows"]
     ]
-    for g in groups:  # the other groups a person is in, for the redesign's "Also in" line (display only)
+    for g in (
+        groups
+    ):  # the other groups a person is in, for the redesign's "Also in" line (display only)
         for r in g["rows"]:
             r["also_other"] = [t for t in r.get("also", []) if t != g["title"]]
     return render(
@@ -498,14 +512,18 @@ def dashboard(request):
     f_who = request.GET.get("who", "")
     if f_who in ("finished", "partway", "not_started"):
         per = {}
-        for pid, st in qs.exclude(status=AssignmentStatus.EXEMPT).values_list("person_id", "status"):
+        for pid, st in qs.exclude(status=AssignmentStatus.EXEMPT).values_list(
+            "person_id", "status"
+        ):
             per.setdefault(pid, []).append(st)
+
         def bucket(sts):
             if all(x in COMPLETE_STATUSES for x in sts):
                 return "finished"
             if all(x == AssignmentStatus.NOT_STARTED for x in sts):
                 return "not_started"
             return "partway"
+
         keep = [pid for pid, sts in per.items() if bucket(sts) == f_who]
         rows = rows.filter(person_id__in=keep)
     rows = rows.order_by("person__last_name", "form_definition__sort_order")
@@ -513,9 +531,7 @@ def dashboard(request):
     done = qs.filter(status__in=COMPLETE_STATUSES).count()
     return render(
         request,
-        prototype.template(
-            request, "dashboard", "manage/dashboard.html"
-        ),
+        prototype.template(request, "dashboard", "manage/dashboard.html"),
         {
             "p": p,
             "periods": ReportingPeriod.objects.exclude(status=PeriodStatus.DRAFT)
@@ -576,7 +592,9 @@ def assignment_action(request, pk):
 def generate_assignments(request, pk):
     p = get_object_or_404(ReportingPeriod, pk=pk)
     if p.status != PeriodStatus.OPEN:
-        messages.error(request, "Assignments can be generated only while the reporting session is open.")
+        messages.error(
+            request, "Assignments can be generated only while the reporting session is open."
+        )
     else:
         result = asg.generate(p, request.user)
         messages.success(
@@ -633,7 +651,10 @@ def _email_timeline(request, period):
     tl = _timeline(request, period)
     if not tl:
         return None
-    return {"events": [e for e in tl["events"] if e["kind"] in ("email", "zone", "due", "now")], "now": tl["now"]}
+    return {
+        "events": [e for e in tl["events"] if e["kind"] in ("email", "zone", "due", "now")],
+        "now": tl["now"],
+    }
 
 
 @manage_action
@@ -645,9 +666,7 @@ def period_emails_auto(request, pk):
         p.auto_emails = on
         p.save(update_fields=["auto_emails", "updated_at"])
         record_event(request.user, AuditLog.Action.UPDATE, p, new={"auto_emails": on})
-    messages.success(
-        request, "Automatic emails are on." if on else "Automatic emails are paused."
-    )
+    messages.success(request, "Automatic emails are on." if on else "Automatic emails are paused.")
     return redirect(f"/manage/periods/{p.pk}/emails/")
 
 
@@ -669,7 +688,10 @@ def period_emails_plan(request, pk):
             raw = request.POST.get(f"{k}_every", "")
             lo, hi = emails.EVERY_LIMITS[k]
             if not raw.isdigit() or not lo <= int(raw) <= hi:
-                messages.error(request, f"Choose {lo} to {hi} days for the {'reminder' if k == 'reminder' else 'past-due email'}.")
+                messages.error(
+                    request,
+                    f"Choose {lo} to {hi} days for the {'reminder' if k == 'reminder' else 'past-due email'}.",
+                )
                 return redirect(back)
             plan[f"{k}_every"] = int(raw)
         msg = "Saved. Reminders go every {} and past-due emails every {}.".format(
@@ -690,7 +712,10 @@ def period_emails_plan(request, pk):
             messages.error(request, "Choose a day after today.")
             return redirect(back)
         if day <= opens:
-            messages.error(request, "Choose a day after opening day. The “your reporting session is open” email always goes on opening day.")
+            messages.error(
+                request,
+                "Choose a day after opening day. The “your reporting session is open” email always goes on opening day.",
+            )
             return redirect(back)
         if action == "skip":
             skips.add(iso)
@@ -715,7 +740,10 @@ def period_emails_plan(request, pk):
             msg = "Back to the standard wording."
         else:
             limits = {"subject": 200, "opening": 1500, "closing": 1500, "signoff": 300}
-            new = {k: request.POST.get(k, "").replace("\r\n", "\n").strip()[:n] for k, n in limits.items()}
+            new = {
+                k: request.POST.get(k, "").replace("\r\n", "\n").strip()[:n]
+                for k, n in limits.items()
+            }
             if not new["subject"] or not new["opening"] or not new["signoff"]:
                 messages.error(request, "Write a subject, an opening, and a sign-off.")
                 return redirect(f"{back}?kind={kind}")
@@ -728,7 +756,9 @@ def period_emails_plan(request, pk):
     old = p.email_plan
     p.email_plan = plan
     p.save(update_fields=["email_plan", "updated_at"])
-    record_event(request.user, AuditLog.Action.UPDATE, p, old={"email_plan": old}, new={"email_plan": plan})
+    record_event(
+        request.user, AuditLog.Action.UPDATE, p, old={"email_plan": old}, new={"email_plan": plan}
+    )
     messages.success(request, msg)
     return redirect(back)
 
@@ -768,9 +798,15 @@ def roster_check(request, pk):
     return render(
         request,
         "manage/roster_check.html",
-        {"p": p, "s": s, "pending": [x for x in sugg if x.status == "pending"], "decided": [x for x in sugg if x.status != "pending"],
-         "can_manage": access.can_manage(request.user), "draft": p.status == PeriodStatus.DRAFT,
-         "recipients_n": rc.recipients().count()},
+        {
+            "p": p,
+            "s": s,
+            "pending": [x for x in sugg if x.status == "pending"],
+            "decided": [x for x in sugg if x.status != "pending"],
+            "can_manage": access.can_manage(request.user),
+            "draft": p.status == PeriodStatus.DRAFT,
+            "recipients_n": rc.recipients().count(),
+        },
     )
 
 
@@ -783,7 +819,9 @@ def roster_check_post(request, pk):
     action = request.POST.get("action", "")
     if action == "send":
         if p.status != PeriodStatus.DRAFT:
-            messages.error(request, "The roster check goes out only before a reporting session opens.")
+            messages.error(
+                request, "The roster check goes out only before a reporting session opens."
+            )
         else:
             sent, missing = rc.send(p, actor=request.user)
             msg = f"Sent {sent} roster check email{'s' if sent != 1 else ''}."
@@ -791,9 +829,18 @@ def roster_check_post(request, pk):
                 msg += f" {missing} {'person has' if missing == 1 else 'people have'} no email address on file."
             messages.success(request, msg)
     elif action in ("done", "declined", "pending"):
-        sg = get_object_or_404(RosterSuggestion, pk=request.POST.get("id"), link__reporting_period=p)
+        sg = get_object_or_404(
+            RosterSuggestion, pk=request.POST.get("id"), link__reporting_period=p
+        )
         rc.decide(request.user, sg, action)
-        messages.success(request, {"done": "Marked as handled.", "declined": "Declined.", "pending": "Back on the list to review."}[action])
+        messages.success(
+            request,
+            {
+                "done": "Marked as handled.",
+                "declined": "Declined.",
+                "pending": "Back on the list to review.",
+            }[action],
+        )
     else:
         raise PermissionDenied
     return redirect("manage:roster_check", pk)

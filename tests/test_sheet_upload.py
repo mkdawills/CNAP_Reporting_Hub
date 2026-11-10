@@ -3,8 +3,6 @@
 import io
 
 import pytest
-
-from tests.test_nih_documents import center  # noqa: F401  (fixture)
 from openpyxl import Workbook, load_workbook
 
 from apps.accounts.models import User
@@ -12,6 +10,7 @@ from apps.forms_engine.runtime import FormSchema
 from apps.reporting.models import Assignment
 from apps.reporting.services import responses as rs
 from apps.reporting.services import sheets
+from tests.test_nih_documents import center  # noqa: F401  (fixture)
 
 pytestmark = pytest.mark.django_db
 

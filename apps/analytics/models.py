@@ -237,7 +237,9 @@ class CoreReport(TimestampedModel):
     )
     reflections = models.TextField(blank=True)
     hidden_answers = models.JSONField(
-        default=list, blank=True, help_text="Answer ids the evaluator held back from the core directors."
+        default=list,
+        blank=True,
+        help_text="Answer ids the evaluator held back from the core directors.",
     )
     released_at = models.DateTimeField(null=True, blank=True)
     released_by = models.ForeignKey(

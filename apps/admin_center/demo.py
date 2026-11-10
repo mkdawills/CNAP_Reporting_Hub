@@ -566,12 +566,23 @@ def _seed_funding(people, users):
         decision_comments="Reviewers valued the design and questioned the sample size in Aim 2.",
         plans_to_resubmit=True,
     )
-    GrantSubmissionPerson.objects.create(grant_submission=g, person=okafor, role="pi", is_primary_cnap_contact=True)
+    GrantSubmissionPerson.objects.create(
+        grant_submission=g, person=okafor, role="pi", is_primary_cnap_contact=True
+    )
     funding.ensure_followup(g, mw)
     picks = [
-        ("bbrf", "Fear extinction research relates directly to anxiety disorders, a stated focus of the foundation."),
-        ("katz", "A second R01 on a new direction, separate from the sleep work, would not need preliminary data."),
-        ("whitehall", "The sleep and memory work fits the foundation’s interest in basic neurobiology."),
+        (
+            "bbrf",
+            "Fear extinction research relates directly to anxiety disorders, a stated focus of the foundation.",
+        ),
+        (
+            "katz",
+            "A second R01 on a new direction, separate from the sleep work, would not need preliminary data.",
+        ),
+        (
+            "whitehall",
+            "The sleep and memory work fits the foundation’s interest in basic neurobiology.",
+        ),
     ]
     for key, why in picks:
         o = FundingOpportunity.objects.filter(tracker_id=key).first()
@@ -580,7 +591,12 @@ def _seed_funding(people, users):
     if "brandt" in people:
         o = FundingOpportunity.objects.filter(tracker_id="fraxa").first()
         if o:
-            funding.add_match(o, people["brandt"], "A fellow in the lab could carry the treatment work forward.", mw)
+            funding.add_match(
+                o,
+                people["brandt"],
+                "A fellow in the lab could carry the treatment work forward.",
+                mw,
+            )
     FundingSuggestion.objects.create(
         person=okafor,
         name="Sample Foundation Early Career Award",
@@ -590,22 +606,49 @@ def _seed_funding(people, users):
         for_everyone=True,
     )
     for d, head, summary, src, url, pinned in [
-        (dt.date(2026, 10, 8), "NIH reports a record number of R01-equivalent awards to Early Stage Investigators",
-         "NIH made 1,648 R01-equivalent awards to Early Stage Investigators in fiscal year 2026, the most on record.\n"
-         "The record came in a year with fewer awards overall.", "Granted News",
-         "https://grantedai.com/blog/nih-1648-early-stage-investigator-r01-record-fy2026-generation-discovery-100-intramural-pis-60924-awards-11-percent-below-average-strategy", True),
-        (dt.date(2026, 8, 11), "NIH ended continuous submission",
-         "NIH stopped accepting continuous submissions on August 11, 2026.\nApplications now follow the standard due dates.",
-         "Chapman University research policy updates", "https://www.chapman.edu/research/policies-and-guidance/federal-research-policies/", False),
-        (dt.date(2026, 1, 1), "NIH accepts up to six applications from one investigator each year",
-         "Each principal investigator may submit six new, renewal, resubmission, or revision applications across all council rounds in a calendar year.\n"
-         "Plan the year’s submissions with the limit in mind.", "NIH Grants and Funding", "https://grants.nih.gov/node/1192", False),
-        (dt.date(2026, 2, 24), "Early Stage Investigator success rates fell in fiscal year 2025",
-         "Success rates for Early Stage Investigators dropped from 26% to 19%, as applications rose 11%.\n"
-         "NIH’s shift to funding more grants for several years at once reduced the money available for new awards.",
-         "Granted News", "https://grantedai.com/news/nih-grant-success-rates-plunge-to-20-as-multiyear-funding-squeezes-early-career-", False),
+        (
+            dt.date(2026, 10, 8),
+            "NIH reports a record number of R01-equivalent awards to Early Stage Investigators",
+            "NIH made 1,648 R01-equivalent awards to Early Stage Investigators in fiscal year 2026, the most on record.\n"
+            "The record came in a year with fewer awards overall.",
+            "Granted News",
+            "https://grantedai.com/blog/nih-1648-early-stage-investigator-r01-record-fy2026-generation-discovery-100-intramural-pis-60924-awards-11-percent-below-average-strategy",
+            True,
+        ),
+        (
+            dt.date(2026, 8, 11),
+            "NIH ended continuous submission",
+            "NIH stopped accepting continuous submissions on August 11, 2026.\nApplications now follow the standard due dates.",
+            "Chapman University research policy updates",
+            "https://www.chapman.edu/research/policies-and-guidance/federal-research-policies/",
+            False,
+        ),
+        (
+            dt.date(2026, 1, 1),
+            "NIH accepts up to six applications from one investigator each year",
+            "Each principal investigator may submit six new, renewal, resubmission, or revision applications across all council rounds in a calendar year.\n"
+            "Plan the year’s submissions with the limit in mind.",
+            "NIH Grants and Funding",
+            "https://grants.nih.gov/node/1192",
+            False,
+        ),
+        (
+            dt.date(2026, 2, 24),
+            "Early Stage Investigator success rates fell in fiscal year 2025",
+            "Success rates for Early Stage Investigators dropped from 26% to 19%, as applications rose 11%.\n"
+            "NIH’s shift to funding more grants for several years at once reduced the money available for new awards.",
+            "Granted News",
+            "https://grantedai.com/news/nih-grant-success-rates-plunge-to-20-as-multiyear-funding-squeezes-early-career-",
+            False,
+        ),
     ]:
         FundingNewsItem.objects.create(
-            headline=head, news_date=d, summary=summary, source_name=src, source_url=url, pinned=pinned, posted_by=mw,
+            headline=head,
+            news_date=d,
+            summary=summary,
+            source_name=src,
+            source_url=url,
+            pinned=pinned,
+            posted_by=mw,
             date_text="Calendar year 2026" if head.startswith("NIH accepts up to six") else "",
         )

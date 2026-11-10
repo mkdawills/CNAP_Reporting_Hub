@@ -27,13 +27,19 @@ def roster_check(request, token):
         note = request.POST.get("note", "").strip()[:2000]
         if action == "none":
             rc.mark_no_changes(link)
-            messages.success(request, "Thank you. The evaluator now knows the roster looks right to you.")
+            messages.success(
+                request, "Thank you. The evaluator now knows the roster looks right to you."
+            )
         elif action == "left":
             person = Person.objects.filter(pk=request.POST.get("person") or 0).first()
             if not person:
                 raise Http404
-            rc.suggest(link, RosterSuggestion.Kind.LEFT, person=person, note=note, from_name=from_name)
-            messages.success(request, f"Thank you. The evaluator will review your note about {person.full_name}.")
+            rc.suggest(
+                link, RosterSuggestion.Kind.LEFT, person=person, note=note, from_name=from_name
+            )
+            messages.success(
+                request, f"Thank you. The evaluator will review your note about {person.full_name}."
+            )
         elif action in ("new", "core_user", "other"):
             name = request.POST.get("name", "").strip()[:200]
             if action != "other" and not name:
@@ -55,7 +61,9 @@ def roster_check(request, token):
             messages.success(request, "Thank you. The evaluator will review your suggestion.")
         return redirect(request.path)
     near, others = rc.roster(link)
-    left_ids = set(link.suggestions.filter(kind=RosterSuggestion.Kind.LEFT).values_list("person_id", flat=True))
+    left_ids = set(
+        link.suggestions.filter(kind=RosterSuggestion.Kind.LEFT).values_list("person_id", flat=True)
+    )
     return render(
         request,
         "portal/roster_check.html",

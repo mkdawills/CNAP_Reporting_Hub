@@ -56,7 +56,9 @@ def test_skip_and_add_a_day(client, center):
     emails.send(center, "open")
     from apps.reporting.models import PeriodEmail
 
-    PeriodEmail.objects.update(sent_at=timezone.now() - timedelta(days=2))  # well inside the 4-day gap
+    PeriodEmail.objects.update(
+        sent_at=timezone.now() - timedelta(days=2)
+    )  # well inside the 4-day gap
     out = dict((k, n) for k, n, _ in emails.run_schedule(center, day))
     assert out["reminder"] > 0
     # The past and opening day can't be changed.
@@ -66,14 +68,27 @@ def test_skip_and_add_a_day(client, center):
 
 
 def test_wording(client, center):
-    _post(client, center, action="wording", kind="reminder", subject="A friendly note: {session} is due {due}", opening="Hello from the CNAP team. {session} is due {due}.", closing="Questions? Reply to this email.", signoff="With thanks,\nMorgan")
+    _post(
+        client,
+        center,
+        action="wording",
+        kind="reminder",
+        subject="A friendly note: {session} is due {due}",
+        opening="Hello from the CNAP team. {session} is due {due}.",
+        closing="Questions? Reply to this email.",
+        signoff="With thanks,\nMorgan",
+    )
     center.refresh_from_db()
     text = emails.preview(center, "reminder")
     assert text.startswith(f"Subject: A friendly note: {center.name} is due ")
     assert f"Hello from the CNAP team. {center.name} is due " in text
-    assert "Questions? Reply to this email." in text and text.rstrip().endswith("With thanks,\nMorgan")
+    assert "Questions? Reply to this email." in text and text.rstrip().endswith(
+        "With thanks,\nMorgan"
+    )
     assert "{session}" not in text and "{due}" not in text
-    assert "Questions? Reply to this email." in emails.preview(center, "reminder", html=True)["html"]
+    assert (
+        "Questions? Reply to this email." in emails.preview(center, "reminder", html=True)["html"]
+    )
     emails.send(center, "reminder", gap=0)
     assert mail.outbox and mail.outbox[-1].subject.startswith("A friendly note:")
     _post(client, center, action="wording_reset", kind="reminder")
@@ -83,4 +98,10 @@ def test_wording(client, center):
 
 def test_only_the_evaluator_changes_emails(client, center):
     client.force_login(User.objects.get(username="okafor"))
-    assert client.post(f"/manage/periods/{center.pk}/emails/plan/", {"action": "every", "reminder_every": "2", "overdue_every": "1"}).status_code == 403
+    assert (
+        client.post(
+            f"/manage/periods/{center.pk}/emails/plan/",
+            {"action": "every", "reminder_every": "2", "overdue_every": "1"},
+        ).status_code
+        == 403
+    )

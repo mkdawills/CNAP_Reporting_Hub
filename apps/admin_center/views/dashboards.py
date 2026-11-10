@@ -70,7 +70,9 @@ def _axis(peak, dollars):
     return top, [step * i for i in range(1, top // step + 1)]
 
 
-def _frame(out, pad_l, pad_t, plot_w, plot_h, peak, ticks, dollars, x_label, y_label, width, height):
+def _frame(
+    out, pad_l, pad_t, plot_w, plot_h, peak, ticks, dollars, x_label, y_label, width, height
+):
     """Horizontal gridlines with y-tick labels, the outer border, and both axis titles."""
     for t in ticks:
         y = pad_t + plot_h * (1 - t / peak)
@@ -125,7 +127,12 @@ def _trend(out, points):
 
 
 def grouped_bars(
-    categories, series, dollars=False, height=300, x_label="Grant year", y_label="Count",
+    categories,
+    series,
+    dollars=False,
+    height=300,
+    x_label="Grant year",
+    y_label="Count",
     trend=False,
 ):
     """Grouped vertical bars: value on top, the series name written vertically inside each bar,
@@ -264,13 +271,14 @@ def flip(categories, series):
     return new_cats, new_series
 
 
-
 def gpair(categories, series, kind="g", flip_x="", **kw):
     """A graph plus, when it has two or more series, the same data with the axes flipped."""
     fn = grouped_bars if kind == "g" else stacked_bars
     out = {"svg": fn(categories, series, **kw), "alt": "", "note": ""}
     if kw.get("trend") and len(categories) < 2:
-        out["note"] = "The dashed trend line appears once there are two or more grant years to compare."
+        out["note"] = (
+            "The dashed trend line appears once there are two or more grant years to compare."
+        )
     if flip_x and len(series) > 1:
         fc, fs = flip(categories, series)
         kw2 = dict(kw)
@@ -319,14 +327,9 @@ def _core_groups(obj):
 def _series_from_table(t, palette=None, status_keys=None):
     out = []
     for i, r in enumerate(t["rows"]):
-        color = (
-            STATUS[status_keys[i]]
-            if status_keys
-            else SERIES[i % len(SERIES)]
-        )
+        color = STATUS[status_keys[i]] if status_keys else SERIES[i % len(SERIES)]
         out.append({"label": r["label"], "vals": r["vals"], "color": color})
     return out
-
 
 
 def _by_project_and_member(dated):
@@ -582,9 +585,7 @@ TITLES = {
 
 @admin_view
 def dashboard(request, kind):
-    data = {"pubs": pubs_dashboard, "talks": talks_dashboard, "grants": grants_dashboard}[
-        kind
-    ]()
+    data = {"pubs": pubs_dashboard, "talks": talks_dashboard, "grants": grants_dashboard}[kind]()
     return render(
         request,
         "manage/dashboard_products.html",

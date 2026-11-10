@@ -14,12 +14,36 @@ from apps.reporting.services import responses as rs
 
 TASK_GROUPS = [
     ("cores", "Core facilities", "Tell us about the cores you used."),
-    ("grant", "Your CNAP grant", "These surveys and reports ask about your project and your mentoring relationship."),
-    ("mycore", "Your core", "These reports cover the core you direct: its progress and who used it."),
-    ("nih", "NIH documents", "These documents are collected once a year for the Center’s Research Performance Progress Report (RPPR) to NIH."),
-    ("mentoring", "Projects you mentor", "These surveys and reports ask for your view as a mentor on a CNAP project."),
-    ("admin", "Administrative Core", "This survey asks how the Center’s administration is serving you."),
-    ("other", "Other Center features and services", "These surveys cover Center programs and events."),
+    (
+        "grant",
+        "Your CNAP grant",
+        "These surveys and reports ask about your project and your mentoring relationship.",
+    ),
+    (
+        "mycore",
+        "Your core",
+        "These reports cover the core you direct: its progress and who used it.",
+    ),
+    (
+        "nih",
+        "NIH documents",
+        "These documents are collected once a year for the Center’s Research Performance Progress Report (RPPR) to NIH.",
+    ),
+    (
+        "mentoring",
+        "Projects you mentor",
+        "These surveys and reports ask for your view as a mentor on a CNAP project.",
+    ),
+    (
+        "admin",
+        "Administrative Core",
+        "This survey asks how the Center’s administration is serving you.",
+    ),
+    (
+        "other",
+        "Other Center features and services",
+        "These surveys cover Center programs and events.",
+    ),
     (
         "hub",
         "CNAP Reporting Hub",
@@ -50,9 +74,13 @@ def _label_minutes(label):
 
 
 def todo_summary(surveys, reports, checkins=0):
-    """"3 surveys and 2 reports" (MW 2026-11-07): respondents see surveys and reports, never "forms"."""
+    """ "3 surveys and 2 reports" (MW 2026-11-07): respondents see surveys and reports, never "forms"."""
     parts = []
-    for n, one, many in ((surveys, "survey", "surveys"), (reports, "report", "reports"), (checkins, "check-in", "check-ins")):
+    for n, one, many in (
+        (surveys, "survey", "surveys"),
+        (reports, "report", "reports"),
+        (checkins, "check-in", "check-ins"),
+    ):
         if n:
             parts.append(f"{n} {one if n == 1 else many}")
     if len(parts) <= 2:
@@ -101,7 +129,9 @@ def task_list(person, period, mine, just_done=None):
                 "group": group,
                 "about": disp.get("about", []),
                 "time": s.time_label(),
-                "minutes": s.minutes() if not disp.get("time_label") else _label_minutes(disp.get("time_label")),
+                "minutes": s.minutes()
+                if not disp.get("time_label")
+                else _label_minutes(disp.get("time_label")),
                 "can_opt_out": bool(s.optout_question) and is_open and not period.in_preview,
                 "opt_out_note": (disp.get("opt_out") or {}).get("short", ""),
                 "used_core": bool(fd.about_core_id and fd.about_core_id in used),
@@ -145,7 +175,8 @@ def task_list(person, period, mine, just_done=None):
                 "rows": others,
                 "count": len(g),
                 "summary": todo_summary(
-                    sum(1 for r in g if r["noun"] == "survey"), sum(1 for r in g if r["noun"] == "report")
+                    sum(1 for r in g if r["noun"] == "survey"),
+                    sum(1 for r in g if r["noun"] == "report"),
                 ),
             }
         )
@@ -180,10 +211,12 @@ def task_list(person, period, mine, just_done=None):
         "pct": round(100 * (total - todo) / total) if total else 0,
         "minutes_left": sum(r["minutes"] for r in open_rows),
         "total_summary": todo_summary(
-            sum(1 for r in rows if r["noun"] == "survey"), sum(1 for r in rows if r["noun"] == "report")
+            sum(1 for r in rows if r["noun"] == "survey"),
+            sum(1 for r in rows if r["noun"] == "report"),
         ),
         "done_summary": todo_summary(
-            sum(1 for r in done_rows if r["noun"] == "survey"), sum(1 for r in done_rows if r["noun"] == "report")
+            sum(1 for r in done_rows if r["noun"] == "survey"),
+            sum(1 for r in done_rows if r["noun"] == "report"),
         ),
         "todo_surveys": sum(1 for r in open_rows if r["noun"] == "survey"),
         "todo_reports": sum(1 for r in open_rows if r["noun"] == "report"),
@@ -301,7 +334,9 @@ def _question_view(q, value, *, missing_ids, file_obj=None, schema=None):
                     "num": num if rest else "",
                     "text": rest or o.label,
                 }
-                if o.is_na_option:  # the directions above spell NA out, so the tile just says NA (MW 2026-11-04)
+                if (
+                    o.is_na_option
+                ):  # the directions above spell NA out, so the tile just says NA (MW 2026-11-04)
                     item["label"] = "Not applicable (NA)"
                     item["text"] = "NA"
                 (na if o.is_na_option else pts).append(item)
@@ -385,9 +420,11 @@ def _audience_key(a, answers):
     if val in (None, ""):
         from apps.forms_engine.models import Question
 
-        q = Question.objects.filter(form_version__form_definition=a.form_definition, code=src).order_by(
-            "-form_version__version_no"
-        ).first()
+        q = (
+            Question.objects.filter(form_version__form_definition=a.form_definition, code=src)
+            .order_by("-form_version__version_no")
+            .first()
+        )
         val = rs.system_value(a, q) if q else None
     return val
 
@@ -401,7 +438,9 @@ def _respondent_words(text, noun):
 
     text = re.sub(r"\bThis form\b", f"This {noun}", text)
     text = re.sub(r"\bthis form\b", f"this {noun}", text)
-    text = re.sub(r"\bPlease (\w)", lambda m: m.group(1).upper(), text)  # no "Please" in directions (MW)
+    text = re.sub(
+        r"\bPlease (\w)", lambda m: m.group(1).upper(), text
+    )  # no "Please" in directions (MW)
     return text
 
 
@@ -420,12 +459,17 @@ def _intro_for(a, answers):
     src = by.get("source")
     if src:
         val = answers.get(src)
-        if val in (None, ""):  # an earlier version without that hidden question: work it out the same way
+        if val in (
+            None,
+            "",
+        ):  # an earlier version without that hidden question: work it out the same way
             from apps.forms_engine.models import Question
 
-            q = Question.objects.filter(
-                form_version__form_definition=a.form_definition, code=src
-            ).order_by("-form_version__version_no").first()
+            q = (
+                Question.objects.filter(form_version__form_definition=a.form_definition, code=src)
+                .order_by("-form_version__version_no")
+                .first()
+            )
             val = rs.system_value(a, q) if q else None
         for key in (val, "default"):
             if key and by.get(key):
@@ -638,23 +682,29 @@ def period_help(period):
         else f"Describe what happened from {start:%B} {start.day} to {end:%B} {end.day}, {end.year}."
     )
     return {
-        "cover_help": "\n".join([
-            first,
-            f"For example, a talk given on {start:%B} {start.day} counts here, and a talk given on "
-            f"{before:%B} {before.day} belongs to the last reporting session.",
-            "If you left something out of an earlier reporting session, you can report it now.",
-            f"The surveys and reports open on {opens:%B} {opens.day} and are due on {due:%B} {due.day}.",
-        ]),
-        "due_help": "\n".join([
-            f"Submit each survey and report by {due:%-I:%M %p} Central Time on {due:%A, %B} {due.day}.",
-            "Until then, a reminder email comes every 4 days, listing only what is left.",
-            "After the due date, the surveys and reports stay open until the evaluator closes the reporting session.",
-        ]),
-        "todo_help": "\n".join([
-            "Each time is an estimate.",
-            "Your answers save as you go, so you can finish across several sittings.",
-            "A survey you don’t use has a one-click opt-out.",
-        ]),
+        "cover_help": "\n".join(
+            [
+                first,
+                f"For example, a talk given on {start:%B} {start.day} counts here, and a talk given on "
+                f"{before:%B} {before.day} belongs to the last reporting session.",
+                "If you left something out of an earlier reporting session, you can report it now.",
+                f"The surveys and reports open on {opens:%B} {opens.day} and are due on {due:%B} {due.day}.",
+            ]
+        ),
+        "due_help": "\n".join(
+            [
+                f"Submit each survey and report by {due:%-I:%M %p} Central Time on {due:%A, %B} {due.day}.",
+                "Until then, a reminder email comes every 4 days, listing only what is left.",
+                "After the due date, the surveys and reports stay open until the evaluator closes the reporting session.",
+            ]
+        ),
+        "todo_help": "\n".join(
+            [
+                "Each time is an estimate.",
+                "Your answers save as you go, so you can finish across several sittings.",
+                "A survey you don’t use has a one-click opt-out.",
+            ]
+        ),
     }
 
 
@@ -668,7 +718,9 @@ def year_plan(person, period):
     from apps.reporting.services.emails import _items
 
     sessions = []
-    for p in ReportingPeriod.objects.filter(grant_year=period.grant_year).order_by("sequence", "opens_at"):
+    for p in ReportingPeriod.objects.filter(grant_year=period.grant_year).order_by(
+        "sequence", "opens_at"
+    ):
         if p.status == PeriodStatus.DRAFT:
             mine = [
                 Assignment(
@@ -691,7 +743,15 @@ def year_plan(person, period):
             )
             state = "open" if p.status == PeriodStatus.OPEN else "past"
         # The same order in every session, so the same survey sits in the same place each time.
-        mine.sort(key=lambda a: (a.form_definition.category != FormCategory.SURVEY, a.form_definition.sort_order, a.form_definition.name, a.project_id or 0, a.core_id or 0))
+        mine.sort(
+            key=lambda a: (
+                a.form_definition.category != FormCategory.SURVEY,
+                a.form_definition.sort_order,
+                a.form_definition.name,
+                a.project_id or 0,
+                a.core_id or 0,
+            )
+        )
         items, summary, total = _items(mine) if mine else ([], "", "")
         if state != "coming" and len(items) == len(mine):
             # Each survey or report opens from Your year, the same as from the list above (MW 2026-11-09).
@@ -723,12 +783,24 @@ def my_products(person):
     from apps.outcomes.rppr import current_year
 
     words = {
-        "pub": {"planned": "Planned", "submitted": "Submitted", "published": "Published", "declined": "Declined"},
-        "grant": {"planned": "Planned", "submitted": "Submitted, pending", "awarded": "Awarded", "not_funded": "Not funded"},
+        "pub": {
+            "planned": "Planned",
+            "submitted": "Submitted",
+            "published": "Published",
+            "declined": "Declined",
+        },
+        "grant": {
+            "planned": "Planned",
+            "submitted": "Submitted, pending",
+            "awarded": "Awarded",
+            "not_funded": "Not funded",
+        },
     }
     pubs = list(os.pubs_of(person))
     superseded = set(
-        Publication.objects.filter(resubmission_of__in=pubs, archived_at__isnull=True).values_list("resubmission_of_id", flat=True)
+        Publication.objects.filter(resubmission_of__in=pubs, archived_at__isnull=True).values_list(
+            "resubmission_of_id", flat=True
+        )
     )
     latest = {}
     for g in os.grants_of(person):
@@ -738,20 +810,61 @@ def my_products(person):
     for p in pubs:
         if p.pk in superseded:
             continue
-        day = p.publication_date or p.submission_date or p.anticipated_publication_date or timezone.localtime(p.created_at).date()
-        rows.append({"kind": "Paper", "title": p.title, "sub": p.journal, "status": words["pub"].get(p.status, p.get_status_display()), "day": day, "anchor": f"item-pub-{p.pk}"})
+        day = (
+            p.publication_date
+            or p.submission_date
+            or p.anticipated_publication_date
+            or timezone.localtime(p.created_at).date()
+        )
+        rows.append(
+            {
+                "kind": "Paper",
+                "title": p.title,
+                "sub": p.journal,
+                "status": words["pub"].get(p.status, p.get_status_display()),
+                "day": day,
+                "anchor": f"item-pub-{p.pk}",
+            }
+        )
     for g in latest.values():
-        day = g.submission_date or g.anticipated_submission_date or timezone.localtime(g.created_at).date()
+        day = (
+            g.submission_date
+            or g.anticipated_submission_date
+            or timezone.localtime(g.created_at).date()
+        )
         sub = " ".join(x for x in (g.funding_agency, g.mechanism) if x)
-        rows.append({"kind": "Proposal", "title": g.project_title, "sub": sub, "status": words["grant"].get(g.status, g.get_status_display()), "day": day, "anchor": f"item-grant-{g.pk}"})
+        rows.append(
+            {
+                "kind": "Proposal",
+                "title": g.project_title,
+                "sub": sub,
+                "status": words["grant"].get(g.status, g.get_status_display()),
+                "day": day,
+                "anchor": f"item-grant-{g.pk}",
+            }
+        )
     for t in os.presentations_of(person):
         day = t.presented_on or timezone.localtime(t.created_at).date()
-        rows.append({"kind": "Talk or poster", "title": t.title, "sub": t.event, "status": t.get_presentation_type_display(), "day": day, "anchor": f"item-talk-{t.pk}"})
+        rows.append(
+            {
+                "kind": "Talk or poster",
+                "title": t.title,
+                "sub": t.event,
+                "status": t.get_presentation_type_display(),
+                "day": day,
+                "anchor": f"item-talk-{t.pk}",
+            }
+        )
     years = {}
     for r in rows:
         years.setdefault(current_year(r["day"]), []).append(r)
     order = {"Paper": 0, "Proposal": 1, "Talk or poster": 2}
     return [
-        {"year": y, "rows": sorted(rs, key=lambda r: (order[r["kind"]], -r["day"].toordinal(), r["title"].lower()))}
+        {
+            "year": y,
+            "rows": sorted(
+                rs, key=lambda r: (order[r["kind"]], -r["day"].toordinal(), r["title"].lower())
+            ),
+        }
         for y, rs in sorted(years.items(), reverse=True)
     ]

@@ -11,7 +11,9 @@ class Command(BaseCommand):
     help = "Load the funding catalog and questions (and, with --fictional, the fictional funding samples)."
 
     def add_arguments(self, parser):
-        parser.add_argument("--fictional", action="store_true", help="Also load the fictional funding samples.")
+        parser.add_argument(
+            "--fictional", action="store_true", help="Also load the fictional funding samples."
+        )
 
     def handle(self, *args, **options):
         from apps.outcomes import funding

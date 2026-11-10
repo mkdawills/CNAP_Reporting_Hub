@@ -73,7 +73,9 @@ def suggest(request):
     name = request.POST.get("name", "").strip()[:300]
     back = f"{reverse('portal:funding')}?for={owner.pk}#s-suggest"
     if not name:
-        messages.error(request, "Add the opportunity’s name, then select Send the suggestion again.")
+        messages.error(
+            request, "Add the opportunity’s name, then select Send the suggestion again."
+        )
         return redirect(back)
     url = request.POST.get("url", "").strip()[:500]
     if url and not url.startswith(("http://", "https://")):
@@ -96,6 +98,12 @@ def suggest(request):
 def letter(request, pk):
     f = get_object_or_404(FundingFollowUp.objects.select_related("grant", "person"), pk=pk)
     if not funding.can_read_letter(request.user, f):
-        raise PermissionDenied("Each letter is visible only to the person it was written for and the CNAP office.")
+        raise PermissionDenied(
+            "Each letter is visible only to the person it was written for and the CNAP office."
+        )
     tpl = prototype.template(request, "funding_letter", "proto/portal/funding_letter.html")
-    return render(request, tpl, {**funding.letter_parts(f), "preview": f.status != FundingFollowUp.Status.SENT})
+    return render(
+        request,
+        tpl,
+        {**funding.letter_parts(f), "preview": f.status != FundingFollowUp.Status.SENT},
+    )

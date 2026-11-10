@@ -29,9 +29,11 @@ from .results import _ids, full_responses
 
 def core_surveys():
     """The user surveys about a core: one per core."""
-    return FormDefinition.objects.filter(
-        about_core__isnull=False, category=FormCategory.SURVEY
-    ).select_related("about_core").order_by("sort_order")
+    return (
+        FormDefinition.objects.filter(about_core__isnull=False, category=FormCategory.SURVEY)
+        .select_related("about_core")
+        .order_by("sort_order")
+    )
 
 
 def is_core_survey(form_definition):

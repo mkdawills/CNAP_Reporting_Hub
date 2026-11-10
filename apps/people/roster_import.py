@@ -43,7 +43,13 @@ from .services import (
 COLUMN_ALIASES = {
     "first_name": {"first", "firstname", "first name", "given name", "given"},
     "last_name": {"last", "lastname", "last name", "surname", "family name"},
-    "email": {"email", "e-mail", "email address", "e-mail address", "mail"},  # accepts both spellings in uploaded files
+    "email": {
+        "email",
+        "e-mail",
+        "email address",
+        "e-mail address",
+        "mail",
+    },  # accepts both spellings in uploaded files
     "institution": {"institution", "university", "organization", "affiliation"},
     "department": {"department", "dept", "unit"},
     "position_title": {"position", "title", "position title", "job title", "role"},

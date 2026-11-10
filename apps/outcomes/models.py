@@ -40,7 +40,9 @@ class Publication(ArchivableModel):
     title = models.CharField(max_length=500)
     publication_type = models.CharField(max_length=20, choices=PublicationType.choices)
     publication_type_other = models.CharField(
-        "Please describe the type", max_length=200, blank=True,
+        "Please describe the type",
+        max_length=200,
+        blank=True,
         help_text="Shown when the type is Other (MW 2026-11-04).",
     )
     status = models.CharField(
@@ -235,14 +237,18 @@ class Presentation(ArchivableModel):
 
     presentation_type = models.CharField(max_length=20, choices=PresentationType.choices)
     presentation_type_other = models.CharField(
-        "Please describe the type", max_length=200, blank=True,
+        "Please describe the type",
+        max_length=200,
+        blank=True,
         help_text="Shown when the type is Other (MW 2026-11-04).",
     )
     title = models.CharField(max_length=500)
     description = models.TextField(blank=True)
     author_display_text = models.TextField(blank=True, help_text="Full author list as entered.")
     event = models.CharField(max_length=300, blank=True)
-    location = models.CharField(max_length=300, blank=True)  # older records; new ones fill the parts below
+    location = models.CharField(
+        max_length=300, blank=True
+    )  # older records; new ones fill the parts below
     venue = models.CharField(max_length=300, blank=True, help_text="Host university or venue.")
     city = models.CharField(max_length=120, blank=True)
     state_region = models.CharField(max_length=120, blank=True)
@@ -407,8 +413,10 @@ class GrantSubmission(ArchivableModel):
     discussion_date = models.DateField(null=True, blank=True)
     feedback_shared_with_cnap = models.BooleanField(null=True, blank=True)
     plans_to_resubmit = models.BooleanField(null=True, blank=True)
-    cayuse_ipf = models.CharField(  # K-State's Cayuse proposal number, for cross-checking (MW 2026-11-03)
-        max_length=40, blank=True
+    cayuse_ipf = (
+        models.CharField(  # K-State's Cayuse proposal number, for cross-checking (MW 2026-11-03)
+            max_length=40, blank=True
+        )
     )
     funding_source_type = models.CharField(
         max_length=14,
@@ -490,7 +498,9 @@ class GrantSubmissionPerson(models.Model):
     person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="grant_links")
     role = models.CharField(max_length=20, choices=GrantRole.choices)
     role_other = models.CharField(
-        "Please describe your role", max_length=200, blank=True,
+        "Please describe your role",
+        max_length=200,
+        blank=True,
         help_text="Shown when the role is Other (MW 2026-11-04).",
     )
     is_primary_cnap_contact = models.BooleanField(default=False)
@@ -654,18 +664,23 @@ class OutcomeReminder(models.Model):
         ordering = ["-sent_at"]
 
 
-
 class GrantNudge(models.Model):
     """One monthly check-in email about a planned grant proposal, and the answer it brought back (MW 2026-11-03)."""
 
     class Choice(models.TextChoices):
-        IDEATION = "ideation", (
-            "The proposal has not progressed past the ideation stage. I am hopeful to get things kick-started soon."
+        IDEATION = (
+            "ideation",
+            (
+                "The proposal has not progressed past the ideation stage. I am hopeful to get things kick-started soon."
+            ),
         )
         BLOCK = "block", "I am experiencing a little writer's block. Thanks for the nudge!"
-        SPECIALIST = "specialist", (
-            "I have taken the first step of notifying my Central Office or departmental grant "
-            "specialist of my plans to submit."
+        SPECIALIST = (
+            "specialist",
+            (
+                "I have taken the first step of notifying my Central Office or departmental grant "
+                "specialist of my plans to submit."
+            ),
         )
         TIMELINE = "timeline", "I have a timeline in place with clear internal due dates."
         PIVOT = "pivot", "I am pivoting away from this plan, or abandoning it."
@@ -689,7 +704,6 @@ class GrantNudge(models.Model):
 
     def __str__(self):
         return f"Nudge to {self.person} about {self.grant.project_title[:40]}"
-
 
 
 # ---------------------------------------------------------------------------
@@ -723,16 +737,24 @@ class FundingOpportunity(ArchivableModel):
     amount_text = models.CharField(max_length=300, blank=True)
     deadline = models.DateField(null=True, blank=True)
     deadline_text = models.CharField(
-        max_length=200, blank=True, help_text="Shown when there is no single date, such as early March each year."
+        max_length=200,
+        blank=True,
+        help_text="Shown when there is no single date, such as early March each year.",
     )
     url = models.URLField(max_length=500, blank=True)
-    summary = models.TextField(blank=True, help_text="One or two plain sentences. One sentence per line.")
-    fuller_text = models.TextField(blank=True, help_text="The longer explanation for the letter page.")
+    summary = models.TextField(
+        blank=True, help_text="One or two plain sentences. One sentence per line."
+    )
+    fuller_text = models.TextField(
+        blank=True, help_text="The longer explanation for the letter page."
+    )
     counts_toward_milestone = models.CharField(
         max_length=8, choices=FundingMilestone.choices, default=FundingMilestone.NO
     )
     esi_only = models.BooleanField(default=False)
-    audience = models.CharField(max_length=10, choices=FundingAudience.choices, default=FundingAudience.MATCHED)
+    audience = models.CharField(
+        max_length=10, choices=FundingAudience.choices, default=FundingAudience.MATCHED
+    )
     checked_on = models.DateField(null=True, blank=True)
     source_url = models.URLField(max_length=500, blank=True)
     tracker_id = models.CharField(max_length=60, blank=True)
@@ -768,9 +790,13 @@ class FundingOpportunity(ArchivableModel):
 class FundingMatch(models.Model):
     """An opportunity MW picked for one person, with her one-sentence reason. Ending hides it; nothing is deleted."""
 
-    opportunity = models.ForeignKey(FundingOpportunity, on_delete=models.PROTECT, related_name="matches")
+    opportunity = models.ForeignKey(
+        FundingOpportunity, on_delete=models.PROTECT, related_name="matches"
+    )
     person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="funding_matches")
-    why = models.TextField(blank=True, help_text="Why the opportunity fits the person. One sentence per line.")
+    why = models.TextField(
+        blank=True, help_text="Why the opportunity fits the person. One sentence per line."
+    )
     added_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
     )
@@ -809,7 +835,11 @@ class FundingSuggestion(TimestampedModel):
     )
     handled_at = models.DateTimeField(null=True, blank=True)
     opportunity = models.ForeignKey(
-        FundingOpportunity, null=True, blank=True, on_delete=models.SET_NULL, related_name="suggestions"
+        FundingOpportunity,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="suggestions",
     )
     note_to_person = models.TextField(blank=True)
 
@@ -829,8 +859,12 @@ class FundingNewsItem(ArchivableModel):
 
     headline = models.CharField(max_length=300)
     news_date = models.DateField(null=True, blank=True)
-    date_text = models.CharField(max_length=100, blank=True, help_text="Shown when there is no single day.")
-    summary = models.TextField(help_text="Two or three sentences in your own words. One sentence per line.")
+    date_text = models.CharField(
+        max_length=100, blank=True, help_text="Shown when there is no single day."
+    )
+    summary = models.TextField(
+        help_text="Two or three sentences in your own words. One sentence per line."
+    )
     source_name = models.CharField(max_length=200, blank=True)
     source_url = models.URLField(max_length=500, blank=True)
     pinned = models.BooleanField(default=False)
@@ -851,12 +885,16 @@ class FundingFollowUp(TimestampedModel):
         SENT = "sent", "Sent"
         DISMISSED = "dismissed", "Dismissed"
 
-    grant = models.OneToOneField(GrantSubmission, on_delete=models.CASCADE, related_name="funding_followup")
+    grant = models.OneToOneField(
+        GrantSubmission, on_delete=models.CASCADE, related_name="funding_followup"
+    )
     person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="funding_followups")
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.TO_REVIEW)
     subject = models.CharField(max_length=300, blank=True)
     opening = models.TextField(blank=True)
-    body_note = models.TextField(blank=True, help_text="MW's personal paragraph. One sentence per line.")
+    body_note = models.TextField(
+        blank=True, help_text="MW's personal paragraph. One sentence per line."
+    )
     closing = models.TextField(blank=True)
     signoff = models.TextField(blank=True)
     opportunities = models.ManyToManyField(FundingOpportunity, blank=True, related_name="followups")

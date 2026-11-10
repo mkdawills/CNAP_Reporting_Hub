@@ -58,7 +58,11 @@ def test_release_shows_only_kept_answers_and_never_names(client, demo):
     assert "Hold back" in page and "Your reflections" in page
     client.post(
         f"/manage/results/{p.short_label}/{fd.code}/core-report/save/",
-        {"action": "release", "reflections": "The core’s new scheduling worked well.", "hide": [str(first["id"])]},
+        {
+            "action": "release",
+            "reflections": "The core’s new scheduling worked well.",
+            "hide": [str(first["id"])],
+        },
     )
     report = CoreReport.objects.get(form_definition=fd, reporting_period=p)
     assert report.released_at and report.release_count == 1
@@ -107,4 +111,7 @@ def test_members_are_told_in_the_survey_purpose():
     from apps.common.templatetags.cnap import form_purpose
 
     for code in ("bn_core_survey", "cn_core_survey", "ni_core_survey"):
-        assert "Core directors receive a report of combined answers and written comments, without names." in form_purpose(code)
+        assert (
+            "Core directors receive a report of combined answers and written comments, without names."
+            in form_purpose(code)
+        )

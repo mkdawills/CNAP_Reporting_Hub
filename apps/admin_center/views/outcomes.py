@@ -120,7 +120,11 @@ def outcomes(request):
         rows = sent.filter(_ack_q("cnap_acknowledged", f)) if f != "all" else grants
         rows = rows.order_by("-submission_date", "-updated_at")
     elif f == "rrid":
-        rows = published.filter(_rrid_missing_q()).distinct().order_by("-publication_date", "-updated_at")
+        rows = (
+            published.filter(_rrid_missing_q())
+            .distinct()
+            .order_by("-publication_date", "-updated_at")
+        )
     else:
         rows = published.filter(_ack_q("cnap_cited", f)) if f != "all" else pubs
         rows = rows.order_by("-publication_date", "-updated_at")
@@ -132,9 +136,9 @@ def outcomes(request):
             "sv": _sv_ctx(request) if tab == "sitevisit" else None,
             "reminders_due": _rem.due() if tab == "reminders" else None,
             "nudges_due": _ndg.due() if tab == "reminders" else None,
-            "nudge_rows": GrantNudge.objects.select_related("grant", "person").order_by(
-                "-sent_at"
-            )[:30]
+            "nudge_rows": GrantNudge.objects.select_related("grant", "person").order_by("-sent_at")[
+                :30
+            ]
             if tab == "reminders"
             else None,
             "nudge_every": settings.GRANT_NUDGE_EVERY_DAYS,
@@ -252,7 +256,7 @@ def counts(year=None):
         rows = []
         for n in names:
             cells = []
-            for m, label in cols:
+            for m, _label in cols:
                 per = [(y, tally.get((kind, n, m, y), 0)) for y in shown]
                 cells.append(
                     {
@@ -513,11 +517,11 @@ class GrantForm(forms.ModelForm):
                 "enter only that investigator’s portion of the award. "
                 "For example: on a $1,200,000 award where the CNAP investigator's subaward "
                 "is $250,000, enter 250000."
-            )
+            ),
         }
 
 
-from apps.portal.outcome_forms import apply_placeholders as _apply_placeholders
+from apps.portal.outcome_forms import apply_placeholders as _apply_placeholders  # noqa: E402
 
 _apply_placeholders(PublicationForm)
 _apply_placeholders(GrantForm)
@@ -545,7 +549,12 @@ class _Rrid(forms.Form):
             name = f"rrid_{r.pk}"
             self.fields[name] = forms.ChoiceField(
                 label=f"{r.core.name} ({r.core.rrid}) cited in the methods?",
-                choices=[("", "Not recorded"), ("yes", "Yes"), ("no", "No"), ("unsure", "Not sure")],
+                choices=[
+                    ("", "Not recorded"),
+                    ("yes", "Yes"),
+                    ("no", "No"),
+                    ("unsure", "Not sure"),
+                ],
                 required=False,
                 initial=have.get(r.pk, ""),
                 help_text="Only counts if this core is ticked under Credit.",
@@ -592,9 +601,26 @@ def publication_edit(request, pk=None):
             "cnap_index_tri": _tri_initial(obj.cnap_in_grant_index) if obj else "",
         },
     )
-    form.order_fields(["status", "substatus", "title", "publication_type", "publication_type_other", "author_display_text", "journal",
-                       "pubmed_url", "submission_date", "publication_date", "cnap_cited_tri", "cnap_index_tri",
-                       "has_foreign_authors", "foreign_component_approved", "has_non_idea_coauthors", "comments"])
+    form.order_fields(
+        [
+            "status",
+            "substatus",
+            "title",
+            "publication_type",
+            "publication_type_other",
+            "author_display_text",
+            "journal",
+            "pubmed_url",
+            "submission_date",
+            "publication_date",
+            "cnap_cited_tri",
+            "cnap_index_tri",
+            "has_foreign_authors",
+            "foreign_component_approved",
+            "has_non_idea_coauthors",
+            "comments",
+        ]
+    )
     credit = _Credit(
         request.POST or None,
         initial={
@@ -676,9 +702,25 @@ def grant_edit(request, pk=None):
     if obj:
         form.fields.pop("resubmission_of", None)
     # One field group after another, so the small group headings read in order (MW 2026-11-04).
-    form.order_fields(["status", "resubmission_of", "project_title", "pi", "grant_number", "funding_source_type", "funding_agency",
-                       "mechanism", "submission_date", "award_notice_date", "requested_total", "award_total",
-                       "cnap_portion", "ack_tri", "decision_comments"])
+    form.order_fields(
+        [
+            "status",
+            "resubmission_of",
+            "project_title",
+            "pi",
+            "grant_number",
+            "funding_source_type",
+            "funding_agency",
+            "mechanism",
+            "submission_date",
+            "award_notice_date",
+            "requested_total",
+            "award_total",
+            "cnap_portion",
+            "ack_tri",
+            "decision_comments",
+        ]
+    )
     if request.method == "POST" and form.is_valid() and credit.is_valid():
         with transaction.atomic():
             g = form.save(commit=False)
@@ -697,7 +739,9 @@ def grant_edit(request, pk=None):
             if g.status == "not_funded":
                 from apps.outcomes import funding
 
-                funding.ensure_followup(g, request.user)  # MW 2026-11-10: the follow-up queue, no redirect
+                funding.ensure_followup(
+                    g, request.user
+                )  # MW 2026-11-10: the follow-up queue, no redirect
             people = list(credit.cleaned_data["people"])
             lead = form.cleaned_data["pi"]
             if lead and lead not in people:
@@ -738,7 +782,13 @@ def grant_edit(request, pk=None):
     return render(
         request,
         "manage/outcome_form.html",
-        {"form": form, "credit": credit, "obj": obj, "kind": "grant", "can_edit": access.can_manage(request.user)},
+        {
+            "form": form,
+            "credit": credit,
+            "obj": obj,
+            "kind": "grant",
+            "can_edit": access.can_manage(request.user),
+        },
     )
 
 
@@ -1468,10 +1518,24 @@ def export(request, kind):
     record_event(request.user, AuditLog.Action.EXPORT, f"outcomes:{kind}")
     resp = HttpResponse("﻿" + buf.getvalue(), content_type="text/csv; charset=utf-8")
     resp["Content-Disposition"] = f'attachment; filename="cnap_{kind}.csv"'
-    if request.GET.get("format") == "xlsx":  # the same cells as the CSV, as a formatted workbook (MW 2026-11-05)
+    if (
+        request.GET.get("format") == "xlsx"
+    ):  # the same cells as the CSV, as a formatted workbook (MW 2026-11-05)
         from apps.reporting.services.exports import csv_to_xlsx
 
-        names = {"publications": "Papers", "pubs": "Papers", "talks": "Talks and posters", "presentations": "Talks and posters", "grants": "Grant proposals", "c1": "RPPR C.1", "table1": "RPPR Tables 1A and 1B", "table2": "RPPR Table 2", "d1": "RPPR D.1", "teams": "Research teams", "sitevisit": "Site-visit report"}
+        names = {
+            "publications": "Papers",
+            "pubs": "Papers",
+            "talks": "Talks and posters",
+            "presentations": "Talks and posters",
+            "grants": "Grant proposals",
+            "c1": "RPPR C.1",
+            "table1": "RPPR Tables 1A and 1B",
+            "table2": "RPPR Table 2",
+            "d1": "RPPR D.1",
+            "teams": "Research teams",
+            "sitevisit": "Site-visit report",
+        }
         return csv_to_xlsx(resp, f"cnap_{kind}.xlsx", title=names.get(kind, kind.title()))
     return resp
 
@@ -1656,7 +1720,9 @@ def table1_exclude(request, pk):
         g.table1_exclusion_reason = ""
         g.save(update_fields=["exclude_from_table1", "table1_exclusion_reason", "updated_at"])
         record_event(request.user, AuditLog.Action.UPDATE, g, old=old, new={"exclude": False})
-        messages.success(request, f"{g.project_title} ({g.version_label}) is counted in Table 1 again.")
+        messages.success(
+            request, f"{g.project_title} ({g.version_label}) is counted in Table 1 again."
+        )
         return redirect(back)
     reason = request.POST.get("reason", "").strip()
     if not reason:

@@ -4,7 +4,9 @@ from apps.outcomes import nudges, reminders
 
 
 class Command(BaseCommand):
-    help = "Email the stale-record reminders and the monthly planned-proposal check-ins (run daily)."
+    help = (
+        "Email the stale-record reminders and the monthly planned-proposal check-ins (run daily)."
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -22,7 +24,7 @@ class Command(BaseCommand):
         nudged = nudges.send(dry_run=opts["dry_run"])
         verb = "Would check in with" if opts["dry_run"] else "Checked in with"
         for grant, person, to in nudged:
-            self.stdout.write(f"{verb} {person} about \"{grant.project_title[:60]}\" ({to})")
+            self.stdout.write(f'{verb} {person} about "{grant.project_title[:60]}" ({to})')
         self.stdout.write(
             f"{len(nudged)} monthly check-in{'s' if len(nudged) != 1 else ''} {'due' if opts['dry_run'] else 'sent'}."
         )

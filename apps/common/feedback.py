@@ -13,7 +13,9 @@ def send(request):
     topic = request.POST.get("topic", "")
     comment = request.POST.get("comment", "").strip()
     if topic not in dict(PageFeedback.TOPICS) or not comment:
-        return JsonResponse({"ok": False, "error": "Choose a topic and write a few words."}, status=400)
+        return JsonResponse(
+            {"ok": False, "error": "Choose a topic and write a few words."}, status=400
+        )
     try:
         rating = int(request.POST.get("rating") or 0) or None
     except ValueError:

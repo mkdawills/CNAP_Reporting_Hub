@@ -57,8 +57,14 @@ def home(request):
         fus = fus.filter(status=FundingFollowUp.Status.TO_REVIEW)
     opps = []
     for o in FundingOpportunity.objects.active().order_by("name"):
-        opps.append({"o": o, "n": o.matches.filter(ended_at__isnull=True).count(), "stale": funding.stale(o, today),
-                     "row": funding.row(o, today=today)})
+        opps.append(
+            {
+                "o": o,
+                "n": o.matches.filter(ended_at__isnull=True).count(),
+                "stale": funding.stale(o, today),
+                "row": funding.row(o, today=today),
+            }
+        )
     opps.sort(key=lambda x: (x["o"].audience != FundingAudience.EVERYONE, x["o"].name.lower()))
     c = funding.counts()
     return render(
@@ -71,7 +77,9 @@ def home(request):
             "followups": [(f, funding.status_changed(f)) for f in fus],
             "opps": opps,
             "n_stale": sum(1 for x in opps if x["stale"]),
-            "suggestions": FundingSuggestion.objects.select_related("person", "opportunity").order_by("status", "-created_at"),
+            "suggestions": FundingSuggestion.objects.select_related(
+                "person", "opportunity"
+            ).order_by("status", "-created_at"),
             "news": FundingNewsItem.objects.active().order_by("-pinned", "-news_date"),
             "questions": FundingQuestion.objects.active(),
             "counts": c,
@@ -92,7 +100,13 @@ def followup(request, pk):
     choices = []
     for o in FundingOpportunity.objects.active():
         if o.pk in mine or o.audience == FundingAudience.EVERYONE:
-            choices.append({"r": funding.row(o, why=mine.get(o.pk, "")), "on": o.pk in featured, "mine": o.pk in mine})
+            choices.append(
+                {
+                    "r": funding.row(o, why=mine.get(o.pk, "")),
+                    "on": o.pk in featured,
+                    "mine": o.pk in mine,
+                }
+            )
     choices.sort(key=lambda x: (not x["mine"], funding._sort_key(x["r"]["o"])))
     to, cc = funding.recipients(f)
     return render(
@@ -127,7 +141,9 @@ def followup_post(request, pk):
             return redirect(back + "#fu-dismiss")
         f.status, f.dismissed_reason = FundingFollowUp.Status.DISMISSED, reason
         f.save(update_fields=["status", "dismissed_reason", "updated_at"])
-        record_event(request.user, AuditLog.Action.UPDATE, f, new={"status": "dismissed", "reason": reason})
+        record_event(
+            request.user, AuditLog.Action.UPDATE, f, new={"status": "dismissed", "reason": reason}
+        )
         messages.success(request, "Dismissed.")
         return redirect(_tab_url("followups"))
     if action == "reopen":
@@ -182,7 +198,17 @@ def followup_email(request, pk):
 
 # --------------------------------------------------------------------------- the opportunity catalog and matches
 
-FIELDS = ["name", "sponsor", "mechanism", "amount_text", "deadline_text", "url", "summary", "fuller_text", "source_url"]
+FIELDS = [
+    "name",
+    "sponsor",
+    "mechanism",
+    "amount_text",
+    "deadline_text",
+    "url",
+    "summary",
+    "fuller_text",
+    "source_url",
+]
 
 
 @admin_view
@@ -193,9 +219,17 @@ def opportunity(request, pk=None):
     if not o and request.GET.get("suggestion"):
         s = FundingSuggestion.objects.filter(pk=request.GET["suggestion"]).first()
         if s:
-            initial = {"name": s.name, "sponsor": s.sponsor, "url": s.url, "deadline_text": s.deadline_text,
-                       "summary": s.why, "audience": FundingAudience.EVERYONE if s.for_everyone else FundingAudience.MATCHED}
-    matches = o.matches.select_related("person").order_by("ended_at", "person__last_name") if o else []
+            initial = {
+                "name": s.name,
+                "sponsor": s.sponsor,
+                "url": s.url,
+                "deadline_text": s.deadline_text,
+                "summary": s.why,
+                "audience": FundingAudience.EVERYONE if s.for_everyone else FundingAudience.MATCHED,
+            }
+    matches = (
+        o.matches.select_related("person").order_by("ended_at", "person__last_name") if o else []
+    )
     taken = {m.person_id for m in matches if not m.ended_at}
     return render(
         request,
@@ -208,7 +242,9 @@ def opportunity(request, pk=None):
             "milestones": FundingMilestone.choices,
             "audiences": FundingAudience.choices,
             "matches": matches,
-            "people": Person.objects.filter(archived_at__isnull=True, is_active=True).exclude(pk__in=taken).order_by("last_name", "first_name"),
+            "people": Person.objects.filter(archived_at__isnull=True, is_active=True)
+            .exclude(pk__in=taken)
+            .order_by("last_name", "first_name"),
             "can_manage": access.can_manage(request.user),
             "stale": funding.stale(o) if o else False,
         },
@@ -235,14 +271,20 @@ def opportunity_post(request, pk=None):
         person = Person.objects.filter(pk=request.POST.get("person") or 0).first()
         if not person:
             messages.error(request, "Choose a person, then select Add the match again.")
-        elif FundingMatch.objects.filter(opportunity=o, person=person, ended_at__isnull=True).exists():
+        elif FundingMatch.objects.filter(
+            opportunity=o, person=person, ended_at__isnull=True
+        ).exists():
             messages.error(request, f"{person} is already matched to the opportunity.")
         else:
             funding.add_match(o, person, request.POST.get("why", "").strip(), request.user)
-            messages.success(request, f"Added. {person} now sees the opportunity under Picked for you.")
+            messages.success(
+                request, f"Added. {person} now sees the opportunity under Picked for you."
+            )
         return redirect(reverse("manage:funding_opportunity", args=[o.pk]) + "#fo-matches")
     if o and action == "end_match":
-        m = get_object_or_404(FundingMatch, pk=request.POST.get("match"), opportunity=o, ended_at__isnull=True)
+        m = get_object_or_404(
+            FundingMatch, pk=request.POST.get("match"), opportunity=o, ended_at__isnull=True
+        )
         m.ended_at = timezone.now()
         m.save(update_fields=["ended_at"])
         record_event(request.user, AuditLog.Action.UPDATE, m, new={"ended": True})
@@ -253,7 +295,9 @@ def opportunity_post(request, pk=None):
     data = {k: request.POST.get(k, "").strip() for k in FIELDS}
     if not data["name"]:
         messages.error(request, "Write the opportunity’s name, then select Save again.")
-        return redirect(request.META.get("HTTP_REFERER") or reverse("manage:funding_opportunity_new"))
+        return redirect(
+            request.META.get("HTTP_REFERER") or reverse("manage:funding_opportunity_new")
+        )
     for k in ("url", "source_url"):
         if data[k] and not data[k].startswith(("http://", "https://")):
             data[k] = "https://" + data[k]
@@ -273,19 +317,34 @@ def opportunity_post(request, pk=None):
         for k, v in data.items():
             setattr(o, k, v)
         o.save()
-        record_event(request.user, AuditLog.Action.UPDATE, o, old={k: str(v) for k, v in old.items()}, new={k: str(v) for k, v in data.items()})
+        record_event(
+            request.user,
+            AuditLog.Action.UPDATE,
+            o,
+            old={k: str(v) for k, v in old.items()},
+            new={k: str(v) for k, v in data.items()},
+        )
         messages.success(request, "Saved.")
         return redirect("manage:funding_opportunity", o.pk)
     o = FundingOpportunity.objects.create(created_by=request.user, **data)
     record_event(request.user, AuditLog.Action.CREATE, o, new={"name": o.name})
-    s = FundingSuggestion.objects.filter(pk=request.POST.get("suggestion") or 0, status=FundingSuggestion.Status.TO_REVIEW).first()
+    s = FundingSuggestion.objects.filter(
+        pk=request.POST.get("suggestion") or 0, status=FundingSuggestion.Status.TO_REVIEW
+    ).first()
     if s:
         o.suggested_by = s.person
         o.save(update_fields=["suggested_by", "updated_at"])
-        s.status, s.opportunity, s.handled_by, s.handled_at = FundingSuggestion.Status.ADDED, o, request.user, timezone.now()
+        s.status, s.opportunity, s.handled_by, s.handled_at = (
+            FundingSuggestion.Status.ADDED,
+            o,
+            request.user,
+            timezone.now(),
+        )
         s.note_to_person = request.POST.get("note_to_person", "").strip() or s.note_to_person
         s.save()
-        record_event(request.user, AuditLog.Action.UPDATE, s, new={"status": "added", "opportunity": o.pk})
+        record_event(
+            request.user, AuditLog.Action.UPDATE, s, new={"status": "added", "opportunity": o.pk}
+        )
     messages.success(request, "Added.")
     return redirect("manage:funding_opportunity", o.pk)
 
@@ -313,7 +372,11 @@ def suggestion_post(request, pk):
     s = get_object_or_404(FundingSuggestion, pk=pk)
     action = request.POST.get("action")
     if action == "decline":
-        s.status, s.handled_by, s.handled_at = FundingSuggestion.Status.DECLINED, request.user, timezone.now()
+        s.status, s.handled_by, s.handled_at = (
+            FundingSuggestion.Status.DECLINED,
+            request.user,
+            timezone.now(),
+        )
         s.note_to_person = request.POST.get("note", "").strip()
         s.save()
         record_event(request.user, AuditLog.Action.UPDATE, s, new={"status": "declined"})
@@ -332,7 +395,9 @@ def suggestion_post(request, pk):
 @admin_view
 def news_edit(request, pk=None):
     n = get_object_or_404(FundingNewsItem, pk=pk) if pk else None
-    return render(request, "manage/funding_news.html", {"n": n, "can_manage": access.can_manage(request.user)})
+    return render(
+        request, "manage/funding_news.html", {"n": n, "can_manage": access.can_manage(request.user)}
+    )
 
 
 @manage_action
@@ -391,6 +456,12 @@ def questions_post(request):
             old = {"title": q.title, "text": q.text}
             q.title, q.text = title[:120], text
             q.save()
-            record_event(request.user, AuditLog.Action.UPDATE, q, old=old, new={"title": q.title, "text": q.text})
+            record_event(
+                request.user,
+                AuditLog.Action.UPDATE,
+                q,
+                old=old,
+                new={"title": q.title, "text": q.text},
+            )
     messages.success(request, "Saved.")
     return redirect(_tab_url("questions"))

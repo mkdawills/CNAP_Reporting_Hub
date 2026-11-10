@@ -81,7 +81,9 @@ def test_on_only_the_redesigned_screens_change(client, demo):
     # Batch 2 (MW 2026-11-05): every form's results use the Screen 90 design
     r = client.get(f"/manage/results/{demo.short_label}/ts_admin_core/")
     assert "proto/report.html" in _templates(r)
-    assert "proto/results.html" in _templates(client.get(f"/manage/results/?period={demo.short_label}"))
+    assert "proto/results.html" in _templates(
+        client.get(f"/manage/results/?period={demo.short_label}")
+    )
     # Batch 3 (MW 2026-11-06): administration pages take the shared design layer, and only the layer:
     # the same template renders, with the prototype class on the page.
     r = client.get("/manage/")
@@ -141,7 +143,9 @@ def test_screen3_counts_add_up(client, demo):
 
 
 @override_settings(UI_PROTOTYPE=True)
-@pytest.mark.parametrize("path", ["/manage/results/{p}/mentee_survey/", "/manage/results/{p}/mentee_survey/export/"])
+@pytest.mark.parametrize(
+    "path", ["/manage/results/{p}/mentee_survey/", "/manage/results/{p}/mentee_survey/export/"]
+)
 def test_screen90_confidentiality_unchanged(client, demo, path):
     url = path.format(p=demo.short_label)
     # a respondent never reaches administrator screens

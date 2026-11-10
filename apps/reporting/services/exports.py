@@ -102,7 +102,11 @@ def write_sheet(ws, title, header, rows, notes=(), widths=None):
         if widths and c <= len(widths) and widths[c - 1]:
             w = widths[c - 1]
         else:
-            longest = max([len(str(header[c - 1]))] + [len(str(row[c - 1])) for row in rows if c - 1 < len(row)] + [6])
+            longest = max(
+                [len(str(header[c - 1]))]
+                + [len(str(row[c - 1])) for row in rows if c - 1 < len(row)]
+                + [6]
+            )
             w = min(max(10, longest + 2), 60)
         ws.column_dimensions[get_column_letter(c)].width = w
     return ws
@@ -197,14 +201,26 @@ def form_answers(user, fd, period, *, core=None, project=None):
     if not mode:
         raise PermissionDenied("Your access doesn’t include individual responses to this form.")
     done = list(
-        Assignment.objects.filter(form_definition=fd, reporting_period=period, status__in=COMPLETE_STATUSES)
+        Assignment.objects.filter(
+            form_definition=fd, reporting_period=period, status__in=COMPLETE_STATUSES
+        )
         .select_related("person", "project", "core", "form_version")
         .prefetch_related("responses")
     )
     if (core or project) and mode == IDENTIFIED:  # narrowing only where names are already shown
-        done = [a for a in done if (not project or a.project_id == project.pk) and (not core or a.core_id == core.pk)]
+        done = [
+            a
+            for a in done
+            if (not project or a.project_id == project.pk) and (not core or a.core_id == core.pk)
+        ]
     if mode == DEIDENTIFIED and not deidentified_rows_allowed(fd, period):
-        return {"mode": mode, "columns": [], "rows": [], "repeats": {}, "blocked": "Individual responses aren’t included because fewer than 5 people completed this form"}
+        return {
+            "mode": mode,
+            "columns": [],
+            "rows": [],
+            "repeats": {},
+            "blocked": "Individual responses aren’t included because fewer than 5 people completed this form",
+        }
     if mode == IDENTIFIED:
         ordered = sorted(done, key=lambda a: (a.person.last_name, a.person.first_name))
         labels = [a.person.full_name for a in ordered]
@@ -236,13 +252,17 @@ def form_answers(user, fd, period, *, core=None, project=None):
         vals, multi, reps = {}, {}, {}
         if resp:
             sec_title = {sec.pk: (sec.title or sec.code) for sec in s.sections if sec.is_repeatable}
-            for ans in resp.answers.select_related("question", "option").prefetch_related("files__file"):
+            for ans in resp.answers.select_related("question", "option").prefetch_related(
+                "files__file"
+            ):
                 q = ans.question
                 if q.config.get("widget") == "system":
                     continue
                 v = _value(q, ans, opts, named=mode == IDENTIFIED)
                 if q.form_section_id in sec_title:
-                    reps.setdefault(sec_title[q.form_section_id], {}).setdefault(ans.repeat_index, {})[q.code] = v
+                    reps.setdefault(sec_title[q.form_section_id], {}).setdefault(
+                        ans.repeat_index, {}
+                    )[q.code] = v
                 elif q.question_type == QuestionType.MULTI_SELECT:
                     multi.setdefault(q.code, []).append(str(v))
                 else:
@@ -255,19 +275,34 @@ def form_answers(user, fd, period, *, core=None, project=None):
             lead.append(ctx)
         lead += [
             "Opted out" if a.status == "completed_opt_out" else "Answered",
-            timezone.localtime(a.submitted_at).date().isoformat() if getattr(a, "submitted_at", None) else "",
+            timezone.localtime(a.submitted_at).date().isoformat()
+            if getattr(a, "submitted_at", None)
+            else "",
         ]
         rows.append(lead + [vals.get(c, "") for c, _ in columns])
         for t, entries in reps.items():
             for i in sorted(entries):
-                repeats[t].append([label, i + 1] + [entries[i].get(c, "") for c, _ in repeat_cols[t]])
-    lead_head = ["Person" if mode == IDENTIFIED else "Respondent"] + (["Project or core"] if mode == IDENTIFIED else []) + ["How it was completed", "Submitted on"]
+                repeats[t].append(
+                    [label, i + 1] + [entries[i].get(c, "") for c, _ in repeat_cols[t]]
+                )
+    lead_head = (
+        ["Person" if mode == IDENTIFIED else "Respondent"]
+        + (["Project or core"] if mode == IDENTIFIED else [])
+        + ["How it was completed", "Submitted on"]
+    )
     return {
         "mode": mode,
         "lead": lead_head,
         "columns": columns,
         "rows": rows,
-        "repeats": {t: (["Person" if mode == IDENTIFIED else "Respondent", "Entry"] + [p for _, p in repeat_cols[t]], repeats[t]) for t in repeat_cols},
+        "repeats": {
+            t: (
+                ["Person" if mode == IDENTIFIED else "Respondent", "Entry"]
+                + [p for _, p in repeat_cols[t]],
+                repeats[t],
+            )
+            for t in repeat_cols
+        },
         "blocked": "",
     }
 
@@ -279,14 +314,18 @@ def add_form_sheets(wb, user, fd, period, used, first=False):
     ws.title = _safe_title(fd.name, used)
     notes = [
         period.name,
-        "With names." if data["mode"] == IDENTIFIED else "Without names: respondents are numbered in the same order as the results page.",
+        "With names."
+        if data["mode"] == IDENTIFIED
+        else "Without names: respondents are numbered in the same order as the results page.",
         "Rating questions show the number the person chose (for example, 4 for Good). Other questions show the words the person saw.",
     ]
     if data["blocked"]:
         write_sheet(ws, fd.name, ["Note"], [[data["blocked"] + "."]], notes=notes[:2])
         return ws.title, data["blocked"]
     header = data["lead"] + [p for _, p in data["columns"]]
-    write_sheet(ws, fd.name, header, data["rows"], notes=notes, widths=[24] + [None] * (len(header) - 1))
+    write_sheet(
+        ws, fd.name, header, data["rows"], notes=notes, widths=[24] + [None] * (len(header) - 1)
+    )
     for t, (h, rows) in data["repeats"].items():
         rs = wb.create_sheet()
         rs.title = _safe_title(f"{fd.name[:18]} – {t}", used)

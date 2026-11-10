@@ -46,8 +46,14 @@ def test_page_shows_names_and_roles_never_emails_and_takes_suggestions(client, s
         if row["person"].primary_email:
             assert row["person"].primary_email not in html
     target = (near + others)[0]["person"]
-    client.post(f"/roster-check/{link.token}/", {"action": "left", "person": target.pk, "note": "Graduated", "from_name": "A student"})
-    client.post(f"/roster-check/{link.token}/", {"action": "new", "name": "Jordan Sample", "role": "Graduate student"})
+    client.post(
+        f"/roster-check/{link.token}/",
+        {"action": "left", "person": target.pk, "note": "Graduated", "from_name": "A student"},
+    )
+    client.post(
+        f"/roster-check/{link.token}/",
+        {"action": "new", "name": "Jordan Sample", "role": "Graduate student"},
+    )
     s = list(link.suggestions.all())
     assert [x.kind for x in s] == ["left", "new"] and s[0].from_name == "A student"
     link.refresh_from_db()

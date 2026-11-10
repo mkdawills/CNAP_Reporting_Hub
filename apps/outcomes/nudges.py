@@ -50,9 +50,7 @@ SUPPORTS = [
 
 def role_of(person):
     """'research' for a current Research Project Leader, 'pilot' for a Pilot Project Leader, else ''."""
-    codes = set(
-        person.current_relationships().values_list("relationship_type__code", flat=True)
-    )
+    codes = set(person.current_relationships().values_list("relationship_type__code", flat=True))
     if "project_leader" in codes:
         return "research"
     if "pilot_awardee" in codes:
@@ -104,9 +102,7 @@ def send(actor=None, now=None, dry_run=False):
         if dry_run:
             sent.append((grant, person, ", ".join([to, *cc])))
             continue
-        nudge = GrantNudge.objects.create(
-            grant=grant, person=person, sent_to=", ".join([to, *cc])
-        )
+        nudge = GrantNudge.objects.create(grant=grant, person=person, sent_to=", ".join([to, *cc]))
         path = f"/outcomes/nudge/{nudge.pk}/"
 
         def link(next_path):
@@ -118,8 +114,7 @@ def send(actor=None, now=None, dry_run=False):
         # Each answer is its own link, so one click lands on the page with it already
         # selected (MW 2026-11-03).
         choice_links = [
-            (label, link(f"{path}?choice={code}"))
-            for code, label in GrantNudge.Choice.choices
+            (label, link(f"{path}?choice={code}")) for code, label in GrantNudge.Choice.choices
         ]
         body = render_to_string(
             "email/grant_nudge.txt",

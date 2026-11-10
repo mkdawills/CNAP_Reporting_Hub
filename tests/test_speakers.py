@@ -51,7 +51,9 @@ def test_add_a_new_speaker_and_the_job_sends_when_the_talk_ends(client, center):
     a = t.assignment
     assert a.form_definition.code == "neurosync_speaker_survey" and a.reporting_period == center
     m = mail.outbox[-1]
-    assert m.to == ["pat.visitor@example.org"] and "Thank you for speaking at NeuroSync" in m.subject
+    assert (
+        m.to == ["pat.visitor@example.org"] and "Thank you for speaking at NeuroSync" in m.subject
+    )
     assert "/accounts/link/" in m.body and '"Sleep and memory"' in m.body
     assert speakers.run_due(now=t.ends_at + timedelta(minutes=15)) == (0, [])  # never twice
     # not part of the period e-mails, and never assigned by a rule
@@ -66,7 +68,10 @@ def test_send_by_hand_and_the_form_shows_the_talk(client, center):
 
     p = Person.objects.filter(emails__isnull=False, is_active=True).first()
     t = SpeakerTalk.objects.create(
-        speaker=p, title="Hippocampal maps", ends_at=timezone.now() - timedelta(minutes=1), auto_send=False
+        speaker=p,
+        title="Hippocampal maps",
+        ends_at=timezone.now() - timedelta(minutes=1),
+        auto_send=False,
     )
     assert speakers.run_due() == (0, [])  # hand-sent only
     r = client.post(f"/manage/neurosync/{t.pk}/send/")
@@ -99,9 +104,30 @@ def test_semester_sheet_upload(client, center):
     assert r.status_code == 200 and "NeuroSync_talks_template" in r["Content-Disposition"]
     wb = Workbook()
     ws = wb.active
-    ws.append(["First name", "Last name", "Email", "Institution", "Talk title", "Date of the talk",
-               "Time the talk ends", "Send the survey automatically (Yes or No)"])
-    ws.append(["Dana", "Example", "dana.example@example.org", "Example U", "Grid cells", "12/04/2026", "4:30 PM", "Yes"])
+    ws.append(
+        [
+            "First name",
+            "Last name",
+            "Email",
+            "Institution",
+            "Talk title",
+            "Date of the talk",
+            "Time the talk ends",
+            "Send the survey automatically (Yes or No)",
+        ]
+    )
+    ws.append(
+        [
+            "Dana",
+            "Example",
+            "dana.example@example.org",
+            "Example U",
+            "Grid cells",
+            "12/04/2026",
+            "4:30 PM",
+            "Yes",
+        ]
+    )
     ws.append(["", "Nobody", "", "", "Mystery talk", "12/05/2026", "", ""])
     b = io.BytesIO()
     wb.save(b)

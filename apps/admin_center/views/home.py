@@ -1,13 +1,11 @@
 """Administrator home: where each period stands and what needs attention."""
 
 from django.contrib import messages
+from django.db.models import Count, Q
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from apps.accounts import access
-from django.urls import reverse
-from django.db.models import Count, Q
-from django.shortcuts import get_object_or_404, redirect, render
-
 from apps.audit.models import AuditLog, record_event
 from apps.common.enums import COMPLETE_STATUSES, AssignmentStatus, PeriodStatus
 from apps.reporting.models import HelpfulDocument, ReportingPeriod
@@ -67,8 +65,12 @@ def home(request):
             "issues": sum(len(c["rows"]) for c in checks),
             "checks": [c for c in checks if c["rows"]][:4],
             "docs": HelpfulDocument.objects.filter(is_active=True).select_related("file"),
-            "site_photo": __import__("apps.common.models", fromlist=["SitePhoto"]).SitePhoto.current(),
-            "funding_counts": __import__("apps.outcomes.funding", fromlist=["counts"]).counts(),  # MW 2026-11-10
+            "site_photo": __import__(
+                "apps.common.models", fromlist=["SitePhoto"]
+            ).SitePhoto.current(),
+            "funding_counts": __import__(
+                "apps.outcomes.funding", fromlist=["counts"]
+            ).counts(),  # MW 2026-11-10
         },
     )
 
@@ -167,12 +169,17 @@ def photo_set(request):
     if not up or not alt:
         messages.error(request, "Choose a photo and describe it in a few words for screen readers.")
         return redirect("manage:home")
-    if Path(up.name).suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp") or up.size > 8 * 1024 * 1024:
+    if (
+        Path(up.name).suffix.lower() not in (".jpg", ".jpeg", ".png", ".webp")
+        or up.size > 8 * 1024 * 1024
+    ):
         messages.error(request, "Upload a JPG, PNG, or WebP image under 8 MB.")
         return redirect("manage:home")
     SitePhoto.objects.filter(is_active=True).update(is_active=False)
     ph = SitePhoto.objects.create(
-        image=up, alt_text=alt[:300], caption=request.POST.get("caption", "").strip()[:300],
+        image=up,
+        alt_text=alt[:300],
+        caption=request.POST.get("caption", "").strip()[:300],
         uploaded_by=request.user,
     )
     record_event(request.user, AuditLog.Action.CREATE, ph, new={"alt": alt})

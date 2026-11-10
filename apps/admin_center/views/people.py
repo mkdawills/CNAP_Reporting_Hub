@@ -161,7 +161,11 @@ def person(request, pk):
         FundingOpportunity,
     )
 
-    ctx["funding_matches"] = FundingMatch.objects.filter(person=p).select_related("opportunity").order_by("ended_at", "opportunity__name")
+    ctx["funding_matches"] = (
+        FundingMatch.objects.filter(person=p)
+        .select_related("opportunity")
+        .order_by("ended_at", "opportunity__name")
+    )
     taken = [m.opportunity_id for m in ctx["funding_matches"] if not m.ended_at]
     ctx["funding_opps"] = FundingOpportunity.objects.active().exclude(pk__in=taken).order_by("name")
     return render(request, "manage/person.html", ctx)
@@ -430,6 +434,7 @@ def projects(request):
 
     def _people(rels):
         return _people_detail(list(rels), gy)
+
     current = Q(relationships__effective_to__isnull=True) | Q(
         relationships__effective_to__gte=today
     )
@@ -497,13 +502,17 @@ def core_rrid(request, pk):
         return redirect(reverse("manage:projects") + "#cores")
     clash = Core.objects.exclude(pk=core.pk).filter(rrid=rrid).first() if rrid else None
     if clash:
-        messages.error(request, f"{rrid} is already saved for {clash.name}. Each core has its own RRID.")
+        messages.error(
+            request, f"{rrid} is already saved for {clash.name}. Each core has its own RRID."
+        )
         return redirect(reverse("manage:projects") + "#cores")
     old = core.rrid
     if rrid != old:
         core.rrid = rrid
         core.save(update_fields=["rrid", "updated_at"])
-        record_event(request.user, AuditLog.Action.UPDATE, core, old={"rrid": old}, new={"rrid": rrid})
+        record_event(
+            request.user, AuditLog.Action.UPDATE, core, old={"rrid": old}, new={"rrid": rrid}
+        )
     messages.success(
         request,
         f"{core.name}: RRID saved as {rrid}. People who add a paper that used this core will now be asked whether they cited it."
@@ -539,7 +548,8 @@ def project(request, pk):
             old_kind = Project.objects.get(pk=pk).kind
             if form.cleaned_data["kind"] != old_kind and pr.relationships.exists():
                 form.add_error(
-                    "kind", "This project already has people attached, so the project’s type can’t change."
+                    "kind",
+                    "This project already has people attached, so the project’s type can’t change.",
                 )
             else:
                 form.save()
@@ -633,7 +643,9 @@ def person_doc_add(request, pk):
         person=p, title=title, file=f, excerpt=excerpt, uploaded_by=request.user
     )
     record_event(request.user, AuditLog.Action.CREATE, d, new={"title": title})
-    messages.success(request, f"“{title}” is now on this page, and visible to {p.first_name} on their profile.")
+    messages.success(
+        request, f"“{title}” is now on this page, and visible to {p.first_name} on their profile."
+    )
     return redirect("manage:person", pk=pk)
 
 

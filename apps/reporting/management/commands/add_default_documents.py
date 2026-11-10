@@ -27,7 +27,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kw):
         # The Phase 2 PL Guidelines were retired as outdated (MW 2026-10-28)
-        n = HelpfulDocument.objects.filter(title="CNAP Phase 2 PL Guidelines", is_active=True).update(is_active=False)
+        n = HelpfulDocument.objects.filter(
+            title="CNAP Phase 2 PL Guidelines", is_active=True
+        ).update(is_active=False)
         if n:
             self.stdout.write("CNAP Phase 2 PL Guidelines: removed (outdated)")
         owner = (

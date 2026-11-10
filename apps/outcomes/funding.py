@@ -39,7 +39,10 @@ FIXTURE = Path(settings.BASE_DIR) / "fixtures" / "funding" / "opportunities.json
 # MW's seven questions for weighing any funding opportunity (2026-11-10). Seeded once; MW edits them in the Hub.
 QUESTIONS = [
     ("Eligibility", "Are you eligible for the funding opportunity?"),
-    ("Preliminary data", "Do you have sufficient preliminary data to be competitive for the funding opportunity?"),
+    (
+        "Preliminary data",
+        "Do you have sufficient preliminary data to be competitive for the funding opportunity?",
+    ),
     (
         "Fit with the funder",
         "Is your research question or hypothesis aligned with the objectives of the funding agency and of the "
@@ -104,10 +107,16 @@ def load_catalog(stdout=None, path=FIXTURE):
     made = 0
     for row in rows:
         key = row.get("tracker_id") or ""
-        q = FundingOpportunity.objects.filter(tracker_id=key) if key else FundingOpportunity.objects.filter(name=row["name"])
+        q = (
+            FundingOpportunity.objects.filter(tracker_id=key)
+            if key
+            else FundingOpportunity.objects.filter(name=row["name"])
+        )
         if q.exists():
             continue
-        FundingOpportunity.objects.create(**{k: v for k, v in row.items() if k in fields and v is not None})
+        FundingOpportunity.objects.create(
+            **{k: v for k, v in row.items() if k in fields and v is not None}
+        )
         made += 1
     if stdout:
         stdout.write(f"funding opportunities: {made} created, {len(rows) - made} already present")
@@ -158,16 +167,17 @@ def row(o, why="", today=None):
         "words": words,
         "milestone": FundingMilestone(o.counts_toward_milestone).label,
         "milestone_state": "ok" if o.counts_toward_milestone == FundingMilestone.YES else "idle",
-        "when": o.deadline.strftime("%B %-d, %Y") if o.deadline and not o.deadline_text else (o.deadline_text or "Not listed"),
+        "when": o.deadline.strftime("%B %-d, %Y")
+        if o.deadline and not o.deadline_text
+        else (o.deadline_text or "Not listed"),
         "why": why,
     }
 
 
 def open_matches(person):
-    return (
-        FundingMatch.objects.filter(person=person, ended_at__isnull=True, opportunity__archived_at__isnull=True)
-        .select_related("opportunity")
-    )
+    return FundingMatch.objects.filter(
+        person=person, ended_at__isnull=True, opportunity__archived_at__isnull=True
+    ).select_related("opportunity")
 
 
 def picked_for(person, today=None):
@@ -207,9 +217,12 @@ def can_read_letter(user, f):
         return True
     if not me or f.status != FundingFollowUp.Status.SENT:
         return False
-    return me.pk == f.person_id or OutcomeDelegate.objects.filter(
-        owner_id=f.person_id, delegate=me, ended_at__isnull=True
-    ).exists()
+    return (
+        me.pk == f.person_id
+        or OutcomeDelegate.objects.filter(
+            owner_id=f.person_id, delegate=me, ended_at__isnull=True
+        ).exists()
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -230,7 +243,9 @@ def ensure_followup(grant, user=None):
         return None
     f, made = FundingFollowUp.objects.get_or_create(grant=grant, defaults={"person": person})
     if made:
-        f.opportunities.set(default_featured(f))  # pre-ticked: the person's matches and anything due soon
+        f.opportunities.set(
+            default_featured(f)
+        )  # pre-ticked: the person's matches and anything due soon
         record_event(user, AuditLog.Action.CREATE, f, new={"grant": grant.pk, "person": person.pk})
     return f
 
@@ -267,7 +282,9 @@ def default_featured(f, today=None):
     today = today or timezone.localdate()
     ids = {m.opportunity_id for m in open_matches(f.person)}
     soon = FundingOpportunity.objects.active().filter(
-        audience=FundingAudience.EVERYONE, deadline__gte=today, deadline__lte=today + timedelta(days=COMING_UP_DAYS)
+        audience=FundingAudience.EVERYONE,
+        deadline__gte=today,
+        deadline__lte=today + timedelta(days=COMING_UP_DAYS),
     )
     ids |= set(soon.values_list("pk", flat=True))
     return ids
@@ -290,7 +307,10 @@ def letter_parts(f, today=None):
     # The person's own picks first, then the rest, each soonest deadline first. The same order on the
     # letter page, in the email, and in the composer (MW 2026-11-10).
     featured = sorted(
-        (row(o, why=_why_for(f.person, o), today=today) for o in f.opportunities.filter(archived_at__isnull=True)),
+        (
+            row(o, why=_why_for(f.person, o), today=today)
+            for o in f.opportunities.filter(archived_at__isnull=True)
+        ),
         key=lambda r: (r["o"].pk not in mine, *_sort_key(r["o"])),
     )
     resub = GrantSubmission.objects.filter(resubmission_of=g, archived_at__isnull=True).first()
@@ -323,7 +343,9 @@ def recipients(f):
     to = f.person.primary_email
     cc = [
         d.delegate.primary_email
-        for d in OutcomeDelegate.objects.filter(owner=f.person, ended_at__isnull=True).select_related("delegate")
+        for d in OutcomeDelegate.objects.filter(
+            owner=f.person, ended_at__isnull=True
+        ).select_related("delegate")
         if d.delegate.primary_email
     ]
     return to, cc
@@ -338,7 +360,10 @@ def letter_url(f, for_email=True):
 
 
 def render_email(f, url=None):
-    ctx = {**letter_parts(f), "url": url or f"{settings.SITE_URL}{reverse('portal:funding_letter', args=[f.pk])}"}
+    ctx = {
+        **letter_parts(f),
+        "url": url or f"{settings.SITE_URL}{reverse('portal:funding_letter', args=[f.pk])}",
+    }
     ctx["table"] = ctx["featured"][:3]
     ctx["with_link"] = bool(url) and "/accounts/link/" in (url or "")
     ctx["days"] = signin.LINK_DAYS
@@ -364,7 +389,9 @@ def send(f, user):
         if not to:
             raise ValueError("The person has no email address on file.")
         subject, text, html = render_email(f, url=letter_url(f))
-        msg = EmailMultiAlternatives(subject=subject, body=text, from_email=settings.DEFAULT_FROM_EMAIL, to=[to], cc=cc)
+        msg = EmailMultiAlternatives(
+            subject=subject, body=text, from_email=settings.DEFAULT_FROM_EMAIL, to=[to], cc=cc
+        )
         msg.attach_alternative(html, "text/html")
         msg.send(fail_silently=False)
         f.status = FundingFollowUp.Status.SENT
@@ -383,8 +410,12 @@ def send(f, user):
 
 def counts():
     return {
-        "followups": FundingFollowUp.objects.filter(status=FundingFollowUp.Status.TO_REVIEW).count(),
-        "suggestions": FundingSuggestion.objects.filter(status=FundingSuggestion.Status.TO_REVIEW).count(),
+        "followups": FundingFollowUp.objects.filter(
+            status=FundingFollowUp.Status.TO_REVIEW
+        ).count(),
+        "suggestions": FundingSuggestion.objects.filter(
+            status=FundingSuggestion.Status.TO_REVIEW
+        ).count(),
     }
 
 

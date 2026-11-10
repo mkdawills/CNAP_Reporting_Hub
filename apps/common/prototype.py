@@ -59,7 +59,9 @@ def template(request, key, default):
         request.proto_screen = key  # lets base.html offer the before/after switch
         if enabled(request):
             request.proto_active = True
-            request.proto_own = True  # this page has its own prototype template, so the admin skin stays off
+            request.proto_own = (
+                True  # this page has its own prototype template, so the admin skin stays off
+            )
             return SCREENS[key]
     return default
 

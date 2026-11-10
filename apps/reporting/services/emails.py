@@ -77,7 +77,11 @@ def skipped_days(period):
 
 def added_days(period):
     """{date ISO string: kind} for emails the evaluator added on the timeline."""
-    return {x["date"]: x["kind"] for x in (period.email_plan or {}).get("add", []) if x.get("kind") in ("reminder", "overdue")}
+    return {
+        x["date"]: x["kind"]
+        for x in (period.email_plan or {}).get("add", [])
+        if x.get("kind") in ("reminder", "overdue")
+    }
 
 
 def wording(period, kind):
@@ -97,7 +101,11 @@ def _fill(text, period):
 def subject_for(period, kind):
     # Subjects name the due date without the weekday, as before.
     due = timezone.localtime(period.due_at)
-    return wording(period, kind)["subject"].replace("{session}", period.name).replace("{due}", f"{due:%B} {due.day}")
+    return (
+        wording(period, kind)["subject"]
+        .replace("{session}", period.name)
+        .replace("{due}", f"{due:%B} {due.day}")
+    )
 
 
 def opening_for(period, kind):
@@ -106,7 +114,11 @@ def opening_for(period, kind):
 
 def parts_for(period, kind):
     w = wording(period, kind)
-    return {"opening": _fill(w["opening"], period), "closing": _fill(w["closing"], period), "signoff": _fill(w["signoff"], period)}
+    return {
+        "opening": _fill(w["opening"], period),
+        "closing": _fill(w["closing"], period),
+        "signoff": _fill(w["signoff"], period),
+    }
 
 
 def _label(a):
@@ -129,14 +141,19 @@ def _items(assignments):
         s = cache[a.form_version_id]
         label = (s.display or {}).get("time_label")
         minutes = _label_minutes(label) if label else s.minutes()
-        items.append({
-            "label": _label(a),
-            "noun": "report" if a.form_definition.category == FormCategory.REPORT else "survey",
-            "minutes": minutes,
-            "time": s.time_label() if label else duration(minutes),
-        })
+        items.append(
+            {
+                "label": _label(a),
+                "noun": "report" if a.form_definition.category == FormCategory.REPORT else "survey",
+                "minutes": minutes,
+                "time": s.time_label() if label else duration(minutes),
+            }
+        )
     total = sum(i["minutes"] for i in items)
-    summary = todo_summary(sum(1 for i in items if i["noun"] == "survey"), sum(1 for i in items if i["noun"] == "report"))
+    summary = todo_summary(
+        sum(1 for i in items if i["noun"] == "survey"),
+        sum(1 for i in items if i["noun"] == "report"),
+    )
     return items, summary, (duration(total) if total else "")
 
 
@@ -147,7 +164,9 @@ def plan(period, kind, gap=None):
     qs = (
         Assignment.objects.filter(reporting_period=period)
         .exclude(status=AssignmentStatus.EXEMPT)
-        .exclude(form_definition__code="neurosync_speaker_survey")  # sent on its own when the talk ends
+        .exclude(
+            form_definition__code="neurosync_speaker_survey"
+        )  # sent on its own when the talk ends
         .select_related("person", "form_definition", "project", "core")
         .order_by("person__last_name", "person__first_name", "form_definition__sort_order")
     )
@@ -213,23 +232,21 @@ def send(period, kind, actor=None, dry_run=False, gap=None):
             else f"{settings.SITE_URL}/tasks/"
         )
         items, summary, total = _items(r["assignments"])
-        ctx = (
-            {
-                "person": p,
-                "period": period,
-                "forms": r["forms"],
-                "items": items,
-                "summary": summary,
-                "total": total,
-                **parts_for(period, kind),
-                "due": f"{due:%A, %B} {due.day}",
-                "url": url,
-                "with_link": r["with_link"],
-                "days": signin.LINK_DAYS,
-                "site": settings.SITE_URL,
-                "kind": kind,
-            }
-        )
+        ctx = {
+            "person": p,
+            "period": period,
+            "forms": r["forms"],
+            "items": items,
+            "summary": summary,
+            "total": total,
+            **parts_for(period, kind),
+            "due": f"{due:%A, %B} {due.day}",
+            "url": url,
+            "with_link": r["with_link"],
+            "days": signin.LINK_DAYS,
+            "site": settings.SITE_URL,
+            "kind": kind,
+        }
         body = render_to_string(f"email/period_{kind}.txt", ctx)
         subject = subject_for(period, kind)
         send_mail(
@@ -320,13 +337,25 @@ def preview(period, kind, html=False):
     due = timezone.localtime(period.due_at)
     items, summary, total = _items(r["assignments"])
     ctx = {
-        "person": r["person"], "period": period, "forms": r["forms"], "items": items,
-        "summary": summary, "total": total, **parts_for(period, kind), "due": f"{due:%A, %B} {due.day}",
+        "person": r["person"],
+        "period": period,
+        "forms": r["forms"],
+        "items": items,
+        "summary": summary,
+        "total": total,
+        **parts_for(period, kind),
+        "due": f"{due:%A, %B} {due.day}",
         "url": "#" if r["with_link"] else f"{settings.SITE_URL}/tasks/",
-        "with_link": r["with_link"], "days": signin.LINK_DAYS, "site": settings.SITE_URL, "kind": kind,
+        "with_link": r["with_link"],
+        "days": signin.LINK_DAYS,
+        "site": settings.SITE_URL,
+        "kind": kind,
     }
     if html:
-        return {"subject": subject_for(period, kind), "html": render_to_string("email/period.html", ctx)}
+        return {
+            "subject": subject_for(period, kind),
+            "html": render_to_string("email/period.html", ctx),
+        }
     ctx["url"] = "[personal sign-in link]" if r["with_link"] else ctx["url"]
     body = render_to_string(f"email/period_{kind}.txt", ctx)
     subject = subject_for(period, kind)

@@ -39,16 +39,19 @@ def core_report(request, label, code):
     for g in written:
         for x in g["answers"]:
             x["hidden"] = x["id"] in hidden
-    from apps.people.models import PersonRelationship
     from django.db.models import Q
     from django.utils import timezone
+
+    from apps.people.models import PersonRelationship
 
     today = timezone.localdate()
     directors = sorted(
         {
             r.person.full_name
             for r in PersonRelationship.objects.filter(
-                core=fd.about_core, relationship_type__code="core_director", effective_from__lte=today
+                core=fd.about_core,
+                relationship_type__code="core_director",
+                effective_from__lte=today,
             )
             .filter(Q(effective_to__isnull=True) | Q(effective_to__gte=today))
             .select_related("person")
@@ -89,13 +92,20 @@ def core_report_save(request, label, code):
     action = request.POST.get("action", "save")
     if action == "release":
         if p.status not in RELEASABLE:
-            messages.error(request, "A core report can be released once the reporting session closes.")
+            messages.error(
+                request, "A core report can be released once the reporting session closes."
+            )
         else:
             cr.release(request.user, report)
             messages.success(request, f"Released to the {fd.about_core.name} directors.")
     elif action == "withdraw" and report.released_at:
         cr.withdraw(request.user, report)
-        messages.success(request, f"Withdrawn. The {fd.about_core.name} Core directors no longer see this core report.")
+        messages.success(
+            request,
+            f"Withdrawn. The {fd.about_core.name} Core directors no longer see this core report.",
+        )
     else:
-        messages.success(request, "Saved. The core directors see nothing until you release the core report.")
+        messages.success(
+            request, "Saved. The core directors see nothing until you release the core report."
+        )
     return redirect("manage:core_report", label, code)

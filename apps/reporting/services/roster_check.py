@@ -47,15 +47,23 @@ def recipients():
         .filter(person__is_active=True, person__archived_at__isnull=True)
         .values_list("person_id", flat=True)
     )
-    return Person.objects.filter(pk__in=set(ids)).prefetch_related("emails").order_by("last_name", "first_name")
+    return (
+        Person.objects.filter(pk__in=set(ids))
+        .prefetch_related("emails")
+        .order_by("last_name", "first_name")
+    )
 
 
 def ensure_links(period):
     have = set(period.roster_links.values_list("person_id", flat=True))
     for person in recipients():
         if person.pk not in have:
-            RosterCheckLink.objects.create(reporting_period=period, person=person, token=secrets.token_urlsafe(32))
-    return period.roster_links.select_related("person").order_by("person__last_name", "person__first_name")
+            RosterCheckLink.objects.create(
+                reporting_period=period, person=person, token=secrets.token_urlsafe(32)
+            )
+    return period.roster_links.select_related("person").order_by(
+        "person__last_name", "person__first_name"
+    )
 
 
 def _email_of(person):
@@ -128,7 +136,14 @@ def roster(link):
         row["roles"].append(f"{role}, {where}" if where else role)
         if (r.project_id and r.project_id in projects) or (r.core_id and r.core_id in cores):
             row["near"] = True
-    rows = sorted(people.values(), key=lambda x: (x["person"].pk == link.person_id, x["person"].last_name.lower(), x["person"].first_name.lower()))
+    rows = sorted(
+        people.values(),
+        key=lambda x: (
+            x["person"].pk == link.person_id,
+            x["person"].last_name.lower(),
+            x["person"].first_name.lower(),
+        ),
+    )
     rows = [r for r in rows if r["person"].pk != link.person_id]
     return [r for r in rows if r["near"]], [r for r in rows if not r["near"]]
 
@@ -153,16 +168,27 @@ def decide(user, suggestion, status):
     suggestion.decided_by = user
     suggestion.decided_at = timezone.now()
     suggestion.save(update_fields=["status", "decided_by", "decided_at", "updated_at"])
-    record_event(user, AuditLog.Action.UPDATE, suggestion.link.reporting_period, new={"roster_suggestion": suggestion.pk, "status": status})
+    record_event(
+        user,
+        AuditLog.Action.UPDATE,
+        suggestion.link.reporting_period,
+        new={"roster_suggestion": suggestion.pk, "status": status},
+    )
 
 
 def summary(period):
-    links = list(period.roster_links.select_related("person").prefetch_related("suggestions").order_by("person__last_name", "person__first_name"))
+    links = list(
+        period.roster_links.select_related("person")
+        .prefetch_related("suggestions")
+        .order_by("person__last_name", "person__first_name")
+    )
     return {
         "links": links,
         "sent": sum(1 for x in links if x.sent_at),
         "replied": sum(1 for x in links if x.replied_at),
         "waiting": [x for x in links if x.sent_at and not x.replied_at],
-        "pending": RosterSuggestion.objects.filter(link__reporting_period=period, status=RosterSuggestion.Status.PENDING).count(),
+        "pending": RosterSuggestion.objects.filter(
+            link__reporting_period=period, status=RosterSuggestion.Status.PENDING
+        ).count(),
         "send_day": send_day(period),
     }

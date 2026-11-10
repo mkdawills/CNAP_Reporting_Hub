@@ -167,13 +167,18 @@ def test_foreign_approval_required_and_warned(client, center):
     r = client.post(
         f"/outcomes/pub/{p.pk}/", {**base, "foreign_component_approved": "no"}, follow=True
     )
-    assert "can’t be listed in CNAP’s Research Performance Progress Report (RPPR)" in r.content.decode()
+    assert (
+        "can’t be listed in CNAP’s Research Performance Progress Report (RPPR)"
+        in r.content.decode()
+    )
 
 
 def test_everyone_on_roster_can_open_prompt_only_for_roles(client, center):
     client.force_login(User.objects.get(username="lee"))  # student, no RPPR role
     assert client.get("/outcomes/").status_code == 200
-    assert "Review your publications, talks, and grants" not in client.get("/tasks/").content.decode()
+    assert (
+        "Review your publications, talks, and grants" not in client.get("/tasks/").content.decode()
+    )
 
 
 def test_rppr_tab_and_downloads(client, center):

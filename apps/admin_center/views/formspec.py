@@ -20,7 +20,9 @@ def forms(request):
             {
                 "fd": fd,
                 "version": v,
-                "n_questions": len([q for q in schema.questions if q.question_type != "instructions"]),
+                "n_questions": len(
+                    [q for q in schema.questions if q.question_type != "instructions"]
+                ),
                 "minutes": schema.minutes(),
             }
         )
@@ -37,10 +39,14 @@ def form_blank(request, code):
     from apps.reporting.services import documents
 
     fd = get_object_or_404(FormDefinition, code=code, archived_at__isnull=True)
-    if fd.confidentiality_class == ConfidentialityClass.MENTORING and not access.can_read_mentoring(request.user):
+    if fd.confidentiality_class == ConfidentialityClass.MENTORING and not access.can_read_mentoring(
+        request.user
+    ):
         raise PermissionDenied
     fmt = "docx" if request.GET.get("fmt") == "docx" else "pdf"
-    return documents.file_response([documents.blank_blocks(fd.active_version)], fd.name, f"{fd.name} blank", fmt)
+    return documents.file_response(
+        [documents.blank_blocks(fd.active_version)], fd.name, f"{fd.name} blank", fmt
+    )
 
 
 @admin_view

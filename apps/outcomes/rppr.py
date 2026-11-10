@@ -25,10 +25,9 @@ evaluator does); anyone under 1.0 is set aside, and anyone with no months entere
 Core users, general members and event participants are left out.
 """
 
-from decimal import Decimal
-
 import datetime as dt
 import re
+from decimal import Decimal
 
 from django.db import transaction
 from django.db.models import Q
@@ -161,7 +160,11 @@ def table1(gy):
     for g in qs.order_by("submission_date"):
         if g.exclude_from_table1:
             skipped.append(
-                (g, "Left out by the evaluator: " + (g.table1_exclusion_reason or "no reason given"))
+                (
+                    g,
+                    "Left out by the evaluator: "
+                    + (g.table1_exclusion_reason or "no reason given"),
+                )
             )
             continue
         if is_parent_or_supplement(g):
@@ -352,7 +355,9 @@ def table2(gy, periods=None):
         mine = [a for a in asg if a.core_id == core.pk]
         rows = [r for r in rows_by.values() if r["asg"].core_id == core.pk and r.get("user_type")]
         for r in rows:
-            if r.pop("_students_apart", False):  # bring older rows to NIH's meaning: students are among the users
+            if r.pop(
+                "_students_apart", False
+            ):  # bring older rows to NIH's meaning: students are among the users
                 r["n_users"] = (r.get("n_users") or 0) + (r.get("n_students") or 0)
             r["period"] = r["asg"].reporting_period.name
             r["by"] = str(r["asg"].person)
@@ -414,7 +419,9 @@ def table2(gy, periods=None):
         cores.append(
             {
                 "core": core,
-                "letter": str(2 + n),  # NIGMS: the first core is Table 2, the second Table 3, and so on
+                "letter": str(
+                    2 + n
+                ),  # NIGMS: the first core is Table 2, the second Table 3, and so on
                 "rows": rows,
                 "labs": len(labs),
                 "users": users,

@@ -154,7 +154,9 @@ def with_dates(c):
         gy = c.assignment.reporting_period.grant_year
         c.due = dates(gy)[1]
         c.rppr_due = rppr_due(gy)
-        c.prev_file = current_file(c.assignment)  # the one they turned in, to look over before answering
+        c.prev_file = current_file(
+            c.assignment
+        )  # the one they turned in, to look over before answering
     return c
 
 

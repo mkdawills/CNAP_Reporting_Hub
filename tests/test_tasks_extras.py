@@ -63,7 +63,9 @@ def test_default_documents(client, center):
     assert HelpfulDocument.objects.filter(is_active=True).count() == 2
     client.force_login(User.objects.get(username="okafor"))
     html = client.get("/tasks/").content.decode()
-    assert "PL Guidelines" not in html and "Adobe" in html and "https://www.k-state.edu/cnap/" in html
+    assert (
+        "PL Guidelines" not in html and "Adobe" in html and "https://www.k-state.edu/cnap/" in html
+    )
 
 
 def test_welcome_ring_and_group_icons(client, center):
@@ -105,7 +107,11 @@ def test_year_by_year_counts_every_year_from_the_first(db):
 
     assert snapshot.by_year() is None  # nothing earlier to compare
     gy = current_year()
-    Presentation.objects.create(presentation_type="invited_talk", title="Older talk", presented_on=period(gy - 2)[0] + dt.timedelta(days=3))
+    Presentation.objects.create(
+        presentation_type="invited_talk",
+        title="Older talk",
+        presented_on=period(gy - 2)[0] + dt.timedelta(days=3),
+    )
     t = snapshot.by_year()
     assert t["years"] == [gy - 2, gy - 1, gy]
     talks = next(r for r in t["rows"] if r["key"] == "talks")
@@ -126,11 +132,20 @@ def test_products_tab_shows_counts_only_to_respondents(client, db):
     gy = current_year()
     day = period(gy)[0] + dt.timedelta(days=2)
     fam = GrantFamily.objects.create(title="Fam")
-    GrantSubmission.objects.create(grant_family=fam, project_title="Secret pending idea", status=GrantStatus.SUBMITTED, submission_date=day)
+    GrantSubmission.objects.create(
+        grant_family=fam,
+        project_title="Secret pending idea",
+        status=GrantStatus.SUBMITTED,
+        submission_date=day,
+    )
     client.force_login(User.objects.get(username="santos"))
     html = client.get("/results/?view=products").content.decode()
     assert "Center Research Outcomes" in html and "Center-wide totals" in html
-    assert "Publications" in html and "Grant proposals submitted" in html and "Grant awards received" in html
+    assert (
+        "Publications" in html
+        and "Grant proposals submitted" in html
+        and "Grant awards received" in html
+    )
     assert "Secret pending idea" not in html  # pending proposals are counted, never listed
     # MW 2026-11-04: respondents see counts only, never the lists
     assert 'id="papers"' not in html and 'id="awards"' not in html and "prodlist" not in html
@@ -144,11 +159,12 @@ def test_products_tab_shows_counts_only_to_respondents(client, db):
 def test_respondent_can_edit_a_submitted_form_while_open_and_sees_the_list(client, center):
     from apps.reporting.models import Assignment
     from apps.reporting.services import responses as rs
-
     from tests.test_nih_documents import _open
 
     a = _open(
-        Assignment.objects.filter(form_definition__code="core_usage_report", reporting_period__status="open")
+        Assignment.objects.filter(
+            form_definition__code="core_usage_report", reporting_period__status="open"
+        )
         .select_related("person")
         .first()
     )
@@ -157,9 +173,13 @@ def test_respondent_can_edit_a_submitted_form_while_open_and_sees_the_list(clien
     from apps.forms_engine.runtime import FormSchema
 
     sec = next(s for s in FormSchema(a.form_version).sections if s.is_repeatable)
-    post = {f"rep-{sec.code}-count": "1", f"rep-{sec.code}-0-lab": "Brandt lab",
-            f"rep-{sec.code}-0-project_name": "Sleep study", f"rep-{sec.code}-0-user_type": "rpl",
-            f"rep-{sec.code}-0-n_users": "2"}
+    post = {
+        f"rep-{sec.code}-count": "1",
+        f"rep-{sec.code}-0-lab": "Brandt lab",
+        f"rep-{sec.code}-0-project_name": "Sleep study",
+        f"rep-{sec.code}-0-user_type": "rpl",
+        f"rep-{sec.code}-0-n_users": "2",
+    }
     rs.save_draft(a, u, post, {})
     page = client.get(f"/tasks/{a.pk}/").content.decode()
     assert "What you’ve listed so far (1)" in page and "<td>Brandt lab</td>" in page

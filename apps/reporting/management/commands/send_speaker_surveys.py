@@ -10,7 +10,9 @@ class Command(BaseCommand):
     help = "Send the NeuroSync Speaker Survey to speakers whose talks have ended."
 
     def add_arguments(self, parser):
-        parser.add_argument("--dry-run", action="store_true", help="List who would get it; send nothing.")
+        parser.add_argument(
+            "--dry-run", action="store_true", help="List who would get it; send nothing."
+        )
 
     def handle(self, *args, dry_run, **kw):
         if dry_run:

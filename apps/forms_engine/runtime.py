@@ -23,7 +23,6 @@ from apps.common.enums import OPTION_QUESTION_TYPES, QuestionType, RuleAction, R
 from .models import CompletionPathway, FormVersion
 
 
-
 class FormSchema:
     def __init__(self, version: FormVersion):
         self.version = version
@@ -191,7 +190,9 @@ class FormSchema:
         if label:  # abbreviations spelled out (MW): "plus 5 min" reads "plus about 5 minutes"
             import re
 
-            return re.sub(r"\bplus (\d+) min\b", r"plus about \1 minutes of questions", label).replace(" page upload", "-page upload")
+            return re.sub(
+                r"\bplus (\d+) min\b", r"plus about \1 minutes of questions", label
+            ).replace(" page upload", "-page upload")
         return f"About {self.minutes()} minutes"
 
     @staticmethod

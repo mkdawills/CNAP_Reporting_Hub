@@ -1,8 +1,8 @@
 """Your year on My tasks (MW 2026-11-06)."""
 
 import pytest
-from django.test import override_settings
 from django.core.management import call_command
+from django.test import override_settings
 
 from apps.accounts.models import User
 from apps.portal.presenters import year_plan

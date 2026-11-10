@@ -146,36 +146,79 @@ def _as_of_page(request, owner, owners, day):
         for o in objs:
             st = asof_mod.status_on(kind, o, day)
             if st:
-                out.append({"title": title(o), "sub": sub(o), "then": STATUS_WORDS[kind].get(st, st), "now": STATUS_WORDS[kind].get(o.status, o.status), "changed": st != o.status, "anchor": f"item-{kind}-{o.pk}"})
+                out.append(
+                    {
+                        "title": title(o),
+                        "sub": sub(o),
+                        "then": STATUS_WORDS[kind].get(st, st),
+                        "now": STATUS_WORDS[kind].get(o.status, o.status),
+                        "changed": st != o.status,
+                        "anchor": f"item-{kind}-{o.pk}",
+                    }
+                )
         return out
 
-    pubs = rows("pub", os.pubs_of(owner).prefetch_related("status_history"), lambda o: o.title, lambda o: o.journal)
-    grants = rows("grant", os.grants_of(owner).prefetch_related("status_history"), lambda o: o.project_title, lambda o: " ".join(x for x in (o.funding_agency, o.mechanism) if x))
-    talks = [{"title": t.title, "sub": " · ".join(x for x in (t.get_presentation_type_display(), t.event) if x), "day": t.presented_on, "anchor": f"item-talk-{t.pk}"} for t in os.presentations_of(owner) if asof_mod.talk_on(t, day)]
+    pubs = rows(
+        "pub",
+        os.pubs_of(owner).prefetch_related("status_history"),
+        lambda o: o.title,
+        lambda o: o.journal,
+    )
+    grants = rows(
+        "grant",
+        os.grants_of(owner).prefetch_related("status_history"),
+        lambda o: o.project_title,
+        lambda o: " ".join(x for x in (o.funding_agency, o.mechanism) if x),
+    )
+    talks = [
+        {
+            "title": t.title,
+            "sub": " · ".join(x for x in (t.get_presentation_type_display(), t.event) if x),
+            "day": t.presented_on,
+            "anchor": f"item-talk-{t.pk}",
+        }
+        for t in os.presentations_of(owner)
+        if asof_mod.talk_on(t, day)
+    ]
     return render(
         request,
         "proto/outcomes_asof.html",
-        {"owner": owner, "owners": owners, "day": day, "pubs": pubs, "grants": grants, "talks": talks,
-         "picks": asof_mod.quick_picks(), "acting_for_other": owner.pk != request.user.person.pk},
+        {
+            "owner": owner,
+            "owners": owners,
+            "day": day,
+            "pubs": pubs,
+            "grants": grants,
+            "talks": talks,
+            "picks": asof_mod.quick_picks(),
+            "acting_for_other": owner.pk != request.user.person.pk,
+        },
     )
 
 
 def _journey_cards(st):
     """Prototype screen 5: one card per paper or proposal, its latest attempt only; earlier attempts
     show on the card's track. Items still planned or submitted come first, those to review on top."""
-    review = {("pub", p.pk) for p in st["review_pubs"]} | {("grant", g.pk) for g in st["review_grants"]}
+    review = {("pub", p.pk) for p in st["review_pubs"]} | {
+        ("grant", g.pk) for g in st["review_grants"]
+    }
     later_pubs = set(
-        Publication.objects.filter(resubmission_of__in=st["pubs"], archived_at__isnull=True).values_list(
-            "resubmission_of_id", flat=True
-        )
+        Publication.objects.filter(
+            resubmission_of__in=st["pubs"], archived_at__isnull=True
+        ).values_list("resubmission_of_id", flat=True)
     )
     latest = {}
     for g in st["grants"]:
         if g.grant_family_id not in latest or g.version_no > latest[g.grant_family_id].version_no:
             latest[g.grant_family_id] = g
-    items = [("pub", p) for p in st["pubs"] if p.pk not in later_pubs] + [("grant", g) for g in latest.values()]
+    items = [("pub", p) for p in st["pubs"] if p.pk not in later_pubs] + [
+        ("grant", g) for g in latest.values()
+    ]
     cards = [journey.card(k, o, review=(k, o.pk) in review) for k, o in items]
-    open_ = sorted((c for c in cards if c["open"]), key=lambda c: (not c["review"], c["kind"], c["title"].lower()))
+    open_ = sorted(
+        (c for c in cards if c["open"]),
+        key=lambda c: (not c["review"], c["kind"], c["title"].lower()),
+    )
     return {
         "open_cards": open_,
         "done_pubs": [c for c in cards if not c["open"] and c["kind"] == "pub"],
@@ -266,7 +309,11 @@ def _facts(kind, obj):
         when = obj.submission_date or obj.anticipated_submission_date
         if when:
             word = "submitted" if obj.submission_date else "planned for"
-            f.append(f"{word} {when:%B} {when.day if obj.submission_date or obj.anticipated_day_known else ''} {when:%Y}".replace("  ", " "))
+            f.append(
+                f"{word} {when:%B} {when.day if obj.submission_date or obj.anticipated_day_known else ''} {when:%Y}".replace(
+                    "  ", " "
+                )
+            )
         amt = obj.requested_total or obj.anticipated_total
         if amt:
             f.append(f"${amt:,.0f} requested")
@@ -274,10 +321,16 @@ def _facts(kind, obj):
         if obj.journal:
             f.append(obj.journal)
         if obj.submission_date:
-            f.append(f"submitted {obj.submission_date:%B} {obj.submission_date.day}, {obj.submission_date:%Y}")
+            f.append(
+                f"submitted {obj.submission_date:%B} {obj.submission_date.day}, {obj.submission_date:%Y}"
+            )
         elif obj.anticipated_submission_month:
             m = obj.anticipated_submission_month
-            f.append(f"planned for {m:%B} {m.day if obj.anticipated_day_known else ''} {m:%Y}".replace("  ", " "))
+            f.append(
+                f"planned for {m:%B} {m.day if obj.anticipated_day_known else ''} {m:%Y}".replace(
+                    "  ", " "
+                )
+            )
     return " · ".join(f)
 
 
@@ -360,7 +413,9 @@ def update(request, kind, pk):
                 data["pubmed_url"] = found["url"]
             if found.get("cnap_in_grant_index") is not None and not data.get("cnap_in_grant_index"):
                 data["cnap_in_grant_index"] = "yes" if found["cnap_in_grant_index"] else "no"
-            note = "Filled in from PubMed. Check the title, journal, date, and authors before saving."
+            note = (
+                "Filled in from PubMed. Check the title, journal, date, and authors before saving."
+            )
             if found.get("cnap_in_grant_index") is not None:
                 note += (
                     " CNAP’s grant "
@@ -372,7 +427,10 @@ def update(request, kind, pk):
             k: (data.getlist(k) if k in ("resources", "projects") else data.get(k))
             for k in [*F.base_fields, *(k for k in data if k.startswith("rrid_"))]
         }
-        form = F(initial={**initial, **{k: v for k, v in typed.items() if v not in (None, "", [])}}, **_own(F, owner))
+        form = F(
+            initial={**initial, **{k: v for k, v in typed.items() if v not in (None, "", [])}},
+            **_own(F, owner),
+        )
         affs = found.get("affiliations", []) if "found" in locals() else []
         return render(
             request,
@@ -592,7 +650,14 @@ def task_item(person, period):
             continue
         st = os.state(o, period)
         items.append(
-            {"owner": o, "todo": st["todo"], "n_review": st["n_review"], "n_ask": st["n_ask"], "done": st["done"], "self": o.pk == person.pk}
+            {
+                "owner": o,
+                "todo": st["todo"],
+                "n_review": st["n_review"],
+                "n_ask": st["n_ask"],
+                "done": st["done"],
+                "self": o.pk == person.pk,
+            }
         )
     if not items:
         return None
@@ -606,9 +671,7 @@ def nudge(request, pk):
     from apps.outcomes import nudges as nsvc
     from apps.outcomes.models import GrantNudge
 
-    n = get_object_or_404(
-        GrantNudge.objects.select_related("grant", "person"), pk=pk
-    )
+    n = get_object_or_404(GrantNudge.objects.select_related("grant", "person"), pk=pk)
     if not os.can_act_for(request.user, n.person):
         raise PermissionDenied("This check-in belongs to someone else.")
     grant = n.grant
@@ -620,9 +683,7 @@ def nudge(request, pk):
         if choice not in valid:
             messages.error(request, "Choose one of the five answers.")
         elif choice == GrantNudge.Choice.PIVOT and not comments:
-            messages.error(
-                request, "Share your new alternative plans in the comments box."
-            )
+            messages.error(request, "Share your new alternative plans in the comments box.")
         else:
             from django.utils import timezone
 
@@ -633,7 +694,9 @@ def nudge(request, pk):
             n.save(update_fields=["choice", "comments", "answered_at", "answered_by"])
             grant.confirmed_at = timezone.now()
             grant.save(update_fields=["confirmed_at", "updated_at"])
-            messages.success(request, "Thank you! Your answer has been shared with the CNAP evaluation team.")
+            messages.success(
+                request, "Thank you! Your answer has been shared with the CNAP evaluation team."
+            )
             return redirect(f"{reverse('portal:outcome_nudge', args=[n.pk])}?done=1")
     return render(
         request,
@@ -646,7 +709,10 @@ def nudge(request, pk):
             "done": request.GET.get("done") or n.answered_at,
             "still_planned": grant.status == GrantStatus.PLANNED,
             "milestones": nsvc.MILESTONES.get(role, []),
-            "role_word": {"research": "Research Project Leader", "pilot": "Pilot Project Leader"}.get(role, ""),
+            "role_word": {
+                "research": "Research Project Leader",
+                "pilot": "Pilot Project Leader",
+            }.get(role, ""),
             "supports": nsvc.SUPPORTS,
         },
     )
@@ -687,9 +753,17 @@ def people(request, kind, pk):
     else:
         role = request.POST.get("role", "")
         if journey.add_person(kind, obj, person, role, request.POST.get("role_other", "").strip()):
-            label = dict(journey.ROLE_CHOICES).get(role, "Co-author") if kind == "grant" else "a co-author"
-            journey.notify(kind, obj, request.user, f"added you as {label}", request=request, only={person.pk})
-            messages.success(request, f"{person} can now see and update “{title[:60]}.” We emailed them.")
+            label = (
+                dict(journey.ROLE_CHOICES).get(role, "Co-author")
+                if kind == "grant"
+                else "a co-author"
+            )
+            journey.notify(
+                kind, obj, request.user, f"added you as {label}", request=request, only={person.pk}
+            )
+            messages.success(
+                request, f"{person} can now see and update “{title[:60]}.” We emailed them."
+            )
         else:
             messages.info(request, f"{person} is already listed.")
     return redirect(reverse("portal:outcomes") + f"#item-{kind}-{obj.pk}")

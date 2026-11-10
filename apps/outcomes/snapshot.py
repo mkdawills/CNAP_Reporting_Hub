@@ -109,7 +109,9 @@ def products(gy=None, asof=None):
         return ", ".join(str(getattr(x, key)) for x in links)
 
     papers = (
-        Publication.objects.filter(status=PublicationStatus.PUBLISHED, publication_date__range=(start, end), **live)
+        Publication.objects.filter(
+            status=PublicationStatus.PUBLISHED, publication_date__range=(start, end), **live
+        )
         .prefetch_related("people__person")
         .order_by("-publication_date", "title")
     )
@@ -119,7 +121,9 @@ def products(gy=None, asof=None):
         .order_by("-presented_on", "title")
     )
     awards = (
-        GrantSubmission.objects.filter(status=GrantStatus.AWARDED, award_notice_date__range=(start, end), **live)
+        GrantSubmission.objects.filter(
+            status=GrantStatus.AWARDED, award_notice_date__range=(start, end), **live
+        )
         .prefetch_related("people__person")
         .order_by("-award_notice_date", "project_title")
     )
@@ -145,7 +149,9 @@ def products(gy=None, asof=None):
             "kind": t.get_presentation_type_display(),
             "event": t.event,
             "date": t.presented_on,
-            "who": names([x for x in sorted(t.people.all(), key=lambda x: x.author_order) if x.is_presenter])
+            "who": names(
+                [x for x in sorted(t.people.all(), key=lambda x: x.author_order) if x.is_presenter]
+            )
             or t.author_display_text
             or names(sorted(t.people.all(), key=lambda x: x.author_order)),
         }
@@ -194,8 +200,16 @@ def products_for(years, asof=None):
         "gy": years[-1] if len(years) == 1 else None,
         "start": min(p["start"] for p in parts),
         "end": max(p["end"] for p in parts),
-        "papers": sorted((x for p in parts for x in p["papers"]), key=lambda x: x["date"] or start_of(years), reverse=True),
-        "talks": sorted((x for p in parts for x in p["talks"]), key=lambda x: x["date"] or start_of(years), reverse=True),
+        "papers": sorted(
+            (x for p in parts for x in p["papers"]),
+            key=lambda x: x["date"] or start_of(years),
+            reverse=True,
+        ),
+        "talks": sorted(
+            (x for p in parts for x in p["talks"]),
+            key=lambda x: x["date"] or start_of(years),
+            reverse=True,
+        ),
         "awards": [x for p in reversed(parts) for x in p["awards"]],
         "submitted": sum(p["submitted"] for p in parts),
     }
@@ -213,29 +227,62 @@ def by_core(years, asof=None):
     segments can add up to more than the number of products; the page says so. Only resources a
     product actually used count, never ones it only planned to use.
     """
-    from django.db.models import Q
 
     years = sorted(set(years))
     live = {"archived_at__isnull": True}
     rng = lambda field: _ranges(field, years, asof)
     kinds = (
-        ("papers", "Papers published", Publication.objects.filter(rng("publication_date"), status=PublicationStatus.PUBLISHED, **live), True),
-        ("talks", "Talks and posters", Presentation.objects.filter(rng("presented_on"), **live), False),
-        ("proposals", "Proposals submitted", GrantSubmission.objects.filter(rng("submission_date"), **live).exclude(status=GrantStatus.PLANNED), True),
-        ("awards", "Proposals awarded", GrantSubmission.objects.filter(rng("award_notice_date"), status=GrantStatus.AWARDED, **live), True),
+        (
+            "papers",
+            "Papers published",
+            Publication.objects.filter(
+                rng("publication_date"), status=PublicationStatus.PUBLISHED, **live
+            ),
+            True,
+        ),
+        (
+            "talks",
+            "Talks and posters",
+            Presentation.objects.filter(rng("presented_on"), **live),
+            False,
+        ),
+        (
+            "proposals",
+            "Proposals submitted",
+            GrantSubmission.objects.filter(rng("submission_date"), **live).exclude(
+                status=GrantStatus.PLANNED
+            ),
+            True,
+        ),
+        (
+            "awards",
+            "Proposals awarded",
+            GrantSubmission.objects.filter(
+                rng("award_notice_date"), status=GrantStatus.AWARDED, **live
+            ),
+            True,
+        ),
     )
     out = []
     for key, label, qs, has_anticipated in kinds:
         counts = {code: 0 for code, _, _ in CORE_GROUPS}
         items = list(qs.prefetch_related("resource_links__resource"))
         for obj in items:
-            links = [x for x in obj.resource_links.all() if not (has_anticipated and x.is_anticipated)]
+            links = [
+                x for x in obj.resource_links.all() if not (has_anticipated and x.is_anticipated)
+            ]
             groups = {x.resource.code if x.resource.code in CORE_CODES else "other" for x in links}
             for g in groups or {"none"}:
                 counts[g] += 1
         mentions = sum(counts.values())
         segs = [
-            {"code": code, "label": name, "color": color, "n": counts[code], "w": round(100 * counts[code] / mentions, 2) if mentions else 0}
+            {
+                "code": code,
+                "label": name,
+                "color": color,
+                "n": counts[code],
+                "w": round(100 * counts[code] / mentions, 2) if mentions else 0,
+            }
             for code, name, color in CORE_GROUPS
             if counts[code]
         ]
@@ -245,7 +292,15 @@ def by_core(years, asof=None):
             sg["mid"] = round(x + sg["w"] / 2, 2)
             sg["row"] = i % 2
             x += sg["w"]
-        out.append({"key": key, "label": label, "total": len(items), "mentions": mentions, "segments": segs})
+        out.append(
+            {
+                "key": key,
+                "label": label,
+                "total": len(items),
+                "mentions": mentions,
+                "segments": segs,
+            }
+        )
     top = max((k["mentions"] for k in out), default=0)
     for k in out:  # bars share one scale, so lengths compare across kinds of product
         k["scale"] = round(100 * k["mentions"] / top, 2) if top else 0

@@ -1,6 +1,20 @@
 from django.urls import path
 
-from .views import audit, core_reports, dashboards, formspec, funding, home, outcomes, people, periods, quality, results, roster, speakers
+from .views import (
+    audit,
+    core_reports,
+    dashboards,
+    formspec,
+    funding,
+    home,
+    outcomes,
+    people,
+    periods,
+    quality,
+    results,
+    roster,
+    speakers,
+)
 
 app_name = "manage"
 
@@ -90,12 +104,24 @@ urlpatterns = [
     path("results/", results.results, name="results"),
     path("results/build/", results.export_builder, name="export_builder"),
     path("results/<str:label>/<slug:code>/", results.form_report, name="form_report"),
-    path("results/<str:label>/<slug:code>/core-report/", core_reports.core_report, name="core_report"),
-    path("results/<str:label>/<slug:code>/core-report/save/", core_reports.core_report_save, name="core_report_save"),
+    path(
+        "results/<str:label>/<slug:code>/core-report/", core_reports.core_report, name="core_report"
+    ),
+    path(
+        "results/<str:label>/<slug:code>/core-report/save/",
+        core_reports.core_report_save,
+        name="core_report_save",
+    ),
     path("results/<str:label>/<slug:code>/themes/", results.save_themes, name="save_themes"),
     path("results/<str:label>/<slug:code>/export/", results.export_report, name="export_report"),
-    path("results/<str:label>/<slug:code>/answers.xlsx", results.export_answers, name="export_answers"),
-    path("results/<str:label>/everything.xlsx", results.export_everything, name="export_everything"),
+    path(
+        "results/<str:label>/<slug:code>/answers.xlsx",
+        results.export_answers,
+        name="export_answers",
+    ),
+    path(
+        "results/<str:label>/everything.xlsx", results.export_everything, name="export_everything"
+    ),
     path("responses/<int:pk>/", results.response, name="response"),
     path("responses/<int:pk>/print/", results.print_response, name="print_response"),
     path("results/<str:label>/<slug:code>/print/", results.print_form_all, name="print_form_all"),
@@ -106,12 +132,22 @@ urlpatterns = [
     path("funding/", funding.home, name="funding_manage"),
     path("funding/followups/<int:pk>/", funding.followup, name="funding_followup"),
     path("funding/followups/<int:pk>/do/", funding.followup_post, name="funding_followup_post"),
-    path("funding/followups/<int:pk>/email/", funding.followup_email, name="funding_followup_email"),
+    path(
+        "funding/followups/<int:pk>/email/", funding.followup_email, name="funding_followup_email"
+    ),
     path("funding/opportunities/new/", funding.opportunity, name="funding_opportunity_new"),
-    path("funding/opportunities/new/do/", funding.opportunity_post, name="funding_opportunity_create"),
+    path(
+        "funding/opportunities/new/do/", funding.opportunity_post, name="funding_opportunity_create"
+    ),
     path("funding/opportunities/<int:pk>/", funding.opportunity, name="funding_opportunity"),
-    path("funding/opportunities/<int:pk>/do/", funding.opportunity_post, name="funding_opportunity_post"),
-    path("funding/suggestions/<int:pk>/do/", funding.suggestion_post, name="funding_suggestion_post"),
+    path(
+        "funding/opportunities/<int:pk>/do/",
+        funding.opportunity_post,
+        name="funding_opportunity_post",
+    ),
+    path(
+        "funding/suggestions/<int:pk>/do/", funding.suggestion_post, name="funding_suggestion_post"
+    ),
     path("funding/news/new/", funding.news_edit, name="funding_news_new"),
     path("funding/news/new/do/", funding.news_post, name="funding_news_create"),
     path("funding/news/<int:pk>/", funding.news_edit, name="funding_news_edit"),

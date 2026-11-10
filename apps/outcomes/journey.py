@@ -24,8 +24,18 @@ FINAL = {
     "grant": [(GrantStatus.AWARDED, "Funded"), (GrantStatus.NOT_FUNDED, "Not funded")],
 }
 WORDS = {
-    "pub": {"planned": "Planned", "submitted": "Submitted", "published": "Published", "declined": "Declined"},
-    "grant": {"planned": "Planned", "submitted": "Submitted", "awarded": "Funded", "not_funded": "Not funded"},
+    "pub": {
+        "planned": "Planned",
+        "submitted": "Submitted",
+        "published": "Published",
+        "declined": "Declined",
+    },
+    "grant": {
+        "planned": "Planned",
+        "submitted": "Submitted",
+        "awarded": "Funded",
+        "not_funded": "Not funded",
+    },
 }
 OPEN = {"planned", "submitted"}
 
@@ -64,7 +74,11 @@ def track(kind, obj):
             when = None
         planned_for = None
         if s == "planned":
-            planned_for = obj.anticipated_submission_month if kind == "pub" else obj.anticipated_submission_date
+            planned_for = (
+                obj.anticipated_submission_month
+                if kind == "pub"
+                else obj.anticipated_submission_date
+            )
         stages.append(
             {
                 "key": s,
@@ -73,7 +87,9 @@ def track(kind, obj):
                 "date": when,
                 "planned_for": planned_for if s == "planned" else None,
                 "day_known": getattr(obj, "anticipated_day_known", False),
-                "detail": obj.get_substatus_display() if kind == "pub" and s == "submitted" and obj.substatus else "",
+                "detail": obj.get_substatus_display()
+                if kind == "pub" and s == "submitted" and obj.substatus
+                else "",
             }
         )
     finals = FINAL[kind]
@@ -88,7 +104,14 @@ def track(kind, obj):
             }
         )
     else:
-        stages.append({"key": "outcome", "word": " or ".join(w for _, w in finals), "state": "next", "date": None})
+        stages.append(
+            {
+                "key": "outcome",
+                "word": " or ".join(w for _, w in finals),
+                "state": "next",
+                "date": None,
+            }
+        )
     return stages
 
 
@@ -96,11 +119,14 @@ def attempts(kind, obj):
     """Every attempt of the same paper or proposal, oldest first (A0, A1, ... for proposals)."""
     if kind == "grant":
         rows = list(
-            GrantSubmission.objects.filter(grant_family_id=obj.grant_family_id, archived_at__isnull=True).order_by(
-                "version_no"
-            )
+            GrantSubmission.objects.filter(
+                grant_family_id=obj.grant_family_id, archived_at__isnull=True
+            ).order_by("version_no")
         )
-        return [{"label": g.version_label, "obj": g, "word": WORDS[kind][g.status], "status": g.status} for g in rows]
+        return [
+            {"label": g.version_label, "obj": g, "word": WORDS[kind][g.status], "status": g.status}
+            for g in rows
+        ]
     chain = [obj]
     p = obj
     while p.resubmission_of_id:
@@ -113,7 +139,10 @@ def attempts(kind, obj):
             break
         chain.append(nxt)
         p = nxt
-    return [{"label": f"Attempt {i}", "obj": x, "word": WORDS[kind][x.status], "status": x.status} for i, x in enumerate(chain, 1)]
+    return [
+        {"label": f"Attempt {i}", "obj": x, "word": WORDS[kind][x.status], "status": x.status}
+        for i, x in enumerate(chain, 1)
+    ]
 
 
 def involved(kind, obj):
@@ -124,14 +153,21 @@ def involved(kind, obj):
             {
                 "link": x,
                 "person": x.person,
-                "role": x.role_other if x.role == GrantRole.OTHER and x.role_other else x.get_role_display(),
+                "role": x.role_other
+                if x.role == GrantRole.OTHER and x.role_other
+                else x.get_role_display(),
                 "lead": i == 0,
             }
             for i, x in enumerate(links)
         ]
     links = obj.people.select_related("person").order_by("author_order", "pk")
     return [
-        {"link": x, "person": x.person, "role": x.author_role or ("Author" if i == 0 else "Co-author"), "lead": i == 0}
+        {
+            "link": x,
+            "person": x.person,
+            "role": x.author_role or ("Author" if i == 0 else "Co-author"),
+            "lead": i == 0,
+        }
         for i, x in enumerate(links)
     ]
 
@@ -141,7 +177,11 @@ def card(kind, obj, review=False):
         "kind": kind,
         "obj": obj,
         "title": obj.title if kind == "pub" else obj.project_title,
-        "sub": (obj.journal if kind == "pub" else " ".join(x for x in (obj.funding_agency, obj.mechanism) if x)),
+        "sub": (
+            obj.journal
+            if kind == "pub"
+            else " ".join(x for x in (obj.funding_agency, obj.mechanism) if x)
+        ),
         "stages": track(kind, obj),
         "attempts": attempts(kind, obj),
         "people": involved(kind, obj),
@@ -175,12 +215,18 @@ def add_person(kind, obj, person, role="", role_other=""):
     if kind == "grant":
         role = role if role in dict(ROLE_CHOICES) else GrantRole.CO_I
         GrantSubmissionPerson.objects.create(
-            grant_submission=obj, person=person, role=role, role_other=role_other if role == GrantRole.OTHER else ""
+            grant_submission=obj,
+            person=person,
+            role=role,
+            role_other=role_other if role == GrantRole.OTHER else "",
         )
     else:
         last = obj.people.order_by("-author_order").first()
         PublicationPerson.objects.create(
-            publication=obj, person=person, author_order=(last.author_order + 1) if last else 0, author_role="Co-author"
+            publication=obj,
+            person=person,
+            author_order=(last.author_order + 1) if last else 0,
+            author_role="Co-author",
         )
     return True
 

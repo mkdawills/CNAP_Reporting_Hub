@@ -30,7 +30,13 @@ def _with_checkin(summary):
     """Adds the check-in to "7 surveys and 3 reports" so the count matches the totals beside it."""
     parts = [x for x in summary.replace(", and ", ", ").replace(" and ", ", ").split(", ") if x]
     parts.append("1 check-in")
-    return parts[0] if len(parts) == 1 else (" and ".join(parts) if len(parts) == 2 else ", ".join(parts[:-1]) + ", and " + parts[-1])
+    return (
+        parts[0]
+        if len(parts) == 1
+        else (
+            " and ".join(parts) if len(parts) == 2 else ", ".join(parts[:-1]) + ", and " + parts[-1]
+        )
+    )
 
 
 @login_required
@@ -101,7 +107,9 @@ def tasks(request):
 
         ctx.update(period_help(ctx["period"]))
         ctx["todo_summary"] = todo_summary(
-            ctx.get("todo_surveys", 0), ctx.get("todo_reports", 0), 1 if oc and not oc["done"] else 0
+            ctx.get("todo_surveys", 0),
+            ctx.get("todo_reports", 0),
+            1 if oc and not oc["done"] else 0,
         )
         if oc:  # the check-in is one of the tasks, so every total names it (MW 2026-11-08: totals must agree)
             ctx["total_summary"] = _with_checkin(ctx.get("total_summary") or "")
@@ -178,7 +186,9 @@ def cp_check(request, pk):
     from apps.common import prototype
 
     return render(
-        request, prototype.template(request, "cp_check", "portal/cp_check.html"), {"c": c, "error": error}
+        request,
+        prototype.template(request, "cp_check", "portal/cp_check.html"),
+        {"c": c, "error": error},
     )
 
 
@@ -255,7 +265,8 @@ def form(request, pk):
                 return redirect(f"{reverse('portal:tasks')}?done={a.pk}")
         elif action == "save" and not errors:
             messages.success(
-                request, "Draft saved. You can come back to it any time before the reporting session closes."
+                request,
+                "Draft saved. You can come back to it any time before the reporting session closes.",
             )
             return redirect("portal:form", pk)
         elif not errors and row_action:
@@ -325,7 +336,9 @@ def edit_again(request, pk):
     """The respondent reopens their own submitted form while the period is open; the submitted copy is kept."""
     a = _own_assignment(request, pk)
     if not rs.can_self_reopen(a, request.user):
-        messages.error(request, "This survey or report can’t be changed now. Ask the evaluator if you need to.")
+        messages.error(
+            request, "This survey or report can’t be changed now. Ask the evaluator if you need to."
+        )
         return redirect("portal:form", pk)
     rs.reopen(request.user, a, reason="Reopened by the respondent")
     messages.success(request, "Your answers are open to change. Submit again when you’re done.")
@@ -348,7 +361,9 @@ def history(request):
     ctx = {"rows": presenters.history_rows(done)}
     if tpl != "portal/history.html":
         products = presenters.my_products(person)
-        ctx.update(products=products, n_done=len(done), n_products=sum(len(y["rows"]) for y in products))
+        ctx.update(
+            products=products, n_done=len(done), n_products=sum(len(y["rows"]) for y in products)
+        )
     return render(request, tpl, ctx)
 
 
@@ -370,7 +385,11 @@ def center_results(request):
         if "all" in picked:
             chosen = list(years)
         else:
-            chosen = [int(x) for x in picked + [request.GET.get("year", "")] if str(x).isdigit() and int(x) in years]
+            chosen = [
+                int(x)
+                for x in picked + [request.GET.get("year", "")]
+                if str(x).isdigit() and int(x) in years
+            ]
         # "As of" (MW 2026-11-05): the totals as they stood at the end of a chosen past day.
         # With no years chosen, the grant year that holds that day.
         from apps.outcomes import asof as asof_mod
@@ -380,24 +399,51 @@ def center_results(request):
             chosen = [rppr.current_year(asof)]
         chosen = sorted(set(chosen)) or [now]
         gy = chosen[-1]
-        ctx.update(asof=asof, asof_picks=asof_mod.quick_picks(), asof_bad=bool(request.GET.get("asof")) and not asof)
-        prod = dict(snapshot.products_for(chosen, asof)) if len(chosen) > 1 else dict(snapshot.products(gy, asof))
-        prod.update(n_papers=len(prod["papers"]), n_talks=len(prod["talks"]), n_awards=len(prod["awards"]))
+        ctx.update(
+            asof=asof,
+            asof_picks=asof_mod.quick_picks(),
+            asof_bad=bool(request.GET.get("asof")) and not asof,
+        )
+        prod = (
+            dict(snapshot.products_for(chosen, asof))
+            if len(chosen) > 1
+            else dict(snapshot.products(gy, asof))
+        )
+        prod.update(
+            n_papers=len(prod["papers"]), n_talks=len(prod["talks"]), n_awards=len(prod["awards"])
+        )
         all_years = len(chosen) == len(years) and len(years) > 1
         if len(chosen) == 1:
             span = f"Year {chosen[0]}"
         elif chosen == list(range(chosen[0], chosen[-1] + 1)):
             span = f"Years {chosen[0]} to {chosen[-1]}"
         else:
-            span = "Years " + ", ".join(str(y) for y in chosen[:-1]) + (", and " if len(chosen) > 2 else " and ") + str(chosen[-1])
-        ctx.update({"chosen": chosen, "all_years": all_years, "span": f"All years ({span})" if all_years else span, "by_core": snapshot.by_core(chosen, asof), "core_groups": snapshot.CORE_GROUPS})
+            span = (
+                "Years "
+                + ", ".join(str(y) for y in chosen[:-1])
+                + (", and " if len(chosen) > 2 else " and ")
+                + str(chosen[-1])
+            )
+        ctx.update(
+            {
+                "chosen": chosen,
+                "all_years": all_years,
+                "span": f"All years ({span})" if all_years else span,
+                "by_core": snapshot.by_core(chosen, asof),
+                "core_groups": snapshot.CORE_GROUPS,
+            }
+        )
         # MW 2026-11-04: respondents see counts only. Titles, people, and funders stay with the
         # evaluator, the Center Director, and the Associate Director (the administrator screens).
         show_detail = access.can_view_admin(request.user)
         if not show_detail:
             prod.update(papers=[], talks=[], awards=[])
         ctx.update({"years": years, "prod": prod, "now": now, "show_detail": show_detail})
-        return render(request, prototype.template(request, "center_results", "portal/center_results.html"), ctx)
+        return render(
+            request,
+            prototype.template(request, "center_results", "portal/center_results.html"),
+            ctx,
+        )
     periods = ReportingPeriod.objects.filter(status=PeriodStatus.FINALIZED).order_by(
         "-display_order"
     )
@@ -407,7 +453,9 @@ def center_results(request):
         selected = next((p for p in periods if p.short_label == label), periods[0])
     cards = presenters.center_results(selected) if selected else []
     ctx.update({"periods": periods, "selected": selected, "cards": cards})
-    return render(request, prototype.template(request, "center_results", "portal/center_results.html"), ctx)
+    return render(
+        request, prototype.template(request, "center_results", "portal/center_results.html"), ctx
+    )
 
 
 LEVELS = [c for c in Person._meta.get_field("trainee_level").choices]
@@ -492,9 +540,7 @@ def my_document(request, pk):
     if d.person_id != request.user.person_id and not access.can_view_admin(request.user):
         raise PermissionDenied
     f = d.file
-    return FileResponse(
-        f.storage_key.open("rb"), as_attachment=True, filename=f.original_filename
-    )
+    return FileResponse(f.storage_key.open("rb"), as_attachment=True, filename=f.original_filename)
 
 
 @login_required
@@ -538,12 +584,16 @@ def print_form(request, pk):
     fmt = "docx" if request.GET.get("fmt") == "docx" else "pdf"
     fd = a.form_definition
     if request.GET.get("blank"):
-        intro = presenters._intro_for(a, rs.system_answers(a, presenters.FormSchema(a.form_version)))
+        intro = presenters._intro_for(
+            a, rs.system_answers(a, presenters.FormSchema(a.form_version))
+        )
         blocks = documents.blank_blocks(a.form_version, intro=intro)
         return documents.file_response([blocks], fd.name, f"{fd.name} blank", fmt)
     ctx = presenters.form_page(request, a, editable=False)
     blocks = documents.response_blocks(ctx, named=True)
-    return documents.file_response([blocks], fd.name, f"{fd.name} {a.reporting_period.short_label}", fmt)
+    return documents.file_response(
+        [blocks], fd.name, f"{fd.name} {a.reporting_period.short_label}", fmt
+    )
 
 
 @login_required
@@ -556,7 +606,11 @@ def core_reports(request):
         raise PermissionDenied
     from apps.common import prototype
 
-    return render(request, prototype.template(request, "core_reports", "portal/core_reports.html"), {"reports": reports})
+    return render(
+        request,
+        prototype.template(request, "core_reports", "portal/core_reports.html"),
+        {"reports": reports},
+    )
 
 
 @login_required

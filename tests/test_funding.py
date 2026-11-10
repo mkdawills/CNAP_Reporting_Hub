@@ -43,19 +43,39 @@ def _person(username):
     return User.objects.get(username=username).person
 
 
-def _grant(person, title="Sample R01: a fictional test proposal", status="submitted", mechanism="R01",
-           agency="National Institutes of Health", role="pi"):
+def _grant(
+    person,
+    title="Sample R01: a fictional test proposal",
+    status="submitted",
+    mechanism="R01",
+    agency="National Institutes of Health",
+    role="pi",
+):
     g = GrantSubmission.objects.create(
-        grant_family=GrantFamily.objects.create(title=title), project_title=title, funding_agency=agency,
-        funding_source_type="nih", mechanism=mechanism, status=status, submission_date=dt.date(2026, 6, 5),
+        grant_family=GrantFamily.objects.create(title=title),
+        project_title=title,
+        funding_agency=agency,
+        funding_source_type="nih",
+        mechanism=mechanism,
+        status=status,
+        submission_date=dt.date(2026, 6, 5),
     )
-    GrantSubmissionPerson.objects.create(grant_submission=g, person=person, role=role, is_primary_cnap_contact=True)
+    GrantSubmissionPerson.objects.create(
+        grant_submission=g, person=person, role=role, is_primary_cnap_contact=True
+    )
     return g
 
 
 def _not_funded_post(client, g, owner, **extra):
-    data = {"for": owner.pk, "to": "not_funded", "decision_date": "2026-11-04", "discussed_with_program_officer": "no",
-            "feedback_shared_with_cnap": "no", "plans_to_resubmit": "no", "decision_comments": "Fictional."}
+    data = {
+        "for": owner.pk,
+        "to": "not_funded",
+        "decision_date": "2026-11-04",
+        "discussed_with_program_officer": "no",
+        "feedback_shared_with_cnap": "no",
+        "plans_to_resubmit": "no",
+        "decision_comments": "Fictional.",
+    }
     data.update(extra)
     return client.post(f"/outcomes/grant/{g.pk}/", data)
 
@@ -76,7 +96,9 @@ def test_not_funded_makes_one_follow_up_and_goes_to_the_funding_page(client, cen
     assert "The CNAP team will follow up with you personally." in html
 
 
-def test_not_funded_with_a_resubmission_keeps_the_a1_redirect_and_links_the_funding_page(client, center):
+def test_not_funded_with_a_resubmission_keeps_the_a1_redirect_and_links_the_funding_page(
+    client, center
+):
     _login(client, "okafor")
     me = _person("okafor")
     g = _grant(me, title="Sample R01: a second fictional proposal")
@@ -93,8 +115,12 @@ def test_not_funded_with_a_resubmission_keeps_the_a1_redirect_and_links_the_fund
 
 def test_a_person_sees_only_their_own_matches_and_letters(client, center):
     okafor, varga = _person("okafor"), _person("varga")
-    secret = FundingOpportunity.objects.create(name="Fictional award picked only for Varga", source_kind="foundation")
-    FundingMatch.objects.create(opportunity=secret, person=varga, why="A fictional reason for Varga alone.")
+    secret = FundingOpportunity.objects.create(
+        name="Fictional award picked only for Varga", source_kind="foundation"
+    )
+    FundingMatch.objects.create(
+        opportunity=secret, person=varga, why="A fictional reason for Varga alone."
+    )
     f = FundingFollowUp.objects.get(person=okafor)
     _login(client, "okafor")
     html = client.get("/funding/").content.decode()
@@ -137,17 +163,26 @@ def test_ended_matches_and_archived_opportunities_are_hidden(client, center):
 
 def test_a_suggestion_waits_for_review_and_add_to_the_list_links_it(client, center):
     _login(client, "okafor")
-    client.post("/funding/suggest/", {"name": "Fictional Foundation Starter Award", "for_everyone": "1"})
+    client.post(
+        "/funding/suggest/", {"name": "Fictional Foundation Starter Award", "for_everyone": "1"}
+    )
     s = FundingSuggestion.objects.get(name="Fictional Foundation Starter Award")
     assert s.status == "to_review" and s.for_everyone
     client.logout()
     _login(client, "mwills")
     html = client.get(f"/manage/funding/opportunities/new/?suggestion={s.pk}").content.decode()
     assert "Fictional Foundation Starter Award" in html
-    client.post("/manage/funding/opportunities/new/do/", {
-        "name": s.name, "source_kind": "foundation", "audience": "everyone", "counts_toward_milestone": "no",
-        "suggestion": s.pk, "note_to_person": "Thank you. The opportunity is now listed.",
-    })
+    client.post(
+        "/manage/funding/opportunities/new/do/",
+        {
+            "name": s.name,
+            "source_kind": "foundation",
+            "audience": "everyone",
+            "counts_toward_milestone": "no",
+            "suggestion": s.pk,
+            "note_to_person": "Thank you. The opportunity is now listed.",
+        },
+    )
     s.refresh_from_db()
     assert s.status == "added" and s.opportunity and s.opportunity.audience == "everyone"
     assert s.opportunity.suggested_by == s.person
@@ -162,10 +197,19 @@ def test_send_emails_once_with_delegates_copied_and_a_sign_in_link(client, cente
     OutcomeDelegate.objects.create(owner=okafor, delegate=varga)
     f = FundingFollowUp.objects.get(person=okafor)
     _login(client, "mwills")
-    r = client.post(f"/manage/funding/followups/{f.pk}/do/", {"action": "send", "opp": [o.pk for o in f.opportunities.all()]})
+    r = client.post(
+        f"/manage/funding/followups/{f.pk}/do/",
+        {"action": "send", "opp": [o.pk for o in f.opportunities.all()]},
+    )
     assert "confirm=send" in r.url and not mail.outbox  # Send asks first
-    client.post(f"/manage/funding/followups/{f.pk}/do/", {"action": "send_yes", "opp": [o.pk for o in f.opportunities.all()],
-                                                         "body_note": "A fictional personal paragraph."})
+    client.post(
+        f"/manage/funding/followups/{f.pk}/do/",
+        {
+            "action": "send_yes",
+            "opp": [o.pk for o in f.opportunities.all()],
+            "body_note": "A fictional personal paragraph.",
+        },
+    )
     assert len(mail.outbox) == 1
     msg = mail.outbox[0]
     assert msg.to == [okafor.primary_email] and varga.primary_email in msg.cc
@@ -174,7 +218,9 @@ def test_send_emails_once_with_delegates_copied_and_a_sign_in_link(client, cente
     assert f"/funding/letter/{f.pk}/" in msg.body
     f.refresh_from_db()
     assert f.status == "sent" and f.sent_at and okafor.primary_email in f.sent_to
-    assert AuditLog.objects.filter(entity_type="outcomes.FundingFollowUp", entity_id=f.pk, new_value__status="sent").exists()
+    assert AuditLog.objects.filter(
+        entity_type="outcomes.FundingFollowUp", entity_id=f.pk, new_value__status="sent"
+    ).exists()
     client.post(f"/manage/funding/followups/{f.pk}/do/", {"action": "send_yes"})
     assert len(mail.outbox) == 1  # a second Send is refused
     with pytest.raises(funding.AlreadySent):
@@ -209,22 +255,40 @@ def test_the_catalog_and_questions_load_twice_without_duplicates(db):
 
 
 def test_news_pinned_first_archived_hidden_and_only_admins_write(client, center):
-    old = FundingNewsItem.objects.create(headline="A fictional old item", summary="Fictional.", news_date=dt.date(2020, 1, 1), pinned=True)
-    gone = FundingNewsItem.objects.create(headline="A fictional archived item", summary="Fictional.", archived_at=timezone.now())
+    old = FundingNewsItem.objects.create(
+        headline="A fictional old item",
+        summary="Fictional.",
+        news_date=dt.date(2020, 1, 1),
+        pinned=True,
+    )
+    gone = FundingNewsItem.objects.create(
+        headline="A fictional archived item", summary="Fictional.", archived_at=timezone.now()
+    )
     items = funding.news()
-    assert [n.pinned for n in items] == sorted((n.pinned for n in items), reverse=True)  # pinned first
+    assert [n.pinned for n in items] == sorted(
+        (n.pinned for n in items), reverse=True
+    )  # pinned first
     assert old in items and gone not in items
     _login(client, "okafor")
     html = client.get("/funding/").content.decode()
     assert "A fictional old item" in html and "A fictional archived item" not in html
-    assert client.post("/manage/funding/news/new/do/", {"headline": "x", "summary": "y"}).status_code == 403
+    assert (
+        client.post("/manage/funding/news/new/do/", {"headline": "x", "summary": "y"}).status_code
+        == 403
+    )
     client.logout()
     _login(client, "hbailey")  # view-only leadership can read but not write
     assert client.get("/manage/funding/?tab=news").status_code == 200
-    assert client.post("/manage/funding/news/new/do/", {"headline": "x", "summary": "y"}).status_code == 403
+    assert (
+        client.post("/manage/funding/news/new/do/", {"headline": "x", "summary": "y"}).status_code
+        == 403
+    )
     client.logout()
     _login(client, "mwills")
-    client.post("/manage/funding/news/new/do/", {"headline": "A fictional new item", "summary": "Fictional."})
+    client.post(
+        "/manage/funding/news/new/do/",
+        {"headline": "A fictional new item", "summary": "Fictional."},
+    )
     assert FundingNewsItem.objects.filter(headline="A fictional new item").exists()
     assert gone.archived_at
 
@@ -235,19 +299,34 @@ def test_news_pinned_first_archived_hidden_and_only_admins_write(client, center)
 def test_manage_pages_refuse_members(client, center):
     f = FundingFollowUp.objects.first()
     _login(client, "okafor")
-    for url in ["/manage/funding/", f"/manage/funding/followups/{f.pk}/", f"/manage/funding/followups/{f.pk}/email/",
-                "/manage/funding/opportunities/new/", "/manage/funding/news/new/"]:
+    for url in [
+        "/manage/funding/",
+        f"/manage/funding/followups/{f.pk}/",
+        f"/manage/funding/followups/{f.pk}/email/",
+        "/manage/funding/opportunities/new/",
+        "/manage/funding/news/new/",
+    ]:
         assert client.get(url).status_code == 403, url
-    assert client.post(f"/manage/funding/followups/{f.pk}/do/", {"action": "send_yes"}).status_code == 403
+    assert (
+        client.post(f"/manage/funding/followups/{f.pk}/do/", {"action": "send_yes"}).status_code
+        == 403
+    )
     assert not mail.outbox
 
 
 def test_matches_tick_themselves_on_an_open_letter_and_the_person_page_panel(client, center):
     okafor = _person("okafor")
     f = FundingFollowUp.objects.get(person=okafor)
-    o = FundingOpportunity.objects.filter(audience="matched").exclude(matches__person=okafor).first()
+    o = (
+        FundingOpportunity.objects.filter(audience="matched")
+        .exclude(matches__person=okafor)
+        .first()
+    )
     _login(client, "mwills")
-    client.post(f"/manage/funding/person/{okafor.pk}/match/", {"opportunity": o.pk, "why": "A fictional reason."})
+    client.post(
+        f"/manage/funding/person/{okafor.pk}/match/",
+        {"opportunity": o.pk, "why": "A fictional reason."},
+    )
     assert FundingMatch.objects.filter(person=okafor, opportunity=o, ended_at__isnull=True).exists()
     assert f.opportunities.filter(pk=o.pk).exists()
     assert "A fictional reason." in client.get(f"/manage/people/{okafor.pk}/").content.decode()

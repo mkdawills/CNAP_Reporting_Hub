@@ -31,7 +31,9 @@ class TalkForm(forms.Form):
     institution = forms.CharField(required=False, label="Institution")
     title = forms.CharField(max_length=300, label="Talk title")
     day = forms.DateField(label="Date of the talk", widget=forms.DateInput(attrs={"type": "date"}))
-    ends = forms.TimeField(label="Time the talk ends", widget=forms.TimeInput(attrs={"type": "time"}))
+    ends = forms.TimeField(
+        label="Time the talk ends", widget=forms.TimeInput(attrs={"type": "time"})
+    )
     auto_send = forms.BooleanField(
         required=False, initial=True, label="Send the survey automatically when the talk ends"
     )
@@ -91,7 +93,11 @@ def talk_add(request):
             return redirect("manage:speakers")
     ends = timezone.make_aware(dt.datetime.combine(d["day"], d["ends"]))
     t = SpeakerTalk.objects.create(
-        speaker=p, title=d["title"].strip(), ends_at=ends, auto_send=d["auto_send"], created_by=request.user
+        speaker=p,
+        title=d["title"].strip(),
+        ends_at=ends,
+        auto_send=d["auto_send"],
+        created_by=request.user,
     )
     record_event(request.user, AuditLog.Action.CREATE, t, new={"talk": t.title})
     if d["auto_send"]:
@@ -123,7 +129,9 @@ def talk_remove(request, pk):
     if t.sent_at:
         messages.error(request, "This survey has already been sent, so the talk stays on the list.")
     else:
-        record_event(request.user, AuditLog.Action.ARCHIVE, t, old={"talk": t.title, "removed": True})
+        record_event(
+            request.user, AuditLog.Action.ARCHIVE, t, old={"talk": t.title, "removed": True}
+        )
         t.delete()
         messages.success(request, "Removed.")
     return redirect("manage:speakers")

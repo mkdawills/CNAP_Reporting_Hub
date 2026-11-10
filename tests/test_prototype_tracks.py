@@ -25,12 +25,18 @@ def center(db):
 
     u = User.objects.get(username="okafor")
     if not GrantSubmission.objects.filter(people__person=u.person, status="planned").exists():
-        a0 = os.create_grant(u, u.person, {"project_title": "Sample R21: attention and sleep", "funding_agency": "NIH"})
+        a0 = os.create_grant(
+            u,
+            u.person,
+            {"project_title": "Sample R21: attention and sleep", "funding_agency": "NIH"},
+        )
         GrantSubmission.objects.filter(pk=a0.pk).update(status="not_funded")
         a0.refresh_from_db()
         os.start_resubmission(u, a0)
     if not Publication.objects.filter(people__person=u.person).exists():
-        os.create_publication(u, u.person, {"title": "Sample paper: sleep spindles", "journal": "Sample Journal"})
+        os.create_publication(
+            u, u.person, {"title": "Sample paper: sleep spindles", "journal": "Sample Journal"}
+        )
 
 
 def login(client, u):
@@ -41,7 +47,11 @@ def login(client, u):
 
 def okafor_grant():
     p = User.objects.get(username="okafor").person
-    return GrantSubmission.objects.filter(people__person=p, status="planned").order_by("-version_no").first()
+    return (
+        GrantSubmission.objects.filter(people__person=p, status="planned")
+        .order_by("-version_no")
+        .first()
+    )
 
 
 def email_of(username):
@@ -99,7 +109,9 @@ def test_an_ended_delegate_loses_access(client, center):
     g = okafor_grant()
     login(client, "lee")
     assert client.get(f"/outcomes/grant/{g.pk}/").status_code == 200
-    OutcomeDelegate.objects.filter(owner=owner, delegate=lee).update(ended_at="2026-11-01T00:00:00Z")
+    OutcomeDelegate.objects.filter(owner=owner, delegate=lee).update(
+        ended_at="2026-11-01T00:00:00Z"
+    )
     assert client.get(f"/outcomes/grant/{g.pk}/").status_code == 403
 
 
@@ -109,7 +121,9 @@ def test_people_involved_see_update_and_the_others_hear_about_it(client, center)
     g = okafor_grant()
     varga = User.objects.get(username="varga").person
     mail.outbox.clear()
-    client.post(f"/outcomes/grant/{g.pk}/people/", {"person": varga.pk, "role": "co_i", "action": "add"})
+    client.post(
+        f"/outcomes/grant/{g.pk}/people/", {"person": varga.pk, "role": "co_i", "action": "add"}
+    )
     link = g.people.get(person=varga)
     assert link.role == "co_i"
     # the person added hears about it, and only that person
@@ -151,6 +165,7 @@ def test_people_involved_see_update_and_the_others_hear_about_it(client, center)
     # and the form shows the co-investigator their own role
     html = client.get(f"/outcomes/grant/{g.pk}/?to=submitted").content.decode()
     import re as _re
+
     sel = _re.search(r'<select[^>]*name="role"[^>]*>(.*?)</select>', html, _re.S)
     assert sel and _re.search(r'<option value="co_i"[^>]*selected', sel.group(1))
 
@@ -161,7 +176,9 @@ def test_the_person_who_entered_it_always_stays(client, center):
     g = okafor_grant()
     okafor = User.objects.get(username="okafor").person
     varga = User.objects.get(username="varga").person
-    client.post(f"/outcomes/grant/{g.pk}/people/", {"person": varga.pk, "role": "co_i", "action": "add"})
+    client.post(
+        f"/outcomes/grant/{g.pk}/people/", {"person": varga.pk, "role": "co_i", "action": "add"}
+    )
     client.post(f"/outcomes/grant/{g.pk}/people/", {"person": okafor.pk, "action": "remove"})
     assert g.people.filter(person=okafor).exists()
     client.post(f"/outcomes/grant/{g.pk}/people/", {"person": varga.pk, "action": "remove"})
@@ -178,9 +195,13 @@ def test_a_resubmission_keeps_everyone_involved(center):
     from apps.outcomes import services as os
 
     okafor = User.objects.get(username="okafor")
-    nxt = os.create_grant(okafor, okafor.person, {"project_title": g.project_title}, family=g.grant_family)
+    nxt = os.create_grant(
+        okafor, okafor.person, {"project_title": g.project_title}, family=g.grant_family
+    )
     journey.copy_people("grant", g, nxt)
-    assert set(nxt.people.values_list("person_id", flat=True)) == set(g.people.values_list("person_id", flat=True))
+    assert set(nxt.people.values_list("person_id", flat=True)) == set(
+        g.people.values_list("person_id", flat=True)
+    )
     assert nxt.people.get(person=varga).role == "co_i"
 
 
@@ -197,4 +218,7 @@ def test_a_change_made_for_someone_else_names_both_people(client, center):
     journey.notify("grant", g, lee, "changed the status from Planned to Submitted")
     recipients = sorted(t for m in mail.outbox for t in m.to)
     assert recipients == sorted([email_of("okafor"), email_of("varga")])
-    assert f"{lee.person.full_name}, entering for {owner.full_name}, changed the status" in mail.outbox[0].body
+    assert (
+        f"{lee.person.full_name}, entering for {owner.full_name}, changed the status"
+        in mail.outbox[0].body
+    )

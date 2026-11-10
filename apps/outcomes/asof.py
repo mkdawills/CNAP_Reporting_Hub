@@ -11,8 +11,16 @@ import datetime as dt
 from django.utils import timezone
 
 PERSON_DATE = {
-    "pub": {"submitted": "submission_date", "published": "publication_date", "declined": "decline_date"},
-    "grant": {"submitted": "submission_date", "awarded": "award_notice_date", "not_funded": "decision_date"},
+    "pub": {
+        "submitted": "submission_date",
+        "published": "publication_date",
+        "declined": "decline_date",
+    },
+    "grant": {
+        "submitted": "submission_date",
+        "awarded": "award_notice_date",
+        "not_funded": "decision_date",
+    },
 }
 ORDER = {
     "pub": ["planned", "submitted", "published", "declined"],
@@ -38,11 +46,19 @@ def events(kind, obj):
             continue
         seen.add(h.to_status)
         field = given.get(h.to_status)
-        day = getattr(obj, field) if field and getattr(obj, field) else timezone.localtime(h.changed_at).date()
+        day = (
+            getattr(obj, field)
+            if field and getattr(obj, field)
+            else timezone.localtime(h.changed_at).date()
+        )
         out.append((day, h.to_status))
     # A record imported without history still carries its dates.
     for status, field in given.items():
-        if status not in seen and getattr(obj, field, None) and ORDER[kind].index(status) <= ORDER[kind].index(obj.status):
+        if (
+            status not in seen
+            and getattr(obj, field, None)
+            and ORDER[kind].index(status) <= ORDER[kind].index(obj.status)
+        ):
             out.append((getattr(obj, field), status))
     out.sort(key=lambda e: (e[0], ORDER[kind].index(e[1])))
     return out

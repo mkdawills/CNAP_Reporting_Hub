@@ -58,7 +58,9 @@ def send(talk, actor=None):
         raise SpeakerError("The NeuroSync Speaker Survey isn’t loaded yet.")
     period = talk.assignment.reporting_period if talk.assignment_id else period_for(talk.ends_at)
     if not period:
-        raise SpeakerError("No reporting session is open for answers, so the survey can’t be sent yet.")
+        raise SpeakerError(
+            "No reporting session is open for answers, so the survey can’t be sent yet."
+        )
     a = talk.assignment
     if a is None:
         a = Assignment.objects.filter(
