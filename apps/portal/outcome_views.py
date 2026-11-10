@@ -19,7 +19,7 @@ from .outcome_forms import GRANT_FORMS, NEXT, PUB_FORMS
 
 # MW's words (decisions.md 2026-10-26), shown after a proposal is marked Not funded.
 NOT_FUNDED_NOTE = (
-    "Thank you for the update. Submitting a proposal is a real accomplishment and something that should always be "
+    "Thank you for the update. Submitting a proposal is a major accomplishment and something that should always be "
     "celebrated! A not-funded decision is part of every researcher’s journey toward funding. Your reviewers’ feedback "
     "is valuable for the next round, and we’re here to help you think through its application."
 )
@@ -441,7 +441,7 @@ def update(request, kind, pk):
             messages.add_message(
                 request,
                 messages.INFO,
-                "Congratulations on submitting your proposal! Submitting is a real accomplishment, "
+                "Congratulations on submitting your proposal! Submitting is a major accomplishment, "
                 "and the Center is cheering for you.",
                 extra_tags="encourage",
             )

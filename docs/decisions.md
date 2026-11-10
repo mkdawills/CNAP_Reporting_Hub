@@ -719,3 +719,4 @@ Known trade-off kept: anyone can pause password sign-in for a username for 15 mi
 - Nothing is emailed automatically: every follow-up letter waits for MW's review and Send.
 - Full spec: `docs/funding-follow-up-spec.md`. Built on branch `feature/funding-follow-up`.
 - 2026-11-10: MW removed the last sentence of the not-funded note ("We are very proud of you and excited for your next steps!"). The note now ends with "...help you think through its application."
+- 2026-11-10: MW changed "a real accomplishment" to "a major accomplishment" everywhere it appears (the not-funded note and the submitted message), and in the funding letter and email.
