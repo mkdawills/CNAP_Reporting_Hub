@@ -1,11 +1,11 @@
 {% extends "base.html" %}{% load cnap static %}
-{% block title %}{% if o %}{{ o.name }}{% else %}Add an opportunity{% endif %} · Funding · {{ platform_name }}{% endblock %}
+{% block title %}{% if o %}{{ o.name }}{% else %}Add an opportunity{% endif %} · Funding and news · {{ platform_name }}{% endblock %}
 {% block content %}
 {# One funding opportunity (MW 2026-11-10): the public facts, and the members it is picked for. #}
 <div class="fv fm">
   <a class="px-link p21-back" href="{% url 'manage:funding_manage' %}?tab={% if suggestion %}suggestions{% else %}opportunities{% endif %}" title="Returns to the list.">Back to {% if suggestion %}Suggestions{% else %}Opportunities and matches{% endif %}</a>
   <header class="px-mast p21-mast">
-    <p class="px-eyebrow">Administration · Funding</p>
+    <p class="px-eyebrow">Administration · Funding and news</p>
     <h1 class="px-title">{% if o %}{{ o.name }}{% else %}Add an opportunity{% endif %}</h1>
     <p class="p21-purpose">{% if o %}The opportunity’s public facts, and the members it is picked for.{% elif suggestion %}Filled in from {{ suggestion.person }}’s suggestion.<br>Check every fact on the sponsor’s page before saving.{% else %}Add an opportunity to the catalog.<br>Check every fact on the sponsor’s page before saving.{% endif %}</p>
     {% if o %}<ul class="px-facts">

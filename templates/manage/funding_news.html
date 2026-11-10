@@ -1,11 +1,11 @@
 {% extends "base.html" %}{% load cnap static %}
-{% block title %}{% if n %}{{ n.headline }}{% else %}Add a news item{% endif %} · Funding · {{ platform_name }}{% endblock %}
+{% block title %}{% if n %}{{ n.headline }}{% else %}Add a news item{% endif %} · Funding and news · {{ platform_name }}{% endblock %}
 {% block content %}
 {# One funding news item (MW 2026-11-10): a summary in the CNAP office's own words, with the source. #}
 <div class="fv fm">
   <a class="px-link p21-back" href="{% url 'manage:funding_manage' %}?tab=news" title="Returns to the news.">Back to News</a>
   <header class="px-mast p21-mast">
-    <p class="px-eyebrow">Administration · Funding</p>
+    <p class="px-eyebrow">Administration · Funding and news</p>
     <h1 class="px-title">{% if n %}{{ n.headline }}{% else %}Add a news item{% endif %}</h1>
     <p class="p21-purpose">Every signed-in member reads funding news on the Funding opportunities page.</p>
   </header>

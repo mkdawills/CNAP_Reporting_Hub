@@ -1,12 +1,12 @@
 {% extends "base.html" %}{% load cnap static %}
-{% block title %}Funding · {{ platform_name }}{% endblock %}
+{% block title %}Funding and news · {{ platform_name }}{% endblock %}
 {% block content %}
 {# The CNAP office's Funding pages (MW 2026-11-10). Nothing is emailed until the evaluator selects Send and confirms. #}
 <div class="fv fm">
   <header class="px-mast p21-mast">
     <p class="px-eyebrow">Administration</p>
-    <h1 class="px-title">Funding</h1>
-    <p class="p21-purpose">Follow-up letters after a proposal is not funded, the opportunity catalog with each person’s matches, members’ suggestions, and funding news.<br>Nothing is emailed until you select Send and confirm.</p>
+    <h1 class="px-title">Funding and news</h1>
+    <p class="p21-purpose">Follow-up letters after a proposal is not funded, the opportunity catalog with each person’s matches, members’ suggestions, funding news, and events and talks.<br>Nothing is emailed until you select Send and confirm.</p>
     <ul class="px-facts">
       <li><span class="px-label">Follow-ups to review</span><span class="v">{{ counts.followups }}</span></li>
       <li><span class="px-label">Suggestions to review</span><span class="v">{{ counts.suggestions }}</span></li>
@@ -15,7 +15,7 @@
     </ul>
   </header>
 
-  <nav class="px-seg" aria-label="Funding">{% for k, label in tabs %}<a href="?tab={{ k }}"{% if k == tab %} class="on" aria-current="page"{% endif %} title="Show {{ label|lower }}.">{{ label }}{% if k == 'followups' and counts.followups %} ({{ counts.followups }}){% elif k == 'suggestions' and counts.suggestions %} ({{ counts.suggestions }}){% endif %}</a>{% endfor %}</nav>
+  <nav class="px-seg" aria-label="Funding and news">{% for k, label in tabs %}<a href="?tab={{ k }}"{% if k == tab %} class="on" aria-current="page"{% endif %} title="Show {{ label|lower }}.">{{ label }}{% if k == 'followups' and counts.followups %} ({{ counts.followups }}){% elif k == 'suggestions' and counts.suggestions %} ({{ counts.suggestions }}){% endif %}</a>{% endfor %}</nav>
 
   {% if tab == 'followups' %}
   <section class="px-section" aria-labelledby="fm-fu">

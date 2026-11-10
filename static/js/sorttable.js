@@ -18,11 +18,39 @@
     table.querySelectorAll("th.sorth").forEach(function (h) { h.classList.remove("asc", "desc"); });
     th.classList.add(dir === 1 ? "asc" : "desc");
     function key(r) {
-      var t = (r.cells[col] ? r.cells[col].textContent : "").trim().toLowerCase();
+      var c = r.cells[col];
+      if (c && c.dataset.sort !== undefined) { var v = c.dataset.sort; return /^-?\d+(\.\d+)?$/.test(v) ? parseFloat(v) : v.toLowerCase(); }
+      var t = (c ? c.textContent : "").trim().toLowerCase();
       var n = t.replace(/[$,%\s]/g, "");
       return /^-?\d+(\.\d+)?$/.test(n) ? parseFloat(n) : t;
     }
     var rows = Array.from(body.rows);
+    function cmp(a, b) {
+      var x = key(a), y = key(b);
+      if (typeof x === "number" && typeof y === "number") return dir * (x - y);
+      return dir * String(x).localeCompare(String(y), undefined, { numeric: true });
+    }
+    // Grouped tables (MW 2026-11-10): rows stay with their person. Sorting by the person sorts the groups;
+    // sorting by any other column sorts the rows inside each person's group.
+    if (table.dataset.groupby !== undefined) {
+      var groups = [], byKey = {};
+      rows.forEach(function (r) {
+        var g = r.cells[0] && r.cells[0].dataset.group;
+        if (g === undefined) return;
+        if (!byKey[g]) { byKey[g] = []; groups.push(byKey[g]); }
+        byKey[g].push(r);
+      });
+      if (col === 0) groups.sort(function (a, b) { return cmp(a[0], b[0]); });
+      else groups.forEach(function (g) { g.sort(cmp); });
+      groups.forEach(function (g) {
+        g.forEach(function (r, i) {
+          r.classList.toggle(table.dataset.groupby + "-first", i === 0);
+          r.classList.toggle(table.dataset.groupby + "-same", i !== 0);
+          body.appendChild(r);
+        });
+      });
+      return;
+    }
     var total = rows.filter(function (r) { return /^total/i.test((r.cells[0] || {}).textContent || ""); });
     rows.filter(function (r) { return total.indexOf(r) === -1; })
       .sort(function (a, b) {

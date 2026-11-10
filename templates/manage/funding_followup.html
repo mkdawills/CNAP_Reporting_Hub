@@ -1,11 +1,11 @@
 {% extends "base.html" %}{% load cnap static %}
-{% block title %}{{ name }} · Funding · {{ platform_name }}{% endblock %}
+{% block title %}{{ name }} · Funding and news · {{ platform_name }}{% endblock %}
 {% block content %}
 {# The follow-up letter composer (MW 2026-11-10). Send asks first, in a lavender note under the button. Nothing is ever sent automatically. #}
 <div class="fv fm">
   <a class="px-link p21-back" href="{% url 'manage:funding_manage' %}?tab=followups" title="Returns to the follow-ups.">Back to Follow-ups</a>
   <header class="px-mast p21-mast">
-    <p class="px-eyebrow">Administration · Funding</p>
+    <p class="px-eyebrow">Administration · Funding and news</p>
     <h1 class="px-title">{{ name }}</h1>
     <p class="p21-purpose">The letter to {{ f.person }} after the decision on the proposal.<br>Edit the letter, preview the email, then send it.</p>
     <ul class="px-facts">

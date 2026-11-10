@@ -1,11 +1,11 @@
 {% extends "base.html" %}{% load cnap static %}
-{% block title %}{% if e %}{{ e.title }}{% else %}Add an event{% endif %} · Funding · {{ platform_name }}{% endblock %}
+{% block title %}{% if e %}{{ e.title }}{% else %}Add an event{% endif %} · Funding and news · {{ platform_name }}{% endblock %}
 {% block content %}
 {# One research event or talk (MW 2026-11-10). #}
 <div class="fv fm">
   <a class="px-link p21-back" href="{% url 'manage:funding_manage' %}?tab=events" title="Returns to the events.">Back to Events and talks</a>
   <header class="px-mast p21-mast">
-    <p class="px-eyebrow">Administration · Funding</p>
+    <p class="px-eyebrow">Administration · Funding and news</p>
     <h1 class="px-title">{% if e %}{{ e.title }}{% else %}Add an event{% endif %}</h1>
     <p class="p21-purpose">Every signed-in member sees upcoming events on the Funding opportunities page.</p>
   </header>
