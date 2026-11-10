@@ -342,3 +342,13 @@ def test_the_letter_name_is_identical_everywhere(client, center):
     assert name in client.get(f"/manage/funding/followups/{f.pk}/").content.decode()
     assert name in client.get(f"/funding/letter/{f.pk}/").content.decode()
     assert Person.objects.filter(pk=f.person_id).exists()
+
+
+def test_opportunities_tab_names_who_each_is_picked_for_and_lists_by_member(client, center):
+    okafor = _person("okafor")
+    m = FundingMatch.objects.filter(person=okafor).select_related("opportunity").first()
+    _login(client, "mwills")
+    html = unescape(client.get("/manage/funding/?tab=opportunities").content.decode())
+    assert "Picked for" in html and okafor.full_name in html
+    html = unescape(client.get("/manage/funding/?tab=opportunities&view=members").content.decode())
+    assert okafor.full_name in html and m.opportunity.name in html and m.why in html

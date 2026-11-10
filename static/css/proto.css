@@ -2143,3 +2143,8 @@ body.proto .fm .fm-picks .fv-choice > span { min-width: 0; }
 body.proto .fm .fm-acts { align-items: flex-start; }
 body.proto .fm .fm-acts > .fm-decline { margin-top: 0; }
 body.proto .fm .fm-acts > .fm-decline[open] { flex-basis: 100%; }
+/* Funding tabs wrap onto a second line on narrow screens instead of running off the edge (MW 2026-11-10). */
+body.proto .fm .px-seg { flex-wrap: wrap; max-width: 100%; border-radius: 22px; }
+body.proto .fm .fm-view { margin: 0 0 var(--px-5); }
+body.proto .fm .fm-picks-list { list-style: none; margin: 4px 0 0; padding: 0 0 0 16px; border-left: 2px solid var(--px-line); display: grid; gap: 14px; }
+body.proto .fm .fm-picks-list li { display: grid; gap: 2px; color: var(--px-ink-2); }

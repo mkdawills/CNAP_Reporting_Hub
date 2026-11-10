@@ -41,11 +41,21 @@
   <section class="px-section" aria-labelledby="fm-op">
     <div class="fm-head"><h2 class="px-h2" id="fm-op">Opportunities and matches</h2>{% if can_manage %}<a class="btn small ghost" href="{% url 'manage:funding_opportunity_new' %}" title="Opens the form to add an opportunity to the catalog.">Add an opportunity</a>{% endif %}</div>
     <p class="px-note">Open an opportunity to edit it or to pick it for chosen members, each with a sentence on why it fits.<br>Relevant to most members appears for everyone.<br>Check dates appears when the facts were last confirmed more than 90 days ago.</p>
+    <nav class="px-seg fm-view" aria-label="Show opportunities"><a href="?tab=opportunities"{% if view == 'opps' %} class="on" aria-current="page"{% endif %} title="List every opportunity, with the members each one is picked for.">By opportunity</a><a href="?tab=opportunities&view=members"{% if view == 'members' %} class="on" aria-current="page"{% endif %} title="List each member, with the opportunities picked for that member.">By member</a></nav>
+    {% if view == 'members' %}
+    {% if members %}<ul class="fv-recs">{% for v in members %}<li class="fv-rec">
+      <span class="fv-name"><a class="px-link" href="{% url 'manage:person' v.p.pk %}#funding" title="Opens {{ v.p.first_name }}’s page, with the Funding panel.">{{ v.p }}</a></span>
+      <span class="px-note">{{ v.rows|length }} opportunit{{ v.rows|length|pluralize:"y,ies" }} picked</span>
+      <ul class="fm-picks-list">{% for r in v.rows %}<li><a class="px-link" href="{% url 'manage:funding_opportunity' r.row.o.pk %}" title="Opens the opportunity.">{{ r.row.o.name }}</a>{% if r.m.why %}<span>{{ r.m.why }}</span>{% endif %}<span class="px-note">Deadline: {{ r.row.when }}</span></li>{% endfor %}</ul>
+    </li>{% endfor %}</ul>
+    {% else %}<p class="px-note">No member has picks yet.<br>Open an opportunity to pick it for a member.</p>{% endif %}
+    {% else %}
     <ul class="fv-recs">{% for x in opps %}<li class="fv-rec">
       <span class="fv-name"><a class="px-link" href="{% url 'manage:funding_opportunity' x.o.pk %}" title="Opens the opportunity to edit it or add matches.">{{ x.o.name }}</a></span>
       <span class="fv-chips"><span class="px-status"{% if x.row.state == 'ok' %} data-s="submitted"{% elif x.row.state == 'warn' %} data-s="in_progress"{% elif x.row.state == 'alert' %} data-s="overdue"{% endif %}>{{ x.row.words }}</span><span class="px-status">{{ x.o.get_audience_display }}</span>{% if x.stale %}<span class="px-status" data-s="in_progress">Check dates</span>{% endif %}</span>
-      <dl class="fv-kv"><dt>Deadline</dt><dd>{{ x.row.when }}</dd><dt>Matched to</dt><dd>{{ x.n }} {% if x.n == 1 %}person{% else %}people{% endif %}</dd><dt>Facts checked</dt><dd>{% if x.o.checked_on %}{{ x.o.checked_on|date:"F j, Y" }}{% else %}Never{% endif %}</dd></dl>
+      <dl class="fv-kv"><dt>Deadline</dt><dd>{{ x.row.when }}</dd><dt>Picked for</dt><dd>{% for p in x.who %}<a class="px-link" href="{% url 'manage:person' p.pk %}#funding" title="Opens {{ p.first_name }}’s page, with the Funding panel.">{{ p }}</a>{% if not forloop.last %}<br>{% endif %}{% empty %}No one yet{% endfor %}</dd><dt>Facts checked</dt><dd>{% if x.o.checked_on %}{{ x.o.checked_on|date:"F j, Y" }}{% else %}Never{% endif %}</dd></dl>
     </li>{% empty %}<li class="px-note">No opportunities yet.</li>{% endfor %}</ul>
+    {% endif %}
     {% if archived_opps %}<p class="px-note">{{ archived_opps }} archived opportunit{{ archived_opps|pluralize:"y is,ies are" }} kept for history and hidden from members.</p>{% endif %}
   </section>
 

@@ -56,16 +56,39 @@ def home(request):
     if show == "open":
         fus = fus.filter(status=FundingFollowUp.Status.TO_REVIEW)
     opps = []
-    for o in FundingOpportunity.objects.active().order_by("name"):
+    for o in (
+        FundingOpportunity.objects.active().order_by("name").prefetch_related("matches__person")
+    ):
+        who = sorted(
+            (m.person for m in o.matches.all() if not m.ended_at),
+            key=lambda p: (p.last_name, p.first_name),
+        )
         opps.append(
             {
                 "o": o,
-                "n": o.matches.filter(ended_at__isnull=True).count(),
+                "n": len(who),
+                "who": who,
                 "stale": funding.stale(o, today),
                 "row": funding.row(o, today=today),
             }
         )
     opps.sort(key=lambda x: (x["o"].audience != FundingAudience.EVERYONE, x["o"].name.lower()))
+    people = {}
+    for x in opps:
+        for p in x["who"]:
+            people.setdefault(p.pk, [p, 0])[1] += 1
+    by_person = sorted(people.values(), key=lambda v: (v[0].last_name, v[0].first_name))
+    # By member (MW 2026-11-10): each member with the opportunities picked for them, soonest deadline first.
+    members = {}
+    for m in FundingMatch.objects.filter(
+        ended_at__isnull=True, opportunity__archived_at__isnull=True
+    ).select_related("person", "opportunity"):
+        members.setdefault(m.person_id, {"p": m.person, "rows": []})["rows"].append(
+            {"m": m, "row": funding.row(m.opportunity, why=m.why, today=today)}
+        )
+    for v in members.values():
+        v["rows"].sort(key=lambda r: funding._sort_key(r["row"]["o"]))
+    members = sorted(members.values(), key=lambda v: (v["p"].last_name, v["p"].first_name))
     c = funding.counts()
     return render(
         request,
@@ -77,6 +100,9 @@ def home(request):
             "followups": [(f, funding.status_changed(f)) for f in fus],
             "opps": opps,
             "n_stale": sum(1 for x in opps if x["stale"]),
+            "by_person": by_person,
+            "members": members,
+            "view": "members" if request.GET.get("view") == "members" else "opps",
             "suggestions": FundingSuggestion.objects.select_related(
                 "person", "opportunity"
             ).order_by("status", "-created_at"),
