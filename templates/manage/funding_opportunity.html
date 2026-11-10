@@ -1,0 +1,61 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{% if o %}{{ o.name }}{% else %}Add an opportunity{% endif %} · Funding · {{ platform_name }}{% endblock %}
+{% block content %}
+{# One funding opportunity (MW 2026-11-10): the public facts, and the members it is picked for. #}
+<div class="fv fm">
+  <a class="px-link p21-back" href="{% url 'manage:funding_manage' %}?tab={% if suggestion %}suggestions{% else %}opportunities{% endif %}" title="Returns to the list.">Back to {% if suggestion %}Suggestions{% else %}Opportunities and matches{% endif %}</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Administration · Funding</p>
+    <h1 class="px-title">{% if o %}{{ o.name }}{% else %}Add an opportunity{% endif %}</h1>
+    <p class="p21-purpose">{% if o %}The opportunity’s public facts, and the members it is picked for.{% elif suggestion %}Filled in from {{ suggestion.person }}’s suggestion.<br>Check every fact on the sponsor’s page before saving.{% else %}Add an opportunity to the catalog.<br>Check every fact on the sponsor’s page before saving.{% endif %}</p>
+    {% if o %}<ul class="px-facts">
+      <li><span class="px-label">Shown to</span><span class="v">{{ o.get_audience_display }}</span></li>
+      <li><span class="px-label">Matched to</span><span class="v">{{ matches|length }} {% if matches|length == 1 %}person{% else %}people{% endif %}</span></li>
+      <li><span class="px-label">Facts checked</span><span class="v">{% if o.checked_on %}{{ o.checked_on|date:"F j, Y" }}{% else %}Never{% endif %}{% if stale %}<br>Check dates{% endif %}</span></li>
+    </ul>{% endif %}
+  </header>
+  {% if o.archived_at %}<div class="px-callout warn fv-msg"><p>Archived {{ o.archived_at|date:"F j, Y" }}.<br>Members no longer see the opportunity.</p></div>{% endif %}
+
+  <form method="post" action="{% if o %}{% url 'manage:funding_opportunity_post' o.pk %}{% else %}{% url 'manage:funding_opportunity_create' %}{% endif %}" class="px-page">{% csrf_token %}
+    {% if suggestion %}<input type="hidden" name="suggestion" value="{{ suggestion.pk }}">{% endif %}
+    <section class="px-section" aria-labelledby="fo-1">
+      <h2 class="px-h2 r90-part" id="fo-1"><span>1</span>The facts</h2>
+      <p class="px-note">Write one sentence per line, with every abbreviation spelled out.</p>
+      <div class="fv-form fm-wide">
+        <div class="fv-field"><label for="fo-name">Name</label><input id="fo-name" name="name" value="{% firstof o.name initial.name %}" maxlength="300" required></div>
+        <div class="fv-field"><label for="fo-sponsor">Sponsor <span class="fv-opt">(optional)</span></label><input id="fo-sponsor" name="sponsor" value="{% firstof o.sponsor initial.sponsor %}" maxlength="300"></div>
+        <div class="fv-field"><label for="fo-kind">Kind of sponsor</label><select id="fo-kind" name="source_kind">{% for v, l in kinds %}<option value="{{ v }}"{% if o.source_kind == v or not o and v == 'foundation' %} selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
+        <div class="fv-field"><label for="fo-mech">Mechanism <span class="fv-opt">(optional)</span></label><input id="fo-mech" name="mechanism" value="{{ o.mechanism }}" maxlength="120"></div>
+        <div class="fv-field"><label for="fo-amount">Amount <span class="fv-opt">(optional)</span></label><input id="fo-amount" name="amount_text" value="{{ o.amount_text }}" maxlength="300"></div>
+        <div class="fv-field"><label for="fo-deadline">Deadline <span class="fv-opt">(optional)</span></label><p class="fv-help">Pick the date when there is one, so members see the days left.</p><input id="fo-deadline" name="deadline" type="date" value="{{ o.deadline|date:'Y-m-d' }}"></div>
+        <div class="fv-field"><label for="fo-dtext">Deadline in words <span class="fv-opt">(optional)</span></label><p class="fv-help">Shown in place of the date, such as “Early March each year.”</p><input id="fo-dtext" name="deadline_text" value="{% firstof o.deadline_text initial.deadline_text %}" maxlength="200"></div>
+        <div class="fv-field"><label for="fo-url">Link to the announcement <span class="fv-opt">(optional)</span></label><input id="fo-url" name="url" value="{% firstof o.url initial.url %}" maxlength="500"></div>
+        <div class="fv-field"><label for="fo-summary">Notes for members <span class="fv-opt">(optional)</span></label><p class="fv-help">One or two sentences, such as who is eligible.</p><textarea id="fo-summary" name="summary" rows="3">{% firstof o.summary initial.summary %}</textarea></div>
+        <div class="fv-field"><label for="fo-fuller">Fuller explanation for letters <span class="fv-opt">(optional)</span></label><textarea id="fo-fuller" name="fuller_text" rows="4">{{ o.fuller_text }}</textarea></div>
+        <div class="fv-field"><label for="fo-ms">Milestone</label><select id="fo-ms" name="counts_toward_milestone">{% for v, l in milestones %}<option value="{{ v }}"{% if o.counts_toward_milestone == v or not o and v == 'no' %} selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
+        <div class="fv-field"><label for="fo-aud">Shown to</label><select id="fo-aud" name="audience">{% for v, l in audiences %}<option value="{{ v }}"{% if o.audience == v or not o and initial.audience == v or not o and not initial.audience and v == 'matched' %} selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
+        <label class="fv-choice"><input type="checkbox" name="esi_only" value="1"{% if o.esi_only %} checked{% endif %}> For Early Stage Investigators only</label>
+        <div class="fv-field"><label for="fo-source">Where the facts came from <span class="fv-opt">(optional)</span></label><input id="fo-source" name="source_url" value="{{ o.source_url }}" maxlength="500"></div>
+        <div class="fv-field"><label for="fo-checked">Facts last checked <span class="fv-opt">(optional)</span></label><input id="fo-checked" name="checked_on" type="date" value="{{ o.checked_on|date:'Y-m-d' }}"></div>
+        {% if suggestion %}<div class="fv-field"><label for="fo-note">Note to {{ suggestion.person.first_name }} <span class="fv-opt">(optional)</span></label><textarea id="fo-note" name="note_to_person" rows="2">Thank you. The opportunity is now listed.</textarea></div>{% endif %}
+      </div>
+      {% if can_manage %}<div class="fm-acts"><button class="btn small ghost" type="submit" name="action" value="save" title="Saves the opportunity.">{% if o %}Save{% else %}Add the opportunity{% endif %}</button>
+        {% if o and not o.archived_at %}<button class="btn small ghost" type="submit" name="action" value="archive" formnovalidate title="Hides the opportunity from members and keeps it for history.">Archive</button>{% elif o %}<button class="btn small ghost" type="submit" name="action" value="restore" formnovalidate title="Shows the opportunity to members again.">Restore</button>{% endif %}</div>{% endif %}
+    </section>
+  </form>
+
+  {% if o %}<section class="px-section" aria-labelledby="fo-matches" id="fo-matches">
+    <h2 class="px-h2 r90-part" id="fo-2"><span>2</span>Picked for</h2>
+    <p class="px-note">Each person sees the opportunity under Picked for you, with your sentence on why it fits.<br>Ending a match hides it from the person and keeps it for history.</p>
+    {% if matches %}<ul class="fv-recs">{% for m in matches %}<li class="fv-rec"><span class="fv-name">{{ m.person }}</span>{% if m.ended_at %}<span class="fv-chips"><span class="px-status">Ended {{ m.ended_at|date:"F j, Y" }}</span></span>{% endif %}<dl class="fv-kv"><dt>Why this fits</dt><dd>{{ m.why|default:"No sentence yet."|linebreaksbr }}</dd><dt>Added</dt><dd>{{ m.added_at|date:"F j, Y" }}</dd></dl>
+      {% if can_manage and not m.ended_at %}<form method="post" action="{% url 'manage:funding_opportunity_post' o.pk %}">{% csrf_token %}<input type="hidden" name="action" value="end_match"><input type="hidden" name="match" value="{{ m.pk }}"><button class="btn small ghost" type="submit" title="Hides the opportunity from {{ m.person.first_name }}.">End the match</button></form>{% endif %}</li>{% endfor %}</ul>
+    {% else %}<p class="px-note">Not picked for anyone yet.</p>{% endif %}
+    {% if can_manage and not o.archived_at %}<form method="post" action="{% url 'manage:funding_opportunity_post' o.pk %}" class="fv-form fm-wide fm-addmatch">{% csrf_token %}<input type="hidden" name="action" value="match">
+      <h3 class="px-h3">Pick the opportunity for someone</h3>
+      <div class="fv-field"><label for="fo-person">Person</label><select id="fo-person" name="person" required><option value="">Choose a person</option>{% for p in people %}<option value="{{ p.pk }}">{{ p.last_name }}, {{ p.first_name }}</option>{% endfor %}</select></div>
+      <div class="fv-field"><label for="fo-why">Why this fits</label><p class="fv-help">One sentence the person reads beside the opportunity.</p><textarea id="fo-why" name="why" rows="2"></textarea></div>
+      <div><button class="btn small ghost" type="submit" title="Shows the opportunity on the person’s Funding opportunities page.">Add the match</button></div>
+    </form>{% endif %}
+  </section>{% endif %}
+</div>
+{% endblock %}

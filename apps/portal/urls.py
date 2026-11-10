@@ -1,5 +1,6 @@
 from django.urls import path
 
+from . import funding_views as fv
 from . import outcome_views as ov
 from . import views
 
@@ -26,6 +27,9 @@ urlpatterns = [
     path("files/<int:file_pk>/", views.download, name="download"),
     # publications and grants (self-entry)
     path("outcomes/", ov.home, name="outcomes"),
+    path("funding/", fv.page, name="funding"),  # MW 2026-11-10
+    path("funding/suggest/", fv.suggest, name="funding_suggest"),
+    path("funding/letter/<int:pk>/", fv.letter, name="funding_letter"),
     path("outcomes/presentations/new/", ov.presentation, name="presentation_new"),
     path("outcomes/presentations/<int:pk>/", ov.presentation, name="presentation_edit"),
     path("outcomes/nudge/<int:pk>/", ov.nudge, name="outcome_nudge"),

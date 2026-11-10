@@ -1,0 +1,91 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{{ name }} · {{ platform_name }}{% endblock %}
+{% block content %}
+{# The full follow-up letter (MW 2026-11-10), built to the approved preview. Visible to the person, anyone entering for them, and the CNAP office. #}
+<div class="fv">
+  {% if preview or request.user.person.pk != f.person_id and can_manage %}<a class="px-link p21-back" href="{% url 'manage:funding_followup' f.pk %}" title="Returns to the letter composer.">Back to the letter</a>{% else %}<a class="px-link p21-back" href="{% url 'portal:funding' %}?for={{ f.person_id }}" title="Returns to the Funding opportunities page.">Back to Funding opportunities</a>{% endif %}
+  {% if preview %}<div class="px-callout warn fv-msg" role="status"><p><strong>Preview.</strong><br>The letter has not been sent.<br>{{ f.person }} sees the page only after the CNAP office selects Send.</p></div>{% endif %}
+  <header class="px-mast p21-mast fv-mast">
+    {% include "proto/_mast_art.html" %}
+    <p class="px-eyebrow">Letters from the Center</p>
+    <h1 class="px-title">{{ name }}</h1>
+    <p class="p21-purpose">This letter follows the decision on the proposal, with options picked for {{ first }} and the support the CNAP team offers.</p>
+    <ul class="px-facts">
+      <li><span class="px-label">Proposal</span><span class="v">{% if f.grant.mechanism %}{{ f.grant.mechanism }} {% endif %}{{ f.grant.version_label }}{% if f.grant.funding_agency %}, {{ f.grant.funding_agency }}{% endif %}</span></li>
+      <li><span class="px-label">Decision</span><span class="v">Not funded</span></li>
+      {% if f.grant.decision_date %}<li><span class="px-label">Decision recorded</span><span class="v">{{ f.grant.decision_date|date:"F j, Y" }}</span></li>{% endif %}
+      <li><span class="px-label">Sent</span><span class="v">{% if f.sent_at %}{{ f.sent_at|date:"F j, Y" }}{% else %}Not yet{% endif %}</span></li>
+    </ul>
+  </header>
+
+  <div class="px-onpage-layout">
+  <nav class="px-onpage" aria-label="On this page">
+    <div class="p21-navtop"><p class="px-label">On this page</p><button type="button" class="p21-collapse" data-navtoggle aria-expanded="true" title="Hide this list to give the page more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
+    <ol>
+      <li><a href="#l-note" data-onpage title="Go to the section A note from the CNAP team.">A note from the CNAP team</a></li>
+      {% if featured %}<li><a href="#l-opts" data-onpage title="Go to the section Options picked for you.">Options picked for you</a></li>{% endif %}
+      <li><a href="#l-weigh" data-onpage title="Go to the section Questions for weighing each option.">Questions for weighing each option</a></li>
+      {% if cofund %}<li><a href="#l-idea" data-onpage title="Go to the section IDeA co-funding.">IDeA co-funding</a></li>{% endif %}
+      {% if resub %}<li><a href="#l-a1" data-onpage title="Go to the section The {{ resub.version_label }} resubmission.">The {{ resub.version_label }} resubmission</a></li>{% endif %}
+      <li><a href="#l-help" data-onpage title="Go to the section Support from the CNAP team.">Support from the CNAP team</a></li>
+      {% if all_news %}<li><a href="#l-news" data-onpage title="Go to the section Funding news.">Funding news</a></li>{% endif %}
+    </ol>
+  </nav>
+  <div class="px-onpage-main">
+    <div class="px-rolls" data-rollgroup>
+    <div class="px-rollbar foldall"><button type="button" data-roll="open" title="Opens every section below at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section below up to its heading.">Collapse all</button></div>
+
+    <details class="px-roll" id="l-note" open>
+      <summary title="The letter from the CNAP team. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5h10l4 4v11H5z"/><path d="M15 4.5v4h4M8 12.5h8M8 15.5h6"/></svg>A note from the CNAP team</h2><span class="px-roll-figs"><span>From the CNAP evaluation team</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body fv-letter">
+        <p>Dear {{ first }},</p>
+        <p>{{ opening|linebreaksbr }}</p>
+        {% if note %}<p>{{ note|linebreaksbr }}</p>{% endif %}
+        {% if closing %}<p>{{ closing|linebreaksbr }}</p>{% endif %}
+        <p class="fv-sign">{{ signoff|linebreaksbr }}</p>
+      </div>
+    </details>
+
+    {% if featured %}<details class="px-roll" id="l-opts" open>
+      <summary title="The options the CNAP team picked, with the details of each. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>Options picked for you</h2><span class="px-roll-figs"><span><b>{{ featured|length }}</b> option{{ featured|length|pluralize }}</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body"><ul class="fv-recs">{% for r in featured %}{% include "proto/portal/_funding_row.html" with mode="letter" %}{% endfor %}</ul></div>
+    </details>{% endif %}
+
+    <details class="px-roll" id="l-weigh" open>
+      <summary title="Seven questions for weighing each option. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7h11M9 12h11M9 17h11"/><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/></svg>Questions for weighing each option</h2><span class="px-roll-figs"><span><b>{{ questions|length }}</b> questions</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body"><p class="fv-lead">Weigh each option with these {{ questions|length }} questions before starting an application.</p>{% include "proto/portal/_funding_questions.html" %}</div>
+    </details>
+
+    {% if cofund %}<details class="px-roll" id="l-idea" open>
+      <summary title="How IDeA co-funding could apply to the proposal. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>IDeA co-funding</h2><span class="px-roll-figs"><span>Applies to this proposal</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <div class="fv-letter"><p>{% if cofund_item and cofund_item.fuller_text %}{{ cofund_item.fuller_text|linebreaksbr }}{% else %}The Institutional Development Award (IDeA) program can co-fund a strong R01, R15, or R35 from an IDeA state that missed the payline.<br>Multiple-investigator applications are not eligible.{% endif %}</p></div>
+        <div class="px-callout fv-msg"><p>{% if talked_to_po %}The Reporting Hub shows a conversation with the program officer{% if f.grant.program_officer_name %}, {{ f.grant.program_officer_name }}{% endif %}.<br>Ask whether co-funding could apply.{% else %}The Reporting Hub shows no conversation with the program officer yet.<br>Ask the program officer assigned to the application whether co-funding could apply.{% endif %}</p></div>
+      </div>
+    </details>{% endif %}
+
+    {% if resub %}<details class="px-roll" id="l-a1" open>
+      <summary title="The next version of the proposal, already started in the Reporting Hub. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5h10l4 4v11H5z"/><path d="M15 4.5v4h4M8 12.5h8M8 15.5h6"/></svg>The {{ resub.version_label }} resubmission</h2><span class="px-roll-figs"><span>Started in the Reporting Hub</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <div class="fv-letter"><p>The {{ resub.version_label }} of this proposal is already started.<br>The {{ resub.version_label }} copies the {{ f.grant.version_label }}’s title, agency, budget, and credits.</p></div>
+        <a class="px-btn quiet" href="{% url 'portal:outcome_update' 'grant' resub.pk %}?for={{ f.person_id }}&to=planned" title="Opens the {{ resub.version_label }} in Publications, talks, and grants.">Open the {{ resub.version_label }} in Publications, talks, and grants</a>
+      </div>
+    </details>{% endif %}
+
+    <details class="px-roll" id="l-help" open>
+      <summary title="Grant-writing support from the CNAP team. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11V6.5a1.5 1.5 0 0 1 3 0V11M10 10.5V5a1.5 1.5 0 0 1 3 0v5.5M13 10.5V6a1.5 1.5 0 0 1 3 0v6M16 12V9.5a1.5 1.5 0 0 1 3 0V14c0 3.6-2.6 6.5-6.5 6.5-2.5 0-4-1-5.3-2.7L4.5 14a1.5 1.5 0 0 1 2.3-1.9L7 12.5"/></svg>Support from the CNAP team</h2><span class="px-roll-figs"><span><b>{{ supports|length }}</b> services</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body"><ul class="fv-plain">{% for s in supports %}<li>{{ s }}</li>{% endfor %}</ul><p class="fv-lead fv-after">Reply to the letter’s email to arrange any of the {{ supports|length }} services.</p></div>
+    </details>
+
+    {% if all_news %}<details class="px-roll" id="l-news">
+      <summary title="Funding news the CNAP team posts. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M8 9h8M8 12.5h8M8 16h5"/></svg>Funding news</h2><span class="px-roll-figs"><span><b>{{ all_news|length }}</b> item{{ all_news|length|pluralize }}</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body"><ul class="fv-recs">{% for n in all_news %}{% include "proto/portal/_funding_news.html" %}{% endfor %}</ul></div>
+    </details>{% endif %}
+    </div>
+
+    <p class="fv-who">The letter is visible only to {{ first }}, anyone entering for {{ first }}, and the CNAP office.</p>
+  </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{{ name }} · Funding · {{ platform_name }}{% endblock %}
+{% block content %}
+{# The follow-up letter composer (MW 2026-11-10). Send asks first, in a lavender note under the button. Nothing is ever sent automatically. #}
+<div class="fv fm">
+  <a class="px-link p21-back" href="{% url 'manage:funding_manage' %}?tab=followups" title="Returns to the follow-ups.">Back to Follow-ups</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Administration · Funding</p>
+    <h1 class="px-title">{{ name }}</h1>
+    <p class="p21-purpose">The letter to {{ f.person }} after the decision on the proposal.<br>Edit the letter, preview the email, then send it.</p>
+    <ul class="px-facts">
+      <li><span class="px-label">Status</span><span class="v">{{ f.get_status_display }}{% if f.status == 'sent' %} {{ f.sent_at|date:"F j, Y" }}{% endif %}</span></li>
+      <li><span class="px-label">Proposal</span><span class="v">{{ f.grant.version_label }}{% if f.grant.funding_agency %}, {{ f.grant.funding_agency }}{% endif %}{% if f.grant.mechanism %}, {{ f.grant.mechanism }}{% endif %}</span></li>
+      <li><span class="px-label">Goes to</span><span class="v">{{ to|default:"No email address on file" }}{% if cc %}<br>Copied to {{ cc|join:", " }}{% endif %}</span></li>
+    </ul>
+  </header>
+  {% if changed %}<div class="px-callout warn fv-msg" role="status"><p><strong>Status changed since.</strong><br>The proposal is no longer marked Not funded.<br>Check the proposal before sending the letter.</p></div>{% endif %}
+
+  {% if f.status == 'sent' %}
+  <div class="px-callout ok fv-msg"><p>Sent {{ f.sent_at|date:"F j, Y" }} to {{ f.sent_to }}.<br>The letter can no longer change.</p></div>
+  <p><a class="btn small ghost" href="{% url 'portal:funding_letter' f.pk %}" title="Opens the letter page as {{ f.person.first_name }} sees it.">Open the letter page</a></p>
+  {% elif f.status == 'dismissed' %}
+  <div class="px-callout fv-msg"><p>Dismissed.<br>Reason: {{ f.dismissed_reason }}</p></div>
+  {% if can_manage %}<form method="post" action="{% url 'manage:funding_followup_post' f.pk %}">{% csrf_token %}<button class="btn small ghost" name="action" value="reopen" title="Puts the follow-up back on the list to review.">Put back on the list</button></form>{% endif %}
+  {% else %}
+  <form method="post" action="{% url 'manage:funding_followup_post' f.pk %}" class="px-page">{% csrf_token %}
+    <section class="px-section" aria-labelledby="fu-1">
+      <h2 class="px-h2 r90-part" id="fu-1"><span>1</span>The letter</h2>
+      <p class="px-note">The name is identical in the email subject, the letter page, and every list.<br>Write one sentence per line.</p>
+      <div class="fv-form fm-wide">
+        <div class="fv-field"><label for="fu-subject">Name of the letter</label><input id="fu-subject" name="subject" value="{{ name }}" maxlength="300"></div>
+        <div class="fv-field"><label for="fu-opening">Opening</label><p class="fv-help">The letter begins “Dear {{ first }},” on its own line.</p><textarea id="fu-opening" name="opening" rows="4">{{ opening }}</textarea></div>
+        <div class="fv-field"><label for="fu-note">Personal paragraph <span class="fv-opt">(optional)</span></label><p class="fv-help">A few sentences for {{ first }} alone, such as what the reviewers valued.</p><textarea id="fu-note" name="body_note" rows="4">{{ note }}</textarea></div>
+        <div class="fv-field"><label for="fu-closing">Closing <span class="fv-opt">(optional)</span></label><textarea id="fu-closing" name="closing" rows="2">{{ closing }}</textarea></div>
+        <div class="fv-field"><label for="fu-signoff">Sign-off</label><textarea id="fu-signoff" name="signoff" rows="2">{{ signoff }}</textarea></div>
+      </div>
+    </section>
+
+    <section class="px-section" aria-labelledby="fu-2">
+      <h2 class="px-h2 r90-part" id="fu-2"><span>2</span>Options to feature</h2>
+      <p class="px-note">Ticked at the start: the opportunities picked for {{ first }}, and anything relevant to most members due within 120 days.<br>The email lists the first three as a table.<br>The letter page lists every ticked option in full.</p>
+      <ul class="fv-recs fm-picks">{% for c in choices %}<li class="fv-rec"><label class="fv-choice"><input type="checkbox" name="opp" value="{{ c.r.o.pk }}"{% if c.on %} checked{% endif %}><span><span class="fv-name">{{ c.r.o.name }}</span><br><span class="px-note">{% if c.mine %}Picked for {{ first }}. {% endif %}{{ c.r.when }}.{% if c.r.why %}<br>{{ c.r.why }}{% endif %}</span></span></label></li>{% empty %}<li class="px-note">No opportunities are picked for {{ first }} yet.<br>Add matches under Opportunities and matches.</li>{% endfor %}</ul>
+    </section>
+
+    <section class="px-section" aria-labelledby="fu-3">
+      <h2 class="px-h2 r90-part" id="fu-3"><span>3</span>Sections that fill in automatically</h2>
+      <ul class="fv-plain">
+        <li>IDeA co-funding: {% if cofund %}included, because the proposal is a single-principal-investigator NIH {{ f.grant.mechanism }}.{% if not talked_to_po %} The letter notes that the Hub shows no conversation with the program officer yet.{% endif %}{% else %}left out, because it applies only to a single-principal-investigator NIH R01, R15, or R35.{% endif %}</li>
+        <li>The resubmission: {% if resub %}included, with a link to the {{ resub.version_label }}.{% else %}left out, because no next version is started.{% endif %}</li>
+        <li>Support from the CNAP team: the {{ supports|length }} grant-writing services.</li>
+        <li>Funding news: the {{ news|length }} newest item{{ news|length|pluralize }}.</li>
+        <li>Questions for weighing each option: the {{ questions|length }} questions from Before you apply.</li>
+      </ul>
+    </section>
+
+    <section class="px-section" aria-labelledby="fu-4">
+      <h2 class="px-h2 r90-part" id="fu-4"><span>4</span>Preview and send</h2>
+      <p class="px-note">Save first, then preview.<br>The previews show the letter exactly as {{ first }} will see it.</p>
+      <div class="fm-acts">
+        <button class="btn small ghost" type="submit" name="action" value="save" title="Saves the letter without sending it.">Save</button>
+        <a class="btn small ghost" href="{% url 'manage:funding_followup_email' f.pk %}" target="_blank" rel="noopener" title="Opens the email as it will go, in a new tab. Save first to see the latest wording.">Preview the email</a>
+        <a class="btn small ghost" href="{% url 'portal:funding_letter' f.pk %}" target="_blank" rel="noopener" title="Opens the letter page as {{ first }} will see it, in a new tab.">Preview the letter page</a>
+      </div>
+      {% if can_manage %}<div class="fm-send" id="fu-send">
+        {% if confirm %}<div class="px-confirm" role="alert"><p>Send the letter to {{ f.person }} at {{ to }}{% if cc %}, copied to {{ cc|join:", " }}{% endif %}?</p><p>A sent letter can no longer change.</p>
+          <div class="px-confirm-row"><button class="btn" type="submit" name="action" value="send_yes" title="Sends the email now.">Yes, send the letter to {{ f.person }}</button><a class="btn small ghost" href="{% url 'manage:funding_followup' f.pk %}" title="Returns to the letter without sending.">No, go back</a></div></div>
+        {% else %}<button class="btn" type="submit" name="action" value="send" title="Saves the letter and asks you to confirm before anything is sent."{% if not to %} disabled{% endif %}>Send</button>{% if not to %}<p class="px-note">{{ f.person }} has no email address on file.<br>Add one on the person’s page first.</p>{% endif %}{% endif %}
+      </div>{% endif %}
+    </section>
+  </form>
+
+  {% if can_manage %}<details class="fm-decline" id="fu-dismiss"><summary class="btn small ghost" title="Takes the follow-up off the list without sending a letter.">Dismiss without a letter</summary>
+    <form method="post" action="{% url 'manage:funding_followup_post' f.pk %}" class="fv-form">{% csrf_token %}<input type="hidden" name="action" value="dismiss">
+      <div class="fv-field"><label for="fu-reason">Reason</label><textarea id="fu-reason" name="reason" rows="2" required></textarea></div>
+      <div><button class="btn small ghost" type="submit" title="Dismisses the follow-up. Nothing is sent.">Dismiss</button></div></form></details>{% endif %}
+  {% endif %}
+</div>
+{% endblock %}

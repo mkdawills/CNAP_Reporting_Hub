@@ -1,0 +1,95 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Funding · {{ platform_name }}{% endblock %}
+{% block content %}
+{# The CNAP office's Funding pages (MW 2026-11-10). Nothing is emailed until the evaluator selects Send and confirms. #}
+<div class="fv fm">
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Administration</p>
+    <h1 class="px-title">Funding</h1>
+    <p class="p21-purpose">Follow-up letters after a proposal is not funded, the opportunity catalog with each person’s matches, members’ suggestions, and funding news.<br>Nothing is emailed until you select Send and confirm.</p>
+    <ul class="px-facts">
+      <li><span class="px-label">Follow-ups to review</span><span class="v">{{ counts.followups }}</span></li>
+      <li><span class="px-label">Suggestions to review</span><span class="v">{{ counts.suggestions }}</span></li>
+      <li><span class="px-label">Opportunities</span><span class="v">{{ opps|length }}</span></li>
+      <li><span class="px-label">Dates to check</span><span class="v">{{ n_stale }}</span></li>
+    </ul>
+  </header>
+
+  <nav class="px-seg" aria-label="Funding">{% for k, label in tabs %}<a href="?tab={{ k }}"{% if k == tab %} class="on" aria-current="page"{% endif %} title="Show {{ label|lower }}.">{{ label }}{% if k == 'followups' and counts.followups %} ({{ counts.followups }}){% elif k == 'suggestions' and counts.suggestions %} ({{ counts.suggestions }}){% endif %}</a>{% endfor %}</nav>
+
+  {% if tab == 'followups' %}
+  <section class="px-section" aria-labelledby="fm-fu">
+    <h2 class="px-h2" id="fm-fu">Follow-ups</h2>
+    <p class="px-note">A follow-up appears here when a proposal is marked Not funded.<br>Open a follow-up to write the letter, preview the email, and send it.</p>
+    <p class="fm-show">{% if show == 'open' %}Showing follow-ups to review. <a class="px-link" href="?tab=followups&show=all" title="Show sent and dismissed follow-ups too.">Show all follow-ups</a>{% else %}Showing all follow-ups. <a class="px-link" href="?tab=followups" title="Show only the follow-ups to review.">Show follow-ups to review</a>{% endif %}</p>
+    {% if followups %}<ul class="fv-recs">{% for f, changed in followups %}<li class="fv-rec">
+      <span class="fv-name"><a class="px-link" href="{% url 'manage:funding_followup' f.pk %}" title="Opens the letter for {{ f.person }}.">{{ f.name }}</a></span>
+      <span class="fv-chips"><span class="px-status"{% if f.status == 'sent' %} data-s="submitted"{% elif f.status == 'to_review' %} data-s="in_progress"{% endif %}>{{ f.get_status_display }}</span>{% if changed %}<span class="px-status" data-s="overdue">Status changed since</span>{% endif %}</span>
+      <dl class="fv-kv">
+        <dt>Person</dt><dd>{{ f.person }}</dd>
+        <dt>Proposal</dt><dd>{{ f.grant.version_label }}{% if f.grant.funding_agency %}, {{ f.grant.funding_agency }}{% endif %}{% if f.grant.mechanism %}, {{ f.grant.mechanism }}{% endif %}</dd>
+        <dt>Marked Not funded</dt><dd>{{ f.created_at|date:"F j, Y" }}</dd>
+        {% if f.grant.decision_comments %}<dt>Decision comments</dt><dd>{{ f.grant.decision_comments|linebreaksbr }}</dd>{% endif %}
+        <dt>Program officer</dt><dd>{% if f.grant.discussed_with_program_officer %}Discussed{% if f.grant.program_officer_name %} with {{ f.grant.program_officer_name }}{% endif %}{% if f.grant.discussion_date %}, {{ f.grant.discussion_date|date:"F j, Y" }}{% endif %}{% elif f.grant.discussed_with_program_officer is False %}Not discussed{% else %}Not answered{% endif %}</dd>
+        <dt>Plans to resubmit</dt><dd>{% if f.grant.plans_to_resubmit %}Yes{% elif f.grant.plans_to_resubmit is False %}No{% else %}Not answered{% endif %}</dd>
+        {% if f.status == 'sent' %}<dt>Sent</dt><dd>{{ f.sent_at|date:"F j, Y" }} to {{ f.sent_to }}</dd>{% elif f.status == 'dismissed' %}<dt>Reason</dt><dd>{{ f.dismissed_reason }}</dd>{% endif %}
+      </dl></li>{% endfor %}</ul>
+    {% else %}<p class="px-note">Nothing to review.</p>{% endif %}
+  </section>
+
+  {% elif tab == 'opportunities' %}
+  <section class="px-section" aria-labelledby="fm-op">
+    <div class="fm-head"><h2 class="px-h2" id="fm-op">Opportunities and matches</h2>{% if can_manage %}<a class="btn small ghost" href="{% url 'manage:funding_opportunity_new' %}" title="Opens the form to add an opportunity to the catalog.">Add an opportunity</a>{% endif %}</div>
+    <p class="px-note">Open an opportunity to edit it or to pick it for chosen members, each with a sentence on why it fits.<br>Relevant to most members appears for everyone.<br>Check dates appears when the facts were last confirmed more than 90 days ago.</p>
+    <ul class="fv-recs">{% for x in opps %}<li class="fv-rec">
+      <span class="fv-name"><a class="px-link" href="{% url 'manage:funding_opportunity' x.o.pk %}" title="Opens the opportunity to edit it or add matches.">{{ x.o.name }}</a></span>
+      <span class="fv-chips"><span class="px-status"{% if x.row.state == 'ok' %} data-s="submitted"{% elif x.row.state == 'warn' %} data-s="in_progress"{% elif x.row.state == 'alert' %} data-s="overdue"{% endif %}>{{ x.row.words }}</span><span class="px-status">{{ x.o.get_audience_display }}</span>{% if x.stale %}<span class="px-status" data-s="in_progress">Check dates</span>{% endif %}</span>
+      <dl class="fv-kv"><dt>Deadline</dt><dd>{{ x.row.when }}</dd><dt>Matched to</dt><dd>{{ x.n }} {% if x.n == 1 %}person{% else %}people{% endif %}</dd><dt>Facts checked</dt><dd>{% if x.o.checked_on %}{{ x.o.checked_on|date:"F j, Y" }}{% else %}Never{% endif %}</dd></dl>
+    </li>{% empty %}<li class="px-note">No opportunities yet.</li>{% endfor %}</ul>
+    {% if archived_opps %}<p class="px-note">{{ archived_opps }} archived opportunit{{ archived_opps|pluralize:"y is,ies are" }} kept for history and hidden from members.</p>{% endif %}
+  </section>
+
+  {% elif tab == 'suggestions' %}
+  <section class="px-section" aria-labelledby="fm-sg">
+    <h2 class="px-h2" id="fm-sg">Suggestions</h2>
+    <p class="px-note">Members suggest opportunities from their Funding opportunities page.<br>Add to the list opens the opportunity form, filled in from the suggestion.<br>The member sees the status and any note you write.</p>
+    {% if suggestions %}<ul class="fv-recs">{% for s in suggestions %}<li class="fv-rec">
+      <span class="fv-name">{% if s.url %}<a class="px-link" href="{{ s.url }}" target="_blank" rel="noopener" title="Opens the announcement in a new tab.">{{ s.name }}</a>{% else %}{{ s.name }}{% endif %}</span>
+      <span class="fv-chips"><span class="px-status"{% if s.status == 'added' %} data-s="submitted"{% elif s.status == 'to_review' %} data-s="in_progress"{% endif %}>{{ s.get_status_display }}</span>{% if s.for_everyone %}<span class="px-status">Could help other members</span>{% endif %}</span>
+      <dl class="fv-kv"><dt>From</dt><dd>{{ s.person }}, {{ s.created_at|date:"F j, Y" }}</dd>{% if s.sponsor %}<dt>Sponsor</dt><dd>{{ s.sponsor }}</dd>{% endif %}{% if s.deadline_text %}<dt>Deadline</dt><dd>{{ s.deadline_text }}</dd>{% endif %}{% if s.why %}<dt>Why</dt><dd>{{ s.why|linebreaksbr }}</dd>{% endif %}{% if s.opportunity %}<dt>Listed as</dt><dd><a class="px-link" href="{% url 'manage:funding_opportunity' s.opportunity.pk %}">{{ s.opportunity.name }}</a></dd>{% endif %}{% if s.note_to_person %}<dt>Note to {{ s.person.first_name }}</dt><dd>{{ s.note_to_person }}</dd>{% endif %}</dl>
+      {% if can_manage %}{% if s.status == 'to_review' %}<div class="fm-acts"><a class="btn small ghost" href="{% url 'manage:funding_opportunity_new' %}?suggestion={{ s.pk }}" title="Opens the opportunity form, filled in from the suggestion.">Add to the list</a>
+        <details class="fm-decline"><summary class="btn small ghost" title="Decline the suggestion, with an optional note to {{ s.person.first_name }}.">Decline</summary>
+          <form method="post" action="{% url 'manage:funding_suggestion_post' s.pk %}" class="fv-form">{% csrf_token %}<input type="hidden" name="action" value="decline"><div class="fv-field"><label for="dn-{{ s.pk }}">Note to {{ s.person.first_name }} <span class="fv-opt">(optional)</span></label><textarea id="dn-{{ s.pk }}" name="note" rows="2"></textarea></div><div><button class="btn small ghost" type="submit" title="Marks the suggestion as declined.">Decline the suggestion</button></div></form></details></div>
+      {% else %}<form method="post" action="{% url 'manage:funding_suggestion_post' s.pk %}">{% csrf_token %}<input type="hidden" name="action" value="reopen"><button class="btn small ghost" type="submit" title="Puts the suggestion back on the list to review.">Put back on the list</button></form>{% endif %}{% endif %}
+    </li>{% endfor %}</ul>
+    {% else %}<p class="px-note">No suggestions yet.</p>{% endif %}
+  </section>
+
+  {% elif tab == 'news' %}
+  <section class="px-section" aria-labelledby="fm-nw">
+    <div class="fm-head"><h2 class="px-h2" id="fm-nw">News</h2>{% if can_manage %}<a class="btn small ghost" href="{% url 'manage:funding_news_new' %}" title="Opens the form to post a news item.">Add a news item</a>{% endif %}</div>
+    <p class="px-note">Every signed-in member reads the news on the Funding opportunities page, pinned items first.<br>The three newest items go in each follow-up letter.</p>
+    {% if news %}<ul class="fv-recs">{% for n in news %}<li class="fv-rec">
+      <span class="fv-name"><a class="px-link" href="{% url 'manage:funding_news_edit' n.pk %}" title="Opens the news item to edit it.">{{ n.headline }}</a></span>
+      {% if n.pinned %}<span class="fv-chips"><span class="px-status">Pinned</span></span>{% endif %}
+      <span>{{ n.summary|linebreaksbr }}</span>
+      <dl class="fv-kv"><dt>Date</dt><dd>{% if n.date_text %}{{ n.date_text }}{% elif n.news_date %}{{ n.news_date|date:"F j, Y" }}{% else %}Not dated{% endif %}</dd>{% if n.source_url %}<dt>Source</dt><dd><a class="px-link" href="{{ n.source_url }}" target="_blank" rel="noopener">{{ n.source_name|default:"The source" }}</a></dd>{% endif %}</dl>
+      {% if can_manage %}<form method="post" action="{% url 'manage:funding_news_post' n.pk %}" class="fm-acts">{% csrf_token %}<button class="btn small ghost" type="submit" name="action" value="{% if n.pinned %}unpin{% else %}pin{% endif %}" title="{% if n.pinned %}Stops showing the item first.{% else %}Shows the item first on the page.{% endif %}">{% if n.pinned %}Unpin{% else %}Pin{% endif %}</button><button class="btn small ghost" type="submit" name="action" value="archive" title="Hides the item from members and keeps it for history.">Archive</button></form>{% endif %}
+    </li>{% endfor %}</ul>
+    {% else %}<p class="px-note">No news yet.</p>{% endif %}
+  </section>
+
+  {% else %}
+  <section class="px-section" aria-labelledby="fm-q">
+    <h2 class="px-h2" id="fm-q">Questions</h2>
+    <p class="px-note">The questions open Before you apply on every member’s Funding opportunities page and appear in each letter.<br>Write one sentence per line.</p>
+    {% if can_manage %}<form method="post" action="{% url 'manage:funding_questions_post' %}" class="fv-form fm-wide">{% csrf_token %}
+      {% for q in questions %}<fieldset class="fm-q"><legend class="px-h3">Question {{ forloop.counter }}</legend>
+        <div class="fv-field"><label for="qt-{{ q.pk }}">Short title</label><input id="qt-{{ q.pk }}" name="title_{{ q.pk }}" value="{{ q.title }}" maxlength="120"></div>
+        <div class="fv-field"><label for="qx-{{ q.pk }}">Question</label><textarea id="qx-{{ q.pk }}" name="text_{{ q.pk }}" rows="3">{{ q.text }}</textarea></div></fieldset>{% endfor %}
+      <div><button class="btn small ghost" type="submit" title="Saves the questions. Members see the change right away.">Save</button></div>
+    </form>{% else %}{% include "proto/portal/_funding_questions.html" %}{% endif %}
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

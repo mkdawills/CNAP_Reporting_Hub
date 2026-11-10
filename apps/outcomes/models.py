@@ -13,6 +13,9 @@ from django.db import models
 from django.db.models import Q
 
 from apps.common.enums import (
+    FundingAudience,
+    FundingMilestone,
+    FundingSourceKind,
     FundingSourceType,
     GrantRole,
     GrantStatus,
@@ -22,7 +25,7 @@ from apps.common.enums import (
     PublicationSubstatus,
     PublicationType,
 )
-from apps.common.models import ArchivableModel
+from apps.common.models import ArchivableModel, TimestampedModel
 from apps.people.models import Person, Project, Resource
 from apps.reporting.models import File
 
@@ -686,3 +689,195 @@ class GrantNudge(models.Model):
 
     def __str__(self):
         return f"Nudge to {self.person} about {self.grant.project_title[:40]}"
+
+
+
+# ---------------------------------------------------------------------------
+# Funding opportunities and the not-funded follow-up (MW 2026-11-10)
+# docs/funding-follow-up-spec.md. Matches are MW's choices; nothing is emailed automatically.
+# ---------------------------------------------------------------------------
+
+
+class FundingQuestion(ArchivableModel):
+    """MW's questions for weighing any funding opportunity. Reference data she can edit without a code change."""
+
+    position = models.PositiveSmallIntegerField()
+    title = models.CharField(max_length=120)
+    text = models.TextField(help_text="One sentence per line.")
+
+    class Meta:
+        db_table = "funding_questions"
+        ordering = ["position", "pk"]
+
+    def __str__(self):
+        return self.title
+
+
+class FundingOpportunity(ArchivableModel):
+    """One funding opportunity in the catalog: public facts, with a source link and the day they were checked."""
+
+    name = models.CharField(max_length=300)
+    sponsor = models.CharField(max_length=300, blank=True)
+    source_kind = models.CharField(max_length=14, choices=FundingSourceKind.choices)
+    mechanism = models.CharField(max_length=120, blank=True)
+    amount_text = models.CharField(max_length=300, blank=True)
+    deadline = models.DateField(null=True, blank=True)
+    deadline_text = models.CharField(
+        max_length=200, blank=True, help_text="Shown when there is no single date, such as early March each year."
+    )
+    url = models.URLField(max_length=500, blank=True)
+    summary = models.TextField(blank=True, help_text="One or two plain sentences. One sentence per line.")
+    fuller_text = models.TextField(blank=True, help_text="The longer explanation for the letter page.")
+    counts_toward_milestone = models.CharField(
+        max_length=8, choices=FundingMilestone.choices, default=FundingMilestone.NO
+    )
+    esi_only = models.BooleanField(default=False)
+    audience = models.CharField(max_length=10, choices=FundingAudience.choices, default=FundingAudience.MATCHED)
+    checked_on = models.DateField(null=True, blank=True)
+    source_url = models.URLField(max_length=500, blank=True)
+    tracker_id = models.CharField(max_length=60, blank=True)
+    suggested_by = models.ForeignKey(
+        Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "funding_opportunities"
+        ordering = ["name"]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(source_kind__in=[x.value for x in FundingSourceKind]),
+                name="funding_opportunities_kind_valid",
+            ),
+            models.CheckConstraint(
+                condition=Q(counts_toward_milestone__in=[x.value for x in FundingMilestone]),
+                name="funding_opportunities_milestone_valid",
+            ),
+            models.CheckConstraint(
+                condition=Q(audience__in=[x.value for x in FundingAudience]),
+                name="funding_opportunities_audience_valid",
+            ),
+        ]
+
+    def __str__(self):
+        return self.name
+
+
+class FundingMatch(models.Model):
+    """An opportunity MW picked for one person, with her one-sentence reason. Ending hides it; nothing is deleted."""
+
+    opportunity = models.ForeignKey(FundingOpportunity, on_delete=models.PROTECT, related_name="matches")
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="funding_matches")
+    why = models.TextField(blank=True, help_text="Why the opportunity fits the person. One sentence per line.")
+    added_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    added_at = models.DateTimeField(auto_now_add=True)
+    ended_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "funding_matches"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["opportunity", "person"],
+                condition=Q(ended_at__isnull=True),
+                name="funding_matches_one_open",
+            )
+        ]
+
+
+class FundingSuggestion(TimestampedModel):
+    """An opportunity a member suggests. It waits in MW's review queue, like roster suggestions."""
+
+    class Status(models.TextChoices):
+        TO_REVIEW = "to_review", "To review"
+        ADDED = "added", "Added"
+        DECLINED = "declined", "Declined"
+
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="funding_suggestions")
+    name = models.CharField(max_length=300)
+    sponsor = models.CharField(max_length=300, blank=True)
+    url = models.URLField(max_length=500, blank=True)
+    deadline_text = models.CharField(max_length=200, blank=True)
+    why = models.TextField(blank=True)
+    for_everyone = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.TO_REVIEW)
+    handled_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    handled_at = models.DateTimeField(null=True, blank=True)
+    opportunity = models.ForeignKey(
+        FundingOpportunity, null=True, blank=True, on_delete=models.SET_NULL, related_name="suggestions"
+    )
+    note_to_person = models.TextField(blank=True)
+
+    class Meta:
+        db_table = "funding_suggestions"
+        ordering = ["-created_at"]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(status__in=["to_review", "added", "declined"]),
+                name="funding_suggestions_status_valid",
+            )
+        ]
+
+
+class FundingNewsItem(ArchivableModel):
+    """A funding news item MW posts: a summary in her own words with the source link."""
+
+    headline = models.CharField(max_length=300)
+    news_date = models.DateField(null=True, blank=True)
+    date_text = models.CharField(max_length=100, blank=True, help_text="Shown when there is no single day.")
+    summary = models.TextField(help_text="Two or three sentences in your own words. One sentence per line.")
+    source_name = models.CharField(max_length=200, blank=True)
+    source_url = models.URLField(max_length=500, blank=True)
+    pinned = models.BooleanField(default=False)
+    posted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+
+    class Meta:
+        db_table = "funding_news"
+        ordering = ["-pinned", "-news_date", "-created_at"]
+
+
+class FundingFollowUp(TimestampedModel):
+    """One per proposal marked Not funded: the letter MW reviews, edits, and sends herself."""
+
+    class Status(models.TextChoices):
+        TO_REVIEW = "to_review", "To review"
+        SENT = "sent", "Sent"
+        DISMISSED = "dismissed", "Dismissed"
+
+    grant = models.OneToOneField(GrantSubmission, on_delete=models.CASCADE, related_name="funding_followup")
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name="funding_followups")
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.TO_REVIEW)
+    subject = models.CharField(max_length=300, blank=True)
+    opening = models.TextField(blank=True)
+    body_note = models.TextField(blank=True, help_text="MW's personal paragraph. One sentence per line.")
+    closing = models.TextField(blank=True)
+    signoff = models.TextField(blank=True)
+    opportunities = models.ManyToManyField(FundingOpportunity, blank=True, related_name="followups")
+    sent_at = models.DateTimeField(null=True, blank=True)
+    sent_to = models.TextField(blank=True)
+    sent_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    dismissed_reason = models.TextField(blank=True)
+
+    @property
+    def name(self):
+        """The letter's name, identical in the email subject, the letter page, and every list (MW 2026-11-10)."""
+        return self.subject or f"Next steps after {self.grant.project_title}"
+
+    class Meta:
+        db_table = "funding_followups"
+        ordering = ["-created_at"]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(status__in=["to_review", "sent", "dismissed"]),
+                name="funding_followups_status_valid",
+            )
+        ]

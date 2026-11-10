@@ -35,6 +35,9 @@ SCREENS = {
     "history": "proto/history.html",  # My history with part 2 (MW 2026-11-05)
     "core_reports": "portal/core_reports.html",
     "core_report": "portal/core_report.html",  # Review before launch, redesigned (MW 2026-11-06)
+    # Funding opportunities (MW 2026-11-10), built to the approved "Investigator Funding View" preview.
+    "funding": "proto/portal/funding.html",
+    "funding_letter": "proto/portal/funding_letter.html",
 }
 
 

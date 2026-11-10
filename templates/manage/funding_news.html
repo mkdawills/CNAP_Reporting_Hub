@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}{% if n %}{{ n.headline }}{% else %}Add a news item{% endif %} · Funding · {{ platform_name }}{% endblock %}
+{% block content %}
+{# One funding news item (MW 2026-11-10): a summary in the CNAP office's own words, with the source. #}
+<div class="fv fm">
+  <a class="px-link p21-back" href="{% url 'manage:funding_manage' %}?tab=news" title="Returns to the news.">Back to News</a>
+  <header class="px-mast p21-mast">
+    <p class="px-eyebrow">Administration · Funding</p>
+    <h1 class="px-title">{% if n %}{{ n.headline }}{% else %}Add a news item{% endif %}</h1>
+    <p class="p21-purpose">Every signed-in member reads funding news on the Funding opportunities page.</p>
+  </header>
+  <form method="post" action="{% if n %}{% url 'manage:funding_news_post' n.pk %}{% else %}{% url 'manage:funding_news_create' %}{% endif %}" class="px-page">{% csrf_token %}
+    <div class="fv-form fm-wide">
+      <div class="fv-field"><label for="nw-head">Headline</label><input id="nw-head" name="headline" value="{{ n.headline }}" maxlength="300" required></div>
+      <div class="fv-field"><label for="nw-sum">Summary</label><p class="fv-help">Two or three sentences in your own words, never copied text.<br>One sentence per line.<br>Link the source below.</p><textarea id="nw-sum" name="summary" rows="4" required>{{ n.summary }}</textarea></div>
+      <div class="fv-field"><label for="nw-date">Date <span class="fv-opt">(optional)</span></label><input id="nw-date" name="news_date" type="date" value="{{ n.news_date|date:'Y-m-d' }}"></div>
+      <div class="fv-field"><label for="nw-dtext">Date in words <span class="fv-opt">(optional)</span></label><p class="fv-help">Shown in place of the date, such as “Calendar year 2026.”</p><input id="nw-dtext" name="date_text" value="{{ n.date_text }}" maxlength="100"></div>
+      <div class="fv-field"><label for="nw-src">Source name <span class="fv-opt">(optional)</span></label><input id="nw-src" name="source_name" value="{{ n.source_name }}" maxlength="200"></div>
+      <div class="fv-field"><label for="nw-url">Link to the source <span class="fv-opt">(optional)</span></label><input id="nw-url" name="source_url" value="{{ n.source_url }}" maxlength="500"></div>
+      <label class="fv-choice"><input type="checkbox" name="pinned" value="1"{% if n.pinned %} checked{% endif %}> Pin the item, so it shows first</label>
+      {% if can_manage %}<div><button class="btn small ghost" type="submit" title="Saves the news item. Members see it right away.">{% if n %}Save{% else %}Add the news item{% endif %}</button></div>{% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

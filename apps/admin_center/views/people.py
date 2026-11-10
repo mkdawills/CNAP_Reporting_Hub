@@ -156,6 +156,14 @@ def person(request, pk):
     ctx["cur_gy"] = rppr.current_year()
     ctx["docs"] = _doc_suggestions(request.user, p)
     ctx["person_docs"] = p.documents.select_related("file")
+    from apps.outcomes.models import (  # the Funding panel (MW 2026-11-10)
+        FundingMatch,
+        FundingOpportunity,
+    )
+
+    ctx["funding_matches"] = FundingMatch.objects.filter(person=p).select_related("opportunity").order_by("ended_at", "opportunity__name")
+    taken = [m.opportunity_id for m in ctx["funding_matches"] if not m.ended_at]
+    ctx["funding_opps"] = FundingOpportunity.objects.active().exclude(pk__in=taken).order_by("name")
     return render(request, "manage/person.html", ctx)
 
 

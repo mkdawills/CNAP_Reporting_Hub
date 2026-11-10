@@ -694,6 +694,10 @@ def grant_edit(request, pk=None):
                     )
                 g.created_by = request.user
             g.save()
+            if g.status == "not_funded":
+                from apps.outcomes import funding
+
+                funding.ensure_followup(g, request.user)  # MW 2026-11-10: the follow-up queue, no redirect
             people = list(credit.cleaned_data["people"])
             lead = form.cleaned_data["pi"]
             if lead and lead not in people:

@@ -22,6 +22,11 @@ Every CNAP person has exactly one row here, whether or not they ever log in.
 | is_active | BooleanField | no |  |
 | rich_profile_override | BooleanField | yes | Leave empty to derive the rich profile from relationships; set to force it on or off. |
 | era_commons_id | CharField | no | NIH eRA Commons user name. Needed for RPPR D.1 for everyone in a personnel role. |
+| orcid | CharField | no | 16 digits, like 0000-0002-1825-0097. NIH requires senior/key personnel to link it in SciENcv. |
+| senior_key | BooleanField | yes | Leave as automatic: the PD/PI and RP Leaders count as senior/key. Set Yes for anyone else named on the NoA. |
+| degrees | CharField | no | As on the RPPR D.1 table, e.g. BS, MA, PhD. |
+| foreign_org | CharField | no | RPPR D.1: only if they are at a foreign organization. |
+| foreign_country | CharField | no |  |
 | trainee_level | CharField | no | postdoc, graduate, undergraduate, high_school — Career level for trainees (RPPR D.1). |
 | era_commons_help_requested_at | DateTimeField | yes | When the person last asked the Center for help with eRA Commons. |
 | era_commons_help_kind | CharField | no | setup, unsure |
@@ -52,6 +57,7 @@ Constraints: `person_emails_email_unique_ci`, `person_emails_one_primary`
 | archived_at | DateTimeField | yes |  |
 | code | CharField | no | unique |
 | name | CharField | no |  |
+| rrid | CharField | no | Research Resource Identifier, like RRID:SCR_012345. Users cite it in their methods so every paper that used the core can be found, with or without the grant number (MW 2026-10-28). |
 | is_active | BooleanField | no |  |
 | sort_order | PositiveSmallIntegerField | no |  |
 
@@ -152,10 +158,27 @@ Calendar months a person worked on CNAP in one budget year (June 1 - May 31), fo
 | updated_at | DateTimeField | no |  |
 | person_id | FK → people | no |  |
 | grant_year | PositiveSmallIntegerField | no |  |
-| calendar_months | DecimalField | no |  |
+| calendar_months | DecimalField | yes |  |
+| academic_months | DecimalField | yes | For 9-month appointments. |
+| summer_months | DecimalField | yes |  |
 | entered_by_id | FK → users | yes |  |
 
 Constraints: `one_effort_per_year`, `effort_months_0_12`
+
+### `person_documents` — PersonDocument
+
+A document kept on one person's page and shown to that person on their profile, such as their signed Statement of Work (SOW) with its Roles, Responsibilities, and Terms (MW 2026-11-03).
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| person_id | FK → people | no |  |
+| title | CharField | no |  |
+| file_id | FK → files | no |  |
+| excerpt | TextField | no | Optional lines pasted from the document. Shown to the person on their My tasks page, so they are reminded of what they have committed to and why they are asked. |
+| uploaded_by_id | FK → users | yes |  |
 
 ## Accounts and permissions (`accounts`)
 
@@ -224,7 +247,7 @@ A single-use emailed sign-in link (decisions.md 2026-10-24, sign-in plan). Only 
 
 ### `signin_codes` — SignInCode
 
-A 6-digit code e-mailed before a link-signed-in person opens a confidential mentoring form.
+A 6-digit code emailed before a link-signed-in person opens a confidential mentoring form.
 
 | Column | Type | Null | Notes |
 | --- | --- | --- | --- |
@@ -469,6 +492,8 @@ Constraints: `form_assignment_rules_unique`, `form_assignment_rules_shape`
 | closed_at | DateTimeField | yes |  |
 | finalized_at | DateTimeField | yes |  |
 | notes | TextField | no |  |
+| auto_emails | BooleanField | no | Send emails on schedule: opening day, every 4 days until the due date, then daily until the period closes. |
+| email_plan | JSONField | no |  |
 
 Constraints: `reporting_periods_year_sequence_unique`, `reporting_periods_dates_ordered`, `reporting_periods_due_after_open`, `reporting_periods_status_valid`, `reporting_periods_closed_at_matches_status`, `reporting_periods_finalized_at_when_finalized`
 
@@ -615,19 +640,112 @@ Constraints: `answer_files_unique`
 
 ### `period_emails` — PeriodEmail
 
-One "your forms are open" or reminder e-mail sent to one person for one period.
+One "your forms are open" or reminder email sent to one person for one period.
 
 | Column | Type | Null | Notes |
 | --- | --- | --- | --- |
 | id | BigAutoField | no | unique |
 | period_id | FK → reporting_periods | no |  |
 | person_id | FK → people | no |  |
-| kind | CharField | no | open, reminder |
+| kind | CharField | no | open, reminder, overdue |
 | email | CharField | no |  |
 | forms_listed | PositiveSmallIntegerField | no |  |
 | with_link | BooleanField | no |  |
 | sent_by_id | FK → users | yes |  |
 | sent_at | DateTimeField | no |  |
+
+### `current_pending_checks` — CurrentPendingCheck
+
+February check (MW 2026-10-28): has this person's Current and Pending changed since the fall upload? One per fall NIH documents task. `changed` is None until they answer; a Yes comes with a new PDF.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| assignment_id | FK → assignments | no | unique |
+| asked_at | DateTimeField | yes |  |
+| last_emailed_at | DateTimeField | yes |  |
+| emails_sent | PositiveSmallIntegerField | no |  |
+| answered_at | DateTimeField | yes |  |
+| changed | BooleanField | yes |  |
+| file_id | FK → files | yes |  |
+
+Constraints: `cp_check_changed_needs_file`
+
+### `helpful_documents` — HelpfulDocument
+
+A document or link the evaluator puts on everyone's My tasks page (MW 2026-10-28), e.g. the PL Guidelines.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| title | CharField | no |  |
+| note | CharField | no | One short line, e.g. who it's for. |
+| file_id | FK → files | yes |  |
+| url | CharField | no | Or a link, instead of a file. |
+| sort_order | PositiveSmallIntegerField | no |  |
+| is_active | BooleanField | no |  |
+
+Constraints: `helpful_doc_file_or_url`
+
+### `speaker_talks` — SpeakerTalk
+
+One NeuroSync talk (MW 2026-11-03). Its speaker gets the NeuroSync Speaker Survey when the talk ends: automatically at `ends_at` (the every-10-minutes job), or when the evaluator sends it by hand.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| speaker_id | FK → people | no |  |
+| title | CharField | no |  |
+| ends_at | DateTimeField | no | When the talk ends. The survey goes out then. |
+| auto_send | BooleanField | no |  |
+| assignment_id | FK → assignments | yes |  |
+| sent_at | DateTimeField | yes |  |
+| sent_to | CharField | no |  |
+| created_by_id | FK → users | yes |  |
+
+### `roster_check_links` — RosterCheckLink
+
+One project leader's or core director's link for one reporting session. The link shows names and roles only, never email addresses. Anyone holding it, including a student the person forwards it to, can suggest changes. Nothing on the roster changes until the evaluator handles each suggestion. The link stops working when the reporting session opens.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| reporting_period_id | FK → reporting_periods | no |  |
+| person_id | FK → people | no |  |
+| token | CharField | no | unique |
+| sent_at | DateTimeField | yes |  |
+| replied_at | DateTimeField | yes | Set by 'No changes' or by the first suggestion. |
+| no_changes | BooleanField | no |  |
+
+Constraints: `roster_link_once`
+
+### `roster_suggestions` — RosterSuggestion
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| link_id | FK → roster_check_links | no |  |
+| kind | CharField | no | left, new, core_user, other |
+| person_id | FK → people | yes |  |
+| name | CharField | no |  |
+| role | CharField | no |  |
+| project_id | FK → projects | yes |  |
+| core_id | FK → cores | yes |  |
+| note | TextField | no |  |
+| from_name | CharField | no | Who filled it in, if not the link's owner. |
+| status | CharField | no | pending, done, declined |
+| decided_by_id | FK → users | yes |  |
+| decided_at | DateTimeField | yes |  |
 
 ## Analytics (`analytics`)
 
@@ -757,6 +875,26 @@ Constraints: `snapshot_notes_kind_valid`
 
 Constraints: `data_quality_dismissals_unique`
 
+### `core_reports` — CoreReport
+
+The core report for one core user survey in one reporting session (MW 2026-11-08). The evaluator reads the written answers, hides any that could identify the writer, writes reflections, and releases the report. Only then can that core's directors read it. A release freezes the written answers, themes, and reflections in `released_content`; a later change is released again, and every release is in the audit log.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| reporting_period_id | FK → reporting_periods | no |  |
+| form_definition_id | FK → form_definitions | no |  |
+| reflections | TextField | no |  |
+| hidden_answers | JSONField | no | Answer ids the evaluator held back from the core directors. |
+| released_at | DateTimeField | yes |  |
+| released_by_id | FK → users | yes |  |
+| release_count | PositiveSmallIntegerField | no |  |
+| released_content | JSONField | no |  |
+
+Constraints: `core_reports_unique`
+
 ## Outcomes (`outcomes`)
 
 ### `publications` — Publication
@@ -771,11 +909,13 @@ One manuscript = one record, followed through Planned -> Submitted -> Published 
 | archived_at | DateTimeField | yes |  |
 | title | CharField | no |  |
 | publication_type | CharField | no | journal_article, conference_paper, book_chapter, thesis, preprint, other |
+| publication_type_other | CharField | no | Shown when the type is Other (MW 2026-11-04). |
 | status | CharField | no | planned, submitted, published, declined |
 | substatus | CharField | yes | under_review, accepted, in_press — Only while Submitted: under review, accepted, in press. |
 | author_display_text | TextField | no | Full author list as entered, citation style. |
 | journal | CharField | no | Anticipated journal while Planned; actual afterwards. |
 | anticipated_submission_month | DateField | yes | First day of the month. |
+| anticipated_day_known | BooleanField | no |  |
 | submission_date | DateField | yes |  |
 | anticipated_publication_date | DateField | yes |  |
 | publication_date | DateField | yes |  |
@@ -826,6 +966,7 @@ Constraints: `publication_projects_unique`
 | publication_id | FK → publications | no |  |
 | resource_id | FK → resources | no |  |
 | is_anticipated | BooleanField | no | Entered while Planned; confirmed later. |
+| rrid_cited | CharField | no | yes, no, unsure — Did the paper cite this core's RRID in its methods? Blank = not asked (no RRID then, or not a core). |
 
 Constraints: `publication_resources_unique`
 
@@ -862,11 +1003,16 @@ Recorded once and linked to every relevant project; never duplicated per project
 | updated_at | DateTimeField | no |  |
 | archived_at | DateTimeField | yes |  |
 | presentation_type | CharField | no | conference, invited_talk, poster_or_flyer, other |
+| presentation_type_other | CharField | no | Shown when the type is Other (MW 2026-11-04). |
 | title | CharField | no |  |
 | description | TextField | no |  |
 | author_display_text | TextField | no | Full author list as entered. |
 | event | CharField | no |  |
 | location | CharField | no |  |
+| venue | CharField | no | Host university or venue. |
+| city | CharField | no |  |
+| state_region | CharField | no |  |
+| country | CharField | no |  |
 | presented_on | DateField | yes |  |
 | cnap_cited | BooleanField | yes | Did the presentation acknowledge CNAP? |
 | resources_other_text | CharField | no |  |
@@ -947,6 +1093,7 @@ Each submission attempt is one record. The version (A0, A1, ...) is system-set a
 | mechanism | CharField | no |  |
 | project_title | CharField | no |  |
 | anticipated_submission_date | DateField | yes |  |
+| anticipated_day_known | BooleanField | no |  |
 | submission_date | DateField | yes |  |
 | anticipated_total | DecimalField | yes | Planned stage, preliminary. |
 | planned_estimated_direct | DecimalField | yes | Planned stage, preliminary. |
@@ -971,8 +1118,10 @@ Each submission attempt is one record. The version (A0, A1, ...) is system-set a
 | discussion_date | DateField | yes |  |
 | feedback_shared_with_cnap | BooleanField | yes |  |
 | plans_to_resubmit | BooleanField | yes |  |
+| cayuse_ipf | CharField | no |  |
 | funding_source_type | CharField | no | nih, federal_other, non_federal — RPPR Table 1A: NIH, Federal non-NIH, Non-federal. |
 | cnap_portion | DecimalField | yes | If MPI, Co-PI, collaborator or subawardee: the CNAP investigator's portion of the award (RPPR Table 1). |
+| table1_exclusion_reason | TextField | no | Why the evaluator left this out of RPPR Table 1 (MW 2026-11-04). |
 | exclude_from_table1 | BooleanField | no | Never counted in RPPR Table 1: the parent COBRE award or a supplement to it, or core-staff funding not related to IDeA support. |
 | rppr_submitted_year | PositiveSmallIntegerField | yes | Grant year of the RPPR that counted this application as submitted. |
 | rppr_awarded_year | PositiveSmallIntegerField | yes | Grant year of the RPPR that counted this award. |
@@ -991,6 +1140,7 @@ Constraints: `grant_submissions_version_unique`, `grant_submissions_status_valid
 | grant_submission_id | FK → grant_submissions | no |  |
 | person_id | FK → people | no |  |
 | role | CharField | no | pi, mpi, co_i, key_personnel, consultant, other |
+| role_other | CharField | no | Shown when the role is Other (MW 2026-11-04). |
 | is_primary_cnap_contact | BooleanField | no |  |
 
 Constraints: `grant_submission_people_unique`, `grant_submission_people_one_primary`, `grant_submission_people_role_valid`
@@ -1071,7 +1221,7 @@ Constraints: `outcome_checkins_unique`
 
 ### `outcome_reminders` — OutcomeReminder
 
-One reminder e-mail about stale publications/grants, so nobody is reminded more often than configured.
+One reminder email about stale publications/grants, so nobody is reminded more often than configured.
 
 | Column | Type | Null | Notes |
 | --- | --- | --- | --- |
@@ -1080,6 +1230,151 @@ One reminder e-mail about stale publications/grants, so nobody is reminded more 
 | sent_at | DateTimeField | no |  |
 | sent_to | TextField | no | Addresses the reminder went to (the person and anyone entering for them). |
 | records | JSONField | no | [{kind, id, title, status, last_reviewed}] at the time it was sent. |
+
+### `grant_nudges` — GrantNudge
+
+One monthly check-in email about a planned grant proposal, and the answer it brought back (MW 2026-11-03).
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| grant_id | FK → grant_submissions | no |  |
+| person_id | FK → people | no |  |
+| sent_at | DateTimeField | no |  |
+| sent_to | TextField | no | Addresses the check-in went to (the person and anyone entering for them). |
+| choice | CharField | no | ideation, block, specialist, timeline, pivot |
+| comments | TextField | no |  |
+| answered_at | DateTimeField | yes |  |
+| answered_by_id | FK → users | yes |  |
+
+### `funding_questions` — FundingQuestion
+
+MW's questions for weighing any funding opportunity. Reference data she can edit without a code change.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| archived_at | DateTimeField | yes |  |
+| position | PositiveSmallIntegerField | no |  |
+| title | CharField | no |  |
+| text | TextField | no | One sentence per line. |
+
+### `funding_opportunities` — FundingOpportunity
+
+One funding opportunity in the catalog: public facts, with a source link and the day they were checked.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| archived_at | DateTimeField | yes |  |
+| name | CharField | no |  |
+| sponsor | CharField | no |  |
+| source_kind | CharField | no | nih, federal_other, foundation, institutional, center |
+| mechanism | CharField | no |  |
+| amount_text | CharField | no |  |
+| deadline | DateField | yes |  |
+| deadline_text | CharField | no | Shown when there is no single date, such as early March each year. |
+| url | CharField | no |  |
+| summary | TextField | no | One or two plain sentences. One sentence per line. |
+| fuller_text | TextField | no | The longer explanation for the letter page. |
+| counts_toward_milestone | CharField | no | yes, ask_po, no |
+| esi_only | BooleanField | no |  |
+| audience | CharField | no | matched, everyone |
+| checked_on | DateField | yes |  |
+| source_url | CharField | no |  |
+| tracker_id | CharField | no |  |
+| suggested_by_id | FK → people | yes |  |
+| created_by_id | FK → users | yes |  |
+
+Constraints: `funding_opportunities_kind_valid`, `funding_opportunities_milestone_valid`, `funding_opportunities_audience_valid`
+
+### `funding_matches` — FundingMatch
+
+An opportunity MW picked for one person, with her one-sentence reason. Ending hides it; nothing is deleted.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| opportunity_id | FK → funding_opportunities | no |  |
+| person_id | FK → people | no |  |
+| why | TextField | no | Why the opportunity fits the person. One sentence per line. |
+| added_by_id | FK → users | yes |  |
+| added_at | DateTimeField | no |  |
+| ended_at | DateTimeField | yes |  |
+
+Constraints: `funding_matches_one_open`
+
+### `funding_suggestions` — FundingSuggestion
+
+An opportunity a member suggests. It waits in MW's review queue, like roster suggestions.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| person_id | FK → people | no |  |
+| name | CharField | no |  |
+| sponsor | CharField | no |  |
+| url | CharField | no |  |
+| deadline_text | CharField | no |  |
+| why | TextField | no |  |
+| for_everyone | BooleanField | no |  |
+| status | CharField | no | to_review, added, declined |
+| handled_by_id | FK → users | yes |  |
+| handled_at | DateTimeField | yes |  |
+| opportunity_id | FK → funding_opportunities | yes |  |
+| note_to_person | TextField | no |  |
+
+Constraints: `funding_suggestions_status_valid`
+
+### `funding_news` — FundingNewsItem
+
+A funding news item MW posts: a summary in her own words with the source link.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| archived_at | DateTimeField | yes |  |
+| headline | CharField | no |  |
+| news_date | DateField | yes |  |
+| date_text | CharField | no | Shown when there is no single day. |
+| summary | TextField | no | Two or three sentences in your own words. One sentence per line. |
+| source_name | CharField | no |  |
+| source_url | CharField | no |  |
+| pinned | BooleanField | no |  |
+| posted_by_id | FK → users | yes |  |
+
+### `funding_followups` — FundingFollowUp
+
+One per proposal marked Not funded: the letter MW reviews, edits, and sends herself.
+
+| Column | Type | Null | Notes |
+| --- | --- | --- | --- |
+| id | BigAutoField | no | unique |
+| created_at | DateTimeField | no |  |
+| updated_at | DateTimeField | no |  |
+| grant_id | FK → grant_submissions | no | unique |
+| person_id | FK → people | no |  |
+| status | CharField | no | to_review, sent, dismissed |
+| subject | CharField | no |  |
+| opening | TextField | no |  |
+| body_note | TextField | no | MW's personal paragraph. One sentence per line. |
+| closing | TextField | no |  |
+| signoff | TextField | no |  |
+| sent_at | DateTimeField | yes |  |
+| sent_to | TextField | no |  |
+| sent_by_id | FK → users | yes |  |
+| dismissed_reason | TextField | no |  |
+| opportunities | FK → funding_opportunities | no |  |
+
+Constraints: `funding_followups_status_valid`
 
 ## Audit log (`audit`)
 

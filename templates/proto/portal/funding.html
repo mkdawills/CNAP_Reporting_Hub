@@ -1,0 +1,103 @@
+{% extends "base.html" %}{% load cnap static %}
+{% block title %}Funding opportunities · {{ platform_name }}{% endblock %}
+{% block content %}
+{# Funding opportunities (MW 2026-11-10), built to the approved "Investigator Funding View" preview with the Hub's own components. #}
+{# A person sees only their own matches, letters, and suggestions. Spec: docs/funding-follow-up-spec.md. #}
+<div class="fv">
+  <header class="px-mast p21-mast fv-mast">
+    {% include "proto/_mast_art.html" %}
+    <p class="px-eyebrow">Your funding</p>
+    <h1 class="px-title">{% if acting_for_other %}Funding opportunities for {{ owner }}{% else %}Funding opportunities{% endif %}</h1>
+    <p class="p21-purpose">This page lists funding opportunities picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}, opportunities relevant to most members, and funding news.</p>
+    <ul class="px-facts">
+      <li><span class="px-label">Picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}</span><span class="v">{{ picked|length }} opportunit{{ picked|length|pluralize:"y,ies" }}</span></li>
+      <li><span class="px-label">Relevant to most members</span><span class="v">{{ everyone|length }} opportunit{{ everyone|length|pluralize:"y,ies" }}</span></li>
+      <li><span class="px-label">Next deadline</span><span class="v">{% if next_deadline %}{{ next_deadline|date:"F j, Y" }}{% else %}None listed{% endif %}</span></li>
+    </ul>
+  </header>
+
+  <div class="px-onpage-layout">
+  <nav class="px-onpage" aria-label="On this page">
+    <div class="p21-navtop"><p class="px-label">On this page</p><button type="button" class="p21-collapse" data-navtoggle aria-expanded="true" title="Hide this list to give the page more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
+    <ol>
+      <li><a href="#s-before" data-onpage title="Go to the section Before you apply.">Before you apply</a></li>
+      <li><a href="#s-for" data-onpage title="Go to the section Picked for you.">Picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}</a></li>
+      <li><a href="#s-most" data-onpage title="Go to the section Relevant to most members.">Relevant to most members</a></li>
+      <li><a href="#s-news" data-onpage title="Go to the section Funding news.">Funding news</a></li>
+      <li><a href="#s-letters" data-onpage title="Go to the section Letters from the Center.">Letters from the Center</a></li>
+      <li><a href="#s-suggest" data-onpage title="Go to the section Suggest an opportunity.">Suggest an opportunity</a></li>
+    </ol>
+  </nav>
+  <div class="px-onpage-main">
+    {% if from_not_funded %}<div class="px-callout fv-msg" role="status"><p>The CNAP team will follow up with you personally.</p></div>{% endif %}
+    <p class="fv-intro">Before you apply holds seven questions for weighing any funding opportunity.<br>The CNAP team picks the opportunities in Picked for you.<br>Relevant to most members lists opportunities for most CNAP members.</p>
+
+    <div class="px-rolls" data-rollgroup>
+    <div class="px-rollbar foldall"><button type="button" data-roll="open" title="Opens every section below at once.">Show all</button><button type="button" data-roll="close" title="Rolls every section below up to its heading.">Collapse all</button></div>
+
+    <details class="px-roll" id="s-before" open>
+      <summary title="Seven questions for weighing any funding opportunity. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7h11M9 12h11M9 17h11"/><circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/></svg>Before you apply</h2><span class="px-roll-figs"><span><b>{{ questions|length }}</b> questions to weigh each opportunity</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <p class="fv-lead">Weigh every funding opportunity with these {{ questions|length }} questions before starting an application.<br>The CNAP team can talk through any of the questions with you.</p>
+        {% include "proto/portal/_funding_questions.html" %}
+      </div>
+    </details>
+
+    <details class="px-roll" id="s-for" open>
+      <summary title="Opportunities the CNAP team picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>Picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}</h2><span class="px-roll-figs"><span><b>{{ picked|length }}</b> opportunit{{ picked|length|pluralize:"y,ies" }}</span>{% if picked_next %}<span>Next deadline {{ picked_next|date:"F j, Y" }}</span>{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        {% if picked %}<ul class="fv-recs">{% for r in picked %}{% include "proto/portal/_funding_row.html" with mode="picked" %}{% endfor %}</ul>
+        {% else %}<p class="px-note">The CNAP team adds opportunities picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %} here.<br>Everything below is open to all CNAP members.</p>{% endif %}
+      </div>
+    </details>
+
+    <details class="px-roll" id="s-most" open>
+      <summary title="Opportunities relevant to most CNAP members. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2c2.4.2 4.2 1.8 4.8 4.8"/></svg>Relevant to most members</h2><span class="px-roll-figs"><span><b>{{ everyone|length }}</b> opportunit{{ everyone|length|pluralize:"y,ies" }}</span>{% if everyone_next %}<span>Next deadline {{ everyone_next|date:"F j, Y" }}</span>{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <p class="fv-lead">These opportunities are relevant to most CNAP members.<br>Check each opportunity’s eligibility before applying.</p>
+        {% if everyone %}<ul class="fv-recs">{% for r in everyone %}{% include "proto/portal/_funding_row.html" with mode="everyone" %}{% endfor %}</ul>
+        {% else %}<p class="px-note">No opportunities are listed yet.</p>{% endif %}
+      </div>
+    </details>
+
+    <details class="px-roll" id="s-news" open>
+      <summary title="Funding news the CNAP team posts, with links to each source. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M8 9h8M8 12.5h8M8 16h5"/></svg>Funding news</h2><span class="px-roll-figs"><span><b>{{ news|length }}</b> item{{ news|length|pluralize }}</span>{% if n_pinned %}<span><b>{{ n_pinned }}</b> pinned</span>{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        {% if news %}<ul class="fv-recs">{% for n in news %}{% include "proto/portal/_funding_news.html" %}{% endfor %}</ul>
+        {% else %}<p class="px-note">No funding news yet.</p>{% endif %}
+      </div>
+    </details>
+
+    <details class="px-roll" id="s-letters" open>
+      <summary title="Letters the CNAP team has sent {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="6" width="17" height="12" rx="1.5"/><path d="M4 7l8 6 8-6"/></svg>Letters from the Center</h2><span class="px-roll-figs"><span><b>{{ letters|length }}</b> letter{{ letters|length|pluralize }}</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        {% if letters %}<ul class="fv-recs">{% for f in letters %}<li class="fv-rec"><span class="fv-name"><a class="px-link" href="{% url 'portal:funding_letter' f.pk %}" title="Opens the full letter.">{{ f.name }}</a></span><dl class="fv-kv"><dt>Sent</dt><dd>{{ f.sent_at|date:"F j, Y" }}</dd><dt>From</dt><dd>The CNAP evaluation team</dd></dl></li>{% endfor %}</ul>
+        {% else %}<p class="px-note">No letters yet.</p>{% endif %}
+      </div>
+    </details>
+
+    <details class="px-roll" id="s-suggest" open>
+      <summary title="Send the CNAP team a funding opportunity worth a look. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17.5h6M10 20.5h4"/><path d="M12 3.5a5.5 5.5 0 0 0-3.3 9.9c.6.5 1 1.2 1 2v.6h4.6v-.6c0-.8.4-1.5 1-2A5.5 5.5 0 0 0 12 3.5z"/></svg>Suggest an opportunity</h2><span class="px-roll-figs"><span><b>{{ suggestions|length }}</b> suggestion{{ suggestions|length|pluralize }} sent</span></span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">
+        <p class="fv-lead">Send the CNAP team a funding opportunity worth a look.<br>The team reviews each suggestion before the opportunity appears on any page.</p>
+        <form class="fv-form" method="post" action="{% url 'portal:funding_suggest' %}">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}">
+          <div class="fv-field"><label for="s-name">Opportunity name</label><input id="s-name" name="name" type="text" maxlength="300" required></div>
+          <div class="fv-field"><label for="s-sponsor">Sponsor <span class="fv-opt">(optional)</span></label><input id="s-sponsor" name="sponsor" type="text" maxlength="300"></div>
+          <div class="fv-field"><label for="s-url">Link to the announcement <span class="fv-opt">(optional)</span></label><p class="fv-help">Paste the full web address of the sponsor’s announcement.</p><input id="s-url" name="url" type="text" inputmode="url" maxlength="500"></div>
+          <div class="fv-field"><label for="s-dl">Deadline <span class="fv-opt">(optional)</span></label><p class="fv-help">Write the date out, such as March 1, 2027.</p><input id="s-dl" name="deadline_text" type="text" maxlength="200"></div>
+          <div class="fv-field"><label for="s-why">Why the opportunity is worth a look <span class="fv-opt">(optional)</span></label><textarea id="s-why" name="why" rows="3"></textarea></div>
+          <label class="fv-choice" for="s-all"><input id="s-all" name="for_everyone" type="checkbox" value="1"> The opportunity could help other CNAP members too.</label>
+          <div><button class="px-btn quiet" type="submit" title="Sends the suggestion to the CNAP team for review.">Send the suggestion</button></div>
+        </form>
+        {% if suggestions %}<h3 class="px-h3 fv-sub">Suggestions sent</h3>
+        <ul class="fv-recs">{% for s in suggestions %}<li class="fv-rec"><span class="fv-name">{{ s.name }}</span><span class="fv-chips"><span class="px-status"{% if s.status == 'added' %} data-s="submitted"{% elif s.status == 'to_review' %} data-s="in_progress"{% endif %}>{{ s.get_status_display }}</span></span>{% if s.note_to_person %}<span>{{ s.note_to_person|linebreaksbr }}</span>{% endif %}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </details>
+    </div>
+
+    <p class="fv-who">The opportunities picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}, letters, and suggestions are visible only to {% if acting_for_other %}{{ owner.first_name }}, the people entering for {{ owner.first_name }},{% else %}you, anyone entering for you,{% endif %} and the CNAP office.<br>Nothing on this page is shared outside CNAP.</p>
+  </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/proto.js' %}" defer></script>{% endblock %}

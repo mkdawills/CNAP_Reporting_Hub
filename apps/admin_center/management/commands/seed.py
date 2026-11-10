@@ -23,6 +23,10 @@ class Command(BaseCommand):
         from apps.forms_engine.loader import load_all
 
         load_all(stdout=self.stdout)
+        from apps.outcomes import funding
+
+        funding.load_questions(self.stdout)  # MW's seven questions (2026-11-10)
+        funding.load_catalog(self.stdout)  # the public opportunity catalog; no people, no matches
         if options["fictional"]:
             from apps.admin_center.demo import seed_demo
 

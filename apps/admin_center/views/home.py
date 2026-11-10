@@ -68,6 +68,7 @@ def home(request):
             "checks": [c for c in checks if c["rows"]][:4],
             "docs": HelpfulDocument.objects.filter(is_active=True).select_related("file"),
             "site_photo": __import__("apps.common.models", fromlist=["SitePhoto"]).SitePhoto.current(),
+            "funding_counts": __import__("apps.outcomes.funding", fromlist=["counts"]).counts(),  # MW 2026-11-10
         },
     )
 

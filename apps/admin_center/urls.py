@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import audit, core_reports, dashboards, formspec, home, outcomes, people, periods, quality, results, roster, speakers
+from .views import audit, core_reports, dashboards, formspec, funding, home, outcomes, people, periods, quality, results, roster, speakers
 
 app_name = "manage"
 
@@ -102,6 +102,22 @@ urlpatterns = [
     # data checks and audit
     # publications and grants
     path("outcomes/", outcomes.outcomes, name="outcomes"),
+    # Funding (MW 2026-11-10): follow-up letters, opportunities and matches, suggestions, news.
+    path("funding/", funding.home, name="funding_manage"),
+    path("funding/followups/<int:pk>/", funding.followup, name="funding_followup"),
+    path("funding/followups/<int:pk>/do/", funding.followup_post, name="funding_followup_post"),
+    path("funding/followups/<int:pk>/email/", funding.followup_email, name="funding_followup_email"),
+    path("funding/opportunities/new/", funding.opportunity, name="funding_opportunity_new"),
+    path("funding/opportunities/new/do/", funding.opportunity_post, name="funding_opportunity_create"),
+    path("funding/opportunities/<int:pk>/", funding.opportunity, name="funding_opportunity"),
+    path("funding/opportunities/<int:pk>/do/", funding.opportunity_post, name="funding_opportunity_post"),
+    path("funding/suggestions/<int:pk>/do/", funding.suggestion_post, name="funding_suggestion_post"),
+    path("funding/news/new/", funding.news_edit, name="funding_news_new"),
+    path("funding/news/new/do/", funding.news_post, name="funding_news_create"),
+    path("funding/news/<int:pk>/", funding.news_edit, name="funding_news_edit"),
+    path("funding/news/<int:pk>/do/", funding.news_post, name="funding_news_post"),
+    path("funding/questions/do/", funding.questions_post, name="funding_questions_post"),
+    path("funding/person/<int:pk>/match/", funding.person_match, name="funding_person_match"),
     path("outcomes/publications/new/", outcomes.publication_edit, name="publication_new"),
     path("outcomes/publications/<int:pk>/", outcomes.publication_edit, name="publication_edit"),
     path("outcomes/grants/new/", outcomes.grant_edit, name="grant_new"),

@@ -1,0 +1,14 @@
+{# One opportunity as a stacked row (MW 2026-11-10, the approved preview): name as the link, status and milestone words, then fixed label columns. #}
+<li class="fv-rec">
+  <span class="fv-name">{% if r.o.url %}<a class="px-link" href="{{ r.o.url }}" target="_blank" rel="noopener" title="Opens the sponsor’s announcement in a new tab.">{{ r.o.name }}</a>{% else %}{{ r.o.name }}{% endif %}</span>
+  <span class="fv-chips"><span class="px-status"{% if r.state == 'ok' %} data-s="submitted"{% elif r.state == 'warn' %} data-s="in_progress"{% elif r.state == 'alert' %} data-s="overdue"{% endif %}>{{ r.words }}</span><span class="px-status"{% if r.milestone_state == 'ok' %} data-s="submitted"{% endif %}>{{ r.milestone }}</span>{% if r.o.esi_only %}<span class="px-status">Early Stage Investigators only</span>{% endif %}</span>
+  <dl class="fv-kv">
+    <dt>Deadline</dt><dd>{{ r.when }}</dd>
+    <dt>Amount</dt><dd>{{ r.o.amount_text|default:"See the announcement" }}</dd>
+    {% if r.o.sponsor %}<dt>Sponsor</dt><dd>{{ r.o.sponsor }}</dd>{% endif %}
+    {% if mode == 'picked' %}{% if r.why %}<dt>Why this fits</dt><dd>{{ r.why|linebreaksbr }}</dd>{% endif %}
+    <dt>Next step</dt><dd><a class="px-link" href="#s-before" data-onpage title="Opens the seven questions in Before you apply.">Weigh the opportunity with the seven questions</a></dd>
+    {% elif mode == 'letter' %}{% if r.why %}<dt>Why this fits</dt><dd>{{ r.why|linebreaksbr }}</dd>{% endif %}<dt>Details</dt><dd>{{ r.o.fuller_text|default:r.o.summary|linebreaksbr }}</dd>
+    {% elif r.o.summary %}<dt>Notes</dt><dd>{{ r.o.summary|linebreaksbr }}</dd>{% endif %}
+  </dl>
+</li>

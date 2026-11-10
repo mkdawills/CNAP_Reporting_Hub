@@ -1,0 +1,27 @@
+{% autoescape off %}{{ name }}
+
+Dear {{ first }},
+
+{{ opening }}
+{% if note %}
+{{ note }}
+{% endif %}{% if table %}
+Options picked for you:
+{% for r in table %}- {{ r.o.name }}. Deadline: {{ r.when }}.
+{% endfor %}{% endif %}{% if news %}
+Funding news:
+{% for n in news %}- {{ n.headline }}.
+{% endfor %}{% endif %}
+Read the full letter:
+{{ url }}
+{% if with_link %}
+The link signs you in to the CNAP Reporting Hub.
+The link works once and expires in {{ days }} days.
+You can get a new one any time at {{ site }}/accounts/link/
+{% else %}
+Sign in with your K-State eID.
+{% endif %}{% if closing %}
+{{ closing }}
+{% endif %}
+{{ signoff }}
+{% endautoescape %}

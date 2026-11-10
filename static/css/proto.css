@@ -2083,3 +2083,59 @@ html body.proto .px-tl-list li::before { left: calc(96px + 10px); }
 }
 /* Room between the "In this survey" line and the survey, so the opt-out box can sit out to the left without touching the line. */
 @media (min-width: 981px) { html body.proto .p21-layout { column-gap: calc(var(--px-7) + 24px); } }
+
+/* Funding opportunities and letters (MW 2026-11-10), from the approved "Investigator Funding View" preview.
+   Only the parts no Hub component has: the stacked opportunity rows, the seven questions, the small form,
+   and the neuron motif behind the title panel. Every shared component (roll-ups, On this page, status words,
+   buttons, callouts) is reused as it is. */
+body.proto .fv-mast { position: relative; isolation: isolate; overflow: hidden; }
+body.proto .fv-mast .mast-art { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+body.proto .fv-msg { margin: 0 0 var(--px-5); max-width: 72ch; }
+body.proto .fv-intro { margin: 0; padding-left: 14px; border-left: 3px solid var(--px-line-strong); color: var(--px-ink-2); max-width: 72ch; }
+body.proto .fv-lead { margin: 0 0 20px; color: var(--px-ink-2); max-width: 72ch; }
+body.proto .fv-after { margin: 16px 0 0; }
+body.proto .fv-recs { list-style: none; margin: 0; padding: 0; }
+body.proto .fv-rec { display: grid; gap: 8px; padding: 20px 0; border-top: 1px solid var(--px-line); }
+body.proto .fv-rec:first-child { border-top: 0; padding-top: 4px; }
+body.proto .fv-name { font-weight: 600; color: var(--px-ink); }
+body.proto .fv-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+body.proto .fv-kv { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 6px 16px; margin: 0; color: var(--px-ink-2); }
+body.proto .fv-kv dt { color: var(--px-muted); font-weight: 500; }
+body.proto .fv-kv dd { margin: 0; min-width: 0; }
+@media (max-width: 560px) { body.proto .fv-kv { grid-template-columns: 1fr; gap: 0; } body.proto .fv-kv dd { margin-bottom: 8px; } }
+body.proto .fv-qs { list-style: none; margin: 0; padding: 0; counter-reset: q; max-width: 72ch; }
+body.proto .fv-qs li { counter-increment: q; display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 12px; row-gap: 2px; padding: 14px 0; border-top: 1px solid var(--px-line); }
+body.proto .fv-qs li:first-child { border-top: 0; padding-top: 4px; }
+body.proto .fv-qs li::before { content: counter(q); grid-row: 1 / span 2; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--px-brand) 35%, var(--px-line)); font: 500 .75rem/1 var(--px-sans); color: var(--px-brand); margin-top: 1px; }
+body.proto .fv-qt { font-weight: 600; color: var(--px-ink); }
+body.proto .fv-qq { color: var(--px-ink-2); }
+body.proto .fv-form { display: grid; gap: 20px; max-width: 560px; }
+body.proto .fv-field { display: grid; gap: 6px; }
+body.proto .fv-field > label { font-weight: 500; color: var(--px-ink); }
+body.proto .fv-opt { font-weight: 400; color: var(--px-muted); }
+body.proto .fv-help { margin: -2px 0 0; font-size: var(--px-fs-sm); color: var(--px-muted); }
+body.proto .fv-field input, body.proto .fv-field textarea { font: inherit; width: 100%; box-sizing: border-box; }
+body.proto .fv-choice { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+body.proto .fv-choice input { margin: 4px 0 0; accent-color: var(--px-brand); width: 16px; height: 16px; flex: none; }
+body.proto .fv-sub { margin: 40px 0 12px; }
+body.proto .fv-letter { max-width: 68ch; color: var(--px-ink); }
+body.proto .fv-letter p { margin: 0 0 16px; }
+body.proto .fv-sign { margin-top: 20px; }
+body.proto .fv-plain { margin: 0; padding-left: 1.2rem; display: grid; gap: 8px; color: var(--px-ink-2); max-width: 72ch; }
+body.proto .fv-who { margin: 32px 0 0; padding-top: 24px; border-top: 1px solid var(--px-line); color: var(--px-ink-2); font-size: var(--px-fs-sm); }
+body.proto .fv-name a.px-link { font: inherit; font-weight: 600; }
+/* The CNAP office's Funding pages: room between numbered sections, and between a section's note and its form. */
+body.proto .fm .px-section + .px-section { margin-top: var(--px-sec, 48px); padding-top: var(--px-6); border-top: 1px solid var(--px-line); }
+body.proto .fm .px-section > .px-note { margin: 4px 0 var(--px-5); }
+body.proto .fm .fm-wide { max-width: 720px; }
+body.proto .fm .fm-acts { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: var(--px-5); }
+body.proto .fm .fm-send { margin-top: var(--px-5); }
+body.proto .fm .fm-head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; }
+body.proto .fm .fm-show { margin: 0 0 var(--px-4); font-size: var(--px-fs-sm); color: var(--px-ink-2); }
+body.proto .fm .fm-decline { margin-top: var(--px-5); }
+body.proto .fm .fm-decline > summary { list-style: none; display: inline-flex; cursor: pointer; }
+body.proto .fm .fm-decline > summary::-webkit-details-marker { display: none; }
+body.proto .fm .fm-decline[open] > form { margin-top: var(--px-4); }
+body.proto .fm .fm-q { border: 0; padding: 0; margin: 0; display: grid; gap: 12px; }
+body.proto .fm .fm-addmatch { margin-top: var(--px-6); }
+body.proto .fm .fm-picks .fv-choice > span { min-width: 0; }

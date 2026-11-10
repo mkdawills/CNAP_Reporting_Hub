@@ -445,14 +445,24 @@ def update(request, kind, pk):
                 "and the Center is cheering for you.",
                 extra_tags="encourage",
             )
+        not_funded = kind == "grant" and to == "not_funded"
         if created:
             label = "publication" if kind == "pub" else f"proposal ({created.version_label})"
             messages.success(
                 request,
                 f"Your changes are saved. A new planned {label} was created from it. Check its details below.",
             )
+            if not_funded:  # MW 2026-11-10: keep the A1 redirect, and point to the funding page
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    "When you’re ready, your Funding opportunities page has options picked for this moment.",
+                    extra_tags="funding",
+                )
             return redirect(_url("portal:outcome_update", owner, kind, created.pk, to="planned"))
         messages.success(request, "Your changes are saved.")
+        if not_funded:  # MW 2026-11-10: go straight to the funding page
+            return redirect(f"{reverse('portal:funding')}?from=not_funded&for={owner.pk}")
         return redirect(_url("portal:outcomes", owner))
     return render(
         request,

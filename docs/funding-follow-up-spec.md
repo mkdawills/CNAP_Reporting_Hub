@@ -277,6 +277,10 @@ funding. Build after the phase 1 screens pass MW's review.
   and a queue of reports. The office can post as "CNAP evaluation team." Every action is audited.
 - Settled-rule note for decisions.md: the discussion is voluntary posting, separate from survey
   answers, which respondents still never see from one another.
+- Links (MW 2026-11-10): members can link to briefings, articles, and posts on other websites. Any web
+  address in a post or reply becomes a link that opens in a new tab (rel="noopener nofollow"), and each post
+  has an optional "Link" field shown with the site's name. Only http and https addresses are linked. Show MW
+  both on the phase 2 preview as a choice.
 - Optional later: an email digest of new posts, off by default.
 - Tests: members read and post; non-members get 403; hidden posts and replies disappear for members
   but stay visible to the office; reports reach the queue; only admins pin or hide.
@@ -305,3 +309,12 @@ funding. Build after the phase 1 screens pass MW's review.
 - Pulling opportunities or news from Grants.gov or the NIH Guide automatically. A later option: a
   weekly scheduled Claude task that drafts news items and new opportunities for MW to review and post;
   nothing would appear in the Hub until she approves it.
+
+## Resources (proposed, MW 2026-11-10, awaiting her choice)
+
+MW plans to put resources together (guides, templates, and similar) that could go into the follow-up letters.
+Proposed, not built: a Resources tab on `/manage/funding/` (title, link or uploaded file, one or two sentences),
+a Resources step in the letter composer with tick boxes like the featured options, a short list in the email,
+and a "Resources from the CNAP team" section on the letter page. Open choices for MW: whether resources also
+appear on every member's Funding opportunities page, and whether to build before or after her phase 1 review.
+One new table (`funding_resources`) needs her approval first.

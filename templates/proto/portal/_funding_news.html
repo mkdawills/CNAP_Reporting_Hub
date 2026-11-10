@@ -1,0 +1,7 @@
+{# One funding news item (MW 2026-11-10): MW's summary in her own words, with the source. #}
+<li class="fv-rec">
+  <span class="fv-name">{{ n.headline }}</span>
+  {% if n.pinned %}<span class="fv-chips"><span class="px-status">Pinned by the CNAP office</span></span>{% endif %}
+  <span>{{ n.summary|linebreaksbr }}</span>
+  <dl class="fv-kv"><dt>Date</dt><dd>{% if n.date_text %}{{ n.date_text }}{% elif n.news_date %}{{ n.news_date|date:"F j, Y" }}{% else %}Not dated{% endif %}</dd>{% if n.source_url %}<dt>Source</dt><dd><a class="px-link" href="{{ n.source_url }}" target="_blank" rel="noopener" title="Opens the source in a new tab.">{{ n.source_name|default:"The source" }}</a></dd>{% endif %}</dl>
+</li>

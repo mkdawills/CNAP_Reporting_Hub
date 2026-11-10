@@ -511,6 +511,10 @@ def update_grant(
         old={"status": old},
         new={"status": new_status},
     )
+    if new_status == GrantStatus.NOT_FUNDED:
+        from . import funding
+
+        funding.ensure_followup(g, user)  # MW's follow-up queue (2026-11-10); one per proposal
     new = None
     if (
         new_status == GrantStatus.NOT_FUNDED

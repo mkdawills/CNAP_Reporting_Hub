@@ -213,3 +213,29 @@ class FundingSourceType(models.TextChoices):
     NIH = "nih", "NIH"
     FEDERAL_OTHER = "federal_other", "Federal, non-NIH"
     NON_FEDERAL = "non_federal", "Non-federal"
+
+
+# ---------------------------------------------------------------------------
+# Funding opportunities (MW 2026-11-10, docs/funding-follow-up-spec.md)
+# ---------------------------------------------------------------------------
+
+
+class FundingSourceKind(models.TextChoices):
+    NIH = "nih", "NIH"
+    FEDERAL_OTHER = "federal_other", "Federal, non-NIH"
+    FOUNDATION = "foundation", "Foundation"
+    INSTITUTIONAL = "institutional", "Institutional"
+    CENTER = "center", "Center"
+
+
+class FundingMilestone(models.TextChoices):
+    """The milestone words beside each opportunity (wording awaiting MW's approval)."""
+
+    YES = "yes", "Counts toward the R01 milestone"
+    ASK_PO = "ask_po", "Ask your program officer"
+    NO = "no", "Bridge funding"
+
+
+class FundingAudience(models.TextChoices):
+    MATCHED = "matched", "Picked for chosen members"
+    EVERYONE = "everyone", "Relevant to most members"
