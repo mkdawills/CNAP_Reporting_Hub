@@ -1,0 +1,32 @@
+# Wakes the public test copy of the Reporting Hub on Render (render.yaml), which sleeps after
+# 15 minutes without visitors on the free plan (MW 2026-11-10).
+#
+# Two ways it runs:
+# - "Run workflow" on the Actions tab wakes the site once, on demand.
+# - On weekdays from 7:00 AM to 6:50 PM Central Time it visits every 10 minutes, so the site stays
+#   awake during the working day. GitHub may start scheduled runs a few minutes late.
+#
+# Fictional data only. This job sends no data, signs in to nothing, and only loads the sign-in page.
+name: Wake the test site
+on:
+  workflow_dispatch:
+  schedule:
+    # Times are UTC. 13:00 to 00:50 UTC is 7:00 AM to 6:50 PM Central Standard Time.
+    - cron: "*/10 13-23 * * 1-5"
+    - cron: "*/10 0 * * 2-6"
+permissions: {}
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Visit the sign-in page until the site answers
+        run: |
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://cnap-hub-test.onrender.com/accounts/login/ || true)
+            echo "Attempt $i: HTTP $code"
+            if [ "$code" = "200" ]; then echo "The test site is awake."; exit 0; fi
+            sleep 15
+          done
+          echo "The test site did not answer within about 4 minutes."
+          exit 1
