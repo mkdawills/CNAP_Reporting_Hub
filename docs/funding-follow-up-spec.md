@@ -26,12 +26,49 @@ opportunity facts are copied into `fixtures/funding/opportunities.json` with a s
   the live system. Demo matches use the fictional sample people from `manage.py seed`.
 - A person sees only their own matches and their own letters. No respondent sees another person's
   matches, letters, or grant details.
-- Plain words for respondents, MW's design themes (decisions.md 2026-11-03 evening sweep and
-  2026-11-04), the prototype look for new screens (`apps/common/prototype.py`; new screens get a
-  `proto/` template and are listed in `SCREENS`).
+- The design rules below, and the prototype look for new screens (`apps/common/prototype.py`; new
+  screens get a `proto/` template and are listed in `SCREENS`).
 - Every create, change, send, and decision goes through `record_event`.
 - Respondents' editing is subject to `entry_open` (closed for a few days after a period closes) only
   where it already applies; reading the funding page is always open.
+
+## Design rules (binding)
+
+Every new screen and the email follow MW's "CNAP Hub Design Rules" Claude Doc
+(https://claude.ai/artifact/FhUSSs2whcKJeUom1sxUuq, rev 55 read 2026-11-10), including its page
+checklist A to Z. Where this spec and the rules differ, the rules win. Points that matter most here:
+
+- Start from an approved screen; no new layouts. Respondent "Funding opportunities" starts from My tasks
+  (Screen 3); the letter page from the progress report (Screen 21) reading view; the admin Funding pages
+  from the reporting session dashboard (Screen 53) and its record lists (checklist V).
+- Things no approved screen has go to MW as a choice before they are built (checklist Y): the
+  opportunity row design, the news list, the suggestion form, and the newsletter email layout.
+- Title panel: gray, purple dot and context line ("Funding," "Administration"), Lora title stating the
+  subject as a fact, one purpose sentence, facts row (for example "12 opportunities · 3 matched to you ·
+  Next deadline December 1, 2026"). One white page below it, sections divided by thin lines, no boxes
+  inside boxes. "On this page" list on the left for the long pages.
+- Roll-ups with counts in the headers (For you, Open to everyone, Funding news, Letters from the
+  Center, Suggest an opportunity), one Show all and Collapse all, spacing per checklist Z.
+- Lists of records are stacked rows (name first as the link, then a status word, then the facts),
+  never two columns; tables that repeat share column widths; on phones each row becomes a short block.
+- Color only with a word beside it. Status and milestone labels are words: "Counts toward the R01
+  milestone," "Ask your program officer," "Bridge funding." Deadlines written out ("December 1, 2026"),
+  with "45 days left" as words, not a colored chip alone.
+- Only the main action is dark purple: Send on the composer, Send suggestion on the form. Send asks
+  first in a lavender note under the button: "Yes, send the letter to [name]" and "No, go back." Success
+  messages use the button's word: "Sent," "Added," "Declined," "Archived."
+- Writing: one sentence per line, no italics, no semicolons, Oxford commas, abbreviations spelled out
+  (Early Stage Investigator, program officer), CNAP and RPPR in capitals, "email," nouns not pronouns,
+  directions start with the verb (never "Please"), professional tone ("a follow-up letter," never a
+  "nudge"). Respondents see "members" where the Hub describes what people entered.
+- The email follows the period-email pattern decided 2026-11-08: HTML with a plain-text fallback; four
+  editable parts (subject, opening, closing, sign-off) plus MW's optional personal paragraph; the
+  featured opportunities as a two-column table (opportunity, deadline); the button and sign-in
+  directions fill in automatically. The name of the letter is identical in the email, the queue, and the
+  letter page.
+- Every button and link has a hover description; every "i" and "?" follows the rules' placement.
+- Before MW's review: side-by-side with the approved screen, every word read against section C,
+  before-and-after screenshots at desktop and phone width, full test suite.
 
 ## Data model (new tables in `apps/outcomes`, migration 0017)
 
@@ -88,8 +125,8 @@ Sections, in this order:
    payline and success-rate news, new or reissued programs, deadline changes.
 4. **Letters from the Center**: links to any follow-up letters sent to this person (see 4).
 5. **Suggest an opportunity**: a short form (name, sponsor, link, deadline, why it is worth a look,
-   "This could help other CNAP researchers too" checkbox). After sending: "Thanks. The CNAP team will
-   review it." The person's own suggestions list below with their status and MW's note.
+   "This could help other CNAP researchers too" checkbox). After sending: "Sent. The CNAP team will review
+   the suggestion." The person's own suggestions list below with their status and MW's note.
 
 A short note at the top for anyone who has never had a match: "The CNAP team adds opportunities picked
 for you here. Everything below is open to all CNAP researchers."
@@ -162,7 +199,7 @@ Templates: `email/funding_letter.html` and `.txt`, `proto/portal/funding.html`,
 ## Wording to confirm with MW before building
 
 - The pre-filled opening sentence for the letter.
-- The three milestone labels.
+- The three milestone labels (proposed above under Design rules).
 - The "For you" empty-state sentence.
 
 Show MW these on a preview before the commit, per working rule 5.
