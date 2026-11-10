@@ -229,7 +229,7 @@ class FundingSourceKind(models.TextChoices):
 
 
 class FundingMilestone(models.TextChoices):
-    """The milestone words beside each opportunity (wording awaiting MW's approval)."""
+    """The milestone words beside each opportunity (approved by MW 2026-11-10)."""
 
     YES = "yes", "Counts toward the R01 milestone"
     ASK_PO = "ask_po", "Ask your program officer"

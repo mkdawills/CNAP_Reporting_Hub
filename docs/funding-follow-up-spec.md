@@ -204,7 +204,7 @@ to the person's Funding opportunities page. Letters are listed under "Letters fr
 Templates: `email/funding_letter.html` and `.txt`, `proto/portal/funding.html`,
 `proto/portal/funding_letter.html`, `manage/funding*.html` (admin pages follow the current manage look).
 
-## Wording to confirm with MW before building
+## Wording confirmed with MW (approved as written, 2026-11-10)
 
 - The three milestone labels (proposed above under Design rules).
 - The "For you" empty-state sentence.

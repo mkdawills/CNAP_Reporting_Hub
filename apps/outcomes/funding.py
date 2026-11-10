@@ -74,7 +74,7 @@ OPENING = (
     "And although it’s never easy, please be reminded that a non-award is part of every researcher’s journey "
     "toward funding."
 )
-SIGNOFF = "With best wishes,\nThe CNAP evaluation team"  # awaiting MW's approval (replaces "Cheering you on!")
+SIGNOFF = "With best wishes,\nThe CNAP evaluation team"  # approved by MW 2026-11-10 (replaces "Cheering you on!")
 COFUND_MECHANISMS = ("R01", "R15", "R35")
 DUE_SOON_DAYS = 30
 COMING_UP_DAYS = 120
