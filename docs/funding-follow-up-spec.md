@@ -224,8 +224,22 @@ artifact "Investigator Funding View", 2026-11-10). It shows the funding page, th
 email inside the Hub's sidebar frame, with fictional people. Build to it. Details settled there:
 
 - Sidebar: "Funding opportunities" sits under My work, after "Publications, talks, and grants."
-- Section order: Picked for you, Relevant to most members, Discussion, Funding news, Letters from the
-  Center, Suggest an opportunity. Each section header has a thin line icon (not a number, since the
+- Section order: Before you apply, Picked for you, Relevant to most members, Discussion, Funding news,
+  Letters from the Center, Suggest an opportunity.
+- Before you apply: MW's six questions for weighing any opportunity (2026-11-10), as a numbered list,
+  each with a short title. The letter page repeats them as "Questions for weighing each option," and each
+  Picked for you row links to them ("Weigh the opportunity with the six questions"). Store the questions
+  as editable reference data so MW can change them without a code change:
+  1. Eligibility. Are you eligible for the funding opportunity?
+  2. Preliminary data. Do you have sufficient preliminary data to be competitive for the funding opportunity?
+  3. Fit with the funder. Is your research question or hypothesis aligned with the objectives of the
+     funding agency and of the funding opportunity?
+  4. Expertise. Is your expertise sufficient for the call? Or do you need to build a team of
+     co-investigators and collaborators to fill potential gaps?
+  5. Advancing the field. Will your research question advance the field? Does the question sit at the
+     intersection of current knowledge in the field and the next frontier of the field?
+  6. Available effort. Do you have available person months of effort for the project? Count current and
+     pending commitments, including CNAP effort. Each section header has a thin line icon (not a number, since the
   sections are not a sequence) and its key figures in soft ovals.
 - Long pages (the funding page and the letter page) have "On this page" with Hide and Show.
 - Opportunity rows: name as the link, status and milestone words as dot labels, then fixed label
