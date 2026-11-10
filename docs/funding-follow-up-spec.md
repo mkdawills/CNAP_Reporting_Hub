@@ -47,7 +47,7 @@ checklist A to Z. Where this spec and the rules differ, the rules win. Points th
   subject as a fact, one purpose sentence, facts row (for example "12 opportunities · 3 matched to you ·
   Next deadline December 1, 2026"). One white page below it, sections divided by thin lines, no boxes
   inside boxes. "On this page" list on the left for the long pages.
-- Roll-ups with counts in the headers (For you, Suited to most members, Funding news, Letters from the
+- Roll-ups with counts in the headers (For you, Relevant to most members, Funding news, Letters from the
   Center, Suggest an opportunity), one Show all and Collapse all, spacing per checklist Z.
 - Lists of records are stacked rows (name first as the link, then a status word, then the facts),
   never two columns; tables that repeat share column widths; on phones each row becomes a short block.
@@ -79,7 +79,7 @@ checklist A to Z. Where this spec and the rules differ, the rules win. Points th
   `summary` (one or two plain sentences), `fuller_text` (the longer explanation for the letter page),
   `counts_toward_milestone` (closed set: `yes` R01-equivalent, `ask_po`, `no` bridge),
   `esi_only` (bool), `audience` (closed set: `matched` shown only to matched people, `everyone` shown in
-  "Suited to most members", which holds opportunities picked by the CNAP office that suit most
+  "Relevant to most members", which holds opportunities picked by the CNAP office relevant to most
   members; each keeps its own eligibility notes), `checked_on` (date the facts were last confirmed), `source_url`,
   `suggested_by` (FK Person, null), `created_by`.
 - Check constraints for the closed sets, as elsewhere.
@@ -118,8 +118,8 @@ Sections, in this order:
 1. **For you** (only if the person has open matches): each opportunity as a row with name (links out to
    the sponsor), sponsor, deadline with days left, amount, a milestone label (R01-equivalent / Ask your
    program officer / Bridge funding), and MW's one-sentence "why." Sorted by deadline, undated last.
-2. **Suited to most members**: every opportunity with `audience=everyone`, same row design, under the introduction
-   "These opportunities suit most CNAP members." and "Check each one's eligibility before applying." This is where
+2. **Relevant to most members**: every opportunity with `audience=everyone`, same row design, under the introduction
+   "These opportunities are relevant to most CNAP members." and "Check each one's eligibility before applying." This is where
    center-wide items live (IDeA co-funding, the R01 standard due dates, career-stage awards).
 3. **Funding news**: the latest items, pinned first, then newest; five shown with "Show all". Each:
    headline, date, the short summary, and the source link. Examples of what belongs here: NIH policy
