@@ -13,8 +13,8 @@
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "git config --global --add safe.directory /workspaces/cnap-platform && pip install --user -r .devcontainer/requirements.txt && python manage.py migrate --noinput && python manage.py seed --fictional && python manage.py seed_funding --fictional",
+  "postCreateCommand": "git config --global --add safe.directory '*' && pip install --user -r .devcontainer/requirements.txt && python manage.py migrate --noinput && python manage.py seed --fictional && python manage.py seed_funding --fictional",
   "postAttachCommand": {
-    "server": "git config --global --add safe.directory /workspaces/cnap-platform; python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    "server": "git config --global --add safe.directory '*'; python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
   }
 }
