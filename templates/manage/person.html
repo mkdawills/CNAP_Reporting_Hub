@@ -133,7 +133,7 @@
       {% if can_manage and funding_opps %}<form method="post" action="{% url 'manage:funding_person_match' p.pk %}" class="stack">{% csrf_token %}
         <label>Opportunity<select name="opportunity" required><option value="">Choose an opportunity</option>{% for o in funding_opps %}<option value="{{ o.pk }}">{{ o.name }}</option>{% endfor %}</select></label>
         <label>Why this fits<textarea name="why" rows="2"></textarea></label>
-        <div><button class="btn small ghost" type="submit" title="Shows the opportunity on {{ p.first_name }}’s Funding opportunities page.">Add</button></div></form>{% endif %}
+        <div><button class="btn small ghost" type="submit" title="Shows the opportunity on {{ p.first_name }}’s Funding and news page.">Add</button></div></form>{% endif %}
     </div>
     {% if assignments %}
     <div class="panel rollsec"><h2 class="sectionhead">Documents on file {% why "The person's signed documents, such as their Statement of Work with its Roles, Responsibilities, and Terms. Each one is visible to the person on their profile, and the pasted excerpt reminds them on My tasks of what they committed to." %}</h2><p class="rollsum"><b>{{ person_docs|length }}</b> document{{ person_docs|length|pluralize }}</p>

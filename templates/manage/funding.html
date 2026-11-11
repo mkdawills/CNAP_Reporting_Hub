@@ -62,7 +62,7 @@
   {% elif tab == 'suggestions' %}
   <section class="px-section" aria-labelledby="fm-sg">
     <h2 class="px-h2" id="fm-sg">Suggestions</h2>
-    <p class="px-note">Members suggest opportunities from their Funding opportunities page.<br>Add to the list opens the opportunity form, filled in from the suggestion.<br>The member sees the status and any note you write.</p>
+    <p class="px-note">Members suggest opportunities from their Funding and news page.<br>Add to the list opens the opportunity form, filled in from the suggestion.<br>The member sees the status and any note you write.</p>
     {% if suggestions %}<ul class="fv-recs">{% for s in suggestions %}<li class="fv-rec">
       <span class="fv-name">{% if s.url %}<a class="px-link" href="{{ s.url }}" target="_blank" rel="noopener" title="Opens the announcement in a new tab.">{{ s.name }}</a>{% else %}{{ s.name }}{% endif %}</span>
       <span class="fv-chips"><span class="px-status"{% if s.status == 'added' %} data-s="submitted"{% elif s.status == 'to_review' %} data-s="in_progress"{% endif %}>{{ s.get_status_display }}</span>{% if s.for_everyone %}<span class="px-status">Could help other members</span>{% endif %}</span>
@@ -78,7 +78,7 @@
   {% elif tab == 'news' %}
   <section class="px-section" aria-labelledby="fm-nw">
     <div class="fm-head"><h2 class="px-h2" id="fm-nw">News</h2>{% if can_manage %}<a class="btn small ghost" href="{% url 'manage:funding_news_new' %}" title="Opens the form to post a news item.">Add a news item</a>{% endif %}</div>
-    <p class="px-note">Every signed-in member reads the news on the Funding opportunities page, pinned items first.<br>The three newest items go in each follow-up letter.</p>
+    <p class="px-note">Every signed-in member reads the news on the Funding and news page, pinned items first.<br>The three newest items go in each follow-up letter.</p>
     {% if news %}<ul class="fv-recs">{% for n in news %}<li class="fv-rec">
       <span class="fv-name"><a class="px-link" href="{% url 'manage:funding_news_edit' n.pk %}" title="Opens the news item to edit it.">{{ n.headline }}</a></span>
       {% if n.pinned %}<span class="fv-chips"><span class="px-status">Pinned</span></span>{% endif %}
@@ -92,7 +92,7 @@
   {% elif tab == 'events' %}
   <section class="px-section" aria-labelledby="fm-ev">
     <div class="fm-head"><h2 class="px-h2" id="fm-ev">Events and talks</h2>{% if can_manage %}<a class="btn small ghost" href="{% url 'manage:funding_event_new' %}" title="Opens the form to add an event or talk.">Add an event</a>{% endif %}</div>
-    <p class="px-note">Every signed-in member sees upcoming events on the Funding opportunities page.<br>An event leaves that page after its last day and stays here for history.</p>
+    <p class="px-note">Every signed-in member sees upcoming events on the Funding and news page.<br>An event leaves that page after its last day and stays here for history.</p>
     {% if events %}<ul class="fv-recs">{% for e in events %}<li class="fv-rec">
       <span class="fv-name"><a class="px-link" href="{% url 'manage:funding_event_edit' e.pk %}" title="Opens the event to edit it.">{{ e.title }}</a></span>
       {% if e.last_day < today %}<span class="fv-chips"><span class="px-status">Past</span></span>{% endif %}
@@ -105,7 +105,7 @@
   {% else %}
   <section class="px-section" aria-labelledby="fm-q">
     <h2 class="px-h2" id="fm-q">Questions</h2>
-    <p class="px-note">The questions open Before you apply on every member’s Funding opportunities page and appear in each letter.<br>Write one sentence per line.</p>
+    <p class="px-note">The questions open Before you apply on every member’s Funding and news page and appear in each letter.<br>Write one sentence per line.</p>
     {% if can_manage %}<form method="post" action="{% url 'manage:funding_questions_post' %}" class="fv-form fm-wide">{% csrf_token %}
       {% for q in questions %}<fieldset class="fm-q"><legend class="px-h3">Question {{ forloop.counter }}</legend>
         <div class="fv-field"><label for="qt-{{ q.pk }}">Short title</label><input id="qt-{{ q.pk }}" name="title_{{ q.pk }}" value="{{ q.title }}" maxlength="120"></div>

@@ -55,7 +55,7 @@
       <h3 class="px-h3">Pick the opportunity for someone</h3>
       <div class="fv-field"><label for="fo-person">Person</label><select id="fo-person" name="person" required><option value="">Choose a person</option>{% for p in people %}<option value="{{ p.pk }}">{{ p.last_name }}, {{ p.first_name }}</option>{% endfor %}</select></div>
       <div class="fv-field"><label for="fo-why">Why this fits</label><p class="fv-help">One sentence the person reads beside the opportunity.</p><textarea id="fo-why" name="why" rows="2"></textarea></div>
-      <div><button class="btn small ghost" type="submit" title="Shows the opportunity on the person’s Funding opportunities page.">Add the match</button></div>
+      <div><button class="btn small ghost" type="submit" title="Shows the opportunity on the person’s Funding and news page.">Add the match</button></div>
     </form>{% endif %}
   </section>{% endif %}
 </div>

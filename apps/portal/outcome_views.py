@@ -514,7 +514,7 @@ def update(request, kind, pk):
                 messages.add_message(
                     request,
                     messages.INFO,
-                    "When you’re ready, your Funding opportunities page has options picked for this moment.",
+                    "When you’re ready, your Funding and news page has options picked for this moment.",
                     extra_tags="funding",
                 )
             return redirect(_url("portal:outcome_update", owner, kind, created.pk, to="planned"))

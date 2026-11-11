@@ -26,7 +26,7 @@
         <a href="{% url 'portal:tasks' %}" {% nav_current 'tasks' 'form' 'preview' %} title="Your to-do list for the current reporting session: every form CNAP is asking you to fill in, with how long each takes and its due date. Your answers feed the Center’s NIH progress report. Click to start or continue a form.">My tasks</a>
         <a href="{% url 'portal:history' %}" {% nav_current 'history' %} title="Everything you have submitted, grouped by reporting session, so you can look back at what you said. Click to open any past form.">My history</a>
         {% if keeps_outcomes %}<a href="{% url 'portal:outcomes' %}" {% nav_current 'outcomes' 'outcome_new' 'outcome_update' 'presentation_new' 'presentation_edit' %} title="Your papers, talks, and grant proposals, from planned to published or awarded. CNAP reports them to NIH every year, so keeping them current saves you a scramble at report time. Click to add or update one.">Publications, talks, and grants</a>{% endif %}
-        {% if keeps_outcomes %}<a href="{% url 'portal:funding' %}" {% nav_current 'funding' 'funding_letter' %} title="Funding opportunities picked for you by the CNAP team, opportunities relevant to most members, funding news, and letters from the Center. Click to see them or suggest an opportunity.">Funding opportunities</a>{% endif %}
+        {% if keeps_outcomes %}<a href="{% url 'portal:funding' %}" {% nav_current 'funding' 'funding_letter' %} title="Funding opportunities picked for you by the CNAP team, opportunities relevant to most members, funding news, and letters from the Center. Click to see them or suggest an opportunity.">Funding and news</a>{% endif %}
         <a href="{% url 'portal:center_results' %}" {% nav_current 'center_results' %} title="What the Center learned from everyone’s answers: combined survey results and products, with no one’s individual answers shown. Click to see the latest results.">Center results</a>
         {% if directs_core %}<a href="{% url 'portal:core_reports' %}" {% nav_current 'core_reports' 'core_report' %} title="The core report for each core you direct: combined answers and written comments from the core’s user survey, without names, plus the evaluator’s themes and reflections. Each core report appears once the evaluator releases it.">Core reports</a>{% endif %}
         <a href="{% url 'portal:profile' %}" {% nav_current 'profile' %} title="Your details for NIH reporting: department, eRA Commons ID, ORCID iD, and effort, plus your roles and documents on file. Click to check or update them.">Profile</a>
@@ -57,7 +57,7 @@
   </aside>
   <main id="main">
     {% if is_view_only_admin and request.resolver_match.namespace == 'manage' %}<div class="banner">View only. You can open every screen.<br>The evaluator makes the changes.</div>{% endif %}
-    {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m|stack }}{% else %}{{ m|stack }}{% endif %}{% if 'funding' in m.tags %}<br><a href="{% url 'portal:funding' %}" title="Opens your Funding opportunities page: options picked for you, opportunities relevant to most members, and funding news.">Open Funding opportunities</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
+    {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m|stack }}{% else %}{{ m|stack }}{% endif %}{% if 'funding' in m.tags %}<br><a href="{% url 'portal:funding' %}" title="Opens your Funding and news page: options picked for you, opportunities relevant to most members, and funding news.">Open Funding and news</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
     {% block content %}{% endblock %}
     {% if request.proto_admin and not request.proto_own %}<script>
     /* Batch 3 (MW 2026-11-06): every administration page follows the approved screens (3, 21, 53, 90).
@@ -160,7 +160,7 @@
 </script>
 {% else %}
 <div class="anon"><main id="main">
-  {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m|stack }}{% else %}{{ m|stack }}{% endif %}{% if 'funding' in m.tags %}<br><a href="{% url 'portal:funding' %}" title="Opens your Funding opportunities page: options picked for you, opportunities relevant to most members, and funding news.">Open Funding opportunities</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
+  {% if messages %}<ul class="messages">{% for m in messages %}<li class="{{ m.tags }}">{% if 'encourage' in m.tags %}{{ m|stack }}{% else %}{{ m|stack }}{% endif %}{% if 'funding' in m.tags %}<br><a href="{% url 'portal:funding' %}" title="Opens your Funding and news page: options picked for you, opportunities relevant to most members, and funding news.">Open Funding and news</a>{% endif %}</li>{% endfor %}</ul>{% endif %}
   {% block anon %}{% endblock %}
 </main></div>
 {% endif %}

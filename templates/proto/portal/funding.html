@@ -1,5 +1,5 @@
 {% extends "base.html" %}{% load cnap static %}
-{% block title %}Funding opportunities · {{ platform_name }}{% endblock %}
+{% block title %}Funding and news · {{ platform_name }}{% endblock %}
 {% block content %}
 {# Funding opportunities (MW 2026-11-10), built to the approved "Investigator Funding View" preview with the Hub's own components. #}
 {# A person sees only their own matches, letters, and suggestions. Spec: docs/funding-follow-up-spec.md. #}
@@ -7,7 +7,7 @@
   <header class="px-mast p21-mast fv-mast">
     {% include "proto/_mast_art.html" %}
     <p class="px-eyebrow">Your funding</p>
-    <h1 class="px-title">{% if acting_for_other %}Funding opportunities for {{ owner }}{% else %}Funding opportunities{% endif %}</h1>
+    <h1 class="px-title">{% if acting_for_other %}Funding and news for {{ owner }}{% else %}Funding and news{% endif %}</h1>
     <p class="p21-purpose">This page lists funding opportunities picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}, opportunities relevant to most members, funding news, and research events and talks.</p>
     <ul class="px-facts">
       <li><span class="px-label">Picked for {% if acting_for_other %}{{ owner.first_name }}{% else %}you{% endif %}</span><span class="v">{{ picked|length }} opportunit{{ picked|length|pluralize:"y,ies" }}</span></li>

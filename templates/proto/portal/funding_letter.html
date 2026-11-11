@@ -3,7 +3,7 @@
 {% block content %}
 {# The full follow-up letter (MW 2026-11-10), built to the approved preview. Visible to the person, anyone entering for them, and the CNAP office. #}
 <div class="fv">
-  {% if preview or request.user.person.pk != f.person_id and can_manage %}<a class="px-link p21-back" href="{% url 'manage:funding_followup' f.pk %}" title="Returns to the letter composer.">Back to the letter</a>{% else %}<a class="px-link p21-back" href="{% url 'portal:funding' %}?for={{ f.person_id }}" title="Returns to the Funding opportunities page.">Back to Funding opportunities</a>{% endif %}
+  {% if preview or request.user.person.pk != f.person_id and can_manage %}<a class="px-link p21-back" href="{% url 'manage:funding_followup' f.pk %}" title="Returns to the letter composer.">Back to the letter</a>{% else %}<a class="px-link p21-back" href="{% url 'portal:funding' %}?for={{ f.person_id }}" title="Returns to the Funding and news page.">Back to Funding and news</a>{% endif %}
   {% if preview %}<div class="px-callout warn fv-msg" role="status"><p><strong>Preview.</strong><br>The letter has not been sent.<br>{{ f.person }} sees the page only after the CNAP office selects Send.</p></div>{% endif %}
   <header class="px-mast p21-mast fv-mast">
     {% include "proto/_mast_art.html" %}

@@ -107,7 +107,7 @@ def test_not_funded_with_a_resubmission_keeps_the_a1_redirect_and_links_the_fund
     assert f"/outcomes/grant/{a1.pk}/" in r.url
     assert FundingFollowUp.objects.filter(grant=g).exists()
     html = client.get(r.url).content.decode()
-    assert "Open Funding opportunities" in html
+    assert "Open Funding and news" in html
 
 
 # 3 and 4 ----------------------------------------------------------------------------------------

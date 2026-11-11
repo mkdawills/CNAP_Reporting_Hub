@@ -7,7 +7,7 @@
   <header class="px-mast p21-mast">
     <p class="px-eyebrow">Administration · Funding and news</p>
     <h1 class="px-title">{% if e %}{{ e.title }}{% else %}Add an event{% endif %}</h1>
-    <p class="p21-purpose">Every signed-in member sees upcoming events on the Funding opportunities page.</p>
+    <p class="p21-purpose">Every signed-in member sees upcoming events on the Funding and news page.</p>
   </header>
   <form method="post" action="{% if e %}{% url 'manage:funding_event_post' e.pk %}{% else %}{% url 'manage:funding_event_create' %}{% endif %}" class="px-page">{% csrf_token %}
     <div class="fv-form fm-wide">
