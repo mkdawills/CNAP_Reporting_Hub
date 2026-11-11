@@ -1,6 +1,8 @@
 {% extends "base.html" %}{% load cnap static %}
 {% block title %}Review before launch · {{ platform_name }}{% endblock %}
 {% block content %}
+{# Wide page (MW 2026-11-11): wide tables use the whole width beside the menu; hiding On this page gives them more. #}
+<span class="wide-page" hidden></span>
 {% comment %}Review before launch, redesigned (MW 2026-11-06: "needs a lot of work in terms of clarity and visual hierarchy").
 Same view, same data, same launch form and Add to roster forms as manage/launch.html. Five numbered steps (MW 2026-11-06: the roster check replies come first):
 roster check replies, check the flags, check the totals, check each person, then approve.{% endcomment %}

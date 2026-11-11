@@ -2164,3 +2164,4 @@ body.proto .fm .fm-newissue .fv-field > span { font-weight: 500; color: var(--px
 body.proto main#main:has(.wide-page) { max-width: none; }
 body.proto main#main:has(.wide-page) .head p, body.proto main#main:has(.wide-page) .px-note { max-width: 80ch; }
 @media (max-width: 1600px) { body.proto main#main:has(.wide-page) { padding-left: var(--px-5); padding-right: var(--px-5); } }
+@media (min-width: 761px) and (max-width: 1600px) { body.proto main#main:has(.wide-page) .px-onpage-layout { padding-left: var(--px-4); padding-right: var(--px-4); } }
