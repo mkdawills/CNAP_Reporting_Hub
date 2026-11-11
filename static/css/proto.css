@@ -2159,3 +2159,8 @@ body.proto .fm .fm-legend { font-weight: 500; color: var(--px-ink); padding: 0; 
 body.proto .fm .fm-newissue { display: none; gap: 10px; padding: 12px 16px; background: var(--px-sunken); border-radius: 10px; }
 body.proto .fm .fm-issue:has(select option[value="new"]:checked) .fm-newissue { display: grid; }
 body.proto .fm .fm-newissue .fv-field > span { font-weight: 500; color: var(--px-ink); }
+/* Wide pages (MW 2026-11-11): pages with many-column tables use the whole width beside the menu,
+   so the table fits without a sideways scroll bar. Text stays readable because only the tables widen. */
+body.proto main#main:has(.wide-page) { max-width: none; }
+body.proto main#main:has(.wide-page) .head p, body.proto main#main:has(.wide-page) .px-note { max-width: 80ch; }
+@media (max-width: 1600px) { body.proto main#main:has(.wide-page) { padding-left: var(--px-5); padding-right: var(--px-5); } }

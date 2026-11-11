@@ -1,6 +1,8 @@
 {% extends "base.html" %}{% load cnap %}
 {% block title %}Publications, talks, and grants · {{ platform_name }}{% endblock %}
 {% block content %}
+{# Wide page (MW 2026-11-11): the tables use the whole width beside the menu, so no sideways scroll on a laptop. #}
+<span class="wide-page" hidden></span>
 <div class="head">
   <div><h1>{% if tab == 'talks' %}Presentations{% elif tab == 'grants' %}Grant proposals{% elif tab == 'pubs' %}Publications{% else %}Publications, talks, and grants{% endif %}{% why "The Center’s products: papers, talks, and grant proposals. Respondents keep their own records, and you can add or fix records here. These counts flow into the RPPR, the site-visit tables, and Center results." %}</h1>
   <p>{% if tab == 'pubs' %}{{ "Each row is one paper. Check whether each published paper acknowledges CNAP."|stack }}{% elif tab == 'grants' %}{{ "Each row is one submission of a proposal. A first submission is round A0, and a resubmission of the same proposal is round A1, so a proposal submitted twice has two rows. Check whether each submitted proposal acknowledges CNAP."|stack }}{% elif tab == 'talks' %}{{ "Each row is one talk or poster, entered after the talk or poster was given."|stack }}{% else %}{{ "The Center’s products, with the tables and counts built from those products."|stack }}{% endif %}</p></div>
