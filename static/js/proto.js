@@ -576,10 +576,54 @@ document.addEventListener("DOMContentLoaded", function () {
       note = document.createElement("p");
       note.className = "px-widenote";
       note.innerHTML = "This table is wider than the page.<br>Scroll sideways to see every column" +
-        (document.querySelector(".px-onpage-layout:not(.navclosed)") ? ", or hide \u201cOn this page\u201d for more room." : ".");
+        (document.querySelector(".px-onpage-layout:not(.navclosed)") ? ", hide \u201cOn this page\u201d for more room," : ",") +
+        " or double-click the table to open it full screen. ";
+      var open = document.createElement("button");
+      open.type = "button"; open.className = "linkbtn px-popbtn"; open.textContent = "Open full screen";
+      open.title = "Opens the table across the whole window. Press Esc or select Close to return.";
+      open.addEventListener("click", function () { popOut(box); });
+      note.appendChild(open);
       box.parentNode.insertBefore(note, box);
     } else if (!more && note) note.remove();
   }
+  // Full-screen view of a wide table (MW 2026-11-11): double-click the table, or select Open full screen.
+  // The table itself moves into the view, so sorting and its buttons keep working, and moves back on Close.
+  function popOut(box) {
+    var table = box.querySelector("table");
+    if (!table || !window.HTMLDialogElement) return;
+    var dlg = document.createElement("dialog");
+    dlg.className = "px-pop";
+    // The view's title is the nearest heading above the table, such as the section's name.
+    var cap = "", el = box;
+    while (el && !cap) {
+      var prev = el.previousElementSibling;
+      while (prev && !cap) {
+        var h = prev.matches("h2, h3, h4") ? prev : prev.querySelector && prev.querySelector("h2, h3, h4");
+        if (h) cap = h.textContent.replace(/\s+/g, " ").trim();
+        prev = prev.previousElementSibling;
+      }
+      el = el.parentElement;
+    }
+    cap = cap || (table.getAttribute("title") || "").split(".")[0];
+    dlg.innerHTML = '<div class="px-pop-head"><p class="px-pop-t"></p><button type="button" class="px-btn small px-pop-close" title="Returns the table to the page. Esc does the same.">Close</button></div><div class="px-pop-body scroll"></div>';
+    dlg.querySelector(".px-pop-t").textContent = cap || "Table";
+    var mark = document.createComment("table");
+    table.parentNode.insertBefore(mark, table);
+    dlg.querySelector(".px-pop-body").appendChild(table);
+    document.body.appendChild(dlg);
+    function close() { if (!dlg.open && !dlg.isConnected) return; mark.parentNode.insertBefore(table, mark); mark.remove(); if (dlg.open) dlg.close(); dlg.remove(); update(box); }
+    dlg.querySelector(".px-pop-close").addEventListener("click", close);
+    dlg.addEventListener("close", close);
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) close(); });
+    dlg.showModal();
+  }
+  document.addEventListener("dblclick", function (e) {
+    if (e.target.closest("a, button, input, select, textarea, label, summary, dialog")) return;
+    var box = e.target.closest(".px-wide");
+    if (!box) return;
+    var sel = window.getSelection && window.getSelection(); if (sel) sel.removeAllRanges();
+    popOut(box);
+  });
   function run() {
     scrollers().forEach(function (box) {
       update(box);
