@@ -2161,7 +2161,7 @@ body.proto .fm .fm-issue:has(select option[value="new"]:checked) .fm-newissue { 
 body.proto .fm .fm-newissue .fv-field > span { font-weight: 500; color: var(--px-ink); }
 /* Wide pages (MW 2026-11-11): pages with many-column tables use the whole width beside the menu,
    so the table fits without a sideways scroll bar. Text stays readable because only the tables widen. */
-body.proto main#main:has(.wide-page) { max-width: none; }
+body.proto main#main:has(.wide-page) { max-width: 1600px; } /* room for the wide tables, without stretching charts and tiles across very large screens (MW 2026-11-12) */
 body.proto main#main:has(.wide-page) .head p, body.proto main#main:has(.wide-page) .px-note { max-width: 80ch; }
 @media (max-width: 1600px) { body.proto main#main:has(.wide-page) { padding-left: var(--px-5); padding-right: var(--px-5); } }
 @media (min-width: 761px) and (max-width: 1600px) { body.proto main#main:has(.wide-page) .px-onpage-layout { padding-left: var(--px-4); padding-right: var(--px-4); } }
@@ -2178,3 +2178,7 @@ body.proto .px-wide table { cursor: zoom-in; }
 /* Wide pages (MW 2026-11-12): results tables stop at the width their columns need, so extra screen width no longer
    stretches the Item column. Narrower screens are unchanged: the table still fills the space and scrolls when it must. */
 body.proto main#main:has(.wide-page) table.reptab, body.proto main#main:has(.wide-page) table.lontab { width: auto; max-width: none; }
+/* Year-by-year line and call-outs (MW 2026-11-12): keep the chart at the size it had, with the three call-outs stacked
+   beside it, on every screen width. */
+body.proto .trend { max-width: 1000px; }
+body.proto .trend .callouts { flex: 0 1 300px; grid-template-columns: 1fr; }
