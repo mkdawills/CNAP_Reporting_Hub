@@ -15,3 +15,13 @@ DEBUG = True
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # Static files are served by Django's runserver in development.
 STORAGES["staticfiles"] = {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}  # noqa: F405
+
+# GitHub Codespaces (MW 2026-11-12): the port forwarder sometimes passes the page's origin as https://localhost:8000,
+# which Django's form check refused ("Origin checking failed"). Trust it, and the Codespace's own address, in Codespaces only.
+if os.environ.get("CODESPACES") == "true":
+    CSRF_TRUSTED_ORIGINS = [  # noqa: F405
+        *CSRF_TRUSTED_ORIGINS,  # noqa: F405
+        "https://localhost:8000",
+        "http://localhost:8000",
+        "https://*.app.github.dev",
+    ]
