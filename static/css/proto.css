@@ -2179,7 +2179,11 @@ body.proto .px-wide table { cursor: zoom-in; }
 /* Wide pages (MW 2026-11-12): results tables stop at the width their columns need, so extra screen width no longer
    stretches the Item column. Narrower screens are unchanged: the table still fills the space and scrolls when it must. */
 body.proto main#main:has(.wide-page) table.reptab, body.proto main#main:has(.wide-page) table.lontab { width: auto; max-width: none; }
-/* Year-by-year line and call-outs (MW 2026-11-12): keep the chart at the size it had, with the three call-outs stacked
-   beside it, on every screen width. */
-body.proto .trend { max-width: 1000px; }
-body.proto .trend .callouts { flex: 0 1 300px; grid-template-columns: 1fr; }
+/* Year-by-year line and call-outs (MW 2026-11-12): the chart keeps a readable size, and the three call-outs stack in
+   one column, centered in the space to its right, with room around them. */
+body.proto .trend { gap: var(--px-6); align-items: center; }
+body.proto .trend-fig { flex: 1 1 460px; max-width: 760px; }
+body.proto .trend .callouts { flex: 1 1 300px; grid-template-columns: minmax(0, 340px); justify-content: center; align-content: center; gap: var(--px-3); }
+/* The three call-outs sit on a soft panel, as white cards, so they read as one group (MW 2026-11-12). */
+body.proto .trend .callouts { background: var(--px-brand-tint); border-radius: var(--px-r-lg); padding: var(--px-5); }
+body.proto .trend .callouts li { background: var(--px-surface); border-color: transparent; }

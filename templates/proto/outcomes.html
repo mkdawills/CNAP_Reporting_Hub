@@ -17,9 +17,9 @@
     <p class="p21-purpose">{% if acting_for_other %}{{ owner }}’s{% else %}Your{% endif %} papers, talks, and grant proposals, with each item’s progress from planned to published or funded.</p>
     {% include "proto/_asof_form.html" with day=None picks=asof_picks %}
     <ul class="px-facts">
-      <li><span class="px-label">In progress</span><span class="v">{{ open_cards|length }}</span></li>
-      <li><span class="px-label">Papers finished</span><span class="v">{{ done_pubs|length }}</span></li>
-      <li><span class="px-label">Proposals decided</span><span class="v">{{ done_grants|length }}</span></li>
+      <li><span class="px-label">Papers and proposals in progress</span><span class="v">{{ open_cards|length }}</span></li>
+      <li><span class="px-label">Published or declined papers</span><span class="v">{{ done_pubs|length }}</span></li>
+      <li><span class="px-label">Funded or not funded proposals</span><span class="v">{{ done_grants|length }}</span></li>
       <li><span class="px-label">Talks and posters</span><span class="v">{{ presentations|length }}</span></li>
     </ul>
   </header>
@@ -36,9 +36,9 @@
   <nav class="px-onpage" aria-label="On this page">
     <div class="p21-navtop"><p class="px-label">On this page</p><button type="button" class="p21-collapse" data-navtoggle aria-expanded="true" title="Hide this list to give the page more room. You can bring it back any time."><span class="p21-cw">Hide</span><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 5 7.5 10l5 5"/></svg></button></div>
     <ol>
-      <li><a href="#o36-open" data-onpage>In progress</a></li>
-      <li><a href="#o36-pubs" data-onpage>Finished papers</a></li>
-      <li><a href="#o36-grants" data-onpage>Decided proposals</a></li>
+      <li><a href="#o36-open" data-onpage>Papers and proposals in progress</a></li>
+      <li><a href="#o36-pubs" data-onpage>Published or declined papers</a></li>
+      <li><a href="#o36-grants" data-onpage>Funded or not funded proposals</a></li>
       <li><a href="#o36-talks" data-onpage>Talks and posters</a></li>
       {% if not acting_for_other %}<li><a href="#o36-who" data-onpage>Who can enter for you</a></li>{% endif %}
     </ol>
@@ -49,7 +49,7 @@
 
     {# ---------------------------------------------------------------- in progress #}
     <details class="px-roll" id="o36-open" open>
-      <summary title="Papers and proposals still planned or submitted. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12h10"/><path d="M8.5 7.5l4.5 4.5-4.5 4.5"/><circle cx="19.5" cy="12" r="1.6"/></svg>In progress</h2><span class="px-roll-meta"><b>{{ open_cards|length }}</b> planned or submitted{% if st.n_review %} · <b>{{ st.n_review }}</b> to review{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <summary title="Papers and proposals still planned or submitted. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12h10"/><path d="M8.5 7.5l4.5 4.5-4.5 4.5"/><circle cx="19.5" cy="12" r="1.6"/></svg>Papers and proposals in progress</h2><span class="px-roll-meta"><b>{{ open_cards|length }}</b> planned or submitted{% if st.n_review %} · <b>{{ st.n_review }}</b> to review{% endif %}</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
       <div class="px-roll-body">
         {% if st.ask_pubs or st.ask_grants %}<div class="o36-asks">
           {% if st.ask_pubs %}<form method="post" action="{% url 'portal:outcome_plans' 'pubs' %}" class="o36-ask">{% csrf_token %}<input type="hidden" name="for" value="{{ owner.pk }}"><p>Do you plan to submit any papers?</p><div class="o36-askacts"><button class="px-btn small" name="answer" value="yes">Yes, add one</button><button class="px-btn small quiet" name="answer" value="no">No, not right now</button></div></form>{% endif %}
@@ -59,16 +59,16 @@
       </div>
     </details>
 
-    {# ---------------------------------------------------------------- finished papers #}
+    {# ---------------------------------------------------------------- published or declined papers #}
     <details class="px-roll" id="o36-pubs">
-      <summary title="Papers that were published or declined. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg>Finished papers</h2><span class="px-roll-meta"><b>{{ done_pubs|length }}</b> published or declined</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
-      <div class="px-roll-body">{% for c in done_pubs %}{% include "proto/_track_card.html" %}{% empty %}<p class="px-note">No finished papers yet.</p>{% endfor %}</div>
+      <summary title="Papers that were published or declined. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg>Published or declined papers</h2><span class="px-roll-meta"><b>{{ done_pubs|length }}</b> published or declined</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">{% for c in done_pubs %}{% include "proto/_track_card.html" %}{% empty %}<p class="px-note">No published or declined papers yet.</p>{% endfor %}</div>
     </details>
 
-    {# ---------------------------------------------------------------- decided proposals #}
+    {# ---------------------------------------------------------------- funded or not funded proposals #}
     <details class="px-roll" id="o36-grants">
-      <summary title="Proposals that were funded or not funded. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/></svg>Decided proposals</h2><span class="px-roll-meta"><b>{{ done_grants|length }}</b> funded or not funded</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
-      <div class="px-roll-body">{% for c in done_grants %}{% include "proto/_track_card.html" %}{% empty %}<p class="px-note">No decided proposals yet.</p>{% endfor %}</div>
+      <summary title="Proposals that were funded or not funded. Click to open or close."><span class="px-roll-t"><h2 class="px-h2 px-roll-h"><svg class="px-roll-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5.5"/><path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5"/></svg>Funded or not funded proposals</h2><span class="px-roll-meta"><b>{{ done_grants|length }}</b> funded or not funded</span></span><span class="px-roll-cue" aria-hidden="true"></span></summary>
+      <div class="px-roll-body">{% for c in done_grants %}{% include "proto/_track_card.html" %}{% empty %}<p class="px-note">No funded or not funded proposals yet.</p>{% endfor %}</div>
     </details>
 
     {# ---------------------------------------------------------------- talks #}
