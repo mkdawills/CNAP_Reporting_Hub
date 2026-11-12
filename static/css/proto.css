@@ -2175,3 +2175,6 @@ body.proto .px-pop-body { flex: 1; overflow: auto; padding: 16px 20px 24px; }
 body.proto .px-pop-body > table { min-width: 100%; }
 body.proto .px-widenote .px-popbtn { margin-left: 2px; }
 body.proto .px-wide table { cursor: zoom-in; }
+/* Wide pages (MW 2026-11-12): results tables stop at the width their columns need, so extra screen width no longer
+   stretches the Item column. Narrower screens are unchanged: the table still fills the space and scrolls when it must. */
+body.proto main#main:has(.wide-page) table.reptab, body.proto main#main:has(.wide-page) table.lontab { width: auto; max-width: none; }
