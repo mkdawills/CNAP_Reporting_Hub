@@ -593,6 +593,12 @@ details.wel{flex:1 1 520px;min-width:0}
   .cm-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px}
   .cm-stats b{font-size:30px}
 }
+@media (min-width:981px){
+  .sheet-sec{align-items:start}
+  .sheet-sec > .sh{grid-row:1;align-self:start}
+  .cm-spot{grid-column:1;grid-row:2;justify-self:start;margin-top:28px;max-width:460px}
+  .cm-web{grid-row:1 / span 2;align-self:center;height:360px}
+}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
