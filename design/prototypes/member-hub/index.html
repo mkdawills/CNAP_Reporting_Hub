@@ -425,7 +425,7 @@ details.wel{flex:1 1 520px;min-width:0}
 .nm-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .nm-go{margin-top:12px;font-size:15px;font-weight:600;color:var(--purple)}
 .nm:hover .nm-go{text-decoration:underline}
-.talk-note{margin-top:auto;padding-top:16px;font-size:14px;line-height:20px;color:var(--muted)}
+.talk-note{padding-top:16px;font-size:14px;line-height:20px;color:var(--muted)}
 .talk .talk-act{margin-top:12px;display:flex;align-items:center;gap:8px 20px;flex-wrap:wrap}
 .pfy{display:flex;align-items:flex-start;gap:16px;margin-bottom:22px}
 .pfy-badge{flex:none;display:grid;place-items:center;width:48px;height:48px;border-radius:50%;color:var(--teal);background:radial-gradient(circle at 30% 30%,#ffffff 0%,#e3f1f1 70%);box-shadow:0 0 0 1px rgba(10,102,112,.18),0 8px 20px -8px rgba(10,102,112,.45)}
@@ -446,6 +446,18 @@ details.wel{flex:1 1 520px;min-width:0}
   .sheet-sec .talk a.conv{padding:20px 0}
   .sheet-sec .talk h3{margin-bottom:12px}
 }
+.ask{display:flex;flex-direction:column;gap:10px;margin:6px 0 28px}
+.ask-l{font:500 26px/32px var(--serif);letter-spacing:-.01em;color:var(--ink)}
+.ask textarea{width:100%;min-height:76px;resize:vertical;padding:12px 14px;border-radius:8px;border:1px solid var(--field);background:var(--surface);font:400 15px/22px var(--sans);color:var(--ink)}
+.ask textarea::placeholder{color:var(--muted)}
+.ask textarea:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.ask-row{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
+.ask-msg{font-size:14px;line-height:20px;color:var(--ink-2)}
+.mt-h{font-size:14px;line-height:20px;font-weight:600;color:var(--teal);padding-bottom:8px;border-bottom:1px solid var(--line)}
+.talk a.conv{grid-template-columns:40px minmax(0,1fr)}
+.talk a.conv .why{grid-column:2;margin-top:4px}
+.talk a.conv + a.conv{border-top:1px solid var(--line)}
+.talk a.conv:first-of-type{border-top:0}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -589,7 +601,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:var(--surface);color:var(--ink-2)}
 .talk b{font-size:15px;line-height:22px;font-weight:600}
 .talk a.conv:hover b{color:var(--purple);text-decoration:underline}
-.talk-act{padding-top:16px;border-top:1px solid var(--line)}
+.talk-act{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
 span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .wel .nm .meta{font-size:14px;color:var(--muted)}
 .welcome-row{grid-column:1 / span 12;margin-top:56px;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
@@ -1226,11 +1238,16 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         </div>
         <div class="talk">
           <h3>Gather peer input and perspective</h3>
-          <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · Seeking: sleep EEG</span></a>
-          <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · Behavioral Neuroscience Core</span></a>
-          <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Seeking: high-performance computing</span></a>
-          <p class="talk-note">Showing the 3 most active of 14 open threads.</p>
-          <div class="talk-act"><a class="btn" href="#">Start a conversation thread</a><a class="t3" href="#">See all 14 threads</a></div>
+          <form class="ask" novalidate>
+            <label for="ask-q" class="ask-l">What are you stuck on?</label>
+            <textarea id="ask-q" rows="2" placeholder="Ask a question, look for a collaborator, or borrow equipment."></textarea>
+            <div class="ask-row"><button type="submit" class="btn pri">Start a conversation thread</button><span class="ask-msg" role="status"></span></div>
+          </form>
+          <p class="mt-h">Matched to you</p>
+          <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · 4 replies · active today</span><span class="why">You use EEG in your pilot, and Jordan needs sleep EEG.</span></a>
+          <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · 2 replies · Tuesday</span><span class="why">You use the Behavioral Neuroscience Core.</span></a>
+          <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · No replies yet</span><span class="why">You listed high-performance computing as a skill. Be the first to answer.</span></a>
+          <div class="talk-act"><a class="t3" href="#">See all 14 threads</a></div>
         </div>
         <div class="ach-row">
             <a href="#"><span class="who-av" aria-hidden="true">DO</span><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
@@ -1343,6 +1360,8 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
     addEventListener('scroll',function(){place();clearTimeout(otp._t);otp._t=setTimeout(spy,60);},{passive:true});addEventListener('resize',place);place();spy();}catch(e){}
 
   try{if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){var fd=document.querySelector('.fund');fd.classList.add('grow-wait');var gt;new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){clearTimeout(gt);gt=setTimeout(function(){fd.classList.add('grown');},900);}else clearTimeout(gt);});},{threshold:.35}).observe(fd);}}catch(e){}
+
+  try{var ask=document.querySelector('.ask');ask.addEventListener('submit',function(e){e.preventDefault();var t=document.getElementById('ask-q'),m=ask.querySelector('.ask-msg');m.textContent=t.value.trim()?'In the live Hub this would open a draft thread. Posting isn’t connected in this prototype.':'Write your question first.';});}catch(e){}
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
