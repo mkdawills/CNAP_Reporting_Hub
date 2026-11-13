@@ -62,7 +62,14 @@ working in, this repository is sufficient on its own.
 - Never fabricate row-level data from aggregates. Imported Year 6–9 aggregates are stored as
   aggregates with provenance `historical` and have no drill-down.
 
-## Next up (2026-11-10)
+## Next up (2026-11-13)
+
+The app is now called the CNAP Member Hub. The homepage from the approved prototype is built on
+`feature/cnap-ui-redesign` behind the redesign switch (`docs/member-hub-homepage.md`), with draft pull
+request #1 open against main. Don't merge without MW's approval. MW will build out the pages the homepage
+links to later: research stories, community, the listserv, photographs, and core requests.
+
+## Earlier (2026-11-10)
 
 Phase 1 of `docs/funding-follow-up-spec.md` is built on branch `feature/funding-follow-up` (funding page,
 letter page, not-funded follow-up letters, suggestions, news, the seven questions). MW approved it and it is

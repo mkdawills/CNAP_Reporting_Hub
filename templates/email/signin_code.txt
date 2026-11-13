@@ -1,6 +1,6 @@
 {% autoescape off %}Hello {{ person.first_name }},
 
-Your CNAP Reporting Hub code is {{ code }}.
+Your CNAP Member Hub code is {{ code }}.
 
 Enter the code on the page that asked for the code. The code expires in {{ minutes }} minutes.
 

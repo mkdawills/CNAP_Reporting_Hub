@@ -1,0 +1,397 @@
+{% load static cnap %}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Home · {{ platform_name }}</title>
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}">
+<link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+<link rel="stylesheet" href="{% static 'hub/hub.css' %}">
+</head>
+<body class="hub-page">
+{# CNAP Member Hub homepage (MW 2026-11-13), built from design/prototypes/member-hub/. Data: apps/portal/hub.py. #}
+{% if demo_site %}<div class="demo-note" role="note">Test copy with fictional data only.</div>{% endif %}
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="{% url 'home' %}"><svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="8" fill="#512888"/><path d="M8.5 23.5c3.4-7.6 6.6-9.8 9.4-9.8 2.7 0 4.3 4.1 9.6 4.1" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8.5" cy="23.5" r="2.4" fill="#fff"/><circle cx="27.5" cy="17.8" r="2.4" fill="#fff"/></svg><span><b>{{ platform_name }}</b><small>Kansas State University</small></span></a>
+    <nav class="nav" aria-label="Main"><a href="{% url 'home' %}" aria-current="page">Home</a><a href="#res-h">Research</a><a href="#cal-h">Events</a><a href="{% url 'portal:funding' %}">Funding</a><a href="#com-h">Community</a><a href="#cores-h">Resources</a></nav>
+    <div class="tools">
+      {% if is_admin %}<a class="mywork" href="{% url 'manage:home' %}" style="border-style:dashed">Administration</a>{% endif %}
+      <a class="mywork" href="{% url 'portal:tasks' %}">My work{% if rep %} <span class="count"{% if not rep.todo %} style="background:var(--green)"{% endif %}>{{ rep.todo }}</span>{% endif %}</a>
+      <div class="acct">
+        <button type="button" class="avatar" aria-expanded="false" aria-controls="acct-menu" aria-label="{{ person.full_name }}: profile and settings">{{ initials }}</button>
+        <div class="acct-menu" id="acct-menu">
+          <p class="acct-who">{{ person.full_name }}{% if roles %}<span>{{ roles.0 }}</span>{% endif %}</p>
+          <a href="{% url 'portal:profile' %}">Profile</a>
+          <a href="{% url 'portal:history' %}">My history</a>
+          {% if is_admin %}<a href="{% url 'manage:home' %}">Administration</a>{% endif %}
+          {% if user.has_usable_password %}<a href="{% url 'password_change' %}">Change password</a>{% endif %}
+          <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit">Log out</button></form>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<button type="button" class="otp-btn" aria-expanded="false" aria-controls="otp-menu"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h7"/></svg>Sections</button><nav class="otp" id="otp-menu" aria-label="On this homepage"><p class="otp-h">On this homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#ph-h" data-t="ph-h">2026 Site Visit Photos</a></li></ol></nav>
+
+  <section class="greet" aria-labelledby="hi">
+    {% include "hub/_fibers.html" %}
+    <button type="button" class="motion" aria-pressed="false"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="3" y="2" width="3" height="10" rx="1"/><rect x="8" y="2" width="3" height="10" rx="1"/></svg><span>Pause motion</span></button>
+    <div class="wrap">
+      <p class="when" id="when">{{ date_line }}</p>
+      <h1 id="hi">{{ greeting }}, {{ person.first_name }}.</h1>
+      {% if rep or ns_soon %}<p class="line">{% if rep %}{% if rep.todo %}<a href="#wk">{{ rep.name }} {{ rep.closes }}</a>.{% else %}<a href="#wk">Your {{ rep.name }} is complete</a>.{% endif %}{% endif %}{% if rep and ns_soon %}<br>{% endif %}{% if ns_soon %}On {{ ns_soon.weekday }}, <a href="#ev-h">NeuroSync welcomes {{ ns_soon.speaker.full_name }}</a>.{% endif %}</p>{% endif %}
+      {% if rep and rep.todo %}<div class="rcue">
+        <a class="rcue-btn" href="{% url 'portal:tasks' %}"><span class="rcue-ring" aria-hidden="true"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15"/><circle class="rcue-p" cx="18" cy="18" r="15" pathLength="{{ rep.total }}" style="stroke-dasharray:{{ rep.done_n }} {{ rep.total }}"/></svg><span class="num">{{ rep.done_n }}/{{ rep.total }}</span></span><span class="rcue-t"><b>Continue your {{ rep.name }}</b><span>{{ rep.left|capfirst }} left{% if rep.time %}, {{ rep.time }}{% endif %}. Closes {{ rep.due_words }}.</span></span><span class="rcue-go" aria-hidden="true"></span></a>
+      </div>{% endif %}
+    </div>
+  </section>
+
+  <section class="mine" aria-labelledby="wk">
+    <div class="wrap">
+      <div class="brief" role="list" aria-label="Your week, most urgent first">
+        <div class="bi intro" role="listitem">
+          <span class="lab">Most urgent first</span>
+          <h2 id="wk">Your week</h2>
+          <div class="body">{% if roles %}<p class="roles">{% for r in roles %}{{ r }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</p>{% endif %}</div>
+          <div class="act"><a class="btn" href="{% url 'portal:tasks' %}">Open My work</a></div>
+        </div>
+        {% if rep %}{% if rep.todo %}<article class="bi" role="listitem">
+          <span class="kind" style="color:var(--{{ rep.kind }})"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>{{ rep.when }}</span>
+          <h3><a href="{% url 'portal:tasks' %}">{{ rep.name }}</a></h3>
+          <div class="body"><p>Closes {{ rep.due_words }}. {{ rep.left|capfirst }} {% if rep.todo == 1 %}is{% else %}are{% endif %} left{% if rep.time %}, {{ rep.time }} in all{% endif %}.</p><div class="prog"><span class="bar" aria-hidden="true"><i style="width:{% widthratio rep.done_n rep.total 100 %}%"></i></span><span>{{ rep.done_n }} of {{ rep.total }} submitted</span></div></div>
+          <div class="act"><a class="btn" href="{% url 'portal:tasks' %}">Continue reporting</a></div>
+        </article>{% else %}<article class="bi" role="listitem">
+          <span class="kind" style="color:var(--green)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"/></svg>{{ rep.period.name }} reporting complete</span>
+          <h3><a href="{% url 'portal:history' %}">Nothing is due</a></h3>
+          <div class="body"><p>All {{ rep.total }} of your surveys and reports are in.</p></div>
+          <div class="act"><a class="btn" href="{% url 'portal:history' %}">See what you submitted</a></div>
+        </article>{% endif %}{% endif %}
+        {% if center %}<article class="bi" role="listitem">
+          <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12.5h10M3.5 10V6M7 10V3.5M10.5 10V7.5"/></svg>Center reporting</span>
+          <h3><a href="{% url 'manage:dashboard' %}">{{ center.finished }} of {{ center.people }} people have finished</a></h3>
+          <div class="body"><p>{{ center.period.name }} closes {{ center.due_words }}. {{ center.forms_done }} of {{ center.forms }} surveys and reports are in.</p></div>
+          <div class="act"><a class="btn" href="{% url 'manage:dashboard' %}">Open the dashboard</a></div>
+        </article>{% endif %}
+        {% if match %}<article class="bi" role="listitem">
+          <span class="kind" style="color:var(--teal)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="5.5"/><path d="M7 4.5v3l2 1.5"/></svg>{% if match.is_new %}New funding match{% else %}Funding picked for you{% endif %}</span>
+          <h3><a href="{% url 'portal:funding' %}">{{ match.o.name }}</a></h3>
+          <div class="body"><p>{% if match.o.deadline or match.o.deadline_text %}Due {{ match.when }}.{% endif %}{% if match.why_line %} {{ match.why_line }}{% endif %}</p></div>
+          <div class="act"><a class="btn" href="{% url 'portal:funding' %}">Review the match</a></div>
+        </article>{% endif %}
+        {% if ns_soon %}<article class="bi" role="listitem">
+          <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3"/></svg>NeuroSync this {{ ns_soon.weekday }}</span>
+          <h3><a href="#ev-h">{{ ns_soon.t.title }}</a></h3>
+          <div class="body"><p>{{ ns_soon.speaker.full_name }}{% if ns_soon.dept %}, {{ ns_soon.dept }}{% endif %}. {{ ns_soon.time }} in {{ ns_where }}.</p></div>
+          <div class="act"><a class="btn" href="#ev-h">See the talk</a></div>
+        </article>{% endif %}
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec lead-in" aria-labelledby="res-h">
+      <header class="sh">
+        <h2 id="res-h">Research at CNAP</h2>
+        <p>Work from the Center’s pilot projects, cores, and investigators.</p>
+      </header>
+      <p class="sample-note">Sample content. This section isn’t connected to the Hub yet.</p>
+      <article class="g feat">
+        <figure class="pic-wrap"><div class="pic"><img src="{% static 'hub/img/neurons.jpg' %}" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"></div><figcaption class="credit">Illustration made for this prototype. It is not research data, and a project image will replace it.</figcaption></figure>
+        <div class="txt">
+          <p class="eyebrow">Pilot project · Neurobiology of Learning and Memory</p>
+          <h3><a href="#">What a night of sleep does to a new memory</a></h3>
+                    <p class="deck">A CNAP pilot project is recording brain activity during sleep to learn which memories are kept by morning. The team describes its design and what it plans to test next.</p>
+          <p class="meta">The CNAP team · November 10, 2026 · 4-minute read</p>
+          <div class="act"><a class="t3" href="#">Read the story</a></div>
+          <div class="also" aria-label="More from CNAP research">
+            <a href="#"><span class="eyebrow">Core capability</span><b>Transcranial magnetic stimulation in the Cognitive Neuroscience Core</b></a>
+            <a href="#"><span class="eyebrow">Publications</span><b>Three new papers that cite CNAP this fall</b></a>
+          </div>
+        </div>
+      </article>
+      <details class="more-stories">
+        <summary><h3>More stories</h3><span class="ms-n">4 stories</span></summary>
+        <ul>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="{% static 'hub/img/oscillations.jpg' %}" alt="Generated illustration of brain oscillations" loading="lazy"><span class="tag">Illustration</span></span><span class="eyebrow">Pilot project</span><b>How a new pilot team is planning its first year</b><span class="meta">The CNAP team · November 6</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="{% static 'hub/img/reel-4.jpg' %}" alt="Placeholder for a portrait photograph" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Investigator profile</span><b>Meet the Center’s newest pilot project leader</b><span class="meta">The CNAP team · October 29</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="{% static 'hub/img/reel-5.jpg' %}" alt="Placeholder for a photograph of the Neuroinformatics Core" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Core capability</span><b>What the Neuroinformatics Core can process for your lab</b><span class="meta">The CNAP team · October 22</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="{% static 'hub/img/reel-2.jpg' %}" alt="Placeholder for a photograph of a workshop" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Training</span><b>Inside the fall grant-writing workshop series</b><span class="meta">The CNAP team · October 15</span></a></li>
+        </ul>
+      </details>
+      <footer class="sf"><a class="btn" href="#">All stories</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a story</a></footer>
+    </section>
+  </div>
+
+
+  </div>
+
+  <div class="wrap">
+    <section class="sec" aria-labelledby="fund-h">
+      <header class="sh">
+        <h2 id="fund-h">Funding and proposals</h2>
+        <p>Opportunities the CNAP team picked for your research, and help at each stage of a proposal.</p>
+      </header>
+      <div class="g sheet">
+        <div class="fund">
+          <div class="pfy"><div><h3>Picked for you, {{ person.first_name }}{% if picked_new %} <span class="pfy-new">{{ picked_new }} new this week</span>{% endif %}</h3>{% if picked %}<p class="pfy-sub">The CNAP team picked {% if picked|length == 1 and not picked_more %}this opportunity{% else %}these opportunities{% endif %} for your research.</p>{% endif %}</div></div>
+          {% if picked %}<div>
+            <div class="opp-hd" aria-hidden="true"><span>Time left</span><span>Opportunity, and why it fits you</span><span>Deadline and award</span></div>
+            {% for r in picked %}{% if forloop.counter == 3 %}<details class="opp-more"><summary><span>1 more match</span><span class="om-n">{{ r.o.name }}{% if r.days is not None %}, {{ r.days }} day{{ r.days|pluralize }} left{% endif %}</span></summary>{% endif %}
+            <a class="opp" href="{% url 'portal:funding' %}"><span class="days num{% if r.soon %} soon{% endif %}">{% if r.days is not None %}{{ r.days }}<small>day{{ r.days|pluralize }} left</small>{% else %}<small>{{ r.words }}</small>{% endif %}</span><span>{% if r.eyebrow %}<span class="spon">{{ r.eyebrow }}</span>{% endif %}<b>{{ r.o.name }}</b>{% if r.why_line %}<span class="why">{{ r.why_line }}</span>{% endif %}</span><span class="side"><strong class="num">{{ r.when }}</strong>{% if r.o.amount_text %}{{ r.o.amount_text }}{% endif %}{% if r.o.checked_on %}<span class="chk">Details checked<br>{{ r.o.checked_on|date:"F j" }}</span>{% endif %}</span></a>
+            {% if forloop.counter == 3 %}</details>{% endif %}{% endfor %}
+            {% if picked_more %}<p class="meta" style="margin-top:12px"><a class="lnk" href="{% url 'portal:funding' %}">{{ picked_more }} more on your funding page</a></p>{% endif %}
+          </div>{% else %}<div class="empty">
+            <p style="font-weight:600">No opportunities are picked for you yet.</p>
+            <p class="meta">The CNAP team picks funding to fit each member’s research. Meanwhile, every open opportunity is on your funding page.</p>
+            <div style="display:flex;gap:20px;flex-wrap:wrap"><a class="lnk" href="{% url 'portal:funding' %}">Browse all funding</a></div>
+          </div>{% endif %}
+        </div>
+        <aside class="proposal" aria-labelledby="prop-h">
+          <p class="gr-h">Grant resources</p>
+          <h3 id="prop-h">From idea to award</h3>
+          <nav class="stages" aria-label="Grant writing resources by stage">
+            <a href="{% url 'portal:funding' %}"><b>Find funding</b><span>Sponsors, searches, and eligibility</span></a>
+            <a href="#pw-h"><b>Plan the proposal</b><span>Timelines, aims, and internal review</span></a>
+            <a href="#pw-h"><b>Write a competitive application</b><span>Specific Aims, approach, and significance</span></a>
+            <a href="{% url 'portal:profile' %}"><b>Prepare NIH documents</b><span>Biosketch, Other Support, and budget</span></a>
+            <a href="#pw-h"><b>Respond to reviews</b><span>Summary statements and resubmission</span></a>
+            <a href="#pw-h"><b>Manage the award</b><span>Progress reports and closeout</span></a>
+          </nav>
+          <div class="consult"><p>Talk through a draft, one on one, with the Assistant Director for Grants and Contracts.</p><a class="btn" href="mailto:{{ evaluator_email }}?subject=Talk%20through%20a%20draft">Book a time</a></div>
+        </aside>
+      </div>
+      <div class="sheet news-sheet">
+        <div class="news">
+          <h3 id="news-h">Funding news</h3>
+          {% if news %}<ul>
+{% for row in news %}{% with n=row.n %}<li><a href="{% if n.source_url %}{{ n.source_url }}{% else %}{% url 'portal:funding' %}{% endif %}"><span class="nw-date">{% if n.news_date %}<span class="nw-num num">{{ n.news_date.day }}</span><span class="nw-mon">{{ n.news_date|date:"F" }}</span>{% else %}<span class="nw-mon">{{ n.date_text }}</span>{% endif %}</span><span class="nw-body">{% if n.bulletin or n.source_name %}<span class="eyebrow">{% if n.bulletin %}{{ n.bulletin.name }}{% else %}{{ n.source_name }}{% endif %}</span>{% endif %}<b>{{ n.headline }}</b><span class="nw-sum">{{ row.first }}</span></span></a></li>{% endwith %}
+{% endfor %}          </ul>{% else %}<p class="meta">No funding news yet. The CNAP team posts news here and on your funding page.</p>{% endif %}
+        </div>
+      </div>
+      <div class="sheet tk-sheet">
+        <div class="tk-head"><div><h3 class="pw-h" id="pw-h">Proposal writing toolkit</h3><p class="tk-lead">Guides and templates for each stage of a proposal, from the first search to closeout.</p><p class="sample-note">Sample content. These links isn’t connected to the Hub yet.</p></div></div>
+        <ol class="tk no-stage"><li class="tk-s"><span class="tk-n num">1</span><h4>Find funding</h4><p class="tk-d">Sponsors, searches, and eligibility</p><ul class="tk-r"><li><a href="#pw-h">Funding search guide</a></li><li><a href="#pw-h">Eligibility checklist</a></li></ul></li><li class="tk-s"><span class="tk-n num">2</span><h4>Plan the proposal</h4><p class="tk-d">Timelines, aims, and internal review</p><ul class="tk-r"><li><a href="#pw-h">Internal review timeline</a></li><li><a href="#pw-h">Proposal planning calendar</a></li></ul></li><li class="tk-s"><span class="tk-n num">3</span><h4>Write a competitive application</h4><p class="tk-d">Specific Aims, approach, and significance</p><ul class="tk-r"><li><a href="#pw-h">Specific Aims guide</a></li><li><a href="#pw-h">Example aims from funded CNAP pilots</a></li></ul></li><li class="tk-s"><span class="tk-n num">4</span><h4>Prepare NIH documents</h4><p class="tk-d">Biosketch, Other Support, and budget</p><ul class="tk-r"><li><a href="#pw-h">Biosketch template</a></li><li><a href="#pw-h">Budget justification</a></li><li><a href="#pw-h">Letters of support</a></li><li><a href="#pw-h">Data management plan</a></li></ul></li><li class="tk-s"><span class="tk-n num">5</span><h4>Respond to reviews</h4><p class="tk-d">Summary statements and resubmission</p><ul class="tk-r"><li><a href="#pw-h">Reading a summary statement</a></li><li><a href="#pw-h">Introduction to a resubmission</a></li></ul></li><li class="tk-s"><span class="tk-n num">6</span><h4>Manage the award</h4><p class="tk-d">Progress reports and closeout</p><ul class="tk-r"><li><a href="#pw-h">Progress report template</a></li><li><a href="#pw-h">Closeout checklist</a></li></ul></li></ol>
+      </div>
+      <footer class="sf"><a class="btn" href="{% url 'portal:funding' %}">All funding</a><a class="share" href="{% url 'portal:funding' %}#s-suggest"><span class="plus" aria-hidden="true"></span>Share a grant opportunity or news</a></footer>
+    </section>
+  </div>
+
+<div class="cal-band">
+  <div class="wrap">
+    <section class="sec" aria-labelledby="cal-h">
+      <div class="cal-panel">
+      <header class="sh">
+        <h2 id="cal-h">Calendar</h2>
+        <p>Center events, deadlines, and NeuroSync talks in one place.</p>
+      </header>
+      {% if cal.kinds|length > 1 %}<div class="cal-filters" role="group" aria-label="Show on the calendar">
+        {% if 'ns' in cal.kinds %}<button type="button" class="cf" data-k="ns" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="4"/></svg>NeuroSync</button>{% endif %}
+        {% if 'ctr' in cal.kinds %}<button type="button" class="cf" data-k="ctr" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 .5L9.5 5 5 9.5 .5 5z"/></svg>Center events</button>{% endif %}
+        {% if 'due' in cal.kinds %}<button type="button" class="cf" data-k="due" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1" y="1" width="8" height="8" rx="1"/></svg>Deadlines</button>{% endif %}
+      </div>{% endif %}
+      <div class="cal">
+        <div class="cal-month">
+          <div class="cm-head"><h3 id="cm-h" aria-live="polite">Calendar</h3>
+            <div class="cm-tools"><div class="cm-views" role="group" aria-label="Calendar view"><button type="button" data-v="month" aria-pressed="false">Month</button><button type="button" data-v="week" aria-pressed="true">Week</button><button type="button" data-v="list" aria-pressed="false">List</button><button type="button" data-v="year" aria-pressed="false">Year</button></div>
+            <div class="cm-nav"><button type="button" class="arrow" data-m="-1" aria-label="Previous week"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-m="1" aria-label="Next week"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div></div>
+          </div>
+          <table class="cm-grid" aria-labelledby="cm-h" hidden><thead><tr><th scope="col"><span class="wd-l">Sunday</span><span class="wd-s" aria-hidden="true">S</span></th><th scope="col"><span class="wd-l">Monday</span><span class="wd-s" aria-hidden="true">M</span></th><th scope="col"><span class="wd-l">Tuesday</span><span class="wd-s" aria-hidden="true">T</span></th><th scope="col"><span class="wd-l">Wednesday</span><span class="wd-s" aria-hidden="true">W</span></th><th scope="col"><span class="wd-l">Thursday</span><span class="wd-s" aria-hidden="true">T</span></th><th scope="col"><span class="wd-l">Friday</span><span class="wd-s" aria-hidden="true">F</span></th><th scope="col"><span class="wd-l">Saturday</span><span class="wd-s" aria-hidden="true">S</span></th></tr></thead><tbody id="cm-body"></tbody></table>
+          <div id="cv"></div>
+          <div class="cm-day" hidden>
+            <div class="cd-head"><h4 id="cl-h" aria-live="polite">Today</h4><button type="button" class="t3 cl-today" hidden>Back to today</button></div>
+            <div id="cl-body"></div>
+          </div>
+        </div>
+        <div class="keys">
+          <div class="key">
+            <p class="k-lab">Next deadline</p>
+            {% if cal.next_due %}<p class="k-date"><span class="k-num num">{{ cal.next_due.date.day }}</span><span class="k-wd">{{ cal.next_due.date|date:"l" }}<br>{{ cal.next_due.date|date:"F" }}</span></p>
+            <p class="k-t">{{ cal.next_due.title }}</p>
+            <a class="t3" href="{{ cal.next_due.url }}">See the details</a>{% else %}<p class="k-t">No deadlines are on the calendar.</p>{% endif %}
+          </div>
+          <div class="key">
+            <p class="k-lab">Coming up in {{ cal.next_month_name }}</p>
+            {% if cal.next_month %}<ul class="k-list">
+              {% for k in cal.next_month %}<li><span class="k-num-s num">{{ k.date.day }}</span><span><b>{{ k.title }}</b><span class="meta">{{ k.date|date:"l" }}{% if k.time != "All day" %}, {{ k.time }}{% endif %}</span></span></li>{% endfor %}
+            </ul>{% else %}<p class="k-t">Nothing is on the calendar yet.</p>{% endif %}
+          </div>
+          <div class="key">
+            <p class="k-lab">Reporting</p>
+            {% if rep %}<p class="k-date"><span class="k-num num">{{ rep.due.day }}</span><span class="k-wd">{{ rep.due|date:"l" }}<br>{{ rep.due|date:"F" }}</span></p>
+            <p class="k-t">{{ rep.name }} is due.</p>
+            <a class="t3" href="{% url 'portal:tasks' %}">Open My work</a>{% else %}<p class="k-t">No reporting session is open for you.</p>{% endif %}
+          </div>
+        </div>
+      </div>
+      <footer class="sf"><p class="meta">Central Time. Dates come from the Hub: reporting sessions, NeuroSync talks, funding deadlines, and research events.</p></footer>
+      </div>
+    </section>
+  </div>
+  </div>
+
+<div class="com-band">
+  <div class="wrap">
+    <section class="sec" aria-labelledby="com-h">
+      <div class="sheet sheet-sec">
+      <header class="sh">
+        <h2 id="com-h">Community</h2>
+        <p>Meet members, celebrate their work, and ask for input.</p>
+        <ul class="cm-stats" aria-label="The community right now"><li><b class="num">61</b> members</li><li><b class="num">3</b> joined this month</li><li><b class="num">14</b> open threads</li><li><b class="num">2</b> grants awarded this fall</li></ul>
+        <p class="cm-match"><a href="#meet-h">4 members share your interest in sleep.</a> <a class="cm-meet" href="#meet-h">Meet them</a></p>
+      </header>
+      <p class="sample-note">Sample content. This section isn’t connected to the Hub yet.</p>
+      <div class="cm-web" aria-hidden="true"><svg viewBox="0 0 500 300" preserveAspectRatio="none"><line x1="220" y1="90" x2="310" y2="78" pathLength="1"/><line x1="220" y1="90" x2="150" y2="48" pathLength="1"/><line x1="220" y1="90" x2="220" y2="174" pathLength="1"/><line x1="220" y1="90" x2="70" y2="156" pathLength="1"/><line x1="310" y1="78" x2="440" y2="54" pathLength="1"/><line x1="310" y1="78" x2="400" y2="174" pathLength="1"/><line x1="220" y1="174" x2="400" y2="174" pathLength="1"/><line x1="220" y1="174" x2="290" y2="264" pathLength="1"/><line x1="220" y1="174" x2="130" y2="252" pathLength="1"/><line x1="70" y1="156" x2="130" y2="252" pathLength="1"/><line x1="400" y1="174" x2="380" y2="270" pathLength="1"/><line x1="290" y1="264" x2="380" y2="270" pathLength="1"/><line x1="150" y1="48" x2="70" y2="156" pathLength="1"/><line x1="400" y1="174" x2="470" y2="246" pathLength="1"/><line x1="380" y1="270" x2="470" y2="246" pathLength="1"/><line x1="440" y1="54" x2="400" y2="174" pathLength="1"/></svg><span class="nd nd-spot" style="left:62%;top:26%;width:58px;height:58px" aria-hidden="true">KB</span><span class="nd" style="left:30%;top:16%;width:40px;height:40px" aria-hidden="true">NA</span><span class="nd" style="left:44%;top:58%;width:44px;height:44px" aria-hidden="true">OM</span><span class="nd" style="left:80%;top:58%;width:46px;height:46px" aria-hidden="true">MS</span><span class="nd" style="left:14%;top:52%;width:38px;height:38px" aria-hidden="true">DO</span><span class="nd" style="left:88%;top:18%;width:40px;height:40px" aria-hidden="true">WZ</span><span class="nd" style="left:26%;top:84%;width:36px;height:36px" aria-hidden="true">JL</span><span class="nd" style="left:44%;top:30%;width:42px;height:42px" aria-hidden="true">EV</span><span class="nd" style="left:58%;top:88%;width:38px;height:38px" aria-hidden="true">TB</span><span class="nd" style="left:76%;top:90%;width:34px;height:34px" aria-hidden="true">RG</span><span class="nd nd-more" style="left:94%;top:82%;width:44px;height:44px" aria-hidden="true">+48</span></div>
+      <aside class="cm-spot" aria-label="This week’s spotlight"><p class="cm-spot-l">This week’s spotlight</p><p class="cm-spot-t"><b>Kira Bauer</b> is studying how attention shifts during eye tracking.</p><a class="t3" href="#">Say hello</a></aside>
+      </div>
+      <div class="sheet sheet-meet">
+      <div class="meet" role="region" aria-labelledby="meet-h">
+        <div class="meet-h"><div><h3 id="meet-h">Community profiles</h3><p class="meet-sub">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p></div>
+          <div class="lu-ctl"><a class="t3" href="#">Member directory</a><button type="button" class="arrow mp-arrow" data-dir="-1" aria-label="Previous members" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow mp-arrow" data-dir="1" aria-label="Next members"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
+        </div>
+        <ol class="mp-list"><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Kira Bauer, to come"><span class="ini">KB</span><span class="mp-new">New</span></span><b>Kira Bauer</b><span class="mp-r">Graduate student, Psychological Sciences</span><span class="mp-i">Attention, eye tracking</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Nadia Ahmed, to come"><span class="ini">NA</span><span class="mp-new">New</span></span><b>Nadia Ahmed</b><span class="mp-r">Graduate student, Kinesiology</span><span class="mp-i">Motor learning, EEG</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Omar Mendes, to come"><span class="ini">OM</span><span class="mp-new">New</span></span><b>Omar Mendes</b><span class="mp-r">Graduate student, Biology</span><span class="mp-i">Sleep, rodent behavior</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Maya Singh, to come"><span class="ini">MS</span></span><b>Dr. Maya Singh</b><span class="mp-r">Cognitive Neuroscience Core</span><span class="mp-i">Working memory, aging</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. David Osei, to come"><span class="ini">DO</span></span><b>Dr. David Osei</b><span class="mp-r">Pilot project alumnus</span><span class="mp-i">Aging, cognition</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Wei Zhang, to come"><span class="ini">WZ</span></span><b>Dr. Wei Zhang</b><span class="mp-r">Neuroinformatics Core</span><span class="mp-i">Data pipelines, imaging</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Jordan Lee, to come"><span class="ini">JL</span></span><b>Dr. Jordan Lee</b><span class="mp-r">Investigator</span><span class="mp-i">Sleep EEG</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Tom Brandt, to come"><span class="ini">TB</span></span><b>Tom Brandt</b><span class="mp-r">Behavioral Neuroscience Core</span><span class="mp-i">Electrophysiology</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Rosa García, to come"><span class="ini">RG</span></span><b>Dr. Rosa García</b><span class="mp-r">Investigator</span><span class="mp-i">Imaging, computing</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Elena Voss, to come"><span class="ini">EV</span></span><b>Dr. Elena Voss</b><span class="mp-r">Mentor</span><span class="mp-i">Memory, plasticity</span></a></li></ol>
+      </div>
+      </div>
+      <div class="sheet sheet-2">
+      <div class="g">
+        <div class="ach">
+          <h3>Recent achievements</h3>
+          <a class="ach-lead" href="#"><span class="ach-pic" role="img" aria-label="Portrait of Maya Singh, to come"><span class="pl">Portrait to come</span><span class="ini">MS</span></span><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="sum">A two-year study of attention and working memory in older adults, run with the Cognitive Neuroscience Core.</span><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
+        </div>
+        <div class="talk">
+          <h3>Gather peer input and perspective</h3>
+          <form class="ask" novalidate>
+            <label for="ask-q" class="ask-l">What are you stuck on?</label>
+            <textarea id="ask-q" rows="2" placeholder="Example: Has anyone run actigraphy with older adults?"></textarea>
+            <div class="ask-row"><button type="submit" class="btn pri">Start a conversation thread</button><span class="ask-msg" role="status"></span></div>
+          </form>
+          <p class="mt-h">Matched to you</p>
+          <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · 4 replies · active today</span><span class="why">You use EEG in your pilot, and Jordan needs sleep EEG.</span></a>
+          <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · 2 replies · Tuesday</span><span class="why">You use the Behavioral Neuroscience Core.</span></a>
+          <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · No replies yet</span><span class="why">You listed high-performance computing as a skill. Be the first to answer.</span></a>
+          <div class="talk-act"><a class="t3" href="#">See all 14 threads</a></div>
+        </div>
+        <div class="ach-row">
+            <a href="#"><span class="who-av" aria-hidden="true">DO</span><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
+            <a href="#"><span class="who-av" aria-hidden="true">WZ</span><span class="kind" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>Invited talk</span><b>Neuroinformatics Core pipeline presented at a national meeting</b><span class="meta">Dr. Wei Zhang · Neuroinformatics Core</span><span class="when">October 30</span></a>
+        </div>
+      </div>
+      </div>
+      <div class="sheet sheet-list" role="region" aria-labelledby="list-h">
+        <div class="ls-head"><div><h3 id="list-h">Emails from the CNAP listserv</h3><p class="ls-sub">Announcements from the CNAP listserv, kept here so you can find them again.</p></div><a class="t3" href="#">All announcements</a></div>
+        <ul class="ls-list"><li><a class="ls" href="#"><span class="ls-d"><span class="ls-n num">12</span><span class="ls-m">November</span></span><span class="ls-b"><span class="ls-f">CNAP Administrative Core</span><b>Reminder: Year 11 pilot letters of intent are due November 20</b><span class="ls-x">Letters are limited to one page. Send yours to the Administrative Core by 5:00 p.m.</span><span class="ls-att">Attachment</span></span></a></li><li><a class="ls" href="#"><span class="ls-d"><span class="ls-n num">9</span><span class="ls-m">November</span></span><span class="ls-b"><span class="ls-f">CNAP Director</span><b>Welcome to our three newest graduate students</b><span class="ls-x">Please join us in welcoming them to the Cognitive Neuroscience Core this month.</span></span></a></li><li><a class="ls" href="#"><span class="ls-d"><span class="ls-n num">4</span><span class="ls-m">November</span></span><span class="ls-b"><span class="ls-f">CNAP Administrative Core</span><b>Updated travel and reimbursement guidelines</b><span class="ls-x">The attached guide replaces last year’s version and takes effect December 1.</span><span class="ls-att">Attachment</span></span></a></li></ul>
+      </div>
+      <footer class="sf"><a class="btn" href="#">Visit the community</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share an achievement</a></footer>
+    </section>
+  </div>
+  </div>
+
+  <div class="ns-band">
+  <div class="wrap">
+    <section class="sec" aria-labelledby="ev-h">
+      <header class="sh sh-r">
+        <h2 id="ev-h">NeuroSync Weekly Speaker Series</h2>
+        <p>Talks are on Wednesdays from 2:30 to 3:30 p.m. in {{ ns_where }}. Refreshments are provided, and every member is welcome.</p>
+      </header>
+      {% if ns.next %}{% with n=ns.next %}<div class="ns-feat">
+            <div class="spk-main">
+              <div class="portrait" role="img" aria-label="Portrait of {{ n.speaker.full_name }}, to come"><span class="pl">Portrait to come</span><span class="ini">{{ n.initials }}</span></div>
+              <p class="poster"><span class="p-lab">{% if ns_soon %}This week at NeuroSync{% else %}Next at NeuroSync{% endif %}</span><span class="p-day">{{ n.weekday }}</span><span class="p-num num">{{ n.day.day }}</span><span class="p-mon">{{ n.day|date:"F" }}</span><span class="p-time">{{ n.time }} · {{ ns_where }}<br>Refreshments provided</span></p>
+              <div class="spk-txt">
+                <p class="eyebrow">NeuroSync talk</p>
+                <h3>{{ n.t.title }}</h3>
+                <p class="who">{{ n.speaker.full_name }}</p>
+                {% if n.dept %}<p class="meta">{{ n.dept }}</p>{% endif %}
+              </div>
+            </div>
+      </div>{% endwith %}{% else %}<div class="quiet-note">
+            <p class="eyebrow">NeuroSync</p>
+            <p style="font:500 22px/30px var(--serif)">No NeuroSync talk is scheduled yet.</p>
+            <p class="meta">Talks appear here as soon as the CNAP team adds them.</p>
+          </div>{% endif %}
+        {% if ns.later %}<div class="lineup" role="region" aria-labelledby="lu-h">
+          <details class="lu-d"><summary><h3 id="lu-h">Upcoming NeuroSync presenters</h3><span class="lu-n">{{ ns.later|length }} talk{{ ns.later|length|pluralize }}, {{ ns.later.0.day|date:"F" }}{% with last=ns.later|last %}{% if last.day|date:"F" != ns.later.0.day|date:"F" %} to {{ last.day|date:"F" }}{% endif %}{% endwith %}</span></summary>
+          <div class="lu-ctl"><button type="button" class="arrow" data-dir="-1" aria-label="Previous speakers" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-dir="1" aria-label="Next speakers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
+          <ol>
+              {% for r in ns.later %}<li><div class="card"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">{{ r.initials }}</span></span><span class="meta num">{{ r.date_words }}</span><b>{{ r.t.title }}</b><span class="meta">{{ r.speaker.full_name }}</span></div></li>{% endfor %}
+          </ol>
+          </details>
+          <p class="sr" aria-live="polite" id="lu-status"></p>
+        </div>{% endif %}
+    </section>
+  </div>
+  </div>
+
+  <div class="wrap">
+    <section class="sec" aria-labelledby="cores-h">
+      <header class="sh">
+        <h2 id="cores-h">Research cores</h2>
+        <p>Three cores support CNAP research with specific services for members.</p>
+      </header>
+      <div class="voucher"><p class="v-l">Coming soon</p><p class="v-t"><b>Core vouchers</b> will help members use core services. Details will be posted here when the program opens.</p></div>
+      <div class="core-grid"><article class="core core-teal"><div class="core-top"><span class="core-code">NI</span></div><h3>Neuroinformatics Core</h3><p class="core-d">Advanced computing, data science, and artificial intelligence (AI) support for CNAP. On Beocat, an EEG analysis that took 1,280 hours now takes about 20.</p><details class="core-x"><summary class="core-sl">Services and charges</summary><ul class="core-s"><li>High-performance computing on Beocat, with 496 Core processors and 10 GPUs</li><li>Data analysis, statistics, and machine learning</li><li>Research software, workflows, and automation</li><li>Workshops in R, Python, and machine learning, plus one-on-one consultation</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p></details><div class="core-a"><a class="btn" href="https://www.k-state.edu/cnap/research-cores/">Request analysis</a><span class="core-links"><a class="t3" href="https://www.k-state.edu/cnap/research-cores/">Book a consultation</a><a class="t3" href="https://connect-lab.carrd.co">CONNECT Lab</a></span></div></article><article class="core core-purple"><div class="core-top"><span class="core-code">CN</span></div><h3>Cognitive Neuroscience Core</h3><p class="core-d">Human neuroscience, electroencephalography (EEG), and brain stimulation support for CNAP. The only COBRE-funded cognitive neuroscience and EEG core in Kansas.</p><details class="core-x"><summary class="core-sl">Services and charges</summary><ul class="core-s"><li>Study design consultation and methodological guidance</li><li>Experiment programming, setup, and troubleshooting in the CONNECT Lab</li><li>EEG data collection with 64-channel EGI nets and mobile OpenBCI systems</li><li>Transcranial magnetic stimulation (TMS and rTMS) combined with EEG</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p></details><div class="core-a"><a class="btn" href="https://www.k-state.edu/cnap/research-cores/">Request instrument time</a><a class="t3" href="https://www.k-state.edu/cnap/research-cores/">Book a consultation</a></div></article><article class="core core-amber"><div class="core-top"><span class="core-code">BN</span></div><h3>Behavioral Neuroscience Core</h3><p class="core-d">Behavioral research, animal models, and experimental neuroscience support for CNAP, in 51 rooms across more than 7,300 square feet.</p><details class="core-x"><summary class="core-sl">Services and charges</summary><ul class="core-s"><li>Design and running of behavioral assays</li><li>Surgical and laboratory procedure support, including stereotaxic surgery</li><li>Full animal care, housing, and compliance documentation</li><li>Training, onboarding, and scheduling of space and equipment</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p></details><div class="core-a"><a class="btn" href="https://www.k-state.edu/cnap/research-cores/">Request instrument time</a><a class="t3" href="https://www.k-state.edu/cnap/research-cores/">Book a consultation or tour</a></div></article></div>
+      <div class="cx-row"><aside class="cx" aria-labelledby="cx-h"><div class="cx-hd"><h3 id="cx-h">CONNECT Lab</h3><p>Cog + Neuro Network for Experimentation and Computing Technologies, a separate facility with support from two cores</p></div><div class="cx-two"><div><h4>Experiment assistance<span>Through the Cognitive Neuroscience Core</span></h4><p>Experiment programming and design consultation, hardware integration with EEG, TMS, eye tracking, and response devices, help adapting existing scripts, and shared experiment code and templates.</p></div><div><h4>Data assistance<span>Through the Neuroinformatics Core</span></h4><p>Data pipelines and analysis consultation, workflows for large-scale and parallel analysis on Beocat, machine learning help, and workshops on analysis tools and methods.</p></div></div><div class="cx-ft"><span>Staffed drop-in room, BH 444, with four workstations for R, MATLAB, Python, JMP, PsychoPy, Unity, and more.</span><a class="t3" href="https://connect-lab.carrd.co">Visit the CONNECT Lab</a></div></aside></div>
+      <footer class="sf"><a class="btn" href="https://www.k-state.edu/cnap/research-cores/">All core services</a><p class="meta">Requests and consultations go through each core’s page on the CNAP website for now.</p></footer>
+    </section>
+  </div>
+
+  <div class="wrap">
+    
+    <section class="sec onb" aria-labelledby="onb-h">
+      <header class="sh">
+        <h2 id="onb-h">Getting started</h2>
+        <p>Onboarding guides for mentors and new project leaders, on primary or pilot projects. Each one walks through what to do first, step by step.</p>
+      </header>
+      <div class="ob-grid"><article class="ob ob-mentor"><p class="ob-l">For mentors</p><h3>Mentoring at CNAP</h3><p class="ob-d">What the Center asks of mentors, and how to support a primary or pilot project leader through the award.</p><details class="ob-x"><summary>See the 5 steps</summary><ol class="ob-s"><li><span class="ob-n num">1</span>Your role and expectations</li><li><span class="ob-n num">2</span>Sign your mentoring agreement</li><li><span class="ob-n num">3</span>Plan your meeting schedule</li><li><span class="ob-n num">4</span>What mentors report, and when</li><li><span class="ob-n num">5</span>Learn about your role at the Site Visit</li></ol></details><div class="ob-a"><span class="meta">5 steps · about 20 minutes to read. The full guide is coming soon.</span></div></article><article class="ob ob-awardee"><p class="ob-l">For mentees</p><h3>Starting your project award</h3><p class="ob-d">For primary and pilot project leaders: what to do in your first months, from your mentoring agreement, finance guidelines, and approvals to orientations with the research cores.</p><details class="ob-x"><summary>See the 7 steps</summary><ol class="ob-s"><li><span class="ob-n num">1</span>Welcome to the Center</li><li><span class="ob-n num">2</span>Sign your mentoring agreement</li><li><span class="ob-n num">3</span>Review CNAP’s finance expectations and guidelines</li><li><span class="ob-n num">4</span>Approvals before you begin</li><li><span class="ob-n num">5</span>Orientations with the research cores</li><li><span class="ob-n num">6</span>Your reporting schedule</li><li><span class="ob-n num">7</span>Learn about your role at the Site Visit</li></ol></details><div class="ob-a"><span class="meta">7 steps · about 35 minutes to read. The full guide is coming soon.</span></div></article></div>
+    </section>
+  </div>
+
+  
+  </div>
+  <section class="reel-band" aria-labelledby="ph-h">
+    <div class="wrap">
+      <header class="sh">
+        <h2 id="ph-h">The 2026 Site Visit</h2>
+        <p>May 27 and 28 in Manhattan, Kansas: core tours, the keynote, project presentations, and the poster session.</p>
+      </header>
+      <p class="sample-note">Sample content. This section isn’t connected to the Hub yet.</p>
+      <div class="mosaic" id="reel" tabindex="-1">
+        <a class="ph lead" href="#"><span class="im"><img src="{% static 'hub/img/reel-1.jpg' %}" alt="Placeholder for a photo of the poster session" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Poster session</b><span>Students and investigators present their work. Day 2, May 28.</span></span></a>
+        <a class="ph" href="#"><span class="im"><img src="{% static 'hub/img/reel-2.jpg' %}" alt="Placeholder for a photo of a core tour" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Core tours</b><span>Day 1, May 27.</span></span></a>
+        <a class="ph" href="#"><span class="im"><img src="{% static 'hub/img/reel-3.jpg' %}" alt="Placeholder for a photo of the keynote address" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Keynote address</b><span>Day 1, before the banquet.</span></span></a>
+      </div>
+      <footer class="sf"><a class="btn" href="#">View the full gallery</a><p class="meta">Showing 3 of 48 photographs. The rest include the banquet and every project presentation.</p><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share your photographs</a></footer>
+    </div>
+  </section>
+
+  <div class="wrap">
+    
+  <div class="wrap">
+    <footer class="foot">
+      <div class="g">
+        <p>The Cognitive and Neurobiological Approaches to Plasticity (CNAP) Center studies how brains and minds change, and helps early-career investigators build independently funded research programs. It is a Center of Biomedical Research Excellence supported by the National Institute of General Medical Sciences of the National Institutes of Health, grant P20GM113109.</p>
+        <nav aria-label="About CNAP" style="grid-column:8 / span 2"><a href="https://www.k-state.edu/cnap/">About CNAP</a><a href="https://www.k-state.edu/cnap/research-cores/">Research cores</a></nav>
+        <nav aria-label="Help" style="grid-column:10 / span 3"><a href="mailto:{{ evaluator_email }}">Contact the CNAP team</a><a href="https://www.k-state.edu/accessibility/">Accessibility</a><a href="https://www.k-state.edu/">Kansas State University</a></nav>
+      </div>
+    </footer>
+  </div>
+
+</main>
+
+<nav class="tabbar" aria-label="Main, on phones">
+  <a href="{% url 'home' %}" aria-current="page"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3.5 10L11 4l7.5 6v8h-5v-5h-5v5h-5z"/></svg>Home</a>
+  <a href="#cal-h"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3.5" y="4.5" width="15" height="14" rx="2"/><path d="M3.5 9h15M8 3v3M14 3v3"/></svg>Events</a>
+  <a href="{% url 'portal:funding' %}"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M11 3l2.4 4.8 5.3.8-3.8 3.7.9 5.2L11 15l-4.8 2.5.9-5.2-3.8-3.7 5.3-.8z"/></svg>Funding</a>
+  <a href="#com-h"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h14v10H10l-4 3v-3H4z"/></svg>Community</a>
+  <a href="{% url 'portal:tasks' %}"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 11.5l4 4 8-9"/></svg>My work{% if rep %}<span class="count">{{ rep.todo }}</span>{% endif %}</a>
+</nav>
+
+{% include "_feedback.html" %}
+{{ cal.data|json_script:"hub-cal" }}
+<script src="{% static 'hub/hub.js' %}" defer></script>
+</body>
+</html>

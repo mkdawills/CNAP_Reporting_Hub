@@ -2,7 +2,7 @@
 {% block title %}Sign in · {{ platform_name }}{% endblock %}
 {% block anon %}
 <div class="panel">
-  <img class="signin-logo" src="{% static 'img/cnap-logo.png' %}" alt="CNAP Center: Cognitive and Neurobiological Approaches to Plasticity"><h1 class="sectionhead signin-h">Reporting Hub</h1>
+  <img class="signin-logo" src="{% static 'img/cnap-logo.png' %}" alt="CNAP Center: Cognitive and Neurobiological Approaches to Plasticity"><h1 class="sectionhead signin-h">Member Hub</h1>
   {% if link %}
     <p>Signing in as <strong>{{ link.person.first_name }} {{ link.person.last_name }}</strong> ({{ link.email }}).</p>
     <form method="post">{% csrf_token %}<input type="hidden" name="next" value="{{ next }}">

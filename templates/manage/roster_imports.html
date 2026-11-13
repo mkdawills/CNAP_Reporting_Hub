@@ -15,14 +15,14 @@
       <div><dt>Required columns</dt><dd>First name, last name, and email.</dd></div>
       <div><dt>Optional columns</dt><dd>Institution, department, and position.</dd></div>
     </dl>
-    <p class="px-callout warn ri-privacy">Use real member data only once the Reporting Hub is on K-State hosting.</p>
+    <p class="px-callout warn ri-privacy">Use real member data only once the Member Hub is on K-State hosting.</p>
     <div class="actions"><button class="btn" type="submit">Upload and review</button></div>
   </form>
 </div>{% else %}<div class="panel" style="max-width:640px">
   <h2 class="sectionhead">Upload a list</h2>
   <form method="post" enctype="multipart/form-data" action="{% url 'manage:roster_upload' %}">{% csrf_token %}
     <div class="field"><label>File{{ form.file }}</label><div class="help">{{ form.file.help_text|stack }}</div></div>
-    <p class="small muted">{{ "Optional columns: institution, department, position. Only use real member data once the Reporting Hub is on K-State hosting."|stack }}</p>
+    <p class="small muted">{{ "Optional columns: institution, department, position. Only use real member data once the Member Hub is on K-State hosting."|stack }}</p>
     <div class="actions"><button class="btn" type="submit">Upload and review</button></div>
   </form>
 </div>{% endif %}{% endif %}

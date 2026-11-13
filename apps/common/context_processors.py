@@ -25,7 +25,7 @@ def cnap(request):
         from .models import SitePhoto
 
         return {
-            "platform_name": "CNAP Reporting Hub",
+            "platform_name": "CNAP Member Hub",
             "evaluator_email": settings.EVALUATOR_EMAIL,
             "site_photo": SitePhoto.current(),
             "demo_site": getattr(settings, "DEMO_SITE", False),
@@ -45,7 +45,7 @@ def cnap(request):
 
     keeps_outcomes = bool(person and owners_for(person))
     return {
-        "platform_name": "CNAP Reporting Hub",
+        "platform_name": "CNAP Member Hub",
         "evaluator_email": settings.EVALUATOR_EMAIL,
         "keeps_outcomes": keeps_outcomes,
         "can_view_admin": access.can_view_admin(user),

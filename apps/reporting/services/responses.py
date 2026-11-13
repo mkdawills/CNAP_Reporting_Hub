@@ -418,7 +418,7 @@ def _contact_requests(assignment, schema, answers):
         )
         if emails:
             send_mail(
-                subject=f"CNAP Reporting Hub: someone would like to hear about the {core.name}",
+                subject=f"CNAP Member Hub: someone would like to hear about the {core.name}",
                 message=(
                     f"{person.full_name} ({person.primary_email or 'no email on file'}"
                     f"{', ' + person.institution if person.institution else ''}) said in the "

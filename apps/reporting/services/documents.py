@@ -99,7 +99,7 @@ def blank_blocks(version, *, intro=None):
                 mark = "☐" if q.question_type == QuestionType.MULTI_SELECT else "○"
                 b.append(("choice", label, [(mark, _choice_text(o)) for o in opts]))
             elif q.question_type == QuestionType.FILE:
-                b.append(("blank", label, 1, "Upload a file in the Reporting Hub."))
+                b.append(("blank", label, 1, "Upload a file in the Member Hub."))
             else:
                 b.append(
                     (
@@ -315,7 +315,7 @@ def to_pdf(docs, title):
         canvas.saveState()
         canvas.setFont("Helvetica", 8)
         canvas.setFillColor(muted)
-        canvas.drawString(0.9 * inch, 0.55 * inch, f"CNAP Reporting Hub · {title}")
+        canvas.drawString(0.9 * inch, 0.55 * inch, f"CNAP Member Hub · {title}")
         canvas.drawRightString(7.6 * inch, 0.55 * inch, f"Page {doc.page}")
         canvas.restoreState()
 
@@ -328,7 +328,7 @@ def to_pdf(docs, title):
         topMargin=0.8 * inch,
         bottomMargin=0.85 * inch,
         title=title,
-        author="CNAP Reporting Hub",
+        author="CNAP Member Hub",
     ).build(flow, onFirstPage=footer, onLaterPages=footer)
     return buf.getvalue()
 
@@ -348,7 +348,7 @@ def to_docx(docs, title):
     )
     d = Document()
     d.core_properties.title = title
-    d.core_properties.author = "CNAP Reporting Hub"
+    d.core_properties.author = "CNAP Member Hub"
     normal = d.styles["Normal"]
     normal.font.name, normal.font.size = "Calibri", Pt(10.5)
 

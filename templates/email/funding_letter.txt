@@ -15,7 +15,7 @@ Funding news:
 Read the full letter:
 {{ url }}
 {% if with_link %}
-The link signs you in to the CNAP Reporting Hub.
+The link signs you in to the CNAP Member Hub.
 The link works once and expires in {{ days }} days.
 You can get a new one any time at {{ site }}/accounts/link/
 {% else %}

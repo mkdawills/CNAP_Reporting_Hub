@@ -49,7 +49,7 @@ def roster_review(request, pk):
         (
             ImportMatchKind.NEW,
             "New people",
-            "Not in the Reporting Hub yet. This person will be added and put on the roster.",
+            "Not in the Member Hub yet. This person will be added and put on the roster.",
         ),
         (
             ImportMatchKind.MATCHED,

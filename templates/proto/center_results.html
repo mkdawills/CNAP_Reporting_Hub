@@ -52,7 +52,7 @@
       <li><span class="r33-n"><span class="made-n">{{ prod.submitted }}</span><span class="made-l">grant proposals submitted</span></span></li>
       <li>{% if show_detail %}<a class="r33-n" href="#r33-awards" title="See the list of grant awards this year.">{% else %}<span class="r33-n">{% endif %}<span class="made-n">{{ prod.n_awards }}</span><span class="made-l">grant awards received</span>{% if show_detail %}</a>{% else %}</span>{% endif %}</li>
     </ul>
-    <p class="made-foot">{% if asof %}These totals show what CNAP members entered as of your selected date.<br>{% else %}These totals are collected in real time from what CNAP members enter into the Reporting Hub.<br>These numbers grow over the course of the current reporting session, as members enter their work.<br>{% endif %}{% if show_detail %}Submitted proposals are counted, not listed, so pending and unfunded proposals stay private.{% else %}Titles, names, and proposal details stay private.{% endif %}</p>
+    <p class="made-foot">{% if asof %}These totals show what CNAP members entered as of your selected date.<br>{% else %}These totals are collected in real time from what CNAP members enter into the Member Hub.<br>These numbers grow over the course of the current reporting session, as members enter their work.<br>{% endif %}{% if show_detail %}Submitted proposals are counted, not listed, so pending and unfunded proposals stay private.{% else %}Titles, names, and proposal details stay private.{% endif %}</p>
   </section>
 
   {# Which core each kind of product drew on (MW 2026-11-06). Counts only, for the chosen years. #}

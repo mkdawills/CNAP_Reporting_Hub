@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from apps.accounts import access
+from apps.common import prototype
 from apps.common.enums import COMPLETE_STATUSES, PeriodStatus
 from apps.people.models import Person
 from apps.people.services import SENIOR_KEY_TYPES, is_external, normalize_orcid, update_person
@@ -41,8 +42,15 @@ def _with_checkin(summary):
 
 @login_required
 def home(request):
-    """Send people where they work: respondents to My tasks, administrators to their home."""
+    """Send people where they work: respondents to My tasks, administrators to their home.
+
+    With the redesign on (UI_PROTOTYPE), everyone with a person record gets the Member Hub homepage
+    instead (MW 2026-11-13). It only reads records; see apps/portal/hub.py."""
     person = request.user.person
+    if prototype.template(request, "hub", None):
+        from . import hub
+
+        return render(request, "hub/home.html", hub.build(request))
     if person.current_relationships().exists() or person.assignments.exists():
         return redirect("portal:tasks")
     if access.can_view_admin(request.user):
