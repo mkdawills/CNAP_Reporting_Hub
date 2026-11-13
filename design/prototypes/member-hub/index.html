@@ -703,6 +703,14 @@ details.wel{flex:1 1 520px;min-width:0}
 .ls-att::before{content:"";width:8px;height:10px;border:1.5px solid currentColor;border-radius:1px}
 @media (max-width:980px){.sheet-list{padding:32px}}
 @media (max-width:640px){.sheet-list{padding:24px 20px;margin-inline:-8px;margin-top:20px}.ls{grid-template-columns:48px minmax(0,1fr);column-gap:14px}.ls-n{font-size:32px}.ls b{font-size:18px;line-height:24px}.ls-head h3{font-size:24px;line-height:30px}}
+.share{margin-left:auto;display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:15px;line-height:20px;font-weight:600;color:var(--purple);text-decoration:none}
+.share:hover{text-decoration:underline;text-underline-offset:3px}
+.share .plus{position:relative;flex:none;width:26px;height:26px;border-radius:50%;background:var(--purple-tint)}
+.share .plus::before,.share .plus::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:1.6px;margin:-.8px 0 0 -5.5px;background:currentColor;border-radius:1px}
+.share .plus::after{transform:rotate(90deg)}
+.cal-band .share,.com-band > .wrap > .sec > .sf .share{color:#fff}
+.cal-band .share .plus,.com-band > .wrap > .sec > .sf .share .plus{background:rgba(255,255,255,.16)}
+@media (max-width:640px){.share{margin-left:0}}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1321,7 +1329,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
           <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-2.jpg" alt="Placeholder for a photograph of a workshop" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Training</span><b>Inside the fall grant-writing workshop series</b><span class="meta">The CNAP team · October 15</span></a></li>
         </ul>
       </div>
-      <footer class="sf"><a class="btn" href="#">All stories</a></footer>
+      <footer class="sf"><a class="btn" href="#">All stories</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a story</a></footer>
     </section>
 
   </div>
@@ -1366,7 +1374,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
           </ol>
           <p class="sr" aria-live="polite" id="lu-status"></p>
         </div>
-      <footer class="sf"><a class="btn" href="#">All NeuroSync talks</a><p class="meta">Past talks and recordings live on the full NeuroSync page.</p></footer>
+      <footer class="sf"><a class="btn" href="#">All NeuroSync talks</a><p class="meta">Past talks and recordings live on the full NeuroSync page.</p><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a speaker</a></footer>
     </section>
   </div>
   </div>
@@ -1421,7 +1429,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
           </div>
         </div>
       </div>
-      <footer class="sf"><a class="btn" href="#">Open the full calendar</a><a class="t3" href="#">Subscribe in my calendar app</a><p class="meta">All times are Central Time. Break and exam dates come from the K-State academic calendar.</p></footer>
+      <footer class="sf"><a class="btn" href="#">Open the full calendar</a><a class="t3" href="#">Subscribe in my calendar app</a><p class="meta">Central Time. K-State dates are from the academic calendar.</p><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Submit an event</a></footer>
       </div>
     </section>
   </div>
@@ -1438,7 +1446,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         <a class="ph" href="#"><span class="im"><img src="img/reel-2.jpg" alt="Placeholder for a photo of a core tour" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Core tours</b><span>Day 1, May 27.</span></span></a>
         <a class="ph" href="#"><span class="im"><img src="img/reel-3.jpg" alt="Placeholder for a photo of the keynote address" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Keynote address</b><span>Day 1, before the banquet.</span></span></a>
       </div>
-      <footer class="sf"><a class="btn" href="#">View the full gallery</a><p class="meta" data-unless="sparse">Showing 3 of 48 photographs. The rest include the banquet and every project presentation.</p><p class="meta" data-when="sparse" hidden>All 3 photographs from this event.</p></footer>
+      <footer class="sf"><a class="btn" href="#">View the full gallery</a><p class="meta" data-unless="sparse">Showing 3 of 48 photographs. The rest include the banquet and every project presentation.</p><p class="meta" data-when="sparse" hidden>All 3 photographs from this event.</p><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share your photographs</a></footer>
     </div>
   </section>
 
@@ -1491,7 +1499,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         <div class="tk-head"><div><h3 class="pw-h" id="pw-h">Proposal writing toolkit</h3><p class="tk-lead">Your <b>R21 is due in 123 days.</b> Your colleagues and fellow applicants may be writing their Specific Aims at this time, so stage 3 is highlighted below.</p></div><a class="t3" href="#">All proposal writing resources</a></div>
         <ol class="tk"><li class="tk-s"><span class="tk-n num">1</span><h4>Find funding</h4><p class="tk-d">Sponsors, searches, and eligibility</p><ul class="tk-r"><li><a href="#">Funding search guide</a></li><li><a href="#">Eligibility checklist</a></li></ul></li><li class="tk-s"><span class="tk-n num">2</span><h4>Plan the proposal</h4><p class="tk-d">Timelines, aims, and internal review</p><ul class="tk-r"><li><a href="#">Internal review timeline</a></li><li><a href="#">Proposal planning calendar</a></li></ul></li><li class="tk-s now" aria-current="step"><span class="tk-n num">3</span><h4>Write a competitive application</h4><p class="tk-d">Specific Aims, approach, and significance</p><p class="tk-you">You are here</p><ul class="tk-r"><li><a href="#">Specific Aims guide</a></li><li><a href="#">Example aims from funded CNAP pilots</a></li></ul></li><li class="tk-s"><span class="tk-n num">4</span><h4>Prepare NIH documents</h4><p class="tk-d">Biosketch, Other Support, and budget</p><ul class="tk-r"><li><a href="#">Biosketch template</a></li><li><a href="#">Budget justification</a></li><li><a href="#">Letters of support</a></li><li><a href="#">Data management plan</a></li></ul></li><li class="tk-s"><span class="tk-n num">5</span><h4>Respond to reviews</h4><p class="tk-d">Summary statements and resubmission</p><ul class="tk-r"><li><a href="#">Reading a summary statement</a></li><li><a href="#">Introduction to a resubmission</a></li></ul></li><li class="tk-s"><span class="tk-n num">6</span><h4>Manage the award</h4><p class="tk-d">Progress reports and closeout</p><ul class="tk-r"><li><a href="#">Progress report template</a></li><li><a href="#">Closeout checklist</a></li></ul></li></ol>
       </div>
-      <footer class="sf"><a class="btn" href="#">All funding</a></footer>
+      <footer class="sf"><a class="btn" href="#">All funding</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share an opportunity or news</a></footer>
     </section>
 
   </div>
@@ -1545,7 +1553,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         <div class="ls-head"><div><h3 id="list-h">From the CNAP list</h3><p class="ls-sub">Announcements from the CNAP email list, kept here so you can find them again.</p></div><a class="t3" href="#">All announcements</a></div>
         <ul class="ls-list"><li><a class="ls" href="#"><span class="ls-d"><span class="ls-n num">12</span><span class="ls-m">November</span></span><span class="ls-b"><span class="ls-f">CNAP Administrative Core</span><b>Reminder: Year 11 pilot letters of intent are due November 20</b><span class="ls-x">Letters are limited to one page. Send yours to the Administrative Core by 5:00 p.m.</span><span class="ls-att">Attachment</span></span></a></li><li><a class="ls" href="#"><span class="ls-d"><span class="ls-n num">9</span><span class="ls-m">November</span></span><span class="ls-b"><span class="ls-f">CNAP Director</span><b>Welcome to our three newest graduate students</b><span class="ls-x">Please join us in welcoming them to the Cognitive Neuroscience Core this month.</span></span></a></li><li><a class="ls" href="#"><span class="ls-d"><span class="ls-n num">4</span><span class="ls-m">November</span></span><span class="ls-b"><span class="ls-f">CNAP Administrative Core</span><b>Updated travel and reimbursement guidelines</b><span class="ls-x">The attached guide replaces last year’s version and takes effect December 1.</span><span class="ls-att">Attachment</span></span></a></li></ul>
       </div>
-      <footer class="sf"><a class="btn" href="#">Visit the community</a></footer>
+      <footer class="sf"><a class="btn" href="#">Visit the community</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share an achievement</a></footer>
     </section>
   </div>
   </div>
