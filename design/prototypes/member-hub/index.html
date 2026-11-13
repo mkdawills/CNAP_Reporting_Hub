@@ -534,6 +534,15 @@ details.wel{flex:1 1 520px;min-width:0}
 .ns-band .sh{border-top:0;padding-top:0}
 .ns-band .sh::before{display:none}
 .ns-band + .cal-band{margin-top:0}
+.com-band{margin-top:var(--sec);background:radial-gradient(120% 70% at 15% 0%,#4a2a75 0%,#3a1f5e 50%,#2c174a 100%);padding-bottom:var(--sec)}
+.com-band > .wrap > .sec{padding-top:var(--sec)}
+.com-band .sheet{box-shadow:0 1px 2px rgba(0,0,0,.1),0 40px 80px -30px rgba(10,4,20,.6)}
+.com-band > .wrap > .sec > .sf{--ink:#ffffff;--line-2:rgba(255,255,255,.4)}
+.com-band > .wrap > .sec > .sf .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.45)}
+.com-band > .wrap > .sec > .sf .btn:hover{background:rgba(255,255,255,.1)}
+.com-band :focus-visible{outline-color:#fff}
+.com-band .sheet :focus-visible{outline-color:var(--purple)}
+.com-band + .wrap > .foot{margin-top:0;border-top:0}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1316,6 +1325,9 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       <footer class="sf"><a class="btn" href="#">All funding</a><p class="meta">Eligibility is confirmed with each sponsor.</p></footer>
     </section>
 
+  </div>
+  <div class="com-band">
+  <div class="wrap">
     <section class="sec" aria-labelledby="com-h">
       <div class="sheet sheet-sec">
       <header class="sh">
@@ -1354,7 +1366,9 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       </div>
       <footer class="sf"><a class="btn" href="#">Visit the community</a></footer>
     </section>
-
+  </div>
+  </div>
+  <div class="wrap">
     <footer class="foot">
       <div class="g">
         <p>The Cognitive and Neurobiological Approaches to Plasticity (CNAP) Center studies how brains and minds change, and helps early-career investigators build independently funded research programs. It is a Center of Biomedical Research Excellence supported by the National Institute of General Medical Sciences of the National Institutes of Health, grant P20GM113109.</p>
