@@ -398,7 +398,7 @@ section .lineup li{width:20%}
 .pw ul{display:flex;flex-wrap:wrap;gap:8px}
 .pw a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:var(--mint);color:var(--ink);font-size:14px;font-weight:500;text-decoration:none}
 .pw a:hover{background:#d6e8e3;text-decoration:underline}
-.ach > a.ach-lead{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto 1fr auto auto;column-gap:28px;row-gap:8px;align-content:stretch;padding:8px 0 0;border-top:0}
+.ach > a.ach-lead{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:repeat(5,auto);column-gap:28px;row-gap:8px;align-content:start;padding:8px 0 0;border-top:0}
 .ach-pic{grid-column:1;grid-row:1 / -1;position:relative;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1;align-self:start;padding:14px;border-radius:4px;background:#e8e2ef;color:var(--purple-ink)}
 .ach-pic .pl{font-size:13px;line-height:17px;font-weight:500}
 .ach-pic .ini{font:500 88px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end}
@@ -435,6 +435,17 @@ details.wel{flex:1 1 520px;min-width:0}
 @media (min-width:1181px) and (max-width:1366px){.ns-feat .poster .p-num{font-size:96px}.ns-feat .poster .p-mon{font-size:26px;line-height:32px}.ns-feat .spk-txt h3{font-size:26px;line-height:32px}}
 .fund.grow-wait::after{clip-path:inset(50% 0 50% 0);transition:clip-path 1.4s cubic-bezier(.25,.8,.25,1)}
 .fund.grow-wait.grown::after{clip-path:inset(0 0 0 0)}
+@media (min-width:981px){
+  .sheet-sec{padding:72px 72px 64px}
+  .sheet-sec .sh{margin-bottom:56px}
+  .sheet-sec .ach h3{margin-bottom:18px}
+  .sheet-sec .ach > a.ach-lead{column-gap:40px;row-gap:12px}
+  .sheet-sec .g > .ach-row{margin-top:64px}
+  .sheet-sec .ach-row a{padding-top:28px}
+  .sheet-sec .talk{padding:40px 40px 36px}
+  .sheet-sec .talk a.conv{padding:20px 0}
+  .sheet-sec .talk h3{margin-bottom:12px}
+}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
