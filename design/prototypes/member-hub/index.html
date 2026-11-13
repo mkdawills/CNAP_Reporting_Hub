@@ -371,6 +371,11 @@ section .lineup li{width:20%}
 .otp a:hover{color:var(--purple)}
 .otp a[aria-current="true"]{color:var(--ink);font-weight:600}
 .otp a[aria-current="true"]::before{background:var(--purple);border-color:var(--purple)}
+.greet .line a{color:var(--greet-ink);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--greet-ink) 40%,transparent);text-decoration-thickness:1px;text-underline-offset:4px}
+.greet .line a:hover{text-decoration-color:currentColor}
+.greet .line a:focus-visible{outline-color:var(--greet-ink)}
+.term-a{color:var(--greet-muted);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--greet-muted) 40%,transparent);text-underline-offset:4px}
+.term-a:hover{color:var(--greet-ink)}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -850,15 +855,15 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
       <p class="when" id="when">Friday, November 13 · Grant Year 10</p>
       <h1 id="hi" data-unless="returning"><span id="tod">Good morning</span>, Amara.</h1>
       <h1 data-when="returning" hidden>Welcome back, Amara.</h1>
-      <p class="line" data-unless="clear quiet urgent roles admin sparse returning">Fall reporting closes in 17 days. On Wednesday, NeuroSync welcomes a speaker who studies sleep and memory, as you do.</p>
-      <p class="line" data-when="urgent" hidden>Two deadlines are close: Fall reporting closes Monday, and your NIH documents are due Thursday.</p>
-      <p class="line" data-when="clear" hidden>Your Fall reporting is complete. On Wednesday, NeuroSync welcomes a speaker who studies sleep and memory, as you do.</p>
-      <p class="line" data-when="quiet" hidden>Fall reporting closes in 17 days. NeuroSync takes a week off and returns on December 2.</p>
-      <p class="line" data-when="roles" hidden>Across your five roles, one deadline is coming: Fall reporting closes in 17 days.</p>
-      <p class="line" data-when="admin" hidden>38 of 61 members have submitted their Fall reports, and your own are done.</p>
-      <p class="line" data-when="sparse" hidden>Fall reporting closes in 17 days. Add your research interests, and the CNAP team will start picking funding for you.</p>
-      <p class="line" data-when="returning" hidden>Since your last visit on October 2, three papers citing CNAP were published, and a funding match was added for you.</p>
-      <div class="term"><span>Week 12 of the fall semester</span><span class="weeks" aria-hidden="true"><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="now"></i><i></i><i class="brk"></i><i></i><i></i><i></i></span><span>Fall break begins in 9 days</span></div>
+      <p class="line" data-unless="clear quiet urgent roles admin sparse returning"><a href="#wk">Fall reporting closes in 17 days</a>. On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who studies sleep and memory</a>, as you do.</p>
+      <p class="line" data-when="urgent" hidden>Two deadlines are close: <a href="#wk">Fall reporting closes Monday</a>, and <a href="#wk">your NIH documents are due Thursday</a>.</p>
+      <p class="line" data-when="clear" hidden><a href="#wk">Your Fall reporting is complete</a>. On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who studies sleep and memory</a>, as you do.</p>
+      <p class="line" data-when="quiet" hidden><a href="#wk">Fall reporting closes in 17 days</a>. <a href="#ev-h">NeuroSync takes a week off and returns on December 2</a>.</p>
+      <p class="line" data-when="roles" hidden>Across your five roles, one deadline is coming: <a href="#wk">Fall reporting closes in 17 days</a>.</p>
+      <p class="line" data-when="admin" hidden><a href="#">38 of 61 members have submitted their Fall reports</a>, and your own are done.</p>
+      <p class="line" data-when="sparse" hidden><a href="#wk">Fall reporting closes in 17 days</a>. <a href="#">Add your research interests</a>, and the CNAP team will start picking funding for you.</p>
+      <p class="line" data-when="returning" hidden>Since your last visit on October 2, <a href="#res-h">three papers citing CNAP were published</a>, and <a href="#fund-h">a funding match was added for you</a>.</p>
+      <div class="term"><span>Week 12 of the fall semester</span><span class="weeks" aria-hidden="true"><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="now"></i><i></i><i class="brk"></i><i></i><i></i><i></i></span><a class="term-a" href="#cal-h">Fall break begins in 9 days</a></div>
     </div>
   </section>
 
