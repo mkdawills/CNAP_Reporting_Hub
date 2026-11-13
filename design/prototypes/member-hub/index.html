@@ -38,12 +38,16 @@ img{max-width:100%;display:block}
 .kind{display:inline-flex;align-items:center;gap:6px;font-size:14px;line-height:20px;font-weight:600}
 .kind svg{flex:none}
 
-/* prototype bar */
-.proto{background:var(--ink);color:#ebe7f0;font-size:14px;line-height:20px}
-.proto .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;min-height:44px;padding-block:6px}
-.proto a{color:#d8c7f3}
-.proto label{margin-left:auto;display:flex;align-items:center;gap:8px}
-.proto select{font:500 14px var(--sans);min-height:32px;border-radius:6px;border:0;padding:0 8px;background:#fff;color:var(--ink)}
+/* prototype note: a quiet vertical tab on the right edge that opens the notes and the scenario menu */
+.proto{position:fixed;right:env(safe-area-inset-right,0px);top:50%;transform:translateY(-50%);z-index:70;display:flex;align-items:center;flex-direction:row-reverse}
+.proto summary{list-style:none;cursor:pointer;writing-mode:vertical-rl;transform:rotate(180deg);font:500 13px/1 var(--sans);letter-spacing:.02em;color:var(--muted);background:var(--surface);border:1px solid var(--line-2);border-right:0;border-radius:0 6px 6px 0;padding:14px 9px;min-width:34px}
+.proto summary::-webkit-details-marker{display:none}
+.proto summary:hover{color:var(--purple)}
+.proto[open] summary{color:var(--purple)}
+.proto .pp{width:300px;margin-right:6px;background:var(--surface);border:1px solid var(--line-2);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;font-size:14px;line-height:21px;color:var(--ink-2);box-shadow:0 8px 24px rgba(29,27,33,.08)}
+.proto .pp b{color:var(--ink)}
+.proto label{display:flex;flex-direction:column;gap:6px;font-weight:600;color:var(--ink)}
+.proto select{font:400 14px var(--sans);min-height:40px;border-radius:6px;border:1px solid var(--field);padding:0 8px;background:var(--surface);color:var(--ink)}
 .skip{position:absolute;left:-9999px;top:8px;z-index:60;background:#fff;color:var(--purple);padding:10px 14px;border-radius:8px;font-weight:600}
 .skip:focus{left:16px}
 
@@ -66,11 +70,35 @@ img{max-width:100%;display:block}
 .avatar{width:42px;height:42px;border-radius:999px;background:var(--purple-tint);color:var(--purple);display:grid;place-items:center;font-weight:600;font-size:14px;text-decoration:none;flex:none}
 .only-phone{display:none}
 
+
+/* greeting moment: one quiet line, with slow nerve-fiber curves drifting behind it */
+.greet{position:relative;overflow:hidden;background:var(--paper);border-bottom:1px solid var(--line)}
+.greet .wrap{position:relative;z-index:1;padding-top:64px;padding-bottom:60px}
+.greet .when{font-size:15px;line-height:22px;color:var(--muted)}
+.greet h1{font:400 56px/64px var(--serif);letter-spacing:-.02em;margin-top:10px;color:var(--ink);text-wrap:balance}
+.greet .line{margin-top:14px;font-size:18px;line-height:28px;color:var(--ink-2);max-width:58ch}
+.fibers{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 30%,#000 60%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 30%,#000 60%)}
+.fibers path{fill:none;stroke:var(--purple);stroke-linecap:round}
+.fibers circle{fill:var(--purple)}
+@media (prefers-reduced-motion:no-preference){
+  .greet .when,.greet h1,.greet .line{opacity:0;transform:translateY(10px);animation:rise 1.1s cubic-bezier(.2,.7,.2,1) forwards}
+  .greet h1{animation-delay:.15s}
+  .greet .line{animation-delay:.45s}
+  .fibers path{stroke-dasharray:1600;stroke-dashoffset:1600;animation:draw 3.2s cubic-bezier(.3,.6,.2,1) forwards}
+  .fibers path:nth-child(2){animation-delay:.25s}.fibers path:nth-child(3){animation-delay:.5s}.fibers path:nth-child(4){animation-delay:.75s}.fibers path:nth-child(5){animation-delay:1s}
+  .fibers circle{opacity:0;animation:fade 1.2s ease 2.2s forwards}
+  .drift{animation:drift 26s ease-in-out 3s infinite alternate}
+  .drift.b{animation-duration:34s;animation-delay:3.4s}
+}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fade{to{opacity:.55}}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(-28px,10px)}}
 /* personal band */
 .mine{background:var(--band);border-bottom:1px solid var(--line)}
 .mine .g{padding-block:32px 34px;align-items:stretch}
 .hello{grid-column:1 / span 3;display:flex;flex-direction:column;gap:10px;padding-right:8px}
-.hello h1{font:600 28px/34px var(--sans);letter-spacing:-.02em}
+.hello h2{font:600 20px/26px var(--sans);letter-spacing:-.015em}
 .hello .roles{font-size:15px;line-height:23px;color:var(--ink-2)}
 .hello .hl{margin-top:auto;padding-top:8px}
 .slots{grid-column:4 / span 9;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto auto;column-gap:var(--gap)}
@@ -245,15 +273,16 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 @media (max-width:640px){
   :root{--gap:20px;--sec:56px;--side:max(20px,env(safe-area-inset-left,0px));--side-r:max(20px,env(safe-area-inset-right,0px))}
   body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px))}
-  .proto label{margin-left:0}
-  .proto .hide-s{display:none}
   .hdr .wrap{min-height:60px;gap:10px}
   .brand small{display:none}
   .search,.mywork{display:none}
   .only-phone{display:grid;place-items:center;width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2)}
   .mine .g{padding-block:24px 8px}
   .hello{padding-bottom:12px}
-  .hello h1{font-size:26px;line-height:32px}
+  .greet .wrap{padding-top:36px;padding-bottom:34px}
+  .greet h1{font-size:38px;line-height:44px}
+  .greet .line{font-size:16px;line-height:25px}
+  .fibers{-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 55%);mask-image:linear-gradient(180deg,transparent 0%,#000 55%);opacity:.7}
   .hello .hl{display:none}
   .slots{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
   .slot{grid-row:auto;grid-template-rows:none}
@@ -289,6 +318,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .ach .when{grid-column:1;grid-row:auto}
   .foot p{grid-column:1 / -1}
   .foot nav{grid-column:span 6!important}
+  .proto{position:static;transform:none;display:block;border-bottom:1px solid var(--line);background:var(--paper)}
+  .proto summary{writing-mode:horizontal-tb;transform:none;border:0;border-radius:0;background:transparent;padding:12px 20px;min-height:44px;font-size:13px}
+  .proto .pp{width:auto;margin:0 20px 14px;box-shadow:none}
   .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(250,249,247,.97);border-top:1px solid var(--line);padding:4px max(6px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px));justify-content:space-around}
   .tabbar a{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:62px;min-height:54px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none}
   .tabbar a[aria-current="page"]{color:var(--purple)}
@@ -297,18 +329,20 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 </style>
 
 <a class="skip" href="#main">Skip to main content</a>
-<div class="proto" role="note"><div class="wrap">
-  <span>Design prototype. People, talks, funding, and dates are fictional.</span>
-  <span class="hide-s">Photos are placeholders. <a href="system.html">Design foundations</a></span>
-  <label>Scenario <select id="scenario" aria-label="Preview a scenario">
-    <option value="typical">Typical week, four reports due</option>
+<details class="proto">
+  <summary>Prototype notes</summary>
+  <div class="pp" role="note">
+    <p><b>Design prototype, not the live Hub.</b> People, talks, funding, and dates are fictional. Photos are placeholders, and the research image is an illustration.</p>
+    <label for="scenario">Preview a scenario<select id="scenario"><option value="typical">Typical week, four reports due</option>
     <option value="clear">Nothing due</option>
     <option value="quiet">Quiet week, no NeuroSync</option>
     <option value="busy">Busy week</option>
     <option value="long">Long titles</option>
     <option value="sparse">Three photos, no funding matches</option>
   </select></label>
-</div></div>
+    <a href="system.html" style="display:inline-block;padding-block:4px">Design foundations</a>
+  </div>
+</details>
 
 <header class="hdr">
   <div class="wrap">
@@ -324,11 +358,30 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 </header>
 
 <main id="main">
-  <section class="mine" aria-labelledby="hi">
+  <section class="greet" aria-labelledby="hi">
+    <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
+      <g class="drift">
+        <path d="M380 300 C 620 250, 760 120, 980 140 S 1300 60, 1480 90" stroke-width="1.4" opacity=".22"/>
+        <path d="M520 330 C 700 260, 860 220, 1040 230 S 1290 170, 1480 200" stroke-width="1.1" opacity=".16"/>
+        <path d="M640 -10 C 760 80, 900 110, 1060 100 S 1280 150, 1480 130" stroke-width="1" opacity=".14"/>
+      </g>
+      <g class="drift b">
+        <path d="M820 330 C 900 250, 1000 200, 1120 190 S 1320 230, 1480 260" stroke-width="1.6" opacity=".12"/>
+        <path d="M900 -10 C 980 70, 1080 120, 1200 118 S 1380 90, 1480 60" stroke-width="1.2" opacity=".18"/>
+        <circle cx="980" cy="140" r="3.2"/><circle cx="1120" cy="190" r="2.6"/><circle cx="1200" cy="118" r="2.4"/><circle cx="1040" cy="230" r="2"/>
+      </g>
+    </svg>
+    <div class="wrap">
+      <p class="when" id="when">Friday, November 13 · Grant Year 10</p>
+      <h1 id="hi"><span id="tod">Good morning</span>, Amara.</h1>
+      <p class="line" data-unless="clear quiet">Three things are waiting for you this week, and NeuroSync is on Tuesday.</p><p class="line" data-when="clear" hidden>Nothing is due this week. NeuroSync is on Tuesday, and a funding match is waiting.</p><p class="line" data-when="quiet" hidden>Three things are waiting for you this week. NeuroSync returns on November 24.</p>
+    </div>
+  </section>
+
+  <section class="mine" aria-labelledby="wk">
     <div class="wrap g">
       <div class="hello">
-        <p class="meta">Friday, November 13 · Grant Year 10</p>
-        <h1 id="hi">Good morning, Amara.</h1>
+        <h2 id="wk">Your week</h2>
         <p class="roles">Pilot Project Leader<br>Behavioral Neuroscience Core user<br>Mentored by Dr. Elena Voss</p>
         <div class="hl"><a class="lnk" href="#">All of my work</a></div>
       </div>
@@ -553,6 +606,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 
 <script>
 (function(){
+  try{var h=new Date().getHours();document.getElementById('tod').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';}catch(e){}
   var reel=document.getElementById('reel');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('.arrow').forEach(function(b){
