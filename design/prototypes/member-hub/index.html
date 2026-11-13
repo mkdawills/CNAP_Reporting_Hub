@@ -500,6 +500,23 @@ details.wel{flex:1 1 520px;min-width:0}
 .cal-band + .reel-band{margin-top:0;border-top:0}
 .cal-band .t3{color:var(--purple);text-decoration-color:rgba(212,189,246,.45)}
 .cal-band :focus-visible{outline-color:#d4bdf6}
+.meet{margin-bottom:56px;padding-bottom:48px;border-bottom:1px solid var(--line)}
+.meet-h{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.meet-h h3{font:500 30px/36px var(--serif);letter-spacing:-.015em}
+.meet-sub{margin-top:6px;font-size:15px;line-height:23px;color:var(--ink-2)}
+.mp-list{display:flex;gap:28px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:6px 2px 4px}
+.mp-list::-webkit-scrollbar{display:none}
+.mp-list li{flex:none;width:156px;scroll-snap-align:start}
+.mp{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;text-decoration:none;color:var(--ink)}
+.mp-c{position:relative;display:grid;place-items:center;width:132px;height:132px;margin-bottom:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f1ecf8,#ddd3ea);box-shadow:0 0 0 4px var(--surface),0 0 0 5px var(--line-2),0 14px 30px -14px rgba(60,29,102,.4);transition:transform .2s,box-shadow .2s}
+.mp-c .ini{font:500 40px/1 var(--serif);color:var(--purple-ink)}
+.mp-new{position:absolute;bottom:2px;right:6px;padding:3px 9px;border-radius:999px;background:var(--teal);color:#fff;font-size:13px;line-height:16px;font-weight:600;box-shadow:0 0 0 3px var(--surface)}
+.mp b{font:500 17px/23px var(--serif)}
+.mp-r{font-size:13px;line-height:18px;color:var(--muted)}
+.mp-i{font-size:13px;line-height:18px;color:var(--teal);font-weight:500}
+.mp:hover b{color:var(--purple);text-decoration:underline}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){.mp:hover .mp-c{transform:translateY(-3px);box-shadow:0 0 0 4px var(--surface),0 0 0 5px var(--purple),0 18px 34px -14px rgba(60,29,102,.5)}}
+@media (prefers-reduced-motion:no-preference){.mp-list{scroll-behavior:smooth}}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -794,6 +811,12 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .yr{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:640px){
+  .meet{margin-bottom:36px;padding-bottom:32px}
+  .meet-h h3{font-size:24px;line-height:30px}
+  .mp-list{gap:18px}
+  .mp-list li{width:118px}
+  .mp-c{width:100px;height:100px}
+  .mp-c .ini{font-size:30px}
   .fund .pfy h3{font-size:24px;line-height:30px}
   .pfy-badge{width:40px;height:40px}
   .nm-list{grid-template-columns:minmax(0,1fr)}
@@ -967,7 +990,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing resources</a></li><li><a href="#com-h" data-t="com-h">Achievements and conversations</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
+<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing resources</a></li><li><a href="#com-h" data-t="com-h">Community</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
@@ -1273,9 +1296,15 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
     <section class="sec" aria-labelledby="com-h">
       <div class="sheet sheet-sec">
       <header class="sh">
-        <h2 id="com-h">Achievements and conversations</h2>
-        <p>Members’ achievements, requests for collaborators, and conversations.</p>
+        <h2 id="com-h">Community</h2>
+        <p>Meet members, celebrate their work, and ask for input.</p>
       </header>
+      <div class="meet" role="region" aria-labelledby="meet-h">
+        <div class="meet-h"><div><h3 id="meet-h">Meet the community</h3><p class="meet-sub">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p></div>
+          <div class="lu-ctl"><a class="t3" href="#">Member directory</a><button type="button" class="arrow mp-arrow" data-dir="-1" aria-label="Previous members" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow mp-arrow" data-dir="1" aria-label="Next members"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
+        </div>
+        <ol class="mp-list"><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Kira Bauer, to come"><span class="ini">KB</span><span class="mp-new">New</span></span><b>Kira Bauer</b><span class="mp-r">Graduate student, Psychological Sciences</span><span class="mp-i">Attention, eye tracking</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Nadia Ahmed, to come"><span class="ini">NA</span><span class="mp-new">New</span></span><b>Nadia Ahmed</b><span class="mp-r">Graduate student, Kinesiology</span><span class="mp-i">Motor learning, EEG</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Omar Mendes, to come"><span class="ini">OM</span><span class="mp-new">New</span></span><b>Omar Mendes</b><span class="mp-r">Graduate student, Biology</span><span class="mp-i">Sleep, rodent behavior</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Maya Singh, to come"><span class="ini">MS</span></span><b>Dr. Maya Singh</b><span class="mp-r">Cognitive Neuroscience Core</span><span class="mp-i">Working memory, aging</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. David Osei, to come"><span class="ini">DO</span></span><b>Dr. David Osei</b><span class="mp-r">Pilot project alumnus</span><span class="mp-i">Aging, cognition</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Wei Zhang, to come"><span class="ini">WZ</span></span><b>Dr. Wei Zhang</b><span class="mp-r">Neuroinformatics Core</span><span class="mp-i">Data pipelines, imaging</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Jordan Lee, to come"><span class="ini">JL</span></span><b>Dr. Jordan Lee</b><span class="mp-r">Investigator</span><span class="mp-i">Sleep EEG</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Tom Brandt, to come"><span class="ini">TB</span></span><b>Tom Brandt</b><span class="mp-r">Behavioral Neuroscience Core</span><span class="mp-i">Electrophysiology</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Rosa García, to come"><span class="ini">RG</span></span><b>Dr. Rosa García</b><span class="mp-r">Investigator</span><span class="mp-i">Imaging, computing</span></a></li><li><a class="mp" href="#"><span class="mp-c" role="img" aria-label="Headshot of Dr. Elena Voss, to come"><span class="ini">EV</span></span><b>Dr. Elena Voss</b><span class="mp-r">Mentor</span><span class="mp-i">Memory, plasticity</span></a></li></ol>
+      </div>
       <div class="g">
         <div class="ach">
           <h3>Recent achievements</h3>
@@ -1300,7 +1329,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         </div>
       </div>
       </div>
-      <footer class="sf"><a class="btn" href="#">Visit the community</a><details class="wel"><summary><span class="faces" aria-hidden="true"><span>KB</span><span>NA</span><span>OM</span></span><span class="wel-t">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</span><span class="wel-more">Meet them</span></summary><ul class="nm-list"><li><a class="nm" href="#"><span class="nm-pic" role="img" aria-label="Headshot of Kira Bauer, to come"><span class="pl">Headshot to come</span><span class="ini">KB</span></span><b>Kira Bauer</b><span class="meta">Graduate student, Psychological Sciences</span><span class="nm-tags"><span class="chip">Attention</span><span class="chip">Eye tracking</span></span><span class="nm-go">View profile</span></a></li><li><a class="nm" href="#"><span class="nm-pic" role="img" aria-label="Headshot of Nadia Ahmed, to come"><span class="pl">Headshot to come</span><span class="ini">NA</span></span><b>Nadia Ahmed</b><span class="meta">Graduate student, Kinesiology</span><span class="nm-tags"><span class="chip">Motor learning</span><span class="chip">EEG</span></span><span class="nm-go">View profile</span></a></li><li><a class="nm" href="#"><span class="nm-pic" role="img" aria-label="Headshot of Omar Mendes, to come"><span class="pl">Headshot to come</span><span class="ini">OM</span></span><b>Omar Mendes</b><span class="meta">Graduate student, Biology</span><span class="nm-tags"><span class="chip">Sleep</span><span class="chip">Rodent behavior</span></span><span class="nm-go">View profile</span></a></li></ul></details></footer>
+      <footer class="sf"><a class="btn" href="#">Visit the community</a></footer>
     </section>
 
     <footer class="foot">
@@ -1407,6 +1436,10 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   try{if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){var fd=document.querySelector('.fund');fd.classList.add('grow-wait');var gt;new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){clearTimeout(gt);gt=setTimeout(function(){fd.classList.add('grown');},900);}else clearTimeout(gt);});},{threshold:.35}).observe(fd);}}catch(e){}
 
   try{var ask=document.querySelector('.ask');ask.addEventListener('submit',function(e){e.preventDefault();var t=document.getElementById('ask-q'),m=ask.querySelector('.ask-msg');m.textContent=t.value.trim()?'In the live Hub this would open a draft thread. Posting isn’t connected in this prototype.':'Write your question first.';});}catch(e){}
+
+  try{var ml=document.querySelector('.mp-list'),ma=document.querySelectorAll('.mp-arrow');function mupd(){var mx=ml.scrollWidth-ml.clientWidth;ma[0].setAttribute('aria-disabled',ml.scrollLeft<=2);ma[1].setAttribute('aria-disabled',ml.scrollLeft>=mx-2);}
+    ma.forEach(function(b){b.addEventListener('click',function(){if(b.getAttribute('aria-disabled')==='true')return;ml.scrollBy({left:ml.clientWidth*0.8*+b.dataset.dir,behavior:still?'auto':'smooth'});});});
+    ml.addEventListener('scroll',function(){clearTimeout(ml._t);ml._t=setTimeout(mupd,80);},{passive:true});addEventListener('resize',mupd);mupd();}catch(e){}
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
