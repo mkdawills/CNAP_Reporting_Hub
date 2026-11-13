@@ -361,7 +361,7 @@ section .lineup li{width:20%}
 .sheet-sec .sh::before{display:none}
 .otp{display:none}
 @media (min-width:1840px){
-  .otp{display:block;position:fixed;z-index:5;top:124px;left:max(20px,calc(50vw - 680px - 232px));width:212px;box-sizing:border-box;padding:20px 20px 18px;border-radius:8px;background:radial-gradient(130% 80% at 0% 0%,#ffffff 0%,#fbf9fe 55%,#f4effa 100%);box-shadow:0 0 0 1px rgba(81,40,136,.07),0 18px 48px -16px rgba(81,40,136,.32),0 0 70px -24px rgba(140,100,200,.4)}
+  .otp{display:block;position:fixed;z-index:5;top:124px;left:max(20px,calc(50vw - 680px - 232px));width:220px;box-sizing:border-box;padding:20px 20px 18px;border-radius:8px;background:radial-gradient(130% 80% at 0% 0%,#ffffff 0%,#fbf9fe 55%,#f4effa 100%);box-shadow:0 0 0 1px rgba(81,40,136,.07),0 18px 48px -16px rgba(81,40,136,.32),0 0 70px -24px rgba(140,100,200,.4)}
 }
 .otp-h{font-size:13px;line-height:18px;font-weight:600;color:var(--muted);padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:6px}
 .otp ol{display:flex;flex-direction:column}
@@ -375,7 +375,7 @@ section .lineup li{width:20%}
 .greet .line a:focus-visible{outline-color:var(--greet-ink)}
 .term-a{color:var(--greet-muted);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--greet-muted) 40%,transparent);text-underline-offset:4px}
 .term-a:hover{color:var(--greet-ink)}
-.otp-act{margin-top:18px;width:100%;padding:0 10px;white-space:nowrap;font-size:14px}
+.otp-act{margin-top:18px;width:100%;padding:0 6px;white-space:nowrap;font-size:14px;letter-spacing:-.01em}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -830,7 +830,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="On this page"><p class="otp-h">On this page</p><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#com-h" data-t="com-h">Achievements and conversations</a></li></ol><a class="btn otp-act" href="#">Start a conversation</a></nav>
+<nav class="otp" aria-label="On this page"><p class="otp-h">On this page</p><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#com-h" data-t="com-h">Achievements and conversations</a></li></ol><a class="btn otp-act" href="#">Start a conversation thread</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
@@ -1141,7 +1141,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · Seeking: sleep EEG</span></a>
           <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · Behavioral Neuroscience Core</span></a>
           <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Seeking: high-performance computing</span></a>
-          <div class="talk-act"><a class="btn" href="#">Start a conversation</a></div>
+          <div class="talk-act"><a class="btn" href="#">Start a conversation thread</a></div>
         </div>
       </div>
       </div>
