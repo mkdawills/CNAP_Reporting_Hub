@@ -156,7 +156,7 @@ img{max-width:100%;display:block}
 .sh::before{content:"";position:absolute;left:0;top:-1px;width:40px;height:2px;background:var(--ink)}
 .sh h2{font:500 44px/50px var(--serif);letter-spacing:-.02em;color:var(--ink);text-wrap:balance}
 .sh p{margin-top:12px;font-size:18px;line-height:28px;color:var(--muted);max-width:56ch}
-.sf{margin-top:40px;padding-top:0;border-top:0;display:flex;align-items:center;gap:12px 24px;flex-wrap:wrap}
+.sf{margin-top:40px;padding-top:0;border-top:0;display:flex;align-items:flex-start;gap:12px 24px;flex-wrap:wrap}
 .sf .meta{font-size:15px;line-height:22px}
 
 /* feature */
@@ -409,6 +409,24 @@ section .lineup li{width:20%}
 .reel-band .sh{border-top:0;padding-top:0}
 .reel-band .sh::before{display:none}
 .reel-band + .wrap > .sec:first-child{padding-top:calc(var(--sec) - 48px)}
+details.wel{flex:1 1 520px;min-width:0}
+.wel summary{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:44px;cursor:pointer;list-style:none}
+.wel summary::-webkit-details-marker{display:none}
+.wel-t{font-size:15px;line-height:22px;color:var(--ink-2)}
+.wel-more{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:var(--purple);text-decoration:underline;text-decoration-color:rgba(81,40,136,.35);text-underline-offset:3px}
+.wel-more::after{content:"";width:7px;height:7px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg) translateY(-2px)}
+.wel[open] .wel-more::after{transform:rotate(-135deg) translateY(-1px)}
+.nm-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:20px}
+.nm{display:flex;flex-direction:column;gap:4px;padding:16px;border-radius:6px;background:var(--surface);text-decoration:none;color:var(--ink);box-shadow:0 1px 2px rgba(29,27,33,.05),0 12px 28px -16px rgba(29,27,33,.2)}
+.nm-pic{display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1;padding:12px;margin-bottom:10px;border-radius:4px;background:#e8e2ef;color:var(--purple-ink)}
+.nm-pic .pl{font-size:13px;line-height:17px;font-weight:500}
+.nm-pic .ini{font:500 64px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end}
+.nm b{font:500 20px/26px var(--serif)}
+.nm-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.nm-go{margin-top:12px;font-size:15px;font-weight:600;color:var(--purple)}
+.nm:hover .nm-go{text-decoration:underline}
+.talk-note{margin-top:auto;padding-top:16px;font-size:14px;line-height:20px;color:var(--muted)}
+.talk .talk-act{margin-top:12px;display:flex;align-items:center;gap:8px 20px;flex-wrap:wrap}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -552,9 +570,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:var(--surface);color:var(--ink-2)}
 .talk b{font-size:15px;line-height:22px;font-weight:600}
 .talk a.conv:hover b{color:var(--purple);text-decoration:underline}
-.talk-act{margin-top:auto;padding-top:20px;border-top:1px solid var(--line)}
-.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.wel .meta{font-size:15px;color:var(--ink-2)}
+.talk-act{padding-top:16px;border-top:1px solid var(--line)}
+span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.wel .nm .meta{font-size:14px;color:var(--muted)}
 .welcome-row{grid-column:1 / span 12;margin-top:56px;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .faces{display:flex}
 .faces span{width:34px;height:34px;border-radius:999px;border:2px solid var(--paper);margin-left:-8px;display:grid;place-items:center;font-size:13px;font-weight:600;background:#e8e2ef;color:var(--purple-ink)}
@@ -705,6 +723,11 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .yr{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:640px){
+  .nm-list{grid-template-columns:minmax(0,1fr)}
+  .nm{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:14px}
+  .nm-pic{grid-row:1 / span 5;margin:0}
+  .nm-pic .pl{display:none}
+  .nm-pic .ini{font-size:34px}
   .ach > a.ach-lead{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
   .ach-pic{grid-column:1;grid-row:auto;max-width:200px;margin-bottom:8px}
   .ach-pic .ini{font-size:56px}
@@ -1186,7 +1209,8 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · Seeking: sleep EEG</span></a>
           <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · Behavioral Neuroscience Core</span></a>
           <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Seeking: high-performance computing</span></a>
-          <div class="talk-act"><a class="btn" href="#">Start a conversation thread</a></div>
+          <p class="talk-note">Showing the 3 most active of 14 open threads.</p>
+          <div class="talk-act"><a class="btn" href="#">Start a conversation thread</a><a class="t3" href="#">See all 14 threads</a></div>
         </div>
         <div class="ach-row">
             <a href="#"><span class="who-av" aria-hidden="true">DO</span><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
@@ -1194,7 +1218,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
         </div>
       </div>
       </div>
-      <footer class="sf"><a class="btn" href="#">Visit the community</a><span class="wel"><span class="faces" aria-hidden="true"><span>KB</span><span>NA</span><span>OM</span></span><p class="meta">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p></span></footer>
+      <footer class="sf"><a class="btn" href="#">Visit the community</a><details class="wel"><summary><span class="faces" aria-hidden="true"><span>KB</span><span>NA</span><span>OM</span></span><span class="wel-t">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</span><span class="wel-more">Meet them</span></summary><ul class="nm-list"><li><a class="nm" href="#"><span class="nm-pic" role="img" aria-label="Headshot of Kira Bauer, to come"><span class="pl">Headshot to come</span><span class="ini">KB</span></span><b>Kira Bauer</b><span class="meta">Graduate student, Psychological Sciences</span><span class="nm-tags"><span class="chip">Attention</span><span class="chip">Eye tracking</span></span><span class="nm-go">View profile</span></a></li><li><a class="nm" href="#"><span class="nm-pic" role="img" aria-label="Headshot of Nadia Ahmed, to come"><span class="pl">Headshot to come</span><span class="ini">NA</span></span><b>Nadia Ahmed</b><span class="meta">Graduate student, Kinesiology</span><span class="nm-tags"><span class="chip">Motor learning</span><span class="chip">EEG</span></span><span class="nm-go">View profile</span></a></li><li><a class="nm" href="#"><span class="nm-pic" role="img" aria-label="Headshot of Omar Mendes, to come"><span class="pl">Headshot to come</span><span class="ini">OM</span></span><b>Omar Mendes</b><span class="meta">Graduate student, Biology</span><span class="nm-tags"><span class="chip">Sleep</span><span class="chip">Rodent behavior</span></span><span class="nm-go">View profile</span></a></li></ul></details></footer>
     </section>
 
     <footer class="foot">
