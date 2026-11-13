@@ -181,6 +181,19 @@ tbody tr:hover td{background:#f6f4f0}
     </div>
   </section>
 
+  <section class="sec" aria-labelledby="rs">
+    <header><h2 id="rs">Breakpoints, motion, and the gallery</h2><p>Four layouts, tested at 1440, 1280, 1024, 768, 390, 360, and 320 pixels. Nothing scrolls sideways at any of them.</p></header>
+    <div style="display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:14px 28px;max-width:860px">
+      <p class="lab">Above 1,180</p><p class="meta">Full header with six destinations. “Your week” is four columns, with the intro beside the items.</p>
+      <p class="lab">981 to 1,180</p><p class="meta">Search becomes an icon. The “Your week” intro becomes a header row above three item columns, so no column is narrower than 280 pixels.</p>
+      <p class="lab">980 and below</p><p class="meta">The bottom tab bar replaces the header links, so there’s always primary navigation. The page reserves 64 pixels plus the device’s safe area under the content, and scrolling to a focused element leaves 84 pixels clear above the bar. “Your week” becomes a list: the most urgent item opens in full, and the rest show a marker and a title on one tap target with a chevron.</p>
+      <p class="lab">640 and below</p><p class="meta">One column with 20-pixel margins. Lower sections show their two most useful items, with a link to the rest.</p>
+      <p class="lab">Motion</p><p class="meta">The greeting and the pathway lines draw in once, in about a second, and then stay still. Hovers change color and outline only, except a 2 percent zoom on gallery photographs. With reduced motion turned on, nothing moves or fades.</p>
+      <p class="lab">Gallery</p><p class="meta">One lead photograph across eight columns at 3 to 2, and two supporting photographs stacked in four columns. On phones, the lead runs edge to edge at 4 to 3 and the two supporting photographs sit side by side as squares. Nothing plays on its own, every photograph is a link with its caption as the name, and placeholders stay labeled until a permitted photograph replaces them.</p>
+      <p class="lab">Type floor</p><p class="meta">Reading text is at least 14 pixels. Tags, tab labels, initials, and counts use 13. Nothing is smaller.</p>
+    </div>
+  </section>
+
   <section class="sec" aria-labelledby="st">
     <header><h2 id="st">Status and type markers</h2><p>Every status pairs a color with a word, and type markers add an icon. Nothing depends on color alone.</p></header>
     <div style="display:flex;flex-direction:column;gap:18px">

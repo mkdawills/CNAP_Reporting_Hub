@@ -23,6 +23,7 @@
 :root[data-look="aubergine"]{--paper:#faf9f8;--band:#f1eef4;--line:#e4e0e8;--line-2:#d2ccd9;--greet-bg:#22132f;--greet-ink:#f6f2fa;--greet-muted:#cbbfdb;--fiber:#c9a8f0}
 :root[data-look="mist"]{--paper:#f9fafb;--band:#eef1f4;--line:#e0e4e9;--line-2:#cbd2da}
 *{box-sizing:border-box}
+html{scroll-padding-top:96px}
 body{background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans);font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased;margin:0}
 h1,h2,h3,p,figure,ul,ol{margin:0}
 ul,ol{padding:0;list-style:none}
@@ -78,7 +79,7 @@ img{max-width:100%;display:block}
 .only-phone{display:none}
 
 
-/* greeting moment: one quiet line, with slow nerve-fiber curves drifting behind it */
+/* greeting moment: one quiet line, with nerve-fiber curves that draw in once and then stay still */
 .greet{position:relative;overflow:hidden;background:var(--greet-bg,var(--paper));border-bottom:1px solid var(--line)}
 .greet .wrap{position:relative;z-index:1;padding-top:64px;padding-bottom:60px}
 .greet .when{font-size:15px;line-height:22px;color:var(--greet-muted,var(--muted))}
@@ -94,13 +95,10 @@ img{max-width:100%;display:block}
   .fibers path{stroke-dasharray:1600;stroke-dashoffset:1600;animation:draw 3.2s cubic-bezier(.3,.6,.2,1) forwards}
   .fibers path:nth-child(2){animation-delay:.25s}.fibers path:nth-child(3){animation-delay:.5s}.fibers path:nth-child(4){animation-delay:.75s}.fibers path:nth-child(5){animation-delay:1s}
   .fibers circle{opacity:0;animation:fade 1.2s ease 2.2s forwards}
-  .drift{animation:drift 26s ease-in-out 3s infinite alternate}
-  .drift.b{animation-duration:34s;animation-delay:3.4s}
 }
 @keyframes rise{to{opacity:1;transform:none}}
 @keyframes draw{to{stroke-dashoffset:0}}
 @keyframes fade{to{opacity:.55}}
-@keyframes drift{from{transform:translate(0,0)}to{transform:translate(-28px,10px)}}
 /* personal band */
 .mine{background:var(--band);border-bottom:1px solid var(--line)}
 .brief{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto auto 1fr auto;column-gap:var(--gap);padding-block:36px 40px}
@@ -116,6 +114,10 @@ img{max-width:100%;display:block}
 .bi .body{display:flex;flex-direction:column;gap:12px}
 .bi p{font-size:15px;line-height:23px;color:var(--ink-2)}
 .bi .roles{color:var(--ink-2)}
+.more-roles summary{display:inline-flex;align-items:center;gap:6px;min-height:32px;cursor:pointer;font-size:15px;font-weight:500;color:var(--purple);list-style:none}
+.more-roles summary::-webkit-details-marker{display:none}
+.more-roles summary::after{content:"";width:7px;height:7px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg) translateY(-2px)}
+.more-roles[open] summary::after{transform:rotate(-135deg) translateY(-1px)}
 .bi .act{align-self:end;padding-top:8px;display:flex;align-items:center;min-height:44px}
 .t3{display:inline-flex;align-items:center;min-height:44px;font-weight:500;font-size:15px;color:var(--purple);text-decoration:underline;text-decoration-color:rgba(81,40,136,.35);text-underline-offset:4px}
 .t3:hover{text-decoration-color:currentColor;color:var(--purple-ink)}
@@ -134,7 +136,9 @@ img{max-width:100%;display:block}
 
 /* feature */
 .feat{align-items:stretch}
-.feat .pic{grid-column:1 / span 7;align-self:start;position:relative;border-radius:4px;overflow:hidden;background:#1a1024;aspect-ratio:16/10}
+.feat .pic-wrap{grid-column:1 / span 7;align-self:start;margin:0;display:flex;flex-direction:column;gap:10px}
+.feat .pic{position:relative;border-radius:4px;overflow:hidden;background:#1a1024;aspect-ratio:16/10}
+.credit{font-size:14px;line-height:20px;color:var(--muted)}
 .feat .pic img{width:100%;height:100%;object-fit:cover;object-position:60% 45%}
 .cap{position:absolute;left:14px;bottom:14px;font-size:13px;line-height:17px;font-weight:500;color:#fff;background:rgba(20,12,30,.66);padding:5px 9px;border-radius:4px}
 .feat .txt{grid-column:8 / span 5;display:flex;flex-direction:column;gap:16px;min-width:0}
@@ -181,28 +185,29 @@ img{max-width:100%;display:block}
 .ev .t{font-size:14px;line-height:22px;color:var(--ink-2);white-space:nowrap}
 .ev b{display:block;font-size:15px;line-height:22px;font-weight:500}
 .ev:hover b{color:var(--purple);text-decoration:underline}
-.ev .kind{font-size:13px;line-height:18px}
+.ev .kind{font-size:14px;line-height:20px}
 .k-ns{color:var(--purple)} .k-you{color:var(--teal)} .k-due{color:var(--amber)} .k-cam{color:var(--ink-2)} .k-ctr{color:var(--purple)} .k-dev{color:var(--ink-2)}
 .agenda .more{border-top:1px solid var(--line);padding-top:12px;margin-top:2px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .quiet-note{background:var(--band);border-radius:4px;padding:20px 22px;display:flex;flex-direction:column;gap:6px}
 
-/* reel */
-.reel-band{background:var(--band);margin-top:var(--sec);padding:48px 0 52px;border-block:1px solid var(--line)}
+/* gallery: one dominant photograph and two supporting ones, at true photographic ratios */
+.reel-band{background:var(--band);margin-top:var(--sec);padding:52px 0 48px;border-block:1px solid var(--line)}
 .reel-band .sh{border-top:0;padding-top:0;margin-bottom:28px}
-.reel{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-left:max(40px,calc((100% - 1360px)/2 + 40px));padding-right:40px;scroll-padding-left:max(40px,calc((100% - 1360px)/2 + 40px))}
-.reel::-webkit-scrollbar{display:none}
-.shot{flex:none;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px}
-.shot .im{position:relative;height:420px;border-radius:4px;overflow:hidden;background:var(--line-2)}
-.shot .im img{width:100%;height:100%;object-fit:cover}
-.shot .tag{position:absolute;left:12px;top:12px;font-size:13px;line-height:17px;font-weight:500;color:var(--ink);background:rgba(250,249,247,.9);padding:5px 9px;border-radius:4px}
-.shot figcaption{font-size:15px;line-height:22px;color:var(--ink-2);max-width:46ch}
-.shot figcaption b{color:var(--ink);font-weight:600}
-.w3{width:630px}.w2{width:315px}.w4{width:472px}
-.arrows{display:flex;gap:8px}
-.arrow{width:42px;height:42px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);display:grid;place-items:center;color:var(--ink);cursor:pointer}
-.arrow:hover{background:var(--paper)}
-.arrow:disabled{opacity:.4;cursor:default}
-.reel-meta{font-size:14px;color:var(--muted)}
+.mosaic{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:1fr 1fr;column-gap:var(--gap);row-gap:24px}
+.ph{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);min-height:0;min-width:0}
+.ph.lead{grid-column:1 / span 8;grid-row:1 / span 2}
+.ph:not(.lead){grid-column:9 / span 4}
+.ph .im{position:relative;display:block;border-radius:4px;overflow:hidden;background:var(--line-2)}
+.ph.lead .im{aspect-ratio:3/2}
+.ph:not(.lead) .im{flex:1 1 0;min-height:0}
+.ph:not(.lead) .im img{position:absolute;inset:0}
+.ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){.ph:hover img{transform:scale(1.02)}}
+.ph .tag{position:absolute;left:12px;top:12px;font-size:13px;line-height:17px;font-weight:500;color:var(--ink);background:rgba(250,249,247,.92);padding:5px 9px;border-radius:4px}
+.cap2{display:flex;flex-direction:column;gap:2px;font-size:15px;line-height:22px;color:var(--ink-2)}
+.cap2 b{font:500 18px/24px var(--serif);color:var(--ink)}
+.ph:hover .cap2 b{color:var(--purple);text-decoration:underline}
+.gal-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;padding-top:18px;border-top:1px solid var(--line-2)}
 
 /* funding */
 .fund{grid-column:1 / span 8;min-width:0}
@@ -215,7 +220,8 @@ img{max-width:100%;display:block}
 a.opp:hover b{color:var(--purple);text-decoration:underline}
 .opp .side{text-align:right;font-size:14px;line-height:21px;color:var(--ink-2)}
 .opp .side strong{display:block;font-size:15px;font-weight:600;color:var(--ink)}
-.chk{display:block;margin-top:8px;color:var(--green);font-weight:500}
+.chk{display:inline-flex;align-items:center;gap:6px;margin-top:10px;color:var(--green);font-weight:500}
+.chk::before{content:"";width:9px;height:5px;border-left:1.8px solid currentColor;border-bottom:1.8px solid currentColor;transform:rotate(-45deg) translateY(-2px)}
 .news{margin-top:28px;border-top:1px solid var(--line);padding-top:16px}
 .news ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:8px}
 .news a{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink)}
@@ -235,12 +241,13 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 /* community */
 .ach{grid-column:1 / span 7;min-width:0}
 .ach h3,.talk h3{font:600 16px/22px var(--sans);margin-bottom:6px}
-.ach a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 20px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
-.ach .kind{grid-column:1}
-.ach b{grid-column:1;font:500 22px/30px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
+.ach a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:4px 18px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.ach .kind{grid-column:2}
+.ach .who-av{grid-column:1;grid-row:1 / span 3;width:48px;height:48px;border-radius:999px;display:grid;place-items:center;font:500 17px/1 var(--serif);background:#e8e2ef;color:var(--purple-ink)}
+.ach b{grid-column:2;font:500 22px/30px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
 .ach a:hover b{color:var(--purple);text-decoration:underline}
-.ach .meta{grid-column:1}
-.ach .when{grid-column:2;grid-row:1;font-size:14px;color:var(--muted);white-space:nowrap}
+.ach .meta{grid-column:2}
+.ach .when{grid-column:3;grid-row:1;font-size:14px;color:var(--muted);white-space:nowrap}
 .talk{grid-column:9 / span 4;min-width:0}
 .talk a.conv{display:grid;grid-template-columns:40px minmax(0,1fr);gap:2px 12px;padding:14px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:var(--band);color:var(--ink-2)}
@@ -248,7 +255,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .talk a.conv:hover b{color:var(--purple);text-decoration:underline}
 .welcome-row{grid-column:1 / span 12;margin-top:28px;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .faces{display:flex}
-.faces span{width:34px;height:34px;border-radius:999px;border:2px solid var(--paper);margin-left:-8px;display:grid;place-items:center;font-size:12px;font-weight:600;background:#e8e2ef;color:var(--purple-ink)}
+.faces span{width:34px;height:34px;border-radius:999px;border:2px solid var(--paper);margin-left:-8px;display:grid;place-items:center;font-size:13px;font-weight:600;background:#e8e2ef;color:var(--purple-ink)}
 .faces span:first-child{margin-left:0}
 
 /* footer */
@@ -262,44 +269,74 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .tabbar{display:none}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.reel{scroll-behavior:smooth}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0s!important;animation-duration:0s!important;animation-iteration-count:1!important}}
 
 /* narrower desktop */
 @media (max-width:1180px){
+  .brief{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto 1fr auto}
+  .bi.intro{grid-column:1 / -1;grid-row:1;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:20px;row-gap:4px;padding-bottom:22px;margin-bottom:24px;border-bottom:1px solid var(--line-2)}
+  .bi.intro .lab{order:3}
+  .bi.intro .body{flex:1 1 320px}
+  .bi.intro .act{padding-top:0;min-height:0;margin-left:auto}
+  .bi:not(.intro){grid-row:2 / span 4}
+  .bi.firstvis{padding-left:0;border-left:0}
+  .fibers{-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 35%,#000 80%);mask-image:linear-gradient(90deg,transparent 0%,transparent 35%,#000 80%)}
   .search{width:44px;padding:0;justify-content:center}.search .st,.search kbd{display:none}
   .nav a{padding:0 9px}.hdr .wrap{gap:20px}
 }
 /* tablet */
 @media (max-width:980px){
-  .nav{display:none}.only-phone{display:grid}
-  .brief{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto 1fr auto auto auto 1fr auto;row-gap:0}
-  .bi:nth-child(odd of :not([hidden])){padding-left:0;border-left:0}
-  .brief .bi{padding-bottom:28px}
-  .feat .pic,.feat .txt{grid-column:1 / -1}.feat .txt{margin-top:24px}
+  .nav,.search{display:none}
+  .only-phone{display:grid;place-items:center;width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);cursor:pointer}
+  .sh{grid-template-columns:minmax(0,1fr) auto;row-gap:6px}
+  .sh h2{grid-column:1}
+  .sh .r{grid-column:2;grid-row:1}
+  .sh p{grid-column:1 / -1;grid-row:2}
+  .fibers{-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 45%,#000 85%);mask-image:linear-gradient(90deg,transparent 0%,transparent 45%,#000 85%)}
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  html{scroll-padding-top:80px;scroll-padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(250,249,247,.97);border-top:1px solid var(--line);padding:4px max(6px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px));justify-content:space-around}
+  .tabbar a{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:62px;min-height:54px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none}
+  .tabbar a[aria-current="page"]{color:var(--purple)}
+  .tabbar .count{position:absolute;top:3px;left:calc(50% + 3px);min-width:20px;height:20px;font-size:13px;line-height:20px;padding:0 5px}
+  .feat .pic-wrap,.feat .txt{grid-column:1 / -1}.feat .txt{margin-top:24px}
   .people,.agenda,.fund,.proposal,.ach,.talk{grid-column:1 / -1}
   .agenda,.proposal,.talk{margin-top:40px}
+  .brief{display:block;padding-block:24px 8px}
+  .bi{display:flex;flex-direction:column;gap:8px;padding:20px 0;border-left:0;border-top:1px solid var(--line-2)}
+  .bi.intro{border-top:0;padding-top:0;display:flex;flex-direction:column;flex-wrap:nowrap;margin-bottom:0;border-bottom:0;padding-bottom:16px}
+  .bi.intro .body{flex:none}
+  .bi.intro .act{display:none}
+  .bi .act{padding-top:6px}
+  .bi h3 a{-webkit-line-clamp:4}
+  .mosaic{grid-template-rows:auto auto}
+  .bi.intro .lab{display:none}
+  .bi.intro .roles{font-size:14px;line-height:21px}
+  .bi.compact{position:relative;padding:14px 0;gap:4px}
+  .bi.compact .body,.bi.compact .act{display:none}
+  .bi.compact h3{padding-right:28px;font-size:17px;line-height:24px}
+  .bi.compact h3 a{-webkit-line-clamp:2}
+  .bi.compact h3 a::before{content:"";position:absolute;inset:0}
+  .bi.compact h3::after{content:"";position:absolute;right:6px;top:50%;width:8px;height:8px;border-right:1.8px solid var(--muted);border-top:1.8px solid var(--muted);transform:translateY(-50%) rotate(45deg)}
+  .bi .act{align-self:flex-start}
 }
 /* phone */
 @media (max-width:640px){
   :root{--gap:20px;--sec:56px;--side:max(20px,env(safe-area-inset-left,0px));--side-r:max(20px,env(safe-area-inset-right,0px))}
-  body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px))}
   .hdr .wrap{min-height:60px;gap:10px}
   .brand small{display:none}
   .search,.mywork{display:none}
-  .only-phone{display:grid;place-items:center;width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2)}
   .greet .wrap{padding-top:36px;padding-bottom:34px}
   .greet h1{font-size:38px;line-height:44px}
   .greet .line{font-size:16px;line-height:25px}
-  .fibers{-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 55%);mask-image:linear-gradient(180deg,transparent 0%,#000 55%);opacity:.7}
-  .brief{display:block;padding-block:24px 8px}
-  .bi{display:flex;flex-direction:column;gap:8px;padding:20px 0;border-left:0;border-top:1px solid var(--line-2)}
-  .bi.intro{border-top:0;padding-top:0}
-  .bi.intro .act{display:none}
-  .bi .act{padding-top:6px}
-  .bi h3 a{-webkit-line-clamp:4}
-  .bi .act{align-self:flex-start}
+  .fibers{inset:0 0 auto 0;height:118px;-webkit-mask-image:linear-gradient(90deg,transparent 35%,#000 85%);mask-image:linear-gradient(90deg,transparent 35%,#000 85%);opacity:.8}
+  .fund [data-unless="sparse"] > .opp:nth-child(3),.ach a:nth-of-type(3),.talk a.conv:nth-of-type(3),.also a:nth-child(2){display:none}
+  .stages span{display:none}
+  .stages a{padding:10px 0}
   .sh{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:20px}
   .sh .r{justify-self:auto}
-  .feat .pic{aspect-ratio:4/3;margin-inline:calc(var(--side) * -1);border-radius:0;width:auto}
+  .feat .pic{aspect-ratio:4/3;margin-inline:calc(var(--side) * -1);border-radius:0}
+  .credit{font-size:14px}
   .feat h3,.feat h3.long{font-size:28px;line-height:35px}
   .deck{font-size:17px;line-height:27px}
   .also b{font-size:17px}
@@ -310,11 +347,15 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .bio{display:none}
   .lineup ol{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:16px;margin-right:calc(var(--side-r) * -1);padding-right:20px;scrollbar-width:none}
   .lineup li{flex:none;width:68%;scroll-snap-align:start}
-  .reel{padding-left:20px;padding-right:20px;scroll-padding-left:20px;gap:12px}
-  .shot .im{height:300px}
-  .w3{width:86vw}.w2{width:64vw}.w4{width:78vw}
-  .reel-band .arrows{display:none}
-  .reel-band{padding:36px 0 40px}
+  .reel-band{padding:36px 0 36px}
+  .mosaic{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto;gap:20px 12px}
+  .ph.lead{grid-column:1 / -1;grid-row:auto}
+  .ph.lead .im{margin-inline:calc(var(--side) * -1);border-radius:0;aspect-ratio:4/3}
+  .ph:not(.lead){grid-column:auto}
+  .ph:not(.lead) .im{flex:none;aspect-ratio:1/1}
+  .ph:not(.lead) .cap2 span{display:none}
+  .cap2 b{font-size:16px;line-height:22px}
+  .gal-foot{margin-top:20px}
   .opp{grid-template-columns:60px minmax(0,1fr);gap:4px 14px}
   .opp .side{grid-column:2;text-align:left}
   .opp .days{font-size:28px;line-height:30px}
@@ -323,17 +364,14 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .news li a{padding:12px 0;border-top:1px solid var(--line)}
   .news li:first-child a{border-top:0}
   .ach b{font-size:19px;line-height:26px}
-  .ach a{grid-template-columns:minmax(0,1fr)}
-  .ach .when{grid-column:1;grid-row:auto}
+  .ach a{grid-template-columns:40px minmax(0,1fr)}
+  .ach .who-av{width:40px;height:40px;font-size:15px}
+  .ach .when{grid-column:2;grid-row:auto}
   .foot p{grid-column:1 / -1}
   .foot nav{grid-column:span 6!important}
   .proto{position:static;transform:none;display:block;border-bottom:1px solid var(--line);background:var(--paper)}
   .proto summary{writing-mode:horizontal-tb;transform:none;border:0;border-radius:0;background:transparent;padding:12px 20px;min-height:44px;font-size:13px}
   .proto .pp{width:auto;margin:0 20px 14px;box-shadow:none}
-  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(250,249,247,.97);border-top:1px solid var(--line);padding:4px max(6px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px));justify-content:space-around}
-  .tabbar a{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:62px;min-height:54px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none}
-  .tabbar a[aria-current="page"]{color:var(--purple)}
-  .tabbar .count{position:absolute;top:3px;left:calc(50% + 3px);min-width:18px;height:18px;font-size:11px;padding:0 5px}
 }
 </style>
 
@@ -351,6 +389,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     <option value="roles">Many roles, long request title</option>
     <option value="admin">Administrator who is also a member</option>
     <option value="sparse">Three photos, no funding matches</option>
+    <option value="returning">Returning after a month away</option>
   </select></label>
     <label for="look">Ground color<select id="look">
       <option value="warm">Warm paper, as approved</option>
@@ -381,12 +420,12 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 <main id="main">
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
-      <g class="drift">
+      <g>
         <path d="M380 300 C 620 250, 760 120, 980 140 S 1300 60, 1480 90" stroke-width="1.4" opacity=".22"/>
         <path d="M520 330 C 700 260, 860 220, 1040 230 S 1290 170, 1480 200" stroke-width="1.1" opacity=".16"/>
         <path d="M640 -10 C 760 80, 900 110, 1060 100 S 1280 150, 1480 130" stroke-width="1" opacity=".14"/>
       </g>
-      <g class="drift b">
+      <g>
         <path d="M820 330 C 900 250, 1000 200, 1120 190 S 1320 230, 1480 260" stroke-width="1.6" opacity=".12"/>
         <path d="M900 -10 C 980 70, 1080 120, 1200 118 S 1380 90, 1480 60" stroke-width="1.2" opacity=".18"/>
         <circle cx="980" cy="140" r="3.2"/><circle cx="1120" cy="190" r="2.6"/><circle cx="1200" cy="118" r="2.4"/><circle cx="1040" cy="230" r="2"/>
@@ -394,8 +433,16 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     </svg>
     <div class="wrap">
       <p class="when" id="when">Friday, November 13 · Grant Year 10</p>
-      <h1 id="hi"><span id="tod">Good morning</span>, Amara.</h1>
-      <p class="line" data-unless="clear quiet">Three things are waiting for you this week, and NeuroSync is on Tuesday.</p><p class="line" data-when="clear" hidden>Nothing is due this week. NeuroSync is on Tuesday, and a funding match is waiting.</p><p class="line" data-when="quiet" hidden>Three things are waiting for you this week. NeuroSync returns on November 24.</p>
+      <h1 id="hi" data-unless="returning"><span id="tod">Good morning</span>, Amara.</h1>
+      <h1 data-when="returning" hidden>Welcome back, Amara.</h1>
+      <p class="line" data-unless="clear quiet urgent roles admin sparse returning">Fall reporting closes in 17 days. On Tuesday, NeuroSync welcomes a speaker who studies sleep and memory, as you do.</p>
+      <p class="line" data-when="urgent" hidden>Two deadlines are close: Fall reporting closes Monday, and your NIH documents are due Thursday.</p>
+      <p class="line" data-when="clear" hidden>Your Fall reporting is complete. On Tuesday, NeuroSync welcomes a speaker who studies sleep and memory, as you do.</p>
+      <p class="line" data-when="quiet" hidden>Fall reporting closes in 17 days. NeuroSync takes a week off and returns on November 24.</p>
+      <p class="line" data-when="roles" hidden>Across your five roles, one deadline is coming: Fall reporting closes in 17 days.</p>
+      <p class="line" data-when="admin" hidden>38 of 61 members have submitted their Fall reports, and your own are done.</p>
+      <p class="line" data-when="sparse" hidden>Fall reporting closes in 17 days. Add your research interests, and the CNAP team will start picking funding for you.</p>
+      <p class="line" data-when="returning" hidden>Since your last visit on October 2, three papers citing CNAP were published, and a funding match was added for you.</p>
     </div>
   </section>
 
@@ -405,7 +452,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
         <div class="bi intro" role="listitem">
           <span class="lab">Most urgent first</span>
           <h2 id="wk">Your week</h2>
-          <div class="body"><p class="roles" data-unless="roles admin">Pilot Project Leader<br>Behavioral Neuroscience Core user<br>Mentored by Dr. Elena Voss</p><p class="roles" data-when="roles" hidden>Pilot Project Leader<br>Mentor to two pilot leaders<br>Behavioral Neuroscience Core user<br>Neuroinformatics Core user<br>NeuroSync planning group</p><p class="roles" data-when="admin" hidden>Center administrator<br>Cognitive Neuroscience Core user<br>NeuroSync planning group</p></div>
+          <div class="body"><p class="roles" data-unless="roles admin">Pilot Project Leader<br>Behavioral Neuroscience Core user<br>Mentored by Dr. Elena Voss</p><div data-when="roles" hidden><p class="roles">Pilot Project Leader<br>Mentor to two pilot leaders</p><details class="more-roles"><summary>3 more roles</summary><p class="roles">Behavioral Neuroscience Core user<br>Neuroinformatics Core user<br>NeuroSync planning group</p></details></div><p class="roles" data-when="admin" hidden>Center administrator<br>Cognitive Neuroscience Core user<br>NeuroSync planning group</p></div>
           <div class="act"><a class="t3" href="#">All of my work</a></div>
         </div>
         <article class="bi" role="listitem" data-unless="clear urgent admin">
@@ -474,7 +521,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
         <div class="r"><a class="lnk" href="#">All stories</a></div>
       </div>
       <article class="g feat">
-        <div class="pic"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"><span class="cap">Illustration, not research data</span></div>
+        <figure class="pic-wrap"><div class="pic"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"></div><figcaption class="credit">Illustration made for this prototype. It is not research data, and a project image will replace it.</figcaption></figure>
         <div class="txt">
           <p class="eyebrow">Pilot project · Neurobiology of Learning and Memory</p>
           <h3 data-unless="long"><a href="#">What a night of sleep does to a new memory</a></h3>
@@ -552,15 +599,17 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
       <div class="g sh">
         <h2 id="ph-h">The 2026 Site Visit</h2>
         <p>May 27 and 28 in Manhattan, Kansas: core tours, the keynote, project presentations, and the poster session.</p>
-        <div class="r"><div class="arrows"><button class="arrow" type="button" aria-label="Previous photos" data-dir="-1"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8.5 3L4.5 7l4 4"/></svg></button><button class="arrow" type="button" aria-label="Next photos" data-dir="1"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5.5 3l4 4-4 4"/></svg></button></div><a class="lnk" href="#">Full gallery</a></div>
       </div>
-    </div>
-    <div class="reel" id="reel" tabindex="0" role="region" aria-label="Site Visit photos. Use the arrow buttons, or scroll or swipe sideways.">
-      <figure class="shot w3"><div class="im"><img src="img/reel-1.jpg" alt="Placeholder for a photo of the poster session" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Poster session.</b> Students and investigators present their work on day 2.</figcaption></figure>
-      <figure class="shot w2"><div class="im"><img src="img/reel-2.jpg" alt="Placeholder for a photo of a core tour" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Core tours.</b> Visitors see the cores at work on day 1.</figcaption></figure>
-      <figure class="shot w4"><div class="im"><img src="img/reel-3.jpg" alt="Placeholder for a photo of the keynote address" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Keynote address.</b> The evening talk before the banquet.</figcaption></figure>
-      <figure class="shot w2" data-unless="sparse"><div class="im"><img src="img/reel-4.jpg" alt="Placeholder for a photo of the banquet" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Banquet.</b> The Center together for dinner.</figcaption></figure>
-      <figure class="shot w3" data-unless="sparse"><div class="im"><img src="img/reel-5.jpg" alt="Placeholder for a photo of project presentations" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Project presentations.</b> Short updates from every funded project.</figcaption></figure>
+      <div class="mosaic" id="reel" tabindex="-1">
+        <a class="ph lead" href="#"><span class="im"><img src="img/reel-1.jpg" alt="Placeholder for a photo of the poster session" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Poster session</b><span>Students and investigators present their work. Day 2, May 28.</span></span></a>
+        <a class="ph" href="#"><span class="im"><img src="img/reel-2.jpg" alt="Placeholder for a photo of a core tour" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Core tours</b><span>Day 1, May 27.</span></span></a>
+        <a class="ph" href="#"><span class="im"><img src="img/reel-3.jpg" alt="Placeholder for a photo of the keynote address" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Keynote address</b><span>Day 1, before the banquet.</span></span></a>
+      </div>
+      <div class="gal-foot">
+        <p class="meta" data-unless="sparse">Showing 3 of 48 photographs. The rest include the banquet and every project presentation.</p>
+        <p class="meta" data-when="sparse" hidden>All 3 photographs from this event.</p>
+        <a class="btn" href="#">View the full gallery</a>
+      </div>
     </div>
   </section>
 
@@ -568,15 +617,15 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     <section class="sec" aria-labelledby="fund-h">
       <div class="g sh">
         <h2 id="fund-h">Funding and proposals</h2>
-        <p>Opportunities the CNAP team picked for you, and help at each stage of a proposal.</p>
+        <p>Opportunities the CNAP team picked for your research, and help at each stage of a proposal. Eligibility is confirmed with each sponsor.</p>
         <div class="r"><a class="lnk" href="#">All funding</a></div>
       </div>
       <div class="g">
         <div class="fund">
           <h3>Picked for you</h3>
           <div data-unless="sparse">
-            <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Checked November 9</span></span></a>
-            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Checked November 9</span></span></a>
+            <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Details checked November 9</span></span></a>
+            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Details checked November 9</span></span></a>
             <a class="opp" href="#"><span class="days num">7<small>days left</small></span><span><span class="spon">CNAP · Pilot program</span><b>Year 11 pilot project letters of intent</b><span class="why">Open to all CNAP faculty. You could pass it on to a colleague.</span></span><span class="side"><strong class="num">November 20, 2026</strong>Center funding</span></a>
           </div>
           <div class="empty" data-when="sparse" hidden>
@@ -594,7 +643,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           </div>
         </div>
         <aside class="proposal" aria-labelledby="prop-h">
-          <h3 id="prop-h">Proposal support</h3>
+          <h3 id="prop-h">From idea to award</h3>
           <nav class="stages" aria-label="Grant writing resources by stage">
             <a href="#"><b>Find funding</b><span>Sponsors, searches, and eligibility</span></a>
             <a href="#"><b>Plan the proposal</b><span>Timelines, aims, and internal review</span></a>
@@ -617,15 +666,15 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
       <div class="g">
         <div class="ach">
           <h3>Recent achievements</h3>
-          <a href="#"><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
-          <a href="#"><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
-          <a href="#"><span class="kind" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>Invited talk</span><b>Neuroinformatics Core pipeline presented at a national meeting</b><span class="meta">Dr. Wei Zhang · Neuroinformatics Core</span><span class="when">October 30</span></a>
+          <a href="#"><span class="who-av" aria-hidden="true">MS</span><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
+          <a href="#"><span class="who-av" aria-hidden="true">DO</span><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
+          <a href="#"><span class="who-av" aria-hidden="true">WZ</span><span class="kind" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>Invited talk</span><b>Neuroinformatics Core pipeline presented at a national meeting</b><span class="meta">Dr. Wei Zhang · Neuroinformatics Core</span><span class="when">October 30</span></a>
         </div>
         <div class="talk">
           <h3>Conversations</h3>
-          <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · Collaborations</span></a>
+          <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · Seeking: sleep EEG</span></a>
           <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · Behavioral Neuroscience Core</span></a>
-          <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Neuroinformatics Core</span></a>
+          <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Seeking: high-performance computing</span></a>
           <div style="padding-top:16px;border-top:1px solid var(--line)"><a class="btn" href="#">Start a conversation</a></div>
         </div>
         <div class="welcome-row"><span class="faces" aria-hidden="true"><span>KB</span><span>NA</span><span>OM</span></span><p style="font-size:15px;color:var(--ink-2)">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p><a class="lnk" href="#" style="margin-left:auto">Member directory</a></div>
@@ -653,17 +702,10 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 <script>
 (function(){
   try{var h=new Date().getHours();document.getElementById('tod').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';}catch(e){}
-  var reel=document.getElementById('reel');
-  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  document.querySelectorAll('.arrow').forEach(function(b){
-    b.addEventListener('click',function(){reel.scrollBy({left:reel.clientWidth*0.75*Number(b.dataset.dir),behavior:reduce?'auto':'smooth'});});
-  });
-  function arrows(){var a=document.querySelectorAll('.arrow');if(!a.length)return;a[0].disabled=reel.scrollLeft<4;a[1].disabled=reel.scrollLeft+reel.clientWidth>=reel.scrollWidth-4;}
-  reel.addEventListener('scroll',arrows,{passive:true});addEventListener('resize',arrows);
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
-    arrows();
+    var first=true;document.querySelectorAll('.brief .bi:not(.intro)').forEach(function(e){e.classList.remove('compact','firstvis');if(e.hidden)return;if(first){first=false;e.classList.add('firstvis');}else{e.classList.add('compact');}});
   }
   var look=document.getElementById('look');
   look.addEventListener('change',function(){document.documentElement.dataset.look=look.value;});
