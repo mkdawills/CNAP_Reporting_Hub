@@ -603,6 +603,38 @@ details.wel{flex:1 1 520px;min-width:0}
 @media (max-width:640px){.ach > h3{font-size:24px;line-height:30px}}
 .sf .t3{min-height:44px}
 .sf .meta{margin:0}
+.tk-sheet{margin-top:24px;padding:44px 48px 40px}
+.tk-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 32px;flex-wrap:wrap;margin-bottom:36px}
+.tk-sheet .pw-h{font:500 34px/40px var(--serif);letter-spacing:-.015em;margin:0}
+.tk-lead{margin-top:8px;font-size:16px;line-height:25px;color:var(--ink-2);max-width:62ch}
+.tk-lead b{color:var(--amber);font-weight:600}
+.tk{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:24px}
+.tk::before{content:"";position:absolute;left:18px;right:18px;top:18px;height:2px;background:var(--line-2)}
+.tk::after{content:"";position:absolute;left:18px;top:18px;height:2px;width:calc((100% + 24px) * 2 / 6);background:var(--teal)}
+.tk-s{position:relative;display:flex;flex-direction:column;gap:6px;min-width:0;padding-top:52px}
+.tk-n{position:absolute;top:0;left:0;z-index:1;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--surface);border:2px solid var(--line-2);font:500 17px/1 var(--serif);color:var(--muted)}
+.tk-s:nth-child(-n+2) .tk-n{border-color:var(--teal);color:var(--teal)}
+.tk-s.now .tk-n{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 0 0 6px rgba(10,102,112,.14)}
+.tk-s h4{margin:0;font:600 16px/22px var(--sans);color:var(--ink);text-wrap:balance}
+.tk-d{font-size:14px;line-height:20px;color:var(--muted)}
+.tk-you{align-self:flex-start;margin-top:2px;padding:3px 10px;border-radius:999px;background:#e3f1f1;color:var(--teal);font-size:13px;line-height:17px;font-weight:600}
+.tk-r{display:flex;flex-direction:column;gap:2px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.tk-r a{display:flex;align-items:center;min-height:32px;font-size:14px;line-height:20px;font-weight:500;color:var(--purple);text-decoration:underline;text-decoration-color:rgba(81,40,136,.3);text-underline-offset:3px}
+.tk-s.now{padding-inline:14px;margin-inline:-14px;padding-bottom:14px;border-radius:8px;background:linear-gradient(180deg,rgba(227,241,241,.9),rgba(227,241,241,0) 85%)}
+.tk-s.now .tk-n{left:14px}
+@media (max-width:1180px){
+  .tk{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:36px}
+  .tk::before,.tk::after{display:none}
+}
+@media (max-width:640px){
+  .tk-sheet{padding:28px 20px;margin-inline:-8px}
+  .tk-sheet .pw-h{font-size:28px;line-height:34px}
+  .tk{grid-template-columns:minmax(0,1fr);row-gap:0}
+  .tk-s{padding:16px 0 16px 54px;border-top:1px solid var(--line)}
+  .tk-s .tk-n{top:14px}
+  .tk-s.now{margin-inline:-8px;padding-inline:62px 8px}
+  .tk-s.now .tk-n{left:8px}
+}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1378,11 +1410,9 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
           </ul>
         </div>
       </div>
-      <div class="sheet pw-sheet">
-        <div class="pw">
-          <h3 class="pw-h" id="pw-h">Proposal writing resources</h3>
-          <ul><li><a href="#">Specific Aims guide</a></li><li><a href="#">Biosketch template</a></li><li><a href="#">Budget justification</a></li><li><a href="#">Letters of support</a></li><li><a href="#">Internal review timeline</a></li><li><a href="#">Data management plan</a></li></ul>
-        </div>
+      <div class="sheet tk-sheet">
+        <div class="tk-head"><div><h3 class="pw-h" id="pw-h">Proposal writing toolkit</h3><p class="tk-lead">Your <b>R21 is due in 123 days.</b> Most people are drafting their Specific Aims by now, so stage 3 is highlighted below.</p></div><a class="t3" href="#">All proposal writing resources</a></div>
+        <ol class="tk"><li class="tk-s"><span class="tk-n num">1</span><h4>Find funding</h4><p class="tk-d">Sponsors, searches, and eligibility</p><ul class="tk-r"><li><a href="#">Funding search guide</a></li><li><a href="#">Eligibility checklist</a></li></ul></li><li class="tk-s"><span class="tk-n num">2</span><h4>Plan the proposal</h4><p class="tk-d">Timelines, aims, and internal review</p><ul class="tk-r"><li><a href="#">Internal review timeline</a></li><li><a href="#">Proposal planning calendar</a></li></ul></li><li class="tk-s now" aria-current="step"><span class="tk-n num">3</span><h4>Write a competitive application</h4><p class="tk-d">Specific Aims, approach, and significance</p><p class="tk-you">You are here</p><ul class="tk-r"><li><a href="#">Specific Aims guide</a></li><li><a href="#">Example aims from funded CNAP pilots</a></li></ul></li><li class="tk-s"><span class="tk-n num">4</span><h4>Prepare NIH documents</h4><p class="tk-d">Biosketch, Other Support, and budget</p><ul class="tk-r"><li><a href="#">Biosketch template</a></li><li><a href="#">Budget justification</a></li><li><a href="#">Letters of support</a></li><li><a href="#">Data management plan</a></li></ul></li><li class="tk-s"><span class="tk-n num">5</span><h4>Respond to reviews</h4><p class="tk-d">Summary statements and resubmission</p><ul class="tk-r"><li><a href="#">Reading a summary statement</a></li><li><a href="#">Introduction to a resubmission</a></li></ul></li><li class="tk-s"><span class="tk-n num">6</span><h4>Manage the award</h4><p class="tk-d">Progress reports and closeout</p><ul class="tk-r"><li><a href="#">Progress report template</a></li><li><a href="#">Closeout checklist</a></li></ul></li></ol>
       </div>
       <footer class="sf"><a class="btn" href="#">All funding</a></footer>
     </section>
