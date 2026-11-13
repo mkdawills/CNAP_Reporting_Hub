@@ -436,7 +436,7 @@ details.wel{flex:1 1 520px;min-width:0}
 .fund.grow-wait::after{clip-path:inset(50% 0 50% 0);transition:clip-path 1.4s cubic-bezier(.25,.8,.25,1)}
 .fund.grow-wait.grown::after{clip-path:inset(0 0 0 0)}
 @media (min-width:981px){
-  .sheet-sec{padding:72px 72px 64px}
+  .sheet-sec{padding:56px 72px}
   .sheet-sec .ach h3{margin-bottom:18px}
   .sheet-sec .ach > a.ach-lead{column-gap:40px;row-gap:12px}
   .sheet-sec .g > .ach-row{margin-top:64px}
@@ -468,7 +468,6 @@ details.wel{flex:1 1 520px;min-width:0}
 .sheet-sec > .sh{padding-bottom:23px;border-bottom:1px solid var(--line);margin-bottom:32px}
 .sheet-sec{padding-top:28px}
 @media (min-width:981px){
-  .sheet-sec{padding-top:56px}
   .sheet-sec > .sh{padding-bottom:56px;margin-bottom:56px}
 }
 @media (min-width:981px){.mine .brief{padding-inline:calc(var(--cg) / 2 + 36px)}}
@@ -543,13 +542,18 @@ details.wel{flex:1 1 520px;min-width:0}
 .com-band :focus-visible{outline-color:#fff}
 .com-band .sheet :focus-visible{outline-color:var(--purple)}
 .com-band + .wrap > .foot{margin-top:0;border-top:0}
-.sheet-sec .meet{margin-bottom:0;padding-bottom:0;border-bottom:0}
+.sheet-meet .meet{margin-bottom:0;padding-bottom:0;border-bottom:0}
 .sheet-2{margin-top:28px;padding:56px 72px 64px}
 @media (max-width:980px){.sheet-2{padding:32px}}
 @media (max-width:640px){.sheet-2{padding:24px 20px;margin-inline:-8px;margin-top:20px}}
 @media (min-width:1440px){
   .sheet-2 .talk{position:relative;z-index:2;margin-right:-104px;margin-top:24px;box-shadow:0 0 0 1px rgba(81,40,136,.08),0 30px 60px -24px rgba(0,0,0,.55)}
 }
+.sheet-sec > .sh{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.sheet-sec{padding-block:48px}
+.sheet-meet{margin-top:28px;padding:48px 72px 52px}
+@media (max-width:980px){.sheet-meet{padding:32px}}
+@media (max-width:640px){.sheet-sec{padding-block:24px}.sheet-meet{padding:24px 20px;margin-inline:-8px;margin-top:20px}}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1341,6 +1345,8 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         <h2 id="com-h">Community</h2>
         <p>Meet members, celebrate their work, and ask for input.</p>
       </header>
+      </div>
+      <div class="sheet sheet-meet">
       <div class="meet" role="region" aria-labelledby="meet-h">
         <div class="meet-h"><div><h3 id="meet-h">Meet the community</h3><p class="meet-sub">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p></div>
           <div class="lu-ctl"><a class="t3" href="#">Member directory</a><button type="button" class="arrow mp-arrow" data-dir="-1" aria-label="Previous members" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow mp-arrow" data-dir="1" aria-label="Next members"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
