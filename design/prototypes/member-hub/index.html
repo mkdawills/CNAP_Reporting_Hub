@@ -83,7 +83,7 @@ img{max-width:100%;display:block}
 
 /* greeting moment: one quiet line, with nerve-fiber curves that draw in once and then stay still */
 .greet{position:relative;overflow:hidden;background:var(--greet-bg,var(--paper));border-bottom:1px solid var(--line)}
-.greet .wrap{position:relative;z-index:1;padding-top:84px;padding-bottom:128px}
+.greet .wrap{position:relative;z-index:1;padding-top:84px;padding-bottom:84px}
 .greet .when{font-size:15px;line-height:22px;color:var(--greet-muted,var(--muted))}
 .greet h1{font:400 clamp(44px,6.2vw,88px)/1.04 var(--serif);letter-spacing:-.025em;margin-top:14px;color:var(--greet-ink,var(--ink));text-wrap:balance}
 .greet .line{margin-top:20px;font-size:18px;line-height:28px;color:var(--greet-muted,var(--ink-2));max-width:58ch}
@@ -108,7 +108,7 @@ img{max-width:100%;display:block}
 .sparks .halo{opacity:.22}
 .motion .still-off{display:none}
 .greet.paused *,.greet.paused{animation-play-state:paused!important}
-.motion{position:absolute;z-index:2;right:var(--side-r);bottom:84px;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--greet-muted) 40%,transparent);background:transparent;color:var(--greet-muted);font:500 14px/1 var(--sans);cursor:pointer}
+.motion{position:absolute;z-index:2;right:var(--side-r);bottom:20px;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--greet-muted) 40%,transparent);background:transparent;color:var(--greet-muted);font:500 14px/1 var(--sans);cursor:pointer}
 .motion:hover{color:var(--greet-ink);border-color:var(--greet-muted)}
 .motion:focus-visible{outline:2px solid var(--greet-ink);outline-offset:3px}
 .motion svg{width:14px;height:14px;fill:currentColor}
@@ -123,7 +123,7 @@ img{max-width:100%;display:block}
 @keyframes fade{to{opacity:.55}}
 /* personal band */
 .mine{position:relative;z-index:2;background:var(--paper);display:flow-root}
-.mine .brief{position:relative;background:var(--week);border-radius:6px;margin-top:-64px;padding-inline:48px;box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -18px rgba(29,27,33,.22)}
+.mine .brief{position:relative;background:var(--week);border-radius:6px;margin-top:48px;padding-inline:48px;box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -18px rgba(29,27,33,.22)}
 .brief{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto auto 1fr auto;column-gap:var(--gap);padding-block:36px 40px}
 .bi{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:10px;min-width:0;padding-left:var(--gap);border-left:1px solid var(--line-2)}
 .bi.intro{padding-left:0;border-left:0}
@@ -386,9 +386,8 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 @keyframes grow{to{transform:scaleX(1)}}
 @keyframes corner{0%{clip-path:inset(0 0 100% 100%)}100%{clip-path:inset(0 0 0 0)}}
 @media (max-width:980px){
-  .mine .brief{padding-inline:32px;margin-top:-48px}
-  .motion{bottom:60px}
-  .greet .wrap{padding-bottom:96px}
+  .mine .brief{padding-inline:32px;margin-top:32px}
+  .greet .wrap{padding-bottom:72px}
   .nav,.search{display:none}
   .only-phone{display:grid;place-items:center;width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);cursor:pointer}
   .sh h2{font-size:38px;line-height:44px}
@@ -436,8 +435,8 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .hdr .wrap{min-height:60px;gap:10px}
   .brand small{display:none}
   .search,.mywork{display:none}
-  .greet .wrap{padding-top:36px;padding-bottom:64px}
-  .mine .brief{margin-top:-32px;margin-inline:-8px;padding-inline:20px;border-radius:6px}
+  .greet .wrap{padding-top:36px;padding-bottom:40px}
+  .mine .brief{margin-top:20px;margin-inline:-8px;padding-inline:20px;border-radius:6px}
   .greet h1{font-size:clamp(40px,11.6vw,48px);line-height:1.06}
   .motion{bottom:auto;top:10px;right:max(12px,env(safe-area-inset-right,0px));width:44px;padding:0;justify-content:center}
   .motion span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
