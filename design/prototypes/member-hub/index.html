@@ -297,6 +297,16 @@ section .lineup li{width:20%}
 .cm-note{margin-top:14px;font-size:14px;line-height:20px;color:var(--muted)}
 .sf .t3{margin-right:8px}
 
+.more-stories{margin-top:64px;padding-top:20px;border-top:1px solid var(--line)}
+.more-stories h3{font:600 20px/26px var(--sans);letter-spacing:-.01em;margin-bottom:22px}
+.more-stories ul{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}
+.ms{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink)}
+.ms-im{position:relative;display:block;aspect-ratio:4/3;border-radius:4px;overflow:hidden;background:var(--band);margin-bottom:8px}
+.ms-im img{width:100%;height:100%;object-fit:cover}
+.ms-im .t-s{display:none}
+.ms-im .tag{white-space:nowrap;position:absolute;left:10px;top:10px;font-size:13px;line-height:17px;font-weight:500;color:var(--ink);background:rgba(250,249,247,.92);padding:4px 8px;border-radius:4px}
+.ms b{font:500 19px/26px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
+.ms:hover b{color:var(--purple);text-decoration:underline}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -522,6 +532,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .ns-feat .portrait .ini{font-size:96px}
   .ns-feat .poster .p-num{font-size:110px}
   .cal-month{grid-column:1 / -1}
+  .more-stories ul{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:32px}
   .keys{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:32px}
 
   section .lineup li{width:calc(100% / 2.4)}
@@ -608,6 +619,14 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .wd-s{display:inline}
   .dbtn{justify-content:space-between;align-items:flex-start}
   #cl-body{flex-direction:column;gap:4px}
+  .more-stories{margin-top:44px}
+  .more-stories ul{grid-template-columns:minmax(0,1fr);row-gap:0}
+  .more-stories li + li{border-top:1px solid var(--line)}
+  .ms{display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:16px;row-gap:4px;padding:14px 0;align-items:start}
+  .ms-im{grid-row:1 / span 3;margin:0}
+  .ms-im .tag{left:6px;top:6px;font-size:13px;padding:2px 6px}
+  .ms-im .t-l{display:none}.ms-im .t-s{display:inline}
+  .ms b{font-size:17px;line-height:23px}
   .cd-ev{flex-wrap:wrap;column-gap:8px;row-gap:0}
   .cd-ev b{flex-basis:100%}
   .keys{grid-template-columns:minmax(0,1fr);row-gap:28px;margin-top:36px}
@@ -819,6 +838,15 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           </div>
         </div>
       </article>
+      <div class="more-stories">
+        <h3>More stories</h3>
+        <ul>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/oscillations.jpg" alt="Generated illustration of brain oscillations" loading="lazy"><span class="tag">Illustration</span></span><span class="eyebrow">Pilot project</span><b>How a new pilot team is planning its first year</b><span class="meta">The CNAP team · November 6</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-4.jpg" alt="Placeholder for a portrait photograph" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Investigator profile</span><b>Meet the Center’s newest pilot project leader</b><span class="meta">The CNAP team · October 29</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-5.jpg" alt="Placeholder for a photograph of the Neuroinformatics Core" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Core capability</span><b>What the Neuroinformatics Core can process for your lab</b><span class="meta">The CNAP team · October 22</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-2.jpg" alt="Placeholder for a photograph of a workshop" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Training</span><b>Inside the fall grant-writing workshop series</b><span class="meta">The CNAP team · October 15</span></a></li>
+        </ul>
+      </div>
       <footer class="sf"><a class="btn" href="#">All stories</a></footer>
     </section>
 
