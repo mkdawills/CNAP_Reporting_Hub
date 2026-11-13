@@ -437,7 +437,6 @@ details.wel{flex:1 1 520px;min-width:0}
 .fund.grow-wait.grown::after{clip-path:inset(0 0 0 0)}
 @media (min-width:981px){
   .sheet-sec{padding:72px 72px 64px}
-  .sheet-sec .sh{margin-bottom:56px}
   .sheet-sec .ach h3{margin-bottom:18px}
   .sheet-sec .ach > a.ach-lead{column-gap:40px;row-gap:12px}
   .sheet-sec .g > .ach-row{margin-top:64px}
@@ -465,6 +464,12 @@ details.wel{flex:1 1 520px;min-width:0}
   .ach > a.ach-lead .kind,.ach > a.ach-lead b,.ach > a.ach-lead .sum,.ach > a.ach-lead .meta,.ach > a.ach-lead .when{grid-column:1}
   .ach > a.ach-lead b{font-size:32px;line-height:39px}
   .ach > a.ach-lead .sum{max-width:60ch}
+}
+.sheet-sec > .sh{padding-bottom:23px;border-bottom:1px solid var(--line);margin-bottom:32px}
+.sheet-sec{padding-top:28px}
+@media (min-width:981px){
+  .sheet-sec{padding-top:56px}
+  .sheet-sec > .sh{padding-bottom:56px;margin-bottom:56px}
 }
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
