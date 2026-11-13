@@ -459,8 +459,9 @@ section .lineup li{width:20%}
 .fund > [data-unless="sparse"]{flex:1;display:flex;flex-direction:column}
 .fund .opp{flex:1;align-content:center}
 .fund h3,.proposal h3{font:600 16px/22px var(--sans);margin-bottom:6px}
-.opp{display:grid;grid-template-columns:96px minmax(0,1fr) 172px;gap:36px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
-.opp-hd{display:grid;grid-template-columns:96px minmax(0,1fr) 172px;gap:36px;padding:6px 0 10px;font-size:13px;line-height:18px;font-weight:600;color:var(--muted)}
+.gr-h{font:500 34px/40px var(--serif);letter-spacing:-.015em;color:var(--ink);margin-bottom:18px}
+.opp{display:grid;grid-template-columns:84px minmax(0,1fr) max-content;gap:40px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.opp-hd{display:grid;grid-template-columns:84px minmax(0,1fr) 150px;gap:40px;padding:6px 0 10px;font-size:13px;line-height:18px;font-weight:600;color:var(--muted)}
 .opp-hd span:first-child{text-align:center}
 .opp-hd span:last-child{text-align:right}
 .opp-hd + .opp{border-top:1px solid var(--line-2)}
@@ -562,6 +563,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 }
 @media (min-width:981px){
   .fund,.ach{padding-right:56px}
+  .fund{position:relative}
+  .fund::after{content:"";position:absolute;right:12px;top:0;bottom:0;width:20px;border:1px solid var(--line-2);border-left:0;pointer-events:none}
+  .opp .side{min-width:150px}
 }
 @media (min-width:1181px){
   .bi.intro{display:flex;flex-direction:column;gap:14px}
@@ -1088,6 +1092,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           </div>
         </div>
         <aside class="proposal" aria-labelledby="prop-h">
+          <p class="gr-h">Grant resources</p>
           <h3 id="prop-h">From idea to award</h3>
           <nav class="stages" aria-label="Grant writing resources by stage">
             <a href="#"><b>Find funding</b><span>Sponsors, searches, and eligibility</span></a>
