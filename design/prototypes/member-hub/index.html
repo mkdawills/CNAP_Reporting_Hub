@@ -305,7 +305,17 @@ section .lineup li{width:20%}
 .sf .t3{margin-right:8px}
 
 .more-stories{margin-top:64px;padding-top:20px;border-top:1px solid var(--line)}
-.more-stories h3{font:600 20px/26px var(--sans);letter-spacing:-.01em;margin-bottom:22px}
+.more-stories h3{font:600 20px/26px var(--sans);letter-spacing:-.01em}
+/* collapsed by default: the heading opens the row of stories */
+.more-stories summary{display:flex;align-items:center;gap:12px;min-height:44px;cursor:pointer;list-style:none}
+.more-stories summary::-webkit-details-marker{display:none}
+.more-stories summary::after{content:"";width:8px;height:8px;margin-left:2px;border-right:1.8px solid var(--purple);border-bottom:1.8px solid var(--purple);transform:rotate(45deg) translateY(-3px);transition:transform .2s ease}
+.more-stories[open] summary::after{transform:rotate(-135deg) translateY(-1px)}
+.more-stories .ms-n{font-size:14px;line-height:20px;color:var(--muted)}
+.more-stories summary:hover h3{color:var(--purple)}
+.more-stories summary:focus-visible{outline:2px solid var(--purple);outline-offset:4px;border-radius:2px}
+.more-stories[open] ul{margin-top:18px}
+@media (prefers-reduced-motion:reduce){.more-stories summary::after{transition:none}}
 .more-stories ul{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}
 .ms{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink)}
 .ms-im{position:relative;display:block;aspect-ratio:4/3;border-radius:4px;overflow:hidden;background:var(--band);margin-bottom:8px}
@@ -852,7 +862,7 @@ details.wel{flex:1 1 520px;min-width:0}
 /* funding */
 .fund{grid-column:1 / span 7;min-width:0;display:flex;flex-direction:column}
 .fund > [data-unless="sparse"]{flex:1;display:flex;flex-direction:column}
-.fund .opp{flex:1;align-content:center}
+.fund .opp{align-content:center}
 .fund h3,.proposal h3{font:600 16px/22px var(--sans);margin-bottom:6px}
 .gr-h{font:500 34px/40px var(--serif);letter-spacing:-.015em;color:var(--ink);margin-bottom:18px}
 .opp{display:grid;grid-template-columns:84px minmax(0,1fr) 150px;column-gap:46px;row-gap:40px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
@@ -860,6 +870,16 @@ details.wel{flex:1 1 520px;min-width:0}
 .opp-hd span:first-child{text-align:center}
 .opp-hd span:last-child{text-align:left}
 .opp-hd + .opp{border-top:1px solid var(--line-2)}
+/* the top match shows; the others open from a quiet row below it */
+.opp-more{border-top:1px solid var(--line)}
+.opp-more summary{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;min-height:56px;padding:12px 0;cursor:pointer;list-style:none;font-size:15px;line-height:22px;font-weight:600;color:var(--purple)}
+.opp-more summary::-webkit-details-marker{display:none}
+.opp-more summary::after{content:"";width:8px;height:8px;margin-left:2px;border-right:1.8px solid currentColor;border-bottom:1.8px solid currentColor;transform:rotate(45deg) translateY(-3px);transition:transform .2s ease}
+.opp-more[open] summary::after{transform:rotate(-135deg) translateY(-1px)}
+.opp-more .om-n{font-weight:400;font-size:14px;color:var(--muted);order:3;flex-basis:100%}
+.opp-more[open] .om-n{display:none}
+.opp-more summary:focus-visible{outline:2px solid var(--purple);outline-offset:4px;border-radius:2px}
+@media (prefers-reduced-motion:reduce){.opp-more summary::after{transition:none}}
 .opp .days{width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--line-2);background:var(--paper);box-shadow:0 0 0 5px var(--surface),0 0 0 6px var(--line);font:500 30px/1 var(--serif);letter-spacing:-.02em;color:var(--ink);align-self:start}
 .opp .days.soon{border-color:var(--amber);box-shadow:0 0 0 5px var(--surface),0 0 0 6px rgba(138,75,0,.35);color:var(--amber)}
 .opp .days small{display:block;font:500 13px/16px var(--sans);letter-spacing:0;color:var(--muted);margin-top:4px}
@@ -1368,15 +1388,15 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
           </div>
         </div>
       </article>
-      <div class="more-stories">
-        <h3>More stories</h3>
+      <details class="more-stories">
+        <summary><h3>More stories</h3><span class="ms-n">4 stories</span></summary>
         <ul>
           <li><a class="ms" href="#"><span class="ms-im"><img src="img/oscillations.jpg" alt="Generated illustration of brain oscillations" loading="lazy"><span class="tag">Illustration</span></span><span class="eyebrow">Pilot project</span><b>How a new pilot team is planning its first year</b><span class="meta">The CNAP team · November 6</span></a></li>
           <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-4.jpg" alt="Placeholder for a portrait photograph" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Investigator profile</span><b>Meet the Center’s newest pilot project leader</b><span class="meta">The CNAP team · October 29</span></a></li>
           <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-5.jpg" alt="Placeholder for a photograph of the Neuroinformatics Core" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Core capability</span><b>What the Neuroinformatics Core can process for your lab</b><span class="meta">The CNAP team · October 22</span></a></li>
           <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-2.jpg" alt="Placeholder for a photograph of a workshop" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Training</span><b>Inside the fall grant-writing workshop series</b><span class="meta">The CNAP team · October 15</span></a></li>
         </ul>
-      </div>
+      </details>
       <footer class="sf"><a class="btn" href="#">All stories</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a story</a></footer>
     </section>
   </div>
@@ -1393,8 +1413,10 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
           <div data-unless="sparse">
             <div class="opp-hd" aria-hidden="true"><span>Time left</span><span>Opportunity, and why it fits you</span><span>Deadline and award</span></div>
             <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Details checked<br>November 9</span></span></a>
-            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Details checked<br>November 9</span></span></a>
             <a class="opp" href="#"><span class="days num soon">7<small>days left</small></span><span><span class="spon">CNAP · Pilot program</span><b>Year 11 pilot project letters of intent</b><span class="why">Open to all CNAP faculty. You could pass it on to a colleague.</span></span><span class="side"><strong class="num">November 20, 2026</strong>Center funding</span></a>
+            <details class="opp-more"><summary><span>1 more match</span><span class="om-n">National Institutes of Health R21, 123 days left</span></summary>
+            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Details checked<br>November 9</span></span></a>
+            </details>
           </div>
           <div class="empty" data-when="sparse" hidden>
             <p style="font-weight:600">No opportunities are picked for you yet.</p>
@@ -1453,7 +1475,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       <div class="cal">
         <div class="cal-month">
           <div class="cm-head"><h3 id="cm-h" aria-live="polite">November 2026</h3>
-            <div class="cm-tools"><div class="cm-views" role="group" aria-label="Calendar view"><button type="button" data-v="month" aria-pressed="true">Month</button><button type="button" data-v="week" aria-pressed="false">Week</button><button type="button" data-v="list" aria-pressed="false">List</button><button type="button" data-v="year" aria-pressed="false">Year</button></div>
+            <div class="cm-tools"><div class="cm-views" role="group" aria-label="Calendar view"><button type="button" data-v="month" aria-pressed="false">Month</button><button type="button" data-v="week" aria-pressed="true">Week</button><button type="button" data-v="list" aria-pressed="false">List</button><button type="button" data-v="year" aria-pressed="false">Year</button></div>
             <div class="cm-nav"><button type="button" class="arrow" data-m="-1" aria-label="Previous month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-m="1" aria-label="Next month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div></div>
           </div>
           <table class="cm-grid" aria-labelledby="cm-h"><thead><tr><th scope="col"><span class="wd-l">Sunday</span><span class="wd-s" aria-hidden="true">S</span></th><th scope="col"><span class="wd-l">Monday</span><span class="wd-s" aria-hidden="true">M</span></th><th scope="col"><span class="wd-l">Tuesday</span><span class="wd-s" aria-hidden="true">T</span></th><th scope="col"><span class="wd-l">Wednesday</span><span class="wd-s" aria-hidden="true">W</span></th><th scope="col"><span class="wd-l">Thursday</span><span class="wd-s" aria-hidden="true">T</span></th><th scope="col"><span class="wd-l">Friday</span><span class="wd-s" aria-hidden="true">F</span></th><th scope="col"><span class="wd-l">Saturday</span><span class="wd-s" aria-hidden="true">S</span></th></tr></thead><tbody id="cm-body"></tbody></table>
@@ -1692,7 +1714,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   body.addEventListener('keydown',function(e){var b=e.target.closest('.dbtn');if(!b)return;var mv={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];if(!mv)return;e.preventDefault();var D=dt(b.dataset.d);D.setDate(D.getDate()+mv);if(D<MIN||D>MAX)return;var d=iso(D.getFullYear(),D.getMonth(),D.getDate());
     if(D.getMonth()!==ym[1]){ym=[D.getFullYear(),D.getMonth()];month(false);updNav();}body.querySelectorAll('.dbtn').forEach(function(x){x.tabIndex=x.dataset.d===d?0:-1;});var t=body.querySelector('[data-d="'+d+'"]');if(t)t.focus();});
 
-  var view='month',tbl=document.querySelector('.cm-grid'),cv=document.getElementById('cv'),cday=document.querySelector('.cm-day'),MIN=new Date(2026,7,1),MAX=new Date(2027,6,31);
+  var view='week',tbl=document.querySelector('.cm-grid'),cv=document.getElementById('cv'),cday=document.querySelector('.cm-day'),MIN=new Date(2026,7,1),MAX=new Date(2027,6,31);
   function chip(e){var t=e[1]==='All day'||e[1]==='All week'?'':e[1];return '<span class="ce k-'+e[2]+'"><span class="ci"><span class="lead">'+mk(e[2])+(t?'<span class="tm">'+t+'</span>':'')+'</span><span class="ct">'+e[3]+'</span></span></span>';}
   function week(){var D=dt(sel);D.setDate(D.getDate()-D.getDay());var a=new Date(D),h='<div class="wk">';
     for(var i=0;i<7;i++){var s=iso(D.getFullYear(),D.getMonth(),D.getDate()),es=evOn(s);
