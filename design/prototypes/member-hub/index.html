@@ -10,6 +10,8 @@
   --paper:#faf9f7; --band:#f2efe9; --surface:#ffffff; --line:#e4e0d8; --line-2:#d3cdc3; --field:#8c8694;
   --ink:#1d1b21; --ink-2:#423e48; --muted:#57525e;
   --purple:#512888; --purple-ink:#3c1d66; --purple-tint:#f1ecf8;
+  --greet-bg:#22132f; --greet-ink:#f6f2fa; --greet-muted:#cbbfdb; --fiber:#c9a8f0; --spark:#f4ecff; --week:#ffffff;
+  --tick:rgba(203,191,219,.22); --tick-past:rgba(203,191,219,.55); --tick-now:#f6f2fa;
   --teal:#0a6670; --amber:#8a4b00; --green:#1d6a4f; --red:#a1302a;
   --serif:"Lora Hub","Lora",Georgia,serif; --sans:"Inter Hub","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
   --gap:32px; --sec:88px; --side:max(40px,env(safe-area-inset-left,0px)); --side-r:max(40px,env(safe-area-inset-right,0px));
@@ -20,7 +22,7 @@
 :root[data-look="stone"]{--paper:#fafafa;--band:#f0f0ee;--line:#e2e2df;--line-2:#cfcfcb}
 :root[data-look="lilac"]{--paper:#fcfbfd;--band:#f3f0f8;--line:#e6e1ee;--line-2:#d4cde0}
 :root[data-look="white"]{--paper:#ffffff;--band:#f7f6f4;--line:#e8e6e2;--line-2:#d6d3cd}
-:root[data-look="aubergine"]{--paper:#faf9f8;--band:#f1eef4;--line:#e4e0e8;--line-2:#d2ccd9;--greet-bg:#22132f;--greet-ink:#f6f2fa;--greet-muted:#cbbfdb;--fiber:#c9a8f0}
+:root[data-look="warm"]{--greet-bg:var(--paper);--greet-ink:var(--ink);--greet-muted:var(--muted);--fiber:var(--purple);--spark:var(--purple);--week:var(--band);--tick:#e4e0d8;--tick-past:#b9b1c6;--tick-now:var(--purple)}
 :root[data-look="mist"]{--paper:#f9fafb;--band:#eef1f4;--line:#e0e4e9;--line-2:#cbd2da}
 *{box-sizing:border-box}
 html{scroll-padding-top:96px}
@@ -81,26 +83,46 @@ img{max-width:100%;display:block}
 
 /* greeting moment: one quiet line, with nerve-fiber curves that draw in once and then stay still */
 .greet{position:relative;overflow:hidden;background:var(--greet-bg,var(--paper));border-bottom:1px solid var(--line)}
-.greet .wrap{position:relative;z-index:1;padding-top:64px;padding-bottom:60px}
+.greet .wrap{position:relative;z-index:1;padding-top:84px;padding-bottom:72px}
 .greet .when{font-size:15px;line-height:22px;color:var(--greet-muted,var(--muted))}
-.greet h1{font:400 56px/64px var(--serif);letter-spacing:-.02em;margin-top:10px;color:var(--greet-ink,var(--ink));text-wrap:balance}
-.greet .line{margin-top:14px;font-size:18px;line-height:28px;color:var(--greet-muted,var(--ink-2));max-width:58ch}
+.greet h1{font:400 clamp(44px,6.2vw,88px)/1.04 var(--serif);letter-spacing:-.025em;margin-top:14px;color:var(--greet-ink,var(--ink));text-wrap:balance}
+.greet .line{margin-top:20px;font-size:18px;line-height:28px;color:var(--greet-muted,var(--ink-2));max-width:58ch}
 .fibers{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 30%,#000 60%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 30%,#000 60%)}
 .fibers path{fill:none;stroke:var(--fiber,var(--purple));stroke-linecap:round}
 .fibers circle{fill:var(--fiber,var(--purple))}
 @media (prefers-reduced-motion:no-preference){
   .greet .when,.greet h1,.greet .line{opacity:0;transform:translateY(10px);animation:rise 1.1s cubic-bezier(.2,.7,.2,1) forwards}
-  .greet h1{animation-delay:.15s}
+  .greet h1{opacity:1;transform:none;animation:none}
+  .greet h1 .w{display:inline-block;opacity:0;filter:blur(10px);transform:translateY(12px);animation:focusin 1.3s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(.15s + var(--i) * .14s)}
+  .fibers .node{transform-box:fill-box;transform-origin:center;animation:fade 1.2s ease 2.2s forwards,breathe 5s ease-in-out 3.4s infinite}
+  .fibers .node:nth-of-type(2){animation-delay:2.2s,4.6s}.fibers .node:nth-of-type(3){animation-delay:2.2s,5.8s}.fibers .node:nth-of-type(4){animation-delay:2.2s,7s}
   .greet .line{animation-delay:.45s}
   .fibers path{stroke-dasharray:1600;stroke-dashoffset:1600;animation:draw 3.2s cubic-bezier(.3,.6,.2,1) forwards}
   .fibers path:nth-child(2){animation-delay:.25s}.fibers path:nth-child(3){animation-delay:.5s}.fibers path:nth-child(4){animation-delay:.75s}.fibers path:nth-child(5){animation-delay:1s}
   .fibers circle{opacity:0;animation:fade 1.2s ease 2.2s forwards}
 }
 @keyframes rise{to{opacity:1;transform:none}}
+@keyframes focusin{to{opacity:1;filter:none;transform:none}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.9);opacity:.35}}
+.sparks circle{fill:var(--spark)}
+.sparks .halo{opacity:.22}
+.motion .still-off{display:none}
+.greet.paused *,.greet.paused{animation-play-state:paused!important}
+.motion{position:absolute;z-index:2;right:var(--side-r);bottom:20px;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--greet-muted) 40%,transparent);background:transparent;color:var(--greet-muted);font:500 14px/1 var(--sans);cursor:pointer}
+.motion:hover{color:var(--greet-ink);border-color:var(--greet-muted)}
+.motion:focus-visible{outline:2px solid var(--greet-ink);outline-offset:3px}
+.motion svg{width:14px;height:14px;fill:currentColor}
+.term{margin-top:32px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;font-size:15px;line-height:22px;color:var(--greet-muted)}
+.weeks{display:flex;align-items:center;gap:4px}
+.weeks i{display:block;width:12px;height:4px;border-radius:2px;background:var(--tick)}
+.weeks i.past{background:var(--tick-past)}
+.weeks i.now{width:26px;background:var(--tick-now)}
+.weeks i.brk{height:10px;width:4px;background:var(--tick-past);margin-inline:4px}
+@media (prefers-reduced-motion:reduce){.sparks,.motion{display:none!important}}
 @keyframes draw{to{stroke-dashoffset:0}}
 @keyframes fade{to{opacity:.55}}
 /* personal band */
-.mine{background:var(--band);border-bottom:1px solid var(--line)}
+.mine{background:var(--week);border-bottom:1px solid var(--line)}
 .brief{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto auto 1fr auto;column-gap:var(--gap);padding-block:36px 40px}
 .bi{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:10px;min-width:0;padding-left:var(--gap);border-left:1px solid var(--line-2)}
 .bi.intro{padding-left:0;border-left:0}
@@ -327,7 +349,10 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .brand small{display:none}
   .search,.mywork{display:none}
   .greet .wrap{padding-top:36px;padding-bottom:34px}
-  .greet h1{font-size:38px;line-height:44px}
+  .greet h1{font-size:clamp(40px,11.6vw,48px);line-height:1.06}
+  .motion{bottom:auto;top:10px;right:max(12px,env(safe-area-inset-right,0px));width:44px;padding:0;justify-content:center}
+  .motion span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .term{margin-top:22px;font-size:14px}
   .greet .line{font-size:16px;line-height:25px}
   .fibers{inset:0 0 auto 0;height:118px;-webkit-mask-image:linear-gradient(90deg,transparent 35%,#000 85%);mask-image:linear-gradient(90deg,transparent 35%,#000 85%);opacity:.8}
   .fund [data-unless="sparse"] > .opp:nth-child(3),.ach a:nth-of-type(3),.talk a.conv:nth-of-type(3),.also a:nth-child(2){display:none}
@@ -392,12 +417,12 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     <option value="returning">Returning after a month away</option>
   </select></label>
     <label for="look">Ground color<select id="look">
-      <option value="warm">Warm paper, as approved</option>
+      <option value="dark">Aubergine greeting and white week, as chosen</option>
+      <option value="warm">Warm paper greeting, Round 5</option>
       <option value="stone">Stone gray</option>
       <option value="lilac">Lilac mist</option>
       <option value="mist">Cool mist</option>
       <option value="white">White, with a soft band</option>
-      <option value="aubergine">Aubergine greeting</option>
     </select></label>
     <a href="system.html" style="display:inline-block;padding-block:4px">Design foundations</a>
   </div>
@@ -421,16 +446,22 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
       <g>
-        <path d="M380 300 C 620 250, 760 120, 980 140 S 1300 60, 1480 90" stroke-width="1.4" opacity=".22"/>
-        <path d="M520 330 C 700 260, 860 220, 1040 230 S 1290 170, 1480 200" stroke-width="1.1" opacity=".16"/>
+        <path id="f1" d="M380 300 C 620 250, 760 120, 980 140 S 1300 60, 1480 90" stroke-width="1.4" opacity=".26"/>
+        <path id="f2" d="M520 330 C 700 260, 860 220, 1040 230 S 1290 170, 1480 200" stroke-width="1.1" opacity=".2"/>
         <path d="M640 -10 C 760 80, 900 110, 1060 100 S 1280 150, 1480 130" stroke-width="1" opacity=".14"/>
       </g>
       <g>
         <path d="M820 330 C 900 250, 1000 200, 1120 190 S 1320 230, 1480 260" stroke-width="1.6" opacity=".12"/>
-        <path d="M900 -10 C 980 70, 1080 120, 1200 118 S 1380 90, 1480 60" stroke-width="1.2" opacity=".18"/>
-        <circle cx="980" cy="140" r="3.2"/><circle cx="1120" cy="190" r="2.6"/><circle cx="1200" cy="118" r="2.4"/><circle cx="1040" cy="230" r="2"/>
+        <path id="f5" d="M900 -10 C 980 70, 1080 120, 1200 118 S 1380 90, 1480 60" stroke-width="1.2" opacity=".22"/>
+        <circle class="node" cx="980" cy="140" r="3.2"/><circle class="node" cx="1120" cy="190" r="2.6"/><circle class="node" cx="1200" cy="118" r="2.4"/><circle class="node" cx="1040" cy="230" r="2"/>
+      </g>
+      <g class="sparks">
+      <g opacity="0"><circle class="halo" r="9"/><circle r="2.4"/><animateMotion dur="9s" begin="3s" repeatCount="indefinite" keyPoints=".5;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#f1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.82;1" dur="9s" begin="3s" repeatCount="indefinite"/></g>
+      <g opacity="0"><circle class="halo" r="9"/><circle r="2.4"/><animateMotion dur="12s" begin="5.5s" repeatCount="indefinite" keyPoints=".5;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#f2"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.82;1" dur="12s" begin="5.5s" repeatCount="indefinite"/></g>
+      <g opacity="0"><circle class="halo" r="9"/><circle r="2.4"/><animateMotion dur="10s" begin="8s" repeatCount="indefinite" keyPoints=".5;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#f5"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.82;1" dur="10s" begin="8s" repeatCount="indefinite"/></g>
       </g>
     </svg>
+    <button type="button" class="motion" aria-pressed="false"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="3" y="2" width="3" height="10" rx="1"/><rect x="8" y="2" width="3" height="10" rx="1"/></svg><span>Pause motion</span></button>
     <div class="wrap">
       <p class="when" id="when">Friday, November 13 · Grant Year 10</p>
       <h1 id="hi" data-unless="returning"><span id="tod">Good morning</span>, Amara.</h1>
@@ -443,6 +474,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
       <p class="line" data-when="admin" hidden>38 of 61 members have submitted their Fall reports, and your own are done.</p>
       <p class="line" data-when="sparse" hidden>Fall reporting closes in 17 days. Add your research interests, and the CNAP team will start picking funding for you.</p>
       <p class="line" data-when="returning" hidden>Since your last visit on October 2, three papers citing CNAP were published, and a funding match was added for you.</p>
+      <div class="term"><span>Week 12 of the fall semester</span><span class="weeks" aria-hidden="true"><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="now"></i><i></i><i class="brk"></i><i></i><i></i><i></i></span><span>Fall break begins in 9 days</span></div>
     </div>
   </section>
 
@@ -702,13 +734,19 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 <script>
 (function(){
   try{var h=new Date().getHours();document.getElementById('tod').textContent=h<12?'Good morning':h<17?'Good afternoon':'Good evening';}catch(e){}
+  function words(h){var t=h.textContent;h.textContent='';t.split(' ').forEach(function(w,i){var s=document.createElement('span');s.className='w';s.style.setProperty('--i',i);s.textContent=w;h.appendChild(s);if(i<t.split(' ').length-1)h.appendChild(document.createTextNode(' '));});}
+  document.querySelectorAll('.greet h1').forEach(words);
+  var g=document.querySelector('.greet'),fs=g.querySelector('.fibers'),mb=g.querySelector('.motion');
+  var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(still&&fs.pauseAnimations)fs.pauseAnimations();
+  mb.addEventListener('click',function(){var p=mb.getAttribute('aria-pressed')!=='true';mb.setAttribute('aria-pressed',p);g.classList.toggle('paused',p);if(p)fs.pauseAnimations();else fs.unpauseAnimations();mb.querySelector('span').textContent=p?'Play motion':'Pause motion';mb.querySelector('svg').innerHTML=p?'<path d="M4 2l8 5-8 5z"/>':'<rect x="3" y="2" width="3" height="10" rx="1"/><rect x="8" y="2" width="3" height="10" rx="1"/>';});
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
     var first=true;document.querySelectorAll('.brief .bi:not(.intro)').forEach(function(e){e.classList.remove('compact','firstvis');if(e.hidden)return;if(first){first=false;e.classList.add('firstvis');}else{e.classList.add('compact');}});
   }
   var look=document.getElementById('look');
-  look.addEventListener('change',function(){document.documentElement.dataset.look=look.value;});
+  look.addEventListener('change',function(){if(look.value==='dark')delete document.documentElement.dataset.look;else document.documentElement.dataset.look=look.value;});
   var sel=document.getElementById('scenario');
   var start=(location.hash||'').slice(1);
   if(start&&[].some.call(sel.options,function(o){return o.value===start;}))sel.value=start;
