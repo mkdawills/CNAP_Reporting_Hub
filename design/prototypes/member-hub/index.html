@@ -307,6 +307,7 @@ section .lineup li{width:20%}
 .ms-im .tag{white-space:nowrap;position:absolute;left:10px;top:10px;font-size:13px;line-height:17px;font-weight:500;color:var(--ink);background:rgba(250,249,247,.92);padding:4px 8px;border-radius:4px}
 .ms b{font:500 19px/26px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
 .ms:hover b{color:var(--purple);text-decoration:underline}
+.sheet{background:var(--surface);border-radius:6px;padding:44px 48px;box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -18px rgba(29,27,33,.2)}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -395,7 +396,7 @@ section .lineup li{width:20%}
 .fund > [data-unless="sparse"]{flex:1;display:flex;flex-direction:column}
 .fund .opp{flex:1;align-content:center}
 .fund h3,.proposal h3{font:600 16px/22px var(--sans);margin-bottom:6px}
-.opp{display:grid;grid-template-columns:84px minmax(0,1fr) 172px;gap:24px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.opp{display:grid;grid-template-columns:84px minmax(0,1fr) 172px;gap:36px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .opp .days{font:500 36px/36px var(--serif);color:var(--ink)}
 .opp .days small{display:block;font:400 14px/20px var(--sans);color:var(--muted);margin-top:4px}
 .opp .spon{font-size:14px;line-height:20px;color:var(--muted)}
@@ -403,7 +404,7 @@ section .lineup li{width:20%}
 a.opp:hover b{color:var(--purple);text-decoration:underline}
 .opp .side{text-align:right;font-size:14px;line-height:21px;color:var(--ink-2)}
 .opp .side strong{display:block;font-size:15px;font-weight:600;color:var(--ink)}
-.chk{display:inline-flex;align-items:center;gap:6px;margin-top:10px;color:var(--green);font-weight:500}
+.chk{display:flex;justify-content:flex-end;align-items:baseline;gap:8px;margin-top:10px;color:var(--green);font-weight:500}
 .chk::before{content:"";width:9px;height:5px;border-left:1.8px solid currentColor;border-bottom:1.8px solid currentColor;transform:rotate(-45deg) translateY(-2px)}
 .news{grid-column:1 / -1;min-width:0;margin-top:56px;border-top:1px solid var(--line);padding-top:20px}
 .news h3{font:600 20px/26px var(--sans);letter-spacing:-.01em;margin-bottom:10px}
@@ -427,7 +428,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .ach{grid-column:1 / span 7;min-width:0;display:flex;flex-direction:column}
 .ach > a{flex:1;align-content:center}
 .ach h3,.talk h3{font:600 16px/22px var(--sans);margin-bottom:6px}
-.ach a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:4px 18px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.ach a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:4px 24px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .ach .kind{grid-column:2}
 .ach .who-av{grid-column:1;grid-row:1 / span 3;width:48px;height:48px;border-radius:999px;display:grid;place-items:center;font:500 17px/1 var(--serif);background:#e8e2ef;color:var(--purple-ink)}
 .ach b{grid-column:2;font:500 22px/30px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
@@ -486,6 +487,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .bi::before{content:"";position:absolute;z-index:1;left:0;top:-.5px;width:40px;height:2px;background:var(--k,var(--ink));transform-origin:left center}
   .bi.firstvis{border-left:0}
 }
+@media (min-width:981px){
+  .fund,.ach{padding-right:56px}
+}
 @media (min-width:1181px){
   .bi.intro{display:flex;flex-direction:column;gap:14px}
   .bi.intro h2{font-size:30px;line-height:36px;letter-spacing:-.02em}
@@ -511,6 +515,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 @keyframes grow{to{transform:scaleX(1)}}
 @keyframes corner{0%{clip-path:inset(0 0 100% 100%)}100%{clip-path:inset(0 0 0 0)}}
 @media (max-width:980px){
+  .sheet{padding:32px}
   .mine .brief{padding-inline:32px;margin-top:32px}
   .greet .wrap{padding-bottom:72px}
   .nav,.search{display:none}
@@ -607,6 +612,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .ns-feat .portrait .ini{font-size:56px}
   .ns-feat ~ .lineup{margin-top:48px}
   .cal-month{padding:16px 12px 12px;margin-inline:-8px}
+  .sheet{padding:24px 20px;margin-inline:-8px}
   .cm-head h3{font-size:24px;line-height:30px}
   .cm-grid th{padding-left:6px}
   .cm-grid td{height:56px}
@@ -966,8 +972,8 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
         <div class="fund">
           <h3>Picked for you</h3>
           <div data-unless="sparse">
-            <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Details checked November 9</span></span></a>
-            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Details checked November 9</span></span></a>
+            <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Details checked<br>November 9</span></span></a>
+            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Details checked<br>November 9</span></span></a>
             <a class="opp" href="#"><span class="days num">7<small>days left</small></span><span><span class="spon">CNAP · Pilot program</span><b>Year 11 pilot project letters of intent</b><span class="why">Open to all CNAP faculty. You could pass it on to a colleague.</span></span><span class="side"><strong class="num">November 20, 2026</strong>Center funding</span></a>
           </div>
           <div class="empty" data-when="sparse" hidden>
@@ -1005,7 +1011,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
         <h2 id="com-h">Around the Center</h2>
         <p>Members’ achievements, requests for collaborators, and conversations.</p>
       </header>
-      <div class="g">
+      <div class="g sheet">
         <div class="ach">
           <h3>Recent achievements</h3>
           <a href="#"><span class="who-av" aria-hidden="true">MS</span><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
