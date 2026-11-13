@@ -125,8 +125,6 @@ img{max-width:100%;display:block}
 /* personal band */
 .mine{position:relative;z-index:2;background:var(--paper);display:flow-root}
 .mine .brief{position:relative;background:var(--week);border-radius:6px;margin-top:48px;padding-inline:48px;box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -18px rgba(29,27,33,.22)}
-/* Your week as a true oval on wide screens; the columns sit inside the inscribed rectangle */
-@media (min-width:1181px){.mine .brief{border-radius:50%;padding:104px 15.5%;box-shadow:0 1px 2px rgba(29,27,33,.05),0 30px 60px -28px rgba(29,27,33,.26)}}
 .brief{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto auto 1fr auto;column-gap:var(--gap);padding-block:36px 40px}
 .bi{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:10px;min-width:0;padding-left:var(--gap);border-left:1px solid var(--line-2)}
 .bi.intro{padding-left:0;border-left:0}
@@ -1282,31 +1280,31 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
           <span class="lab">Most urgent first</span>
           <h2 id="wk">Your week</h2>
           <div class="body"><p class="roles" data-unless="roles admin">Pilot Project Leader<br>Behavioral Neuroscience Core user<br>Mentored by Dr. Elena Voss</p><div data-when="roles" hidden><p class="roles">Pilot Project Leader<br>Mentor to two pilot leaders</p><details class="more-roles"><summary>3 more roles</summary><p class="roles">Behavioral Neuroscience Core user<br>Neuroinformatics Core user<br>NeuroSync planning group</p></details></div><p class="roles" data-when="admin" hidden>Center administrator<br>Cognitive Neuroscience Core user<br>NeuroSync planning group</p></div>
-          <div class="act"><a class="t3" href="#">All of my work</a></div>
+          <div class="act"><a class="btn" href="#">All of my work</a></div>
         </div>
         <article class="bi" role="listitem" data-unless="clear urgent admin">
           <span class="kind" style="color:var(--amber)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Due in 17 days</span>
           <h3><a href="#">Year 10 Fall reporting</a></h3>
           <div class="body"><p>Closes Monday, November 30. Four surveys and reports are left, about 1 hour in all.</p><div class="prog"><span class="bar" aria-hidden="true"><i></i></span><span>2 of 6 submitted</span></div></div>
-          <div class="act"><a class="btn pri" href="#">Continue reporting</a></div>
+          <div class="act"><a class="btn" href="#">Continue reporting</a></div>
         </article>
         <article class="bi" role="listitem" data-when="urgent" hidden>
           <span class="kind" style="color:var(--red)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Due in 3 days</span>
           <h3><a href="#">Year 10 Fall reporting</a></h3>
           <div class="body"><p>Closes Monday, November 16. Four surveys and reports are left, about 1 hour in all.</p><div class="prog"><span class="bar" aria-hidden="true"><i></i></span><span>2 of 6 submitted</span></div></div>
-          <div class="act"><a class="btn pri" href="#">Continue reporting</a></div>
+          <div class="act"><a class="btn" href="#">Continue reporting</a></div>
         </article>
         <article class="bi" role="listitem" data-when="clear" hidden>
           <span class="kind" style="color:var(--green)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"/></svg>Fall reporting complete</span>
           <h3><a href="#">Nothing is due</a></h3>
           <div class="body"><p>All six surveys and reports are in. The next session opens in April.</p></div>
-          <div class="act"><a class="t3" href="#">See what you submitted</a></div>
+          <div class="act"><a class="btn" href="#">See what you submitted</a></div>
         </article>
         <article class="bi" role="listitem" data-when="admin" hidden>
           <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12.5h10M3.5 10V6M7 10V3.5M10.5 10V7.5"/></svg>Center reporting</span>
           <h3><a href="#">38 of 61 members have submitted</a></h3>
           <div class="body"><p>Closes Monday, November 30. Your own reports are done. Reminders go out Monday to the 23 members still working.</p></div>
-          <div class="act"><a class="btn pri" href="#">Open the session</a></div>
+          <div class="act"><a class="btn" href="#">Open the session</a></div>
         </article>
         <article class="bi" role="listitem" data-unless="sparse urgent">
           <span class="kind" style="color:var(--teal)"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M7 1l1.8 3.7 4 .6-2.9 2.8.7 4L7 10.2 3.4 12.1l.7-4L1.2 5.3l4-.6z"/></svg>New funding match</span>
@@ -1330,13 +1328,13 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
           <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="5" cy="4.5" r="2.2"/><circle cx="10" cy="5" r="1.8"/><path d="M1 12.5c.6-2.6 2.1-3.8 4-3.8s3.4 1.2 4 3.8M9.5 8.8c1.8 0 3 1 3.5 3"/></svg>Someone to meet</span>
           <h3><a href="#">Jordan Lee is looking for an EEG collaborator</a></h3>
           <div class="body"><p>Your pilot uses electroencephalography (EEG), and Jordan’s grant needs it.</p></div>
-          <div class="act"><a class="t3" href="#">Read the request</a></div>
+          <div class="act"><a class="btn" href="#">Read the request</a></div>
         </article>
         <article class="bi" role="listitem" data-when="roles" hidden>
           <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="5" cy="4.5" r="2.2"/><circle cx="10" cy="5" r="1.8"/><path d="M1 12.5c.6-2.6 2.1-3.8 4-3.8s3.4 1.2 4 3.8M9.5 8.8c1.8 0 3 1 3.5 3"/></svg>Someone to meet</span>
           <h3><a href="#">Jordan Lee is looking for a collaborator with high-density EEG and sleep-staging experience for a three-year study of memory in older adults</a></h3>
           <div class="body"><p>Your pilot uses electroencephalography (EEG), and Jordan’s grant needs it.</p></div>
-          <div class="act"><a class="t3" href="#">Read the request</a></div>
+          <div class="act"><a class="btn" href="#">Read the request</a></div>
         </article>
       </div>
     </div>
