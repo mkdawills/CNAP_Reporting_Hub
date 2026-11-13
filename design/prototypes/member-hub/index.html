@@ -15,6 +15,13 @@
   --gap:32px; --sec:88px; --side:max(40px,env(safe-area-inset-left,0px)); --side-r:max(40px,env(safe-area-inset-right,0px));
   color-scheme:light;
 }
+
+/* Looks for review: the same design in four grounds. Only the neutrals change; purple, charcoal, and the accents stay. */
+:root[data-look="stone"]{--paper:#fafafa;--band:#f0f0ee;--line:#e2e2df;--line-2:#cfcfcb}
+:root[data-look="lilac"]{--paper:#fcfbfd;--band:#f3f0f8;--line:#e6e1ee;--line-2:#d4cde0}
+:root[data-look="white"]{--paper:#ffffff;--band:#f7f6f4;--line:#e8e6e2;--line-2:#d6d3cd}
+:root[data-look="aubergine"]{--paper:#faf9f8;--band:#f1eef4;--line:#e4e0e8;--line-2:#d2ccd9;--greet-bg:#22132f;--greet-ink:#f6f2fa;--greet-muted:#cbbfdb;--fiber:#c9a8f0}
+:root[data-look="mist"]{--paper:#f9fafb;--band:#eef1f4;--line:#e0e4e9;--line-2:#cbd2da}
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans);font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased;margin:0}
 h1,h2,h3,p,figure,ul,ol{margin:0}
@@ -64,7 +71,7 @@ img{max-width:100%;display:block}
 .tools{margin-left:auto;display:flex;align-items:center;gap:10px}
 .search{display:flex;align-items:center;gap:10px;min-height:42px;width:250px;padding:0 12px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);color:var(--muted);font-size:15px;text-decoration:none}
 .search kbd{margin-left:auto;font:500 13px/1 var(--sans);border:1px solid var(--line);border-radius:4px;padding:3px 6px;color:var(--muted)}
-.mywork{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 12px 0 14px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);text-decoration:none;font-size:15px;font-weight:500}
+.mywork{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 12px 0 14px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);text-decoration:none;font-size:15px;font-weight:500}
 .mywork:hover{background:var(--band);color:var(--ink)}
 .count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--purple);color:#fff;font-size:13px;font-weight:600}
 .avatar{width:42px;height:42px;border-radius:999px;background:var(--purple-tint);color:var(--purple);display:grid;place-items:center;font-weight:600;font-size:14px;text-decoration:none;flex:none}
@@ -72,14 +79,14 @@ img{max-width:100%;display:block}
 
 
 /* greeting moment: one quiet line, with slow nerve-fiber curves drifting behind it */
-.greet{position:relative;overflow:hidden;background:var(--paper);border-bottom:1px solid var(--line)}
+.greet{position:relative;overflow:hidden;background:var(--greet-bg,var(--paper));border-bottom:1px solid var(--line)}
 .greet .wrap{position:relative;z-index:1;padding-top:64px;padding-bottom:60px}
-.greet .when{font-size:15px;line-height:22px;color:var(--muted)}
-.greet h1{font:400 56px/64px var(--serif);letter-spacing:-.02em;margin-top:10px;color:var(--ink);text-wrap:balance}
-.greet .line{margin-top:14px;font-size:18px;line-height:28px;color:var(--ink-2);max-width:58ch}
+.greet .when{font-size:15px;line-height:22px;color:var(--greet-muted,var(--muted))}
+.greet h1{font:400 56px/64px var(--serif);letter-spacing:-.02em;margin-top:10px;color:var(--greet-ink,var(--ink));text-wrap:balance}
+.greet .line{margin-top:14px;font-size:18px;line-height:28px;color:var(--greet-muted,var(--ink-2));max-width:58ch}
 .fibers{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 30%,#000 60%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 30%,#000 60%)}
-.fibers path{fill:none;stroke:var(--purple);stroke-linecap:round}
-.fibers circle{fill:var(--purple)}
+.fibers path{fill:none;stroke:var(--fiber,var(--purple));stroke-linecap:round}
+.fibers circle{fill:var(--fiber,var(--purple))}
 @media (prefers-reduced-motion:no-preference){
   .greet .when,.greet h1,.greet .line{opacity:0;transform:translateY(10px);animation:rise 1.1s cubic-bezier(.2,.7,.2,1) forwards}
   .greet h1{animation-delay:.15s}
@@ -96,23 +103,25 @@ img{max-width:100%;display:block}
 @keyframes drift{from{transform:translate(0,0)}to{transform:translate(-28px,10px)}}
 /* personal band */
 .mine{background:var(--band);border-bottom:1px solid var(--line)}
-.mine .g{padding-block:32px 34px;align-items:stretch}
-.hello{grid-column:1 / span 3;display:flex;flex-direction:column;gap:10px;padding-right:8px}
-.hello h2{font:600 20px/26px var(--sans);letter-spacing:-.015em}
-.hello .roles{font-size:15px;line-height:23px;color:var(--ink-2)}
-.hello .hl{margin-top:auto;padding-top:8px}
-.slots{grid-column:4 / span 9;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto auto;column-gap:var(--gap)}
-.slot{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:8px;align-content:start;padding-left:var(--gap);border-left:1px solid var(--line-2);min-width:0}
-.slot[hidden]{display:none}
-.slot .kind{align-self:start}
-.slot h2{font:600 18px/25px var(--sans);letter-spacing:-.005em}
-.slot h2 a{display:inline-block;padding-block:2px;color:var(--ink);text-decoration:none}
-.slot h2 a:hover{color:var(--purple);text-decoration:underline}
-.slot p{font-size:15px;line-height:23px;color:var(--ink-2)}
-.slot .act{padding-top:8px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;align-self:end}
-.prog{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2)}
-.prog .bar{width:96px;height:6px;border-radius:999px;background:#e3ded5;overflow:hidden}
-.prog .bar i{display:block;height:100%;width:33%;background:var(--purple)}
+.brief{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto auto 1fr auto;column-gap:var(--gap);padding-block:36px 40px}
+.bi{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:10px;min-width:0;padding-left:var(--gap);border-left:1px solid var(--line-2)}
+.bi.intro{padding-left:0;border-left:0}
+.bi[hidden]{display:none}
+.bi .lab{font-size:14px;line-height:20px;color:var(--muted)}
+.bi .kind{align-self:start}
+.bi h2{font:600 22px/28px var(--sans);letter-spacing:-.015em;align-self:start}
+.bi h3{margin:0;font:600 18px/25px var(--sans);letter-spacing:-.005em;align-self:start;text-wrap:pretty}
+.bi h3 a{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;padding-block:1px;color:var(--ink);text-decoration:none}
+.bi h3 a:hover{color:var(--purple);text-decoration:underline}
+.bi .body{display:flex;flex-direction:column;gap:12px}
+.bi p{font-size:15px;line-height:23px;color:var(--ink-2)}
+.bi .roles{color:var(--ink-2)}
+.bi .act{align-self:end;padding-top:8px;display:flex;align-items:center;min-height:44px}
+.t3{display:inline-flex;align-items:center;min-height:44px;font-weight:500;font-size:15px;color:var(--purple);text-decoration:underline;text-decoration-color:rgba(81,40,136,.35);text-underline-offset:4px}
+.t3:hover{text-decoration-color:currentColor;color:var(--purple-ink)}
+.prog{display:flex;align-items:center;gap:12px;font-size:14px;line-height:20px;color:var(--ink-2)}
+.prog .bar{flex:1;max-width:140px;height:4px;border-radius:999px;background:var(--line-2);overflow:hidden}
+.prog .bar i{display:block;height:100%;width:33.3%;background:var(--purple);border-radius:999px}
 
 /* sections */
 .sec{padding-top:var(--sec)}
@@ -183,7 +192,7 @@ img{max-width:100%;display:block}
 .reel{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-left:max(40px,calc((100% - 1360px)/2 + 40px));padding-right:40px;scroll-padding-left:max(40px,calc((100% - 1360px)/2 + 40px))}
 .reel::-webkit-scrollbar{display:none}
 .shot{flex:none;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px}
-.shot .im{position:relative;height:420px;border-radius:4px;overflow:hidden;background:#cfc8bf}
+.shot .im{position:relative;height:420px;border-radius:4px;overflow:hidden;background:var(--line-2)}
 .shot .im img{width:100%;height:100%;object-fit:cover}
 .shot .tag{position:absolute;left:12px;top:12px;font-size:13px;line-height:17px;font-weight:500;color:var(--ink);background:rgba(250,249,247,.9);padding:5px 9px;border-radius:4px}
 .shot figcaption{font-size:15px;line-height:22px;color:var(--ink-2);max-width:46ch}
@@ -234,7 +243,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .ach .when{grid-column:2;grid-row:1;font-size:14px;color:var(--muted);white-space:nowrap}
 .talk{grid-column:9 / span 4;min-width:0}
 .talk a.conv{display:grid;grid-template-columns:40px minmax(0,1fr);gap:2px 12px;padding:14px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
-.talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:#ebe7e0;color:var(--ink-2)}
+.talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:var(--band);color:var(--ink-2)}
 .talk b{font-size:15px;line-height:22px;font-weight:600}
 .talk a.conv:hover b{color:var(--purple);text-decoration:underline}
 .welcome-row{grid-column:1 / span 12;margin-top:28px;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
@@ -262,9 +271,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 /* tablet */
 @media (max-width:980px){
   .nav{display:none}.only-phone{display:grid}
-  .hello{grid-column:1 / -1;padding:0 0 24px}
-  .slots{grid-column:1 / -1}
-  .slot:first-child{padding-left:0;border-left:0}
+  .brief{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto 1fr auto auto auto 1fr auto;row-gap:0}
+  .bi:nth-child(odd of :not([hidden])){padding-left:0;border-left:0}
+  .brief .bi{padding-bottom:28px}
   .feat .pic,.feat .txt{grid-column:1 / -1}.feat .txt{margin-top:24px}
   .people,.agenda,.fund,.proposal,.ach,.talk{grid-column:1 / -1}
   .agenda,.proposal,.talk{margin-top:40px}
@@ -277,17 +286,17 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .brand small{display:none}
   .search,.mywork{display:none}
   .only-phone{display:grid;place-items:center;width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2)}
-  .mine .g{padding-block:24px 8px}
-  .hello{padding-bottom:12px}
   .greet .wrap{padding-top:36px;padding-bottom:34px}
   .greet h1{font-size:38px;line-height:44px}
   .greet .line{font-size:16px;line-height:25px}
   .fibers{-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 55%);mask-image:linear-gradient(180deg,transparent 0%,#000 55%);opacity:.7}
-  .hello .hl{display:none}
-  .slots{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
-  .slot{grid-row:auto;grid-template-rows:none}
-  .slot{padding:18px 0;border-left:0;border-top:1px solid var(--line-2)}
-  .slot .act{padding-top:10px}
+  .brief{display:block;padding-block:24px 8px}
+  .bi{display:flex;flex-direction:column;gap:8px;padding:20px 0;border-left:0;border-top:1px solid var(--line-2)}
+  .bi.intro{border-top:0;padding-top:0}
+  .bi.intro .act{display:none}
+  .bi .act{padding-top:6px}
+  .bi h3 a{-webkit-line-clamp:4}
+  .bi .act{align-self:flex-start}
   .sh{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:20px}
   .sh .r{justify-self:auto}
   .feat .pic{aspect-ratio:4/3;margin-inline:calc(var(--side) * -1);border-radius:0;width:auto}
@@ -338,8 +347,19 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     <option value="quiet">Quiet week, no NeuroSync</option>
     <option value="busy">Busy week</option>
     <option value="long">Long titles</option>
+    <option value="urgent">Several urgent items</option>
+    <option value="roles">Many roles, long request title</option>
+    <option value="admin">Administrator who is also a member</option>
     <option value="sparse">Three photos, no funding matches</option>
   </select></label>
+    <label for="look">Ground color<select id="look">
+      <option value="warm">Warm paper, as approved</option>
+      <option value="stone">Stone gray</option>
+      <option value="lilac">Lilac mist</option>
+      <option value="mist">Cool mist</option>
+      <option value="white">White, with a soft band</option>
+      <option value="aubergine">Aubergine greeting</option>
+    </select></label>
     <a href="system.html" style="display:inline-block;padding-block:4px">Design foundations</a>
   </div>
 </details>
@@ -350,6 +370,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     <nav class="nav" aria-label="Main"><a href="#" aria-current="page">Home</a><a href="#">Research</a><a href="#">Events</a><a href="#">Funding</a><a href="#">Community</a><a href="#">Resources</a></nav>
     <div class="tools">
       <a class="search" href="#" role="button" aria-label="Search people, events, resources, and funding"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><span class="st">Search CNAP</span><kbd>/</kbd></a>
+      <a class="mywork" href="#" data-when="admin" hidden style="border-style:dashed">Administration</a>
       <a class="mywork" href="#">My work <span class="count" data-unless="clear">4</span><span class="count" data-when="clear" hidden style="background:var(--green)">0</span></a>
       <button class="only-phone" type="button" aria-label="Search"><svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg></button>
       <a class="avatar" href="#" aria-label="Amara Okafor: profile, roles, and settings">AO</a>
@@ -379,42 +400,67 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   </section>
 
   <section class="mine" aria-labelledby="wk">
-    <div class="wrap g">
-      <div class="hello">
-        <h2 id="wk">Your week</h2>
-        <p class="roles">Pilot Project Leader<br>Behavioral Neuroscience Core user<br>Mentored by Dr. Elena Voss</p>
-        <div class="hl"><a class="lnk" href="#">All of my work</a></div>
-      </div>
-      <div class="slots" role="list" aria-label="Your week, most urgent first">
-        <article class="slot" role="listitem" data-unless="clear">
-          <span class="kind k-due"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Due in 17 days</span>
-          <h2><a href="#">Year 10 Fall reporting</a></h2>
-          <p>Closes Monday, November 30. Four surveys and reports are left, about 1 hour in all.</p>
-          <div class="act"><a class="btn pri" href="#">Continue</a><span class="prog"><span class="bar" aria-hidden="true"><i></i></span>2 of 6</span></div>
+    <div class="wrap">
+      <div class="brief" role="list" aria-label="Your week, most urgent first">
+        <div class="bi intro" role="listitem">
+          <span class="lab">Most urgent first</span>
+          <h2 id="wk">Your week</h2>
+          <div class="body"><p class="roles" data-unless="roles admin">Pilot Project Leader<br>Behavioral Neuroscience Core user<br>Mentored by Dr. Elena Voss</p><p class="roles" data-when="roles" hidden>Pilot Project Leader<br>Mentor to two pilot leaders<br>Behavioral Neuroscience Core user<br>Neuroinformatics Core user<br>NeuroSync planning group</p><p class="roles" data-when="admin" hidden>Center administrator<br>Cognitive Neuroscience Core user<br>NeuroSync planning group</p></div>
+          <div class="act"><a class="t3" href="#">All of my work</a></div>
+        </div>
+        <article class="bi" role="listitem" data-unless="clear urgent admin">
+          <span class="kind" style="color:var(--amber)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Due in 17 days</span>
+          <h3><a href="#">Year 10 Fall reporting</a></h3>
+          <div class="body"><p>Closes Monday, November 30. Four surveys and reports are left, about 1 hour in all.</p><div class="prog"><span class="bar" aria-hidden="true"><i></i></span><span>2 of 6 submitted</span></div></div>
+          <div class="act"><a class="btn pri" href="#">Continue reporting</a></div>
         </article>
-        <article class="slot" role="listitem" data-when="clear" hidden>
+        <article class="bi" role="listitem" data-when="urgent" hidden>
+          <span class="kind" style="color:var(--red)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Due in 3 days</span>
+          <h3><a href="#">Year 10 Fall reporting</a></h3>
+          <div class="body"><p>Closes Monday, November 16. Four surveys and reports are left, about 1 hour in all.</p><div class="prog"><span class="bar" aria-hidden="true"><i></i></span><span>2 of 6 submitted</span></div></div>
+          <div class="act"><a class="btn pri" href="#">Continue reporting</a></div>
+        </article>
+        <article class="bi" role="listitem" data-when="clear" hidden>
           <span class="kind" style="color:var(--green)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"/></svg>Fall reporting complete</span>
-          <h2><a href="#">Nothing is due</a></h2>
-          <p>All 6 surveys and reports are in. The next session opens in April.</p>
-          <div class="act"><a class="lnk" href="#">See what you submitted</a></div>
+          <h3><a href="#">Nothing is due</a></h3>
+          <div class="body"><p>All six surveys and reports are in. The next session opens in April.</p></div>
+          <div class="act"><a class="t3" href="#">See what you submitted</a></div>
         </article>
-        <article class="slot" role="listitem" data-unless="sparse">
+        <article class="bi" role="listitem" data-when="admin" hidden>
+          <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12.5h10M3.5 10V6M7 10V3.5M10.5 10V7.5"/></svg>Center reporting</span>
+          <h3><a href="#">38 of 61 members have submitted</a></h3>
+          <div class="body"><p>Closes Monday, November 30. Your own reports are done. Reminders go out Monday to the 23 members still working.</p></div>
+          <div class="act"><a class="btn pri" href="#">Open the session</a></div>
+        </article>
+        <article class="bi" role="listitem" data-unless="sparse urgent">
           <span class="kind" style="color:var(--teal)"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M7 1l1.8 3.7 4 .6-2.9 2.8.7 4L7 10.2 3.4 12.1l.7-4L1.2 5.3l4-.6z"/></svg>New funding match</span>
-          <h2><a href="#">Early-career award in sleep and cognition</a></h2>
-          <p>Due February 2, 2027. Picked because it fits your sleep and memory aims.</p>
-          <div class="act"><a class="lnk" href="#fund-h">Why it fits</a></div>
+          <h3><a href="#">Early-career award in sleep and cognition</a></h3>
+          <div class="body"><p>Due February 2, 2027. Picked because it fits your sleep and memory aims.</p></div>
+          <div class="act"><a class="btn" href="#fund-h">Review the match</a></div>
         </article>
-        <article class="slot" role="listitem" data-when="sparse" hidden>
+        <article class="bi" role="listitem" data-when="urgent" hidden>
+          <span class="kind" style="color:var(--amber)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Due in 6 days</span>
+          <h3><a href="#">NIH documents for the progress report</a></h3>
+          <div class="body"><p>Upload your biosketch and Other Support by Thursday, November 19, for the Center’s report.</p></div>
+          <div class="act"><a class="btn" href="#">Upload documents</a></div>
+        </article>
+        <article class="bi" role="listitem" data-when="sparse" hidden>
           <span class="kind" style="color:var(--teal)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="5.5"/><path d="M7 4.5v3l2 1.5"/></svg>Help us pick funding for you</span>
-          <h2><a href="#">Add your research interests</a></h2>
-          <p>The CNAP team uses them to pick opportunities and speakers. It takes two minutes.</p>
-          <div class="act"><a class="lnk" href="#">Add interests</a></div>
+          <h3><a href="#">Add your research interests</a></h3>
+          <div class="body"><p>The CNAP team uses them to pick opportunities and speakers. It takes two minutes.</p></div>
+          <div class="act"><a class="btn" href="#">Add interests</a></div>
         </article>
-        <article class="slot" role="listitem">
+        <article class="bi" role="listitem" data-unless="roles">
           <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="5" cy="4.5" r="2.2"/><circle cx="10" cy="5" r="1.8"/><path d="M1 12.5c.6-2.6 2.1-3.8 4-3.8s3.4 1.2 4 3.8M9.5 8.8c1.8 0 3 1 3.5 3"/></svg>Someone to meet</span>
-          <h2><a href="#">Jordan Lee is looking for an EEG collaborator</a></h2>
-          <p>Your pilot uses electroencephalography (EEG), and Jordan’s grant needs it.</p>
-          <div class="act"><a class="lnk" href="#">Read the request</a></div>
+          <h3><a href="#">Jordan Lee is looking for an EEG collaborator</a></h3>
+          <div class="body"><p>Your pilot uses electroencephalography (EEG), and Jordan’s grant needs it.</p></div>
+          <div class="act"><a class="t3" href="#">Read the request</a></div>
+        </article>
+        <article class="bi" role="listitem" data-when="roles" hidden>
+          <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="5" cy="4.5" r="2.2"/><circle cx="10" cy="5" r="1.8"/><path d="M1 12.5c.6-2.6 2.1-3.8 4-3.8s3.4 1.2 4 3.8M9.5 8.8c1.8 0 3 1 3.5 3"/></svg>Someone to meet</span>
+          <h3><a href="#">Jordan Lee is looking for a collaborator with high-density EEG and sleep-staging experience for a three-year study of memory in older adults</a></h3>
+          <div class="body"><p>Your pilot uses electroencephalography (EEG), and Jordan’s grant needs it.</p></div>
+          <div class="act"><a class="t3" href="#">Read the request</a></div>
         </article>
       </div>
     </div>
@@ -619,6 +665,8 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
     arrows();
   }
+  var look=document.getElementById('look');
+  look.addEventListener('change',function(){document.documentElement.dataset.look=look.value;});
   var sel=document.getElementById('scenario');
   var start=(location.hash||'').slice(1);
   if(start&&[].some.call(sel.options,function(o){return o.value===start;}))sel.value=start;
