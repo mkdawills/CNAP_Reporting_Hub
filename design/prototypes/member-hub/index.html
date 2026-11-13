@@ -479,6 +479,11 @@ details.wel{flex:1 1 520px;min-width:0}
   .ns-feat .spk-txt .chips,.ns-feat .spk-act{justify-content:flex-end}
   .ns-feat .spk-txt .bio{margin-left:auto}
 }
+@media (min-width:1181px){
+  .sh-r h2,.sh-r p{width:calc(50% - var(--gap) / 2 - 40px);text-align:right;margin-left:0}
+  .sh-r p{max-width:none}
+  .sh-r::before{left:calc(50% - var(--gap) / 2 - 80px)}
+}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1084,7 +1089,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
     </section>
 
     <section class="sec" aria-labelledby="ev-h">
-      <header class="sh">
+      <header class="sh sh-r">
         <h2 id="ev-h">NeuroSync</h2>
         <p>The Center’s seminar series. Talks are on Wednesdays from 2:30 to 3:30 p.m. in Leadership Room 127. Refreshments are provided, and every member is welcome.</p>
       </header>
