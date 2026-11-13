@@ -458,6 +458,14 @@ details.wel{flex:1 1 520px;min-width:0}
 .talk a.conv .why{grid-column:2;margin-top:4px}
 .talk a.conv + a.conv{border-top:1px solid var(--line)}
 .talk a.conv:first-of-type{border-top:0}
+@media (min-width:981px){
+  .ach > a.ach-lead{grid-template-columns:minmax(0,1fr);grid-template-rows:none;row-gap:10px}
+  .ach-pic{grid-column:1;grid-row:auto;aspect-ratio:3/2;margin-bottom:14px}
+  .ach-pic .ini{font-size:120px}
+  .ach > a.ach-lead .kind,.ach > a.ach-lead b,.ach > a.ach-lead .sum,.ach > a.ach-lead .meta,.ach > a.ach-lead .when{grid-column:1}
+  .ach > a.ach-lead b{font-size:32px;line-height:39px}
+  .ach > a.ach-lead .sum{max-width:60ch}
+}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
