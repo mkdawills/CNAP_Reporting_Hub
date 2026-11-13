@@ -151,7 +151,8 @@ img{max-width:100%;display:block}
 
 /* sections */
 .sec{padding-top:var(--sec)}
-.sec.lead-in{padding-top:48px}
+.sec.lead-in{padding-top:var(--sec)}
+.sec.onb{padding-top:72px}
 .sh{position:relative;border-top:1px solid var(--line);padding-top:32px;margin-bottom:44px}
 .sh::before{content:"";position:absolute;left:0;top:-1px;width:40px;height:2px;background:var(--ink)}
 .sh h2{font:500 44px/50px var(--serif);letter-spacing:-.02em;color:var(--ink);text-wrap:balance}
@@ -670,6 +671,20 @@ details.wel{flex:1 1 520px;min-width:0}
 .cal-panel .sh p{margin-inline:auto}
 .cal-panel .cal-filters{justify-content:center}
 @media (max-width:640px){.cal-panel .sh{text-align:left}.cal-panel .cal-filters{justify-content:flex-start}}
+.ob-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+.ob{display:flex;flex-direction:column;padding:36px 40px 32px;border-radius:6px;background:var(--surface);box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -20px rgba(29,27,33,.22);border-top:3px solid var(--purple)}
+.ob-awardee{border-top-color:var(--teal)}
+.ob-l{font-size:14px;line-height:20px;font-weight:600;color:var(--purple)}
+.ob-awardee .ob-l{color:var(--teal)}
+.ob h3{margin:6px 0 10px;font:500 30px/36px var(--serif);letter-spacing:-.015em}
+.ob-d{font-size:16px;line-height:25px;color:var(--ink-2);max-width:52ch}
+.ob-s{margin:22px 0 26px;border-top:1px solid var(--line)}
+.ob-s li{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px;line-height:22px;color:var(--ink)}
+.ob-n{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);font:500 14px/1 var(--serif);color:var(--purple)}
+.ob-awardee .ob-n{color:var(--teal)}
+.ob-a{margin-top:auto;display:flex;align-items:center;gap:10px 20px;flex-wrap:wrap}
+@media (max-width:980px){.ob-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.ob{padding:26px 20px 24px}.ob h3{font-size:24px;line-height:30px}}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1145,7 +1160,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li class="otp-g" aria-hidden="true">Today</li><li><a href="#wk" data-t="wk">Your week</a></li><li class="otp-g" aria-hidden="true">At the Center</li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li class="otp-g" aria-hidden="true">Funding</li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li class="otp-g" aria-hidden="true">People</li><li><a href="#com-h" data-t="com-h">Community</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
+<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li class="otp-g" aria-hidden="true">Today</li><li><a href="#wk" data-t="wk">Your week</a></li><li class="otp-g" aria-hidden="true">At the Center</li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li class="otp-g" aria-hidden="true">Funding</li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li class="otp-g" aria-hidden="true">People</li><li><a href="#com-h" data-t="com-h">Community</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
@@ -1252,6 +1267,13 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   </section>
 
   <div class="wrap">
+    <section class="sec onb" aria-labelledby="onb-h">
+      <header class="sh">
+        <h2 id="onb-h">Getting started</h2>
+        <p>Onboarding guides for mentors and new pilot awardees. Each one walks through what to do first, step by step.</p>
+      </header>
+      <div class="ob-grid"><article class="ob ob-mentor"><p class="ob-l">For mentors</p><h3>Mentoring at CNAP</h3><p class="ob-d">What the Center asks of mentors, and how to support a pilot project leader through the award.</p><ol class="ob-s"><li><span class="ob-n num">1</span>Your role and expectations</li><li><span class="ob-n num">2</span>Set up a mentoring agreement</li><li><span class="ob-n num">3</span>Plan your meeting schedule</li><li><span class="ob-n num">4</span>What mentors report, and when</li></ol><div class="ob-a"><a class="btn" href="#">Start the mentor guide</a><span class="meta">4 steps · about 15 minutes to read</span></div></article><article class="ob ob-awardee"><p class="ob-l">For new awardees</p><h3>Starting your pilot award</h3><p class="ob-d">Everything to set up in your first months, from accounts and approvals to meeting your mentor.</p><ol class="ob-s"><li><span class="ob-n num">1</span>Welcome to the Center</li><li><span class="ob-n num">2</span>Set up your award and budget</li><li><span class="ob-n num">3</span>Approvals before you begin</li><li><span class="ob-n num">4</span>Meet your mentor and the cores</li><li><span class="ob-n num">5</span>Your reporting schedule</li></ol><div class="ob-a"><a class="btn" href="#">Start the awardee guide</a><span class="meta">5 steps · about 25 minutes to read</span></div></article></div>
+    </section>
     <section class="sec lead-in" aria-labelledby="res-h">
       <header class="sh">
         <h2 id="res-h">Research at CNAP</h2>
