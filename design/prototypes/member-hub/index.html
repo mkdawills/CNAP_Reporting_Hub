@@ -152,7 +152,7 @@ img{max-width:100%;display:block}
 /* sections */
 .sec{padding-top:var(--sec)}
 .sec.lead-in{padding-top:var(--sec)}
-.sec.onb{padding-top:72px}
+.sec.onb{padding-top:var(--sec)}
 .sh{position:relative;border-top:1px solid var(--line);padding-top:32px;margin-bottom:44px}
 .sh::before{content:"";position:absolute;left:0;top:-1px;width:40px;height:2px;background:var(--ink)}
 .sh h2{font:500 44px/50px var(--serif);letter-spacing:-.02em;color:var(--ink);text-wrap:balance}
@@ -543,6 +543,10 @@ details.wel{flex:1 1 520px;min-width:0}
 .com-band :focus-visible{outline-color:#fff}
 .com-band .sheet :focus-visible{outline-color:var(--purple)}
 .com-band + .wrap > .foot{margin-top:0;border-top:0}
+/* calendar and community share one dark stretch, split by a faint rule; NeuroSync follows as a white band */
+.cal-band + .com-band{margin-top:0}
+.cal-band + .com-band > .wrap{background:linear-gradient(rgba(255,255,255,.14),rgba(255,255,255,.14)) content-box top / 100% 1px no-repeat}
+.com-band + .ns-band{margin-top:0;border-top:0}
 .sheet-meet .meet{margin-bottom:0;padding-bottom:0;border-bottom:0}
 .sheet-2{margin-top:28px;padding:56px 72px 64px}
 @media (max-width:980px){.sheet-2{padding:32px}}
@@ -742,7 +746,9 @@ details.wel{flex:1 1 520px;min-width:0}
 .people > [data-unless="quiet"]{flex:1;display:flex}
 .spk-main{flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));column-gap:var(--gap);row-gap:32px;align-content:start}
 .spk-txt{grid-column:1 / -1;max-width:62ch;min-width:0}
-.poster{grid-column:5 / -1;align-self:end;display:flex;flex-direction:column;color:var(--ink)}
+.poster{grid-column:5 / -1;align-self:end;display:flex;flex-direction:column;color:var(--ink);position:relative}
+.ns-band .poster::before{content:"";position:absolute;right:-16px;top:-28px;width:120px;height:120px;border-top:2px solid var(--purple);border-right:2px solid var(--teal);pointer-events:none}
+@media (max-width:980px){.ns-band .poster::before{display:none}}
 .poster .p-lab{font-size:14px;line-height:20px;font-weight:600;color:var(--purple);margin-bottom:auto}
 .poster .p-day{font:500 22px/28px var(--serif);color:var(--ink-2)}
 .poster .p-num{font:400 168px/.86 var(--serif);letter-spacing:-.04em;margin:8px 0 12px;color:var(--purple-ink)}
@@ -1212,7 +1218,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li class="otp-g" aria-hidden="true">Today</li><li><a href="#wk" data-t="wk">Your week</a></li><li class="otp-g" aria-hidden="true">At the Center</li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li class="otp-g" aria-hidden="true">Funding</li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li class="otp-g" aria-hidden="true">People</li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
+<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li class="otp-g" aria-hidden="true">Today</li><li><a href="#wk" data-t="wk">Your week</a></li><li class="otp-g" aria-hidden="true">Funding</li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li class="otp-g" aria-hidden="true">Events and people</li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li class="otp-g" aria-hidden="true">At the Center</li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
@@ -1319,102 +1325,57 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   </section>
 
   <div class="wrap">
-    <section class="sec onb" aria-labelledby="onb-h">
+    <section class="sec" aria-labelledby="fund-h">
       <header class="sh">
-        <h2 id="onb-h">Getting started</h2>
-        <p>Onboarding guides for mentors and new project leaders, on primary or pilot projects. Each one walks through what to do first, step by step.</p>
+        <h2 id="fund-h">Funding and proposals</h2>
+        <p>Opportunities the CNAP team picked for your research, and help at each stage of a proposal.</p>
       </header>
-      <div class="ob-grid"><article class="ob ob-mentor"><p class="ob-l">For mentors</p><h3>Mentoring at CNAP</h3><p class="ob-d">What the Center asks of mentors, and how to support a primary or pilot project leader through the award.</p><ol class="ob-s"><li><span class="ob-n num">1</span>Your role and expectations</li><li><span class="ob-n num">2</span>Sign your mentoring agreement</li><li><span class="ob-n num">3</span>Plan your meeting schedule</li><li><span class="ob-n num">4</span>What mentors report, and when</li><li><span class="ob-n num">5</span>Learn about your role at the Site Visit</li></ol><div class="ob-a"><a class="btn" href="#">Start the mentor guide</a><span class="meta">5 steps · about 20 minutes to read</span></div></article><article class="ob ob-awardee"><p class="ob-l">For mentees</p><h3>Starting your project award</h3><p class="ob-d">For primary and pilot project leaders: what to do in your first months, from your mentoring agreement, finance guidelines, and approvals to orientations with the research cores.</p><ol class="ob-s"><li><span class="ob-n num">1</span>Welcome to the Center</li><li><span class="ob-n num">2</span>Sign your mentoring agreement</li><li><span class="ob-n num">3</span>Review CNAP’s finance expectations and guidelines</li><li><span class="ob-n num">4</span>Approvals before you begin</li><li><span class="ob-n num">5</span>Orientations with the research cores</li><li><span class="ob-n num">6</span>Your reporting schedule</li><li><span class="ob-n num">7</span>Learn about your role at the Site Visit</li></ol><div class="ob-a"><a class="btn" href="#">Start the mentee guide</a><span class="meta">7 steps · about 35 minutes to read</span></div></article></div>
-    </section>
-    <section class="sec lead-in" aria-labelledby="res-h">
-      <header class="sh">
-        <h2 id="res-h">Research at CNAP</h2>
-        <p>Work from the Center’s pilot projects, cores, and investigators.</p>
-      </header>
-      <article class="g feat">
-        <figure class="pic-wrap"><div class="pic"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"></div><figcaption class="credit">Illustration made for this prototype. It is not research data, and a project image will replace it.</figcaption></figure>
-        <div class="txt">
-          <p class="eyebrow">Pilot project · Neurobiology of Learning and Memory</p>
-          <h3 data-unless="long"><a href="#">What a night of sleep does to a new memory</a></h3>
-          <h3 class="long" data-when="long" hidden><a href="#">Recording brain activity across a full night of sleep to see which of the day’s memories are strengthened, and which fade by morning</a></h3>
-          <p class="deck">A CNAP pilot project is recording brain activity during sleep to learn which memories are kept by morning. The team describes its design and what it plans to test next.</p>
-          <p class="meta">The CNAP team · November 10, 2026 · 4-minute read</p>
-          <div class="act"><a class="t3" href="#">Read the story</a></div>
-          <div class="also" aria-label="More from CNAP research">
-            <a href="#"><span class="eyebrow">Core capability</span><b>Transcranial magnetic stimulation in the Cognitive Neuroscience Core</b></a>
-            <a href="#"><span class="eyebrow">Publications</span><b>Three new papers that cite CNAP this fall</b></a>
+      <div class="g sheet">
+        <div class="fund">
+          <div class="pfy"><div><h3>Picked for you, Amara <span class="pfy-new">1 new this week</span></h3><p class="pfy-sub">The CNAP team matched these three to your sleep and memory aims.</p></div></div>
+          <div data-unless="sparse">
+            <div class="opp-hd" aria-hidden="true"><span>Time left</span><span>Opportunity, and why it fits you</span><span>Deadline and award</span></div>
+            <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Details checked<br>November 9</span></span></a>
+            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Details checked<br>November 9</span></span></a>
+            <a class="opp" href="#"><span class="days num soon">7<small>days left</small></span><span><span class="spon">CNAP · Pilot program</span><b>Year 11 pilot project letters of intent</b><span class="why">Open to all CNAP faculty. You could pass it on to a colleague.</span></span><span class="side"><strong class="num">November 20, 2026</strong>Center funding</span></a>
+          </div>
+          <div class="empty" data-when="sparse" hidden>
+            <p style="font-weight:600">No opportunities are picked for you yet.</p>
+            <p class="meta">The CNAP team picks funding from your research interests. Add yours, or browse every open opportunity.</p>
+            <div style="display:flex;gap:20px;flex-wrap:wrap"><a class="lnk" href="#">Add research interests</a><a class="lnk" href="#">Browse all funding</a></div>
           </div>
         </div>
-      </article>
-      <div class="more-stories">
-        <h3>More stories</h3>
-        <ul>
-          <li><a class="ms" href="#"><span class="ms-im"><img src="img/oscillations.jpg" alt="Generated illustration of brain oscillations" loading="lazy"><span class="tag">Illustration</span></span><span class="eyebrow">Pilot project</span><b>How a new pilot team is planning its first year</b><span class="meta">The CNAP team · November 6</span></a></li>
-          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-4.jpg" alt="Placeholder for a portrait photograph" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Investigator profile</span><b>Meet the Center’s newest pilot project leader</b><span class="meta">The CNAP team · October 29</span></a></li>
-          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-5.jpg" alt="Placeholder for a photograph of the Neuroinformatics Core" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Core capability</span><b>What the Neuroinformatics Core can process for your lab</b><span class="meta">The CNAP team · October 22</span></a></li>
-          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-2.jpg" alt="Placeholder for a photograph of a workshop" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Training</span><b>Inside the fall grant-writing workshop series</b><span class="meta">The CNAP team · October 15</span></a></li>
-        </ul>
+        <aside class="proposal" aria-labelledby="prop-h">
+          <p class="gr-h">Grant resources</p>
+          <h3 id="prop-h">From idea to award</h3>
+          <nav class="stages" aria-label="Grant writing resources by stage">
+            <a href="#"><b>Find funding</b><span>Sponsors, searches, and eligibility</span></a>
+            <a href="#"><b>Plan the proposal</b><span>Timelines, aims, and internal review</span></a>
+            <a href="#"><b>Write a competitive application</b><span>Specific Aims, approach, and significance</span></a>
+            <a href="#"><b>Prepare NIH documents</b><span>Biosketch, Other Support, and budget</span></a>
+            <a href="#"><b>Respond to reviews</b><span>Summary statements and resubmission</span></a>
+            <a href="#"><b>Manage the award</b><span>Progress reports and closeout</span></a>
+          </nav>
+          <div class="consult"><p>Talk through a draft, one on one, with the Assistant Director for Grants and Contracts.</p><a class="btn" href="#">Book a time</a></div>
+        </aside>
       </div>
-      <footer class="sf"><a class="btn" href="#">All stories</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a story</a></footer>
-    </section>
-
-  </div>
-  <div class="wrap">
-    <section class="sec" aria-labelledby="cores-h">
-      <header class="sh">
-        <h2 id="cores-h">Research cores</h2>
-        <p>Three cores support CNAP research with specific services for members.</p>
-      </header>
-      <div class="voucher"><p class="v-l">Coming soon</p><p class="v-t"><b>Core vouchers</b> will help members use core services. Details will be posted here when the program opens.</p><a class="t3" href="#">Tell me when it opens</a></div>
-      <div class="core-grid"><article class="core core-teal"><div class="core-top"><span class="core-code">NI</span></div><h3>Neuroinformatics Core</h3><p class="core-d">Advanced computing, data science, and artificial intelligence (AI) support for CNAP. On Beocat, an EEG analysis that took 1,280 hours now takes about 20.</p><p class="core-sl">Services</p><ul class="core-s"><li>High-performance computing on Beocat, with 496 Core processors and 10 GPUs</li><li>Data analysis, statistics, and machine learning</li><li>Research software, workflows, and automation</li><li>Workshops in R, Python, and machine learning, plus one-on-one consultation</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p><div class="core-a"><a class="btn" href="#">Request analysis</a><span class="core-links"><a class="t3" href="#">Book a consultation</a><a class="t3" href="https://connect-lab.carrd.co">CONNECT Lab</a></span></div></article><article class="core core-purple"><div class="core-top"><span class="core-code">CN</span></div><h3>Cognitive Neuroscience Core</h3><p class="core-d">Human neuroscience, electroencephalography (EEG), and brain stimulation support for CNAP. The only COBRE-funded cognitive neuroscience and EEG core in Kansas.</p><p class="core-sl">Services</p><ul class="core-s"><li>Study design consultation and methodological guidance</li><li>Experiment programming, setup, and troubleshooting in the CONNECT Lab</li><li>EEG data collection with 64-channel EGI nets and mobile OpenBCI systems</li><li>Transcranial magnetic stimulation (TMS and rTMS) combined with EEG</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p><div class="core-a"><a class="btn" href="#">Request instrument time</a><a class="t3" href="#">Book a consultation</a></div></article><article class="core core-amber"><div class="core-top"><span class="core-code">BN</span></div><h3>Behavioral Neuroscience Core</h3><p class="core-d">Behavioral research, animal models, and experimental neuroscience support for CNAP, in 51 rooms across more than 7,300 square feet.</p><p class="core-sl">Services</p><ul class="core-s"><li>Design and running of behavioral assays</li><li>Surgical and laboratory procedure support, including stereotaxic surgery</li><li>Full animal care, housing, and compliance documentation</li><li>Training, onboarding, and scheduling of space and equipment</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p><div class="core-a"><a class="btn" href="#">Request instrument time</a><a class="t3" href="#">Book a consultation or tour</a></div></article></div>
-      <footer class="sf"><a class="btn" href="#">All core services</a><a class="t3" href="https://www.k-state.edu/cnap/research-cores/">Core pages on the CNAP website</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Ask a core a question</a></footer>
-    </section>
-  </div>
-
-  <div class="ns-band">
-  <div class="wrap">
-    <section class="sec" aria-labelledby="ev-h">
-      <header class="sh sh-r">
-        <h2 id="ev-h">NeuroSync</h2>
-        <p>The Center’s seminar series. Talks are on Wednesdays from 2:30 to 3:30 p.m. in Leadership Room 127. Refreshments are provided, and every member is welcome.</p>
-      </header>
-      <div class="ns-feat" data-unless="quiet">
-            <div class="spk-main">
-              <div class="portrait" role="img" aria-label="Portrait of Dr. Priya Raman, to come"><span class="pl">Portrait to come</span><span class="ini">PR</span></div>
-              <p class="poster"><span class="p-lab">This week at NeuroSync</span><span class="p-day">Wednesday</span><span class="p-num num">18</span><span class="p-mon">November</span><span class="p-time">2:30 to 3:30 p.m. · Leadership Room 127<br>Refreshments provided</span></p>
-              <div class="spk-txt">
-                <p class="eyebrow">NeuroSync talk</p>
-                <h3><a href="#">Memory consolidation during sleep</a></h3>
-                <p class="who">Dr. Priya Raman</p>
-                <p class="meta">Department of Psychological Sciences</p>
-                <p class="bio">Studies how slow waves and sleep spindles decide which memories last, in younger and older adults.</p>
-                <div class="chips"><span class="chip you">Sleep</span><span class="chip you">Memory consolidation</span><span class="chip">Aging</span></div>
-                <div class="spk-act"><a class="btn" href="#">Add to my calendar</a><a class="btn" href="#" style="border-color:transparent;background:transparent;color:var(--purple)">Speaker profile</a></div>
-              </div>
-            </div>
-      </div>
-          <div class="quiet-note" data-when="quiet" hidden>
-            <p class="eyebrow">NeuroSync</p>
-            <p style="font:500 22px/30px var(--serif)">No NeuroSync talk this week.</p>
-            <p class="meta">The series returns Wednesday, December 2, with Dr. Daniel Kim on machine learning for spike sorting.</p>
-          </div>
-        <div class="lineup" role="region" aria-labelledby="lu-h">
-          <div class="lineup-h"><h3 id="lu-h">Upcoming NeuroSync presenters</h3>
-            <div class="lu-ctl"><a class="t3" href="#">All speakers</a><button type="button" class="arrow" data-dir="-1" aria-label="Previous speakers" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-dir="1" aria-label="Next speakers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
-          </div>
-          <ol>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">DK</span></span><span class="meta num">Wednesday, December 2</span><b>Machine learning for spike sorting</b><span class="meta">Dr. Daniel Kim</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">AH</span></span><span class="meta num">Wednesday, December 9</span><b>Stress, the heart, and the aging brain</b><span class="meta">Dr. Ana Herrera</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">SN</span></span><span class="meta num">Wednesday, January 27</span><b>Rodent models of memory decline</b><span class="meta">Dr. Sam Novak</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">LT</span></span><span class="meta num">Wednesday, February 3</span><b>Learning across the lifespan</b><span class="meta">Dr. Lea Torres</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">MO</span></span><span class="meta num">Wednesday, February 10</span><b>Attention and the sleeping brain</b><span class="meta">Dr. Maya Okafor</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">RB</span></span><span class="meta num">Wednesday, February 17</span><b>Imaging small circuits in behaving animals</b><span class="meta">Dr. Ravi Bhat</span></a></li>
-          </ol>
-          <p class="sr" aria-live="polite" id="lu-status"></p>
+      <div class="sheet news-sheet">
+        <div class="news">
+          <h3 id="news-h">Funding news</h3>
+          <ul>
+<li><a href="#"><span class="nw-date"><span class="nw-num num">11</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">K-State Research Weekly</span><b>New budget forms for spring proposals</b><span class="nw-sum">Use the new forms for proposals routed after January 1.</span></span></a></li>
+<li><a href="#"><span class="nw-date"><span class="nw-num num">6</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">National Institutes of Health</span><b>Biosketch format changes start in January</b><span class="nw-sum">What changes, and where to find the updated template.</span></span></a></li>
+<li><a href="#"><span class="nw-date"><span class="nw-num num">3</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">CNAP</span><b>Pre-submission review funds are open</b><span class="nw-sum">Support for an outside reviewer before you submit.</span></span></a></li>
+          </ul>
         </div>
-      <footer class="sf"><a class="btn" href="#">All NeuroSync talks</a><p class="meta">Past talks and recordings live on the full NeuroSync page.</p><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a speaker</a></footer>
+      </div>
+      <div class="sheet tk-sheet">
+        <div class="tk-head"><div><h3 class="pw-h" id="pw-h">Proposal writing toolkit</h3><p class="tk-lead">Your <b>R21 is due in 123 days.</b> Your colleagues and fellow applicants may be writing their Specific Aims at this time, so stage 3 is highlighted below.</p></div><a class="t3" href="#">All proposal writing resources</a></div>
+        <ol class="tk"><li class="tk-s"><span class="tk-n num">1</span><h4>Find funding</h4><p class="tk-d">Sponsors, searches, and eligibility</p><ul class="tk-r"><li><a href="#">Funding search guide</a></li><li><a href="#">Eligibility checklist</a></li></ul></li><li class="tk-s"><span class="tk-n num">2</span><h4>Plan the proposal</h4><p class="tk-d">Timelines, aims, and internal review</p><ul class="tk-r"><li><a href="#">Internal review timeline</a></li><li><a href="#">Proposal planning calendar</a></li></ul></li><li class="tk-s now" aria-current="step"><span class="tk-n num">3</span><h4>Write a competitive application</h4><p class="tk-d">Specific Aims, approach, and significance</p><p class="tk-you">You are here</p><ul class="tk-r"><li><a href="#">Specific Aims guide</a></li><li><a href="#">Example aims from funded CNAP pilots</a></li></ul></li><li class="tk-s"><span class="tk-n num">4</span><h4>Prepare NIH documents</h4><p class="tk-d">Biosketch, Other Support, and budget</p><ul class="tk-r"><li><a href="#">Biosketch template</a></li><li><a href="#">Budget justification</a></li><li><a href="#">Letters of support</a></li><li><a href="#">Data management plan</a></li></ul></li><li class="tk-s"><span class="tk-n num">5</span><h4>Respond to reviews</h4><p class="tk-d">Summary statements and resubmission</p><ul class="tk-r"><li><a href="#">Reading a summary statement</a></li><li><a href="#">Introduction to a resubmission</a></li></ul></li><li class="tk-s"><span class="tk-n num">6</span><h4>Manage the award</h4><p class="tk-d">Progress reports and closeout</p><ul class="tk-r"><li><a href="#">Progress report template</a></li><li><a href="#">Closeout checklist</a></li></ul></li></ol>
+      </div>
+      <footer class="sf"><a class="btn" href="#">All funding</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share an opportunity or news</a></footer>
     </section>
-  </div>
+
   </div>
 
   <div class="cal-band">
@@ -1473,74 +1434,6 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   </div>
   </div>
 
-  <section class="reel-band" aria-labelledby="ph-h">
-    <div class="wrap">
-      <header class="sh">
-        <h2 id="ph-h">The 2026 Site Visit</h2>
-        <p>May 27 and 28 in Manhattan, Kansas: core tours, the keynote, project presentations, and the poster session.</p>
-      </header>
-      <div class="mosaic" id="reel" tabindex="-1">
-        <a class="ph lead" href="#"><span class="im"><img src="img/reel-1.jpg" alt="Placeholder for a photo of the poster session" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Poster session</b><span>Students and investigators present their work. Day 2, May 28.</span></span></a>
-        <a class="ph" href="#"><span class="im"><img src="img/reel-2.jpg" alt="Placeholder for a photo of a core tour" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Core tours</b><span>Day 1, May 27.</span></span></a>
-        <a class="ph" href="#"><span class="im"><img src="img/reel-3.jpg" alt="Placeholder for a photo of the keynote address" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Keynote address</b><span>Day 1, before the banquet.</span></span></a>
-      </div>
-      <footer class="sf"><a class="btn" href="#">View the full gallery</a><p class="meta" data-unless="sparse">Showing 3 of 48 photographs. The rest include the banquet and every project presentation.</p><p class="meta" data-when="sparse" hidden>All 3 photographs from this event.</p><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share your photographs</a></footer>
-    </div>
-  </section>
-
-  <div class="wrap">
-    <section class="sec" aria-labelledby="fund-h">
-      <header class="sh">
-        <h2 id="fund-h">Funding and proposals</h2>
-        <p>Opportunities the CNAP team picked for your research, and help at each stage of a proposal.</p>
-      </header>
-      <div class="g sheet">
-        <div class="fund">
-          <div class="pfy"><div><h3>Picked for you, Amara <span class="pfy-new">1 new this week</span></h3><p class="pfy-sub">The CNAP team matched these three to your sleep and memory aims.</p></div></div>
-          <div data-unless="sparse">
-            <div class="opp-hd" aria-hidden="true"><span>Time left</span><span>Opportunity, and why it fits you</span><span>Deadline and award</span></div>
-            <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Details checked<br>November 9</span></span></a>
-            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Details checked<br>November 9</span></span></a>
-            <a class="opp" href="#"><span class="days num soon">7<small>days left</small></span><span><span class="spon">CNAP · Pilot program</span><b>Year 11 pilot project letters of intent</b><span class="why">Open to all CNAP faculty. You could pass it on to a colleague.</span></span><span class="side"><strong class="num">November 20, 2026</strong>Center funding</span></a>
-          </div>
-          <div class="empty" data-when="sparse" hidden>
-            <p style="font-weight:600">No opportunities are picked for you yet.</p>
-            <p class="meta">The CNAP team picks funding from your research interests. Add yours, or browse every open opportunity.</p>
-            <div style="display:flex;gap:20px;flex-wrap:wrap"><a class="lnk" href="#">Add research interests</a><a class="lnk" href="#">Browse all funding</a></div>
-          </div>
-        </div>
-        <aside class="proposal" aria-labelledby="prop-h">
-          <p class="gr-h">Grant resources</p>
-          <h3 id="prop-h">From idea to award</h3>
-          <nav class="stages" aria-label="Grant writing resources by stage">
-            <a href="#"><b>Find funding</b><span>Sponsors, searches, and eligibility</span></a>
-            <a href="#"><b>Plan the proposal</b><span>Timelines, aims, and internal review</span></a>
-            <a href="#"><b>Write a competitive application</b><span>Specific Aims, approach, and significance</span></a>
-            <a href="#"><b>Prepare NIH documents</b><span>Biosketch, Other Support, and budget</span></a>
-            <a href="#"><b>Respond to reviews</b><span>Summary statements and resubmission</span></a>
-            <a href="#"><b>Manage the award</b><span>Progress reports and closeout</span></a>
-          </nav>
-          <div class="consult"><p>Talk through a draft, one on one, with the Assistant Director for Grants and Contracts.</p><a class="btn" href="#">Book a time</a></div>
-        </aside>
-      </div>
-      <div class="sheet news-sheet">
-        <div class="news">
-          <h3 id="news-h">Funding news</h3>
-          <ul>
-<li><a href="#"><span class="nw-date"><span class="nw-num num">11</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">K-State Research Weekly</span><b>New budget forms for spring proposals</b><span class="nw-sum">Use the new forms for proposals routed after January 1.</span></span></a></li>
-<li><a href="#"><span class="nw-date"><span class="nw-num num">6</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">National Institutes of Health</span><b>Biosketch format changes start in January</b><span class="nw-sum">What changes, and where to find the updated template.</span></span></a></li>
-<li><a href="#"><span class="nw-date"><span class="nw-num num">3</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">CNAP</span><b>Pre-submission review funds are open</b><span class="nw-sum">Support for an outside reviewer before you submit.</span></span></a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="sheet tk-sheet">
-        <div class="tk-head"><div><h3 class="pw-h" id="pw-h">Proposal writing toolkit</h3><p class="tk-lead">Your <b>R21 is due in 123 days.</b> Your colleagues and fellow applicants may be writing their Specific Aims at this time, so stage 3 is highlighted below.</p></div><a class="t3" href="#">All proposal writing resources</a></div>
-        <ol class="tk"><li class="tk-s"><span class="tk-n num">1</span><h4>Find funding</h4><p class="tk-d">Sponsors, searches, and eligibility</p><ul class="tk-r"><li><a href="#">Funding search guide</a></li><li><a href="#">Eligibility checklist</a></li></ul></li><li class="tk-s"><span class="tk-n num">2</span><h4>Plan the proposal</h4><p class="tk-d">Timelines, aims, and internal review</p><ul class="tk-r"><li><a href="#">Internal review timeline</a></li><li><a href="#">Proposal planning calendar</a></li></ul></li><li class="tk-s now" aria-current="step"><span class="tk-n num">3</span><h4>Write a competitive application</h4><p class="tk-d">Specific Aims, approach, and significance</p><p class="tk-you">You are here</p><ul class="tk-r"><li><a href="#">Specific Aims guide</a></li><li><a href="#">Example aims from funded CNAP pilots</a></li></ul></li><li class="tk-s"><span class="tk-n num">4</span><h4>Prepare NIH documents</h4><p class="tk-d">Biosketch, Other Support, and budget</p><ul class="tk-r"><li><a href="#">Biosketch template</a></li><li><a href="#">Budget justification</a></li><li><a href="#">Letters of support</a></li><li><a href="#">Data management plan</a></li></ul></li><li class="tk-s"><span class="tk-n num">5</span><h4>Respond to reviews</h4><p class="tk-d">Summary statements and resubmission</p><ul class="tk-r"><li><a href="#">Reading a summary statement</a></li><li><a href="#">Introduction to a resubmission</a></li></ul></li><li class="tk-s"><span class="tk-n num">6</span><h4>Manage the award</h4><p class="tk-d">Progress reports and closeout</p><ul class="tk-r"><li><a href="#">Progress report template</a></li><li><a href="#">Closeout checklist</a></li></ul></li></ol>
-      </div>
-      <footer class="sf"><a class="btn" href="#">All funding</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share an opportunity or news</a></footer>
-    </section>
-
-  </div>
   <div class="com-band">
   <div class="wrap">
     <section class="sec" aria-labelledby="com-h">
@@ -1595,6 +1488,124 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
     </section>
   </div>
   </div>
+
+  <div class="ns-band">
+  <div class="wrap">
+    <section class="sec" aria-labelledby="ev-h">
+      <header class="sh sh-r">
+        <h2 id="ev-h">NeuroSync</h2>
+        <p>The Center’s seminar series. Talks are on Wednesdays from 2:30 to 3:30 p.m. in Leadership Room 127. Refreshments are provided, and every member is welcome.</p>
+      </header>
+      <div class="ns-feat" data-unless="quiet">
+            <div class="spk-main">
+              <div class="portrait" role="img" aria-label="Portrait of Dr. Priya Raman, to come"><span class="pl">Portrait to come</span><span class="ini">PR</span></div>
+              <p class="poster"><span class="p-lab">This week at NeuroSync</span><span class="p-day">Wednesday</span><span class="p-num num">18</span><span class="p-mon">November</span><span class="p-time">2:30 to 3:30 p.m. · Leadership Room 127<br>Refreshments provided</span></p>
+              <div class="spk-txt">
+                <p class="eyebrow">NeuroSync talk</p>
+                <h3><a href="#">Memory consolidation during sleep</a></h3>
+                <p class="who">Dr. Priya Raman</p>
+                <p class="meta">Department of Psychological Sciences</p>
+                <p class="bio">Studies how slow waves and sleep spindles decide which memories last, in younger and older adults.</p>
+                <div class="chips"><span class="chip you">Sleep</span><span class="chip you">Memory consolidation</span><span class="chip">Aging</span></div>
+                <div class="spk-act"><a class="btn" href="#">Add to my calendar</a><a class="btn" href="#" style="border-color:transparent;background:transparent;color:var(--purple)">Speaker profile</a></div>
+              </div>
+            </div>
+      </div>
+          <div class="quiet-note" data-when="quiet" hidden>
+            <p class="eyebrow">NeuroSync</p>
+            <p style="font:500 22px/30px var(--serif)">No NeuroSync talk this week.</p>
+            <p class="meta">The series returns Wednesday, December 2, with Dr. Daniel Kim on machine learning for spike sorting.</p>
+          </div>
+        <div class="lineup" role="region" aria-labelledby="lu-h">
+          <div class="lineup-h"><h3 id="lu-h">Upcoming NeuroSync presenters</h3>
+            <div class="lu-ctl"><a class="t3" href="#">All speakers</a><button type="button" class="arrow" data-dir="-1" aria-label="Previous speakers" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-dir="1" aria-label="Next speakers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
+          </div>
+          <ol>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">DK</span></span><span class="meta num">Wednesday, December 2</span><b>Machine learning for spike sorting</b><span class="meta">Dr. Daniel Kim</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">AH</span></span><span class="meta num">Wednesday, December 9</span><b>Stress, the heart, and the aging brain</b><span class="meta">Dr. Ana Herrera</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">SN</span></span><span class="meta num">Wednesday, January 27</span><b>Rodent models of memory decline</b><span class="meta">Dr. Sam Novak</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">LT</span></span><span class="meta num">Wednesday, February 3</span><b>Learning across the lifespan</b><span class="meta">Dr. Lea Torres</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">MO</span></span><span class="meta num">Wednesday, February 10</span><b>Attention and the sleeping brain</b><span class="meta">Dr. Maya Okafor</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">RB</span></span><span class="meta num">Wednesday, February 17</span><b>Imaging small circuits in behaving animals</b><span class="meta">Dr. Ravi Bhat</span></a></li>
+          </ol>
+          <p class="sr" aria-live="polite" id="lu-status"></p>
+        </div>
+      <footer class="sf"><a class="btn" href="#">All NeuroSync talks</a><p class="meta">Past talks and recordings live on the full NeuroSync page.</p><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a speaker</a></footer>
+    </section>
+  </div>
+  </div>
+
+  <div class="wrap">
+    <section class="sec" aria-labelledby="cores-h">
+      <header class="sh">
+        <h2 id="cores-h">Research cores</h2>
+        <p>Three cores support CNAP research with specific services for members.</p>
+      </header>
+      <div class="voucher"><p class="v-l">Coming soon</p><p class="v-t"><b>Core vouchers</b> will help members use core services. Details will be posted here when the program opens.</p><a class="t3" href="#">Tell me when it opens</a></div>
+      <div class="core-grid"><article class="core core-teal"><div class="core-top"><span class="core-code">NI</span></div><h3>Neuroinformatics Core</h3><p class="core-d">Advanced computing, data science, and artificial intelligence (AI) support for CNAP. On Beocat, an EEG analysis that took 1,280 hours now takes about 20.</p><p class="core-sl">Services</p><ul class="core-s"><li>High-performance computing on Beocat, with 496 Core processors and 10 GPUs</li><li>Data analysis, statistics, and machine learning</li><li>Research software, workflows, and automation</li><li>Workshops in R, Python, and machine learning, plus one-on-one consultation</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p><div class="core-a"><a class="btn" href="#">Request analysis</a><span class="core-links"><a class="t3" href="#">Book a consultation</a><a class="t3" href="https://connect-lab.carrd.co">CONNECT Lab</a></span></div></article><article class="core core-purple"><div class="core-top"><span class="core-code">CN</span></div><h3>Cognitive Neuroscience Core</h3><p class="core-d">Human neuroscience, electroencephalography (EEG), and brain stimulation support for CNAP. The only COBRE-funded cognitive neuroscience and EEG core in Kansas.</p><p class="core-sl">Services</p><ul class="core-s"><li>Study design consultation and methodological guidance</li><li>Experiment programming, setup, and troubleshooting in the CONNECT Lab</li><li>EEG data collection with 64-channel EGI nets and mobile OpenBCI systems</li><li>Transcranial magnetic stimulation (TMS and rTMS) combined with EEG</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p><div class="core-a"><a class="btn" href="#">Request instrument time</a><a class="t3" href="#">Book a consultation</a></div></article><article class="core core-amber"><div class="core-top"><span class="core-code">BN</span></div><h3>Behavioral Neuroscience Core</h3><p class="core-d">Behavioral research, animal models, and experimental neuroscience support for CNAP, in 51 rooms across more than 7,300 square feet.</p><p class="core-sl">Services</p><ul class="core-s"><li>Design and running of behavioral assays</li><li>Surgical and laboratory procedure support, including stereotaxic surgery</li><li>Full animal care, housing, and compliance documentation</li><li>Training, onboarding, and scheduling of space and equipment</li></ul><p class="core-fee"><span>Schedule of charges</span><span class="core-soon">Coming soon</span></p><div class="core-a"><a class="btn" href="#">Request instrument time</a><a class="t3" href="#">Book a consultation or tour</a></div></article></div>
+      <footer class="sf"><a class="btn" href="#">All core services</a><a class="t3" href="https://www.k-state.edu/cnap/research-cores/">Core pages on the CNAP website</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Ask a core a question</a></footer>
+    </section>
+  </div>
+
+  <div class="wrap">
+    <section class="sec onb" aria-labelledby="onb-h">
+      <header class="sh">
+        <h2 id="onb-h">Getting started</h2>
+        <p>Onboarding guides for mentors and new project leaders, on primary or pilot projects. Each one walks through what to do first, step by step.</p>
+      </header>
+      <div class="ob-grid"><article class="ob ob-mentor"><p class="ob-l">For mentors</p><h3>Mentoring at CNAP</h3><p class="ob-d">What the Center asks of mentors, and how to support a primary or pilot project leader through the award.</p><ol class="ob-s"><li><span class="ob-n num">1</span>Your role and expectations</li><li><span class="ob-n num">2</span>Sign your mentoring agreement</li><li><span class="ob-n num">3</span>Plan your meeting schedule</li><li><span class="ob-n num">4</span>What mentors report, and when</li><li><span class="ob-n num">5</span>Learn about your role at the Site Visit</li></ol><div class="ob-a"><a class="btn" href="#">Start the mentor guide</a><span class="meta">5 steps · about 20 minutes to read</span></div></article><article class="ob ob-awardee"><p class="ob-l">For mentees</p><h3>Starting your project award</h3><p class="ob-d">For primary and pilot project leaders: what to do in your first months, from your mentoring agreement, finance guidelines, and approvals to orientations with the research cores.</p><ol class="ob-s"><li><span class="ob-n num">1</span>Welcome to the Center</li><li><span class="ob-n num">2</span>Sign your mentoring agreement</li><li><span class="ob-n num">3</span>Review CNAP’s finance expectations and guidelines</li><li><span class="ob-n num">4</span>Approvals before you begin</li><li><span class="ob-n num">5</span>Orientations with the research cores</li><li><span class="ob-n num">6</span>Your reporting schedule</li><li><span class="ob-n num">7</span>Learn about your role at the Site Visit</li></ol><div class="ob-a"><a class="btn" href="#">Start the mentee guide</a><span class="meta">7 steps · about 35 minutes to read</span></div></article></div>
+    </section>
+  </div>
+
+  <div class="wrap">
+    <section class="sec lead-in" aria-labelledby="res-h">
+      <header class="sh">
+        <h2 id="res-h">Research at CNAP</h2>
+        <p>Work from the Center’s pilot projects, cores, and investigators.</p>
+      </header>
+      <article class="g feat">
+        <figure class="pic-wrap"><div class="pic"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"></div><figcaption class="credit">Illustration made for this prototype. It is not research data, and a project image will replace it.</figcaption></figure>
+        <div class="txt">
+          <p class="eyebrow">Pilot project · Neurobiology of Learning and Memory</p>
+          <h3 data-unless="long"><a href="#">What a night of sleep does to a new memory</a></h3>
+          <h3 class="long" data-when="long" hidden><a href="#">Recording brain activity across a full night of sleep to see which of the day’s memories are strengthened, and which fade by morning</a></h3>
+          <p class="deck">A CNAP pilot project is recording brain activity during sleep to learn which memories are kept by morning. The team describes its design and what it plans to test next.</p>
+          <p class="meta">The CNAP team · November 10, 2026 · 4-minute read</p>
+          <div class="act"><a class="t3" href="#">Read the story</a></div>
+          <div class="also" aria-label="More from CNAP research">
+            <a href="#"><span class="eyebrow">Core capability</span><b>Transcranial magnetic stimulation in the Cognitive Neuroscience Core</b></a>
+            <a href="#"><span class="eyebrow">Publications</span><b>Three new papers that cite CNAP this fall</b></a>
+          </div>
+        </div>
+      </article>
+      <div class="more-stories">
+        <h3>More stories</h3>
+        <ul>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/oscillations.jpg" alt="Generated illustration of brain oscillations" loading="lazy"><span class="tag">Illustration</span></span><span class="eyebrow">Pilot project</span><b>How a new pilot team is planning its first year</b><span class="meta">The CNAP team · November 6</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-4.jpg" alt="Placeholder for a portrait photograph" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Investigator profile</span><b>Meet the Center’s newest pilot project leader</b><span class="meta">The CNAP team · October 29</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-5.jpg" alt="Placeholder for a photograph of the Neuroinformatics Core" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Core capability</span><b>What the Neuroinformatics Core can process for your lab</b><span class="meta">The CNAP team · October 22</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-2.jpg" alt="Placeholder for a photograph of a workshop" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Training</span><b>Inside the fall grant-writing workshop series</b><span class="meta">The CNAP team · October 15</span></a></li>
+        </ul>
+      </div>
+      <footer class="sf"><a class="btn" href="#">All stories</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a story</a></footer>
+    </section>
+  </div>
+
+  <section class="reel-band" aria-labelledby="ph-h">
+    <div class="wrap">
+      <header class="sh">
+        <h2 id="ph-h">The 2026 Site Visit</h2>
+        <p>May 27 and 28 in Manhattan, Kansas: core tours, the keynote, project presentations, and the poster session.</p>
+      </header>
+      <div class="mosaic" id="reel" tabindex="-1">
+        <a class="ph lead" href="#"><span class="im"><img src="img/reel-1.jpg" alt="Placeholder for a photo of the poster session" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Poster session</b><span>Students and investigators present their work. Day 2, May 28.</span></span></a>
+        <a class="ph" href="#"><span class="im"><img src="img/reel-2.jpg" alt="Placeholder for a photo of a core tour" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Core tours</b><span>Day 1, May 27.</span></span></a>
+        <a class="ph" href="#"><span class="im"><img src="img/reel-3.jpg" alt="Placeholder for a photo of the keynote address" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Keynote address</b><span>Day 1, before the banquet.</span></span></a>
+      </div>
+      <footer class="sf"><a class="btn" href="#">View the full gallery</a><p class="meta" data-unless="sparse">Showing 3 of 48 photographs. The rest include the banquet and every project presentation.</p><p class="meta" data-when="sparse" hidden>All 3 photographs from this event.</p><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Share your photographs</a></footer>
+    </div>
+  </section>
+
   <div class="wrap">
     <footer class="foot">
       <div class="g">
