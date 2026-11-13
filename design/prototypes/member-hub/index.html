@@ -349,7 +349,7 @@ section .lineup li{width:20%}
 .ach > a.ach-lead .who-av{width:72px;height:72px;font-size:26px}
 .ach > a.ach-lead b{font-size:30px;line-height:37px;letter-spacing:-.01em}
 .ach > a.ach-lead .sum{grid-column:2;font-size:16px;line-height:25px;color:var(--ink-2);margin:4px 0 2px;max-width:52ch}
-.ach-row{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:56px;border-top:1px solid var(--line)}
+.ach-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:56px;border-top:1px solid var(--line)}
 .ach-row a{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:14px;row-gap:4px;align-content:start;padding:20px 0 4px;text-decoration:none;color:var(--ink)}
 .ach-row a + a::before{content:"";position:absolute;left:-28px;top:20px;bottom:0;border-left:1px solid var(--line)}
 .ach-row .who-av{grid-row:1 / span 4;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font:500 15px/1 var(--serif);background:#e8e2ef;color:var(--purple-ink)}
@@ -381,7 +381,7 @@ section .lineup li{width:20%}
 .otp-act .plus::before,.otp-act .plus::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:1.6px;margin:-.8px 0 0 -5px;background:currentColor;border-radius:1px}
 .otp-act .plus::after{transform:rotate(90deg)}
 .talk-sub{font-size:15px;line-height:22px;color:var(--ink-2);margin:-2px 0 12px}
-.news-sheet{margin-top:32px;padding-block:40px 36px}
+.news-sheet{margin-top:24px;padding-block:40px 36px}
 .news-sheet .news{margin-top:0;border-top:0;padding-top:0}
 .news-sheet .news h3{font:500 34px/40px var(--serif);letter-spacing:-.015em;margin-bottom:24px}
 .news-sheet .news ul{margin-top:0}
@@ -392,11 +392,23 @@ section .lineup li{width:20%}
 .nw-body{display:flex;flex-direction:column;gap:6px;min-width:0}
 .news-sheet .news b{font:500 21px/28px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
 .nw-sum{font-size:15px;line-height:23px;color:var(--ink-2)}
-.pw{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:12px 24px;flex-wrap:wrap}
-.pw-h{font-size:15px;line-height:22px;font-weight:600;color:var(--ink)}
+.pw-sheet{margin-top:24px;padding-block:28px}
+.pw{display:flex;align-items:baseline;gap:12px 24px;flex-wrap:wrap}
+.pw-h{font:500 24px/30px var(--serif);letter-spacing:-.01em;color:var(--ink);margin-right:8px}
 .pw ul{display:flex;flex-wrap:wrap;gap:8px}
 .pw a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:var(--mint);color:var(--ink);font-size:14px;font-weight:500;text-decoration:none}
 .pw a:hover{background:#d6e8e3;text-decoration:underline}
+.ach > a.ach-lead{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto 1fr auto auto;column-gap:28px;row-gap:8px;align-content:stretch;padding:8px 0 0;border-top:0}
+.ach-pic{grid-column:1;grid-row:1 / -1;position:relative;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1;align-self:start;padding:14px;border-radius:4px;background:#e8e2ef;color:var(--purple-ink)}
+.ach-pic .pl{font-size:13px;line-height:17px;font-weight:500}
+.ach-pic .ini{font:500 88px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end}
+.ach > a.ach-lead .kind,.ach > a.ach-lead b,.ach > a.ach-lead .sum,.ach > a.ach-lead .meta,.ach > a.ach-lead .when{grid-column:2}
+.ach > a.ach-lead .when{grid-row:auto;order:5}
+.ach > a.ach-lead b{font-size:28px;line-height:35px}
+.sheet > .ach-row,.g > .ach-row{grid-column:1 / -1;margin-top:40px}
+.reel-band .sh{border-top:0;padding-top:0}
+.reel-band .sh::before{display:none}
+.reel-band + .wrap > .sec:first-child{padding-top:calc(var(--sec) - 48px)}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -693,6 +705,10 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .yr{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:640px){
+  .ach > a.ach-lead{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
+  .ach-pic{grid-column:1;grid-row:auto;max-width:200px;margin-bottom:8px}
+  .ach-pic .ini{font-size:56px}
+  .ach > a.ach-lead .kind,.ach > a.ach-lead b,.ach > a.ach-lead .sum,.ach > a.ach-lead .meta,.ach > a.ach-lead .when{grid-column:1}
   .news-sheet .news h3{font-size:28px;line-height:34px}
   .news-sheet .news ul{row-gap:22px}
   .news-sheet{padding-block:28px}
@@ -782,6 +798,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .lineup-h{flex-wrap:wrap}
   .lu-ctl .t3{margin-right:auto}
   .reel-band{padding:36px 0 36px}
+  .reel-band + .wrap > .sec:first-child{padding-top:calc(var(--sec) - 36px)}
   .mosaic{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto;gap:20px 12px}
   .ph.lead{grid-column:1 / -1;grid-row:auto}
   .ph.lead .im{margin-inline:calc(var(--side) * -1);border-radius:0;aspect-ratio:4/3}
@@ -1143,6 +1160,8 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 <li><a href="#"><span class="nw-date"><span class="nw-num num">3</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">CNAP</span><b>Pre-submission review funds are open</b><span class="nw-sum">Support for an outside reviewer before you submit.</span></span></a></li>
           </ul>
         </div>
+      </div>
+      <div class="sheet pw-sheet">
         <div class="pw">
           <p class="pw-h">Proposal writing resources</p>
           <ul><li><a href="#">Specific Aims guide</a></li><li><a href="#">Biosketch template</a></li><li><a href="#">Budget justification</a></li><li><a href="#">Letters of support</a></li><li><a href="#">Internal review timeline</a></li><li><a href="#">Data management plan</a></li></ul>
@@ -1160,11 +1179,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
       <div class="g">
         <div class="ach">
           <h3>Recent achievements</h3>
-          <a class="ach-lead" href="#"><span class="who-av" aria-hidden="true">MS</span><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="sum">A two-year study of attention and working memory in older adults, run with the Cognitive Neuroscience Core.</span><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
-          <div class="ach-row">
-            <a href="#"><span class="who-av" aria-hidden="true">DO</span><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
-            <a href="#"><span class="who-av" aria-hidden="true">WZ</span><span class="kind" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>Invited talk</span><b>Neuroinformatics Core pipeline presented at a national meeting</b><span class="meta">Dr. Wei Zhang · Neuroinformatics Core</span><span class="when">October 30</span></a>
-          </div>
+          <a class="ach-lead" href="#"><span class="ach-pic" role="img" aria-label="Portrait of Maya Singh, to come"><span class="pl">Portrait to come</span><span class="ini">MS</span></span><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="sum">A two-year study of attention and working memory in older adults, run with the Cognitive Neuroscience Core.</span><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
         </div>
         <div class="talk">
           <h3>Gather peer input and perspective</h3>
@@ -1172,6 +1187,10 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · Behavioral Neuroscience Core</span></a>
           <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Seeking: high-performance computing</span></a>
           <div class="talk-act"><a class="btn" href="#">Start a conversation thread</a></div>
+        </div>
+        <div class="ach-row">
+            <a href="#"><span class="who-av" aria-hidden="true">DO</span><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
+            <a href="#"><span class="who-av" aria-hidden="true">WZ</span><span class="kind" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>Invited talk</span><b>Neuroinformatics Core pipeline presented at a national meeting</b><span class="meta">Dr. Wei Zhang · Neuroinformatics Core</span><span class="when">October 30</span></a>
         </div>
       </div>
       </div>
