@@ -361,7 +361,7 @@ section .lineup li{width:20%}
 .sheet-sec .sh::before{display:none}
 .otp{display:none}
 @media (min-width:1840px){
-  .otp{display:block;position:fixed;z-index:5;top:124px;left:max(20px,calc(50vw - 680px - 232px));width:220px;box-sizing:border-box;padding:20px 20px 18px;border-radius:8px;background:radial-gradient(130% 80% at 0% 0%,#ffffff 0%,#fbf9fe 55%,#f4effa 100%);box-shadow:0 0 0 1px rgba(81,40,136,.07),0 18px 48px -16px rgba(81,40,136,.32),0 0 70px -24px rgba(140,100,200,.4)}
+  .otp{display:block;position:fixed;z-index:5;top:124px;left:max(24px,env(safe-area-inset-left,0px));width:220px;box-sizing:border-box;padding:20px 20px 18px;border-radius:8px;background:radial-gradient(130% 80% at 0% 0%,#ffffff 0%,#fbf9fe 55%,#f4effa 100%);box-shadow:0 0 0 1px rgba(81,40,136,.07),0 18px 48px -16px rgba(81,40,136,.32),0 0 70px -24px rgba(140,100,200,.4)}
 }
 .otp-h{font-size:13px;line-height:18px;font-weight:600;color:var(--muted);padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:6px}
 .otp ol{display:flex;flex-direction:column}
