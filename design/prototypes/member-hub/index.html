@@ -484,6 +484,22 @@ details.wel{flex:1 1 520px;min-width:0}
   .sh-r p{max-width:none}
   .sh-r::before{left:calc(50% + var(--gap) / 2)}
 }
+.cal-band{margin-top:var(--sec);background:radial-gradient(120% 70% at 85% 0%,#2c1a3d 0%,#1d1226 55%,#170e1f 100%);color:#f3eef8;padding-bottom:var(--sec)}
+.cal-band > .wrap > .sec{padding-top:var(--sec)}
+.cal-band .sh{border-top:0;padding-top:0}
+.cal-band .sh::before{display:none}
+.cal-band > .wrap > .sec > .sh,.cal-band .keys,.cal-band .sf,.cal-band .cal-filters{--ink:#f6f2fa;--ink-2:#d9cfe6;--muted:#b9adc9;--line:rgba(246,242,250,.16);--purple:#d4bdf6;--purple-ink:#efe6fc;--paper:#1d1226;--surface:#2a1c36;--line-2:rgba(246,242,250,.28);--field:rgba(246,242,250,.4);color:var(--ink)}
+.cal-band .sh h2{color:var(--ink)}
+.cal-band .k-num,.cal-band .k-num-s,.cal-band .k-big{color:#e4d4fa}
+.cal-band .btn{background:transparent;color:var(--ink);border-color:var(--line-2)}
+.cal-band .btn:hover{background:rgba(246,242,250,.08)}
+.cal-band .cf{background:transparent;color:var(--ink);border-color:var(--line-2)}
+.cal-band .cf[data-k="ns"] svg{color:#c9a8f0}.cal-band .cf[data-k="ctr"] svg{color:#7fd1b0}.cal-band .cf[data-k="due"] svg{color:#f2b866}.cal-band .cf[data-k="you"] svg{color:#8fd6d9}.cal-band .cf[data-k="cam"] svg{color:#d9cfe6}
+.cal-band .cf[aria-pressed="false"]{color:var(--muted)}
+.cal-band .cal-month{color:var(--ink);box-shadow:0 30px 60px -24px rgba(0,0,0,.6)}
+.cal-band + .reel-band{margin-top:0;border-top:0}
+.cal-band .t3{color:var(--purple);text-decoration-color:rgba(212,189,246,.45)}
+.cal-band :focus-visible{outline-color:#d4bdf6}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1130,6 +1146,9 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       <footer class="sf"><a class="btn" href="#">All NeuroSync talks</a><p class="meta">Past talks and recordings live on the full NeuroSync page.</p></footer>
     </section>
 
+  </div>
+  <div class="cal-band">
+  <div class="wrap">
     <section class="sec" aria-labelledby="cal-h">
       <header class="sh">
         <h2 id="cal-h">Calendar</h2>
@@ -1179,6 +1198,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       </div>
       <footer class="sf"><a class="btn" href="#">Open the full calendar</a><a class="t3" href="#">Subscribe in my calendar app</a><p class="meta">All times are Central Time. Break and exam dates come from the K-State academic calendar.</p></footer>
     </section>
+  </div>
   </div>
 
   <section class="reel-band" aria-labelledby="ph-h">
