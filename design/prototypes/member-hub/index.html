@@ -83,7 +83,7 @@ img{max-width:100%;display:block}
 
 /* greeting moment: one quiet line, with nerve-fiber curves that draw in once and then stay still */
 .greet{position:relative;overflow:hidden;background:var(--greet-bg,var(--paper));border-bottom:1px solid var(--line)}
-.greet .wrap{position:relative;z-index:1;padding-top:84px;padding-bottom:72px}
+.greet .wrap{position:relative;z-index:1;padding-top:84px;padding-bottom:128px}
 .greet .when{font-size:15px;line-height:22px;color:var(--greet-muted,var(--muted))}
 .greet h1{font:400 clamp(44px,6.2vw,88px)/1.04 var(--serif);letter-spacing:-.025em;margin-top:14px;color:var(--greet-ink,var(--ink));text-wrap:balance}
 .greet .line{margin-top:20px;font-size:18px;line-height:28px;color:var(--greet-muted,var(--ink-2));max-width:58ch}
@@ -108,7 +108,7 @@ img{max-width:100%;display:block}
 .sparks .halo{opacity:.22}
 .motion .still-off{display:none}
 .greet.paused *,.greet.paused{animation-play-state:paused!important}
-.motion{position:absolute;z-index:2;right:var(--side-r);bottom:20px;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--greet-muted) 40%,transparent);background:transparent;color:var(--greet-muted);font:500 14px/1 var(--sans);cursor:pointer}
+.motion{position:absolute;z-index:2;right:var(--side-r);bottom:84px;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--greet-muted) 40%,transparent);background:transparent;color:var(--greet-muted);font:500 14px/1 var(--sans);cursor:pointer}
 .motion:hover{color:var(--greet-ink);border-color:var(--greet-muted)}
 .motion:focus-visible{outline:2px solid var(--greet-ink);outline-offset:3px}
 .motion svg{width:14px;height:14px;fill:currentColor}
@@ -122,7 +122,8 @@ img{max-width:100%;display:block}
 @keyframes draw{to{stroke-dashoffset:0}}
 @keyframes fade{to{opacity:.55}}
 /* personal band */
-.mine{background:var(--week);border-bottom:1px solid var(--wline)}
+.mine{position:relative;z-index:2;background:var(--paper);display:flow-root}
+.mine .brief{position:relative;background:var(--week);border-radius:6px;margin-top:-64px;padding-inline:48px;box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -18px rgba(29,27,33,.22)}
 .brief{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto auto 1fr auto;column-gap:var(--gap);padding-block:36px 40px}
 .bi{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:10px;min-width:0;padding-left:var(--gap);border-left:1px solid var(--line-2)}
 .bi.intro{padding-left:0;border-left:0}
@@ -185,10 +186,17 @@ img{max-width:100%;display:block}
 .also a:hover b{color:var(--purple);text-decoration:underline}
 
 /* neurosync + agenda */
-.people{grid-column:1 / span 7;min-width:0;display:flex;flex-direction:column}
+.people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
-.spk-main{flex:1;display:grid;grid-template-columns:minmax(200px,280px) minmax(0,1fr);gap:36px;align-items:center}
-.portrait{align-self:stretch;min-height:340px;border-radius:4px;background:#e8e2ef;display:flex;flex-direction:column;justify-content:space-between;padding:14px;color:var(--purple-ink);position:relative;overflow:hidden}
+.spk-main{flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));column-gap:var(--gap);row-gap:32px;align-content:start}
+.spk-txt{grid-column:1 / -1;max-width:62ch;min-width:0}
+.poster{grid-column:5 / -1;align-self:end;display:flex;flex-direction:column;color:var(--ink)}
+.poster .p-lab{font-size:14px;line-height:20px;font-weight:600;color:var(--purple);margin-bottom:auto}
+.poster .p-day{font:500 22px/28px var(--serif);color:var(--ink-2)}
+.poster .p-num{font:400 168px/.86 var(--serif);letter-spacing:-.04em;margin:6px 0 10px -6px;color:var(--purple-ink)}
+.poster .p-mon{font:500 34px/40px var(--serif);letter-spacing:-.01em}
+.poster .p-time{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:15px;line-height:22px;color:var(--ink-2)}
+.portrait{grid-column:1 / span 4;aspect-ratio:1;align-self:start;border-radius:4px;background:#e8e2ef;display:flex;flex-direction:column;justify-content:space-between;padding:14px;color:var(--purple-ink);position:relative;overflow:hidden}
 .portrait .ini{font:500 88px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end;opacity:.9}
 .portrait .pl{font-size:13px;line-height:17px;font-weight:500}
 .people h3{font:500 28px/35px var(--serif);letter-spacing:-.01em;text-wrap:balance;margin:6px 0 8px}
@@ -219,19 +227,27 @@ img{max-width:100%;display:block}
 .card:hover b{color:var(--purple);text-decoration:underline}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 @media (prefers-reduced-motion:no-preference){.lineup ol{scroll-behavior:smooth}}
-.agenda{grid-column:8 / span 5;min-width:0;background:var(--night);border-radius:4px;padding:30px 32px 26px;color:var(--ink);--ink:#f6f2fa;--ink-2:#d9cfe6;--muted:#b9adc9;--line:rgba(246,242,250,.14);--purple:#d4bdf6;--purple-ink:#efe6fc}
-.agenda h3{font-size:18px}
-.agenda .k-ns,.agenda .k-ctr{color:#d4bdf6}.agenda .k-you{color:#8fd6d9}.agenda .k-due{color:#f2b866}
+.agenda{grid-column:1 / span 4;grid-row:1;align-self:stretch;gap:0;min-width:0;display:flex;flex-direction:column;background:var(--surface);border-top:2px solid var(--purple);border-radius:0 0 4px 4px;padding:26px 26px 22px;box-shadow:0 0 0 1px var(--line) inset}
+.agenda h3{font:600 18px/24px var(--sans);letter-spacing:-.01em;margin-bottom:6px}
 .agenda h3{font:600 16px/22px var(--sans);margin-bottom:4px}
-.day{padding-top:16px}
+.day{padding-top:18px;display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:14px}
+.day h4{grid-column:1;grid-row:1 / span 9;display:flex;flex-direction:column;align-items:flex-start;padding-top:8px}
+.day .ev{grid-column:2;grid-template-columns:auto minmax(0,1fr);column-gap:10px;row-gap:2px;align-items:baseline}
+.day .ev > span:last-child{display:contents}
+.day .ev b{grid-column:1 / -1}
+.day .ev .t{font-size:14px;color:var(--muted)}
+.d-num{font:400 38px/1 var(--serif);letter-spacing:-.02em;color:var(--ink)}
+.d-wd{font-size:13px;line-height:18px;font-weight:500;color:var(--muted);margin-top:4px}
+.day .ev:first-of-type{border-top:0}
+.day + .day{border-top:1px solid var(--line);margin-top:6px}
 .day h4{margin:0 0 4px;font:600 14px/20px var(--sans);color:var(--ink)}
-.ev{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:10px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.ev{display:grid;grid-template-columns:minmax(0,1fr);gap:2px;padding:10px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .ev .t{font-size:14px;line-height:22px;color:var(--ink-2);white-space:nowrap}
 .ev b{display:block;font-size:15px;line-height:22px;font-weight:500}
 .ev:hover b{color:var(--purple);text-decoration:underline}
 .ev .kind{font-size:14px;line-height:20px}
 .k-ns{color:var(--purple)} .k-you{color:var(--teal)} .k-due{color:var(--amber)} .k-cam{color:var(--ink-2)} .k-ctr{color:var(--purple)} .k-dev{color:var(--ink-2)}
-.agenda .more{border-top:1px solid var(--line);padding-top:12px;margin-top:2px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.agenda .more{border-top:1px solid var(--line);padding-top:14px;margin-top:auto;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .quiet-note{background:var(--band);border-radius:4px;padding:20px 22px;display:flex;flex-direction:column;gap:6px}
 
 /* gallery: one dominant photograph and two supporting ones, at true photographic ratios */
@@ -340,7 +356,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 /* tablet */
 /* "Your week" above tablet width: open columns, each with a hairline top rule and a short accent in its type color */
 @media (min-width:981px){
-  .brief{--cg:clamp(48px,5vw,80px);padding-block:80px 79px;column-gap:var(--cg)}
+  .brief{--cg:clamp(48px,5vw,80px);padding-block:72px 72px;column-gap:var(--cg)}
   .bi{position:relative;border-left:0;padding-left:0;padding-top:24px}
   /* corner bracket: a top rule and a fainter right rule that meet halfway into the gap */
   .bi::after{content:"";position:absolute;top:0;left:0;right:calc(var(--cg) / -2);bottom:0;border-top:1px solid var(--wline);border-right:1px solid var(--wline-v);pointer-events:none}
@@ -370,6 +386,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 @keyframes grow{to{transform:scaleX(1)}}
 @keyframes corner{0%{clip-path:inset(0 0 100% 100%)}100%{clip-path:inset(0 0 0 0)}}
 @media (max-width:980px){
+  .mine .brief{padding-inline:32px;margin-top:-48px}
+  .motion{bottom:60px}
+  .greet .wrap{padding-bottom:96px}
   .nav,.search{display:none}
   .only-phone{display:grid;place-items:center;width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);cursor:pointer}
   .sh h2{font-size:38px;line-height:44px}
@@ -383,6 +402,11 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .feat .pic,.feat .credit,.feat .txt{grid-column:1 / -1}.feat .txt{grid-row:3;margin-top:24px}
   .feat .pic{aspect-ratio:16/10;min-height:0;align-self:start}
   .people,.agenda,.fund,.proposal,.ach,.talk{grid-column:1 / -1}
+  .people,.agenda{grid-row:auto}
+  .spk-main{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .portrait{grid-column:1}
+  .poster{grid-column:2}
+  .poster .p-num{font-size:120px}
   .agenda,.proposal,.talk{margin-top:40px}
   .lineup{margin-top:56px}
   .lineup li{width:calc((100% - 2 * var(--gap)) / 2.4)}
@@ -412,7 +436,8 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .hdr .wrap{min-height:60px;gap:10px}
   .brand small{display:none}
   .search,.mywork{display:none}
-  .greet .wrap{padding-top:36px;padding-bottom:34px}
+  .greet .wrap{padding-top:36px;padding-bottom:64px}
+  .mine .brief{margin-top:-32px;margin-inline:-8px;padding-inline:20px;border-radius:6px}
   .greet h1{font-size:clamp(40px,11.6vw,48px);line-height:1.06}
   .motion{bottom:auto;top:10px;right:max(12px,env(safe-area-inset-right,0px));width:44px;padding:0;justify-content:center}
   .motion span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -431,8 +456,12 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .feat h3,.feat h3.long{font-size:28px;line-height:35px}
   .deck{font-size:17px;line-height:27px}
   .also b{font-size:17px}
-  .spk-main{grid-template-columns:minmax(0,1fr);gap:16px}
-  .portrait{width:132px;min-height:0;aspect-ratio:4/5;align-self:start}
+  .spk-main{row-gap:22px;column-gap:20px}
+  .poster .p-num{font-size:84px;margin-left:-3px}
+  .poster .p-day{font-size:18px;line-height:24px}
+  .poster .p-mon{font-size:24px;line-height:30px}
+  .poster .p-time{font-size:14px;margin-top:10px;padding-top:10px}
+  .poster .p-lab{font-size:13px;line-height:18px}
   .portrait .ini{font-size:40px}.portrait .pl{display:none}
   .people h3{font-size:22px;line-height:29px;margin-top:4px}
   .bio{display:none}
@@ -645,11 +674,12 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           <div data-unless="quiet">
             <div class="spk-main">
               <div class="portrait" role="img" aria-label="Portrait of Dr. Priya Raman, to come"><span class="pl">Portrait to come</span><span class="ini">PR</span></div>
-              <div style="min-width:0">
-                <p class="eyebrow">NeuroSync · Tuesday, November 17 · 12:00 p.m.</p>
+              <p class="poster"><span class="p-lab">This week at NeuroSync</span><span class="p-day">Tuesday</span><span class="p-num num">17</span><span class="p-mon">November</span><span class="p-time">12:00 p.m. · Room to be announced</span></p>
+              <div class="spk-txt">
+                <p class="eyebrow">NeuroSync talk</p>
                 <h3><a href="#">Memory consolidation during sleep</a></h3>
                 <p class="who">Dr. Priya Raman</p>
-                <p class="meta">Department of Psychological Sciences · Room to be announced</p>
+                <p class="meta">Department of Psychological Sciences</p>
                 <p class="bio">Studies how slow waves and sleep spindles decide which memories last, in younger and older adults.</p>
                 <div class="chips"><span class="chip you">Sleep</span><span class="chip you">Memory consolidation</span><span class="chip">Aging</span></div>
                 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px"><a class="btn" href="#">Add to my calendar</a><a class="btn" href="#" style="border-color:transparent;background:transparent;color:var(--purple)">Speaker profile</a></div>
@@ -665,16 +695,16 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 
         <div class="agenda">
           <h3>This week and next</h3>
-          <div class="day"><h4>Tuesday, November 17</h4>
+          <div class="day"><h4><span class="d-num num">17</span><span class="d-wd">Tuesday</span><span class="sr">, November 17</span></h4>
             <a class="ev" href="#" data-unless="quiet"><span class="t">12:00 p.m.</span><span><span class="kind k-ns"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>NeuroSync</span><b>Memory consolidation during sleep</b></span></a>
             <a class="ev" href="#"><span class="t">3:00 p.m.</span><span><span class="kind k-you"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="7" cy="4.5" r="2.5"/><path d="M2 13c.8-2.8 2.7-4 5-4s4.2 1.2 5 4"/></svg>Your meeting · only you see this</span><b>Mentor meeting with Dr. Elena Voss</b></span></a>
             <a class="ev" href="#" data-when="busy" hidden><span class="t">4:00 p.m.</span><span><span class="kind k-dev"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M7 1.5v11M1.5 7h11"/></svg>Professional development</span><b>Writing a strong Specific Aims page</b></span></a>
           </div>
-          <div class="day"><h4>Wednesday, November 18</h4>
+          <div class="day"><h4><span class="d-num num">18</span><span class="d-wd">Wednesday</span><span class="sr">, November 18</span></h4>
             <a class="ev" href="#"><span class="t">4:00 p.m.</span><span><span class="kind k-cam"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M1.5 12.5h11M2.5 12.5V6L7 3l4.5 3v6.5M5.5 12.5v-3h3v3"/></svg>Campus seminar</span><b>Neural circuits of fear learning</b></span></a>
             <a class="ev" href="#" data-when="busy" hidden><span class="t">5:30 p.m.</span><span><span class="kind k-ctr"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M7 1.5l5.5 5.5L7 12.5 1.5 7z"/></svg>Center event</span><b>Fall social for members and students</b></span></a>
           </div>
-          <div class="day" data-unless="quiet"><h4>Friday, November 20</h4>
+          <div class="day" data-unless="quiet"><h4><span class="d-num num">20</span><span class="d-wd">Friday</span><span class="sr">, November 20</span></h4>
             <a class="ev" href="#"><span class="t">All day</span><span><span class="kind k-due"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Center deadline</span><b>Year 11 pilot letters of intent</b></span></a>
           </div>
           <div class="more"><span class="meta" data-unless="busy">Next: the annual Site Visit, late May 2027</span><a class="lnk" href="#" data-when="busy" hidden>5 more events this week</a><a class="lnk" href="#">Add to my calendar app</a></div>
