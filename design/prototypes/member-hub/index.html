@@ -529,6 +529,11 @@ details.wel{flex:1 1 520px;min-width:0}
 .cal-band .btn{color:#ffffff;border-color:rgba(255,255,255,.4)}
 .cal-band .cf{color:#ffffff;border-color:rgba(255,255,255,.3)}
 .brief .kind svg{display:none}
+.ns-band{margin-top:var(--sec);background:var(--surface);border-block:1px solid var(--line);padding-bottom:var(--sec)}
+.ns-band > .wrap > .sec{padding-top:var(--sec)}
+.ns-band .sh{border-top:0;padding-top:0}
+.ns-band .sh::before{display:none}
+.ns-band + .cal-band{margin-top:0}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1139,6 +1144,9 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       <footer class="sf"><a class="btn" href="#">All stories</a></footer>
     </section>
 
+  </div>
+  <div class="ns-band">
+  <div class="wrap">
     <section class="sec" aria-labelledby="ev-h">
       <header class="sh sh-r">
         <h2 id="ev-h">NeuroSync</h2>
@@ -1165,7 +1173,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
             <p class="meta">The series returns Wednesday, December 2, with Dr. Daniel Kim on machine learning for spike sorting.</p>
           </div>
         <div class="lineup" role="region" aria-labelledby="lu-h">
-          <div class="lineup-h"><h3 id="lu-h">Coming to NeuroSync</h3>
+          <div class="lineup-h"><h3 id="lu-h">Upcoming NeuroSync presenters</h3>
             <div class="lu-ctl"><a class="t3" href="#">All speakers</a><button type="button" class="arrow" data-dir="-1" aria-label="Previous speakers" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-dir="1" aria-label="Next speakers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
           </div>
           <ol>
@@ -1180,8 +1188,9 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         </div>
       <footer class="sf"><a class="btn" href="#">All NeuroSync talks</a><p class="meta">Past talks and recordings live on the full NeuroSync page.</p></footer>
     </section>
-
   </div>
+  </div>
+
   <div class="cal-band">
   <div class="wrap">
     <section class="sec" aria-labelledby="cal-h">
