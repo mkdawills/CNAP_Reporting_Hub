@@ -1295,7 +1295,8 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   try{var otp=document.querySelector('.otp'),links=[].slice.call(otp.querySelectorAll('a'));
     
     function spy(){var cur=links[0];links.forEach(function(a){var h=document.getElementById(a.dataset.t);if(h&&h.getBoundingClientRect().top<innerHeight*0.35)cur=a;});links.forEach(function(a){a.setAttribute('aria-current',a===cur);});}
-    addEventListener('scroll',function(){clearTimeout(otp._t);otp._t=setTimeout(spy,60);},{passive:true});spy();}catch(e){}
+    var gr=document.querySelector('.greet');function place(){otp.style.top=Math.max(124,Math.round(gr.getBoundingClientRect().bottom+48))+'px';}
+    addEventListener('scroll',function(){place();clearTimeout(otp._t);otp._t=setTimeout(spy,60);},{passive:true});addEventListener('resize',place);place();spy();}catch(e){}
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
