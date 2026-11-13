@@ -1,0 +1,574 @@
+<title>CNAP Member Hub</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout concept: a quiet personal band on top, then the Center's science, people, money, and community, alternating rich and precise sections on one 12-column grid. Serif belongs to the Center's science and people, and sans belongs to you and your tools. */
+@font-face{font-family:"Inter Hub";src:url("fonts/inter-400.woff") format("woff");font-weight:400;font-display:swap}
+@font-face{font-family:"Inter Hub";src:url("fonts/inter-500.woff") format("woff");font-weight:500;font-display:swap}
+@font-face{font-family:"Inter Hub";src:url("fonts/inter-600.woff") format("woff");font-weight:600;font-display:swap}
+@font-face{font-family:"Lora Hub";src:url("fonts/lora.woff") format("woff");font-weight:400 700;font-display:swap}
+:root{
+  --paper:#faf9f7; --band:#f2efe9; --surface:#ffffff; --line:#e4e0d8; --line-2:#d3cdc3; --field:#8c8694;
+  --ink:#1d1b21; --ink-2:#423e48; --muted:#57525e;
+  --purple:#512888; --purple-ink:#3c1d66; --purple-tint:#f1ecf8;
+  --teal:#0a6670; --amber:#8a4b00; --green:#1d6a4f; --red:#a1302a;
+  --serif:"Lora Hub","Lora",Georgia,serif; --sans:"Inter Hub","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --gap:32px; --sec:88px; --side:max(40px,env(safe-area-inset-left,0px)); --side-r:max(40px,env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans);font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased;margin:0}
+h1,h2,h3,p,figure,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:var(--purple);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--purple-ink)}
+:focus-visible{outline:2px solid var(--purple);outline-offset:3px;border-radius:4px}
+img{max-width:100%;display:block}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1360px;margin:0 auto;padding-left:var(--side);padding-right:var(--side-r)}
+.g{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap)}
+.meta{font-size:14px;line-height:21px;color:var(--muted)}
+.lnk{display:inline-block;padding-block:4px;font-weight:500;font-size:15px;text-decoration:none;white-space:nowrap}
+.lnk:hover{text-decoration:underline}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:8px;font:500 15px/1 var(--sans);text-decoration:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);cursor:pointer;transition:background-color .15s,border-color .15s}
+.btn:hover{background:var(--band);color:var(--ink)}
+.btn.pri{background:var(--purple);border-color:var(--purple);color:#fff}
+.btn.pri:hover{background:var(--purple-ink);border-color:var(--purple-ink)}
+.why{display:flex;gap:8px;font-size:14px;line-height:21px;font-weight:500;color:var(--teal)}
+.why::before{content:"";flex:none;width:6px;height:6px;border-radius:999px;background:currentColor;margin-top:8px}
+.kind{display:inline-flex;align-items:center;gap:6px;font-size:14px;line-height:20px;font-weight:600}
+.kind svg{flex:none}
+
+/* prototype bar */
+.proto{background:var(--ink);color:#ebe7f0;font-size:14px;line-height:20px}
+.proto .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;min-height:44px;padding-block:6px}
+.proto a{color:#d8c7f3}
+.proto label{margin-left:auto;display:flex;align-items:center;gap:8px}
+.proto select{font:500 14px var(--sans);min-height:32px;border-radius:6px;border:0;padding:0 8px;background:#fff;color:var(--ink)}
+.skip{position:absolute;left:-9999px;top:8px;z-index:60;background:#fff;color:var(--purple);padding:10px 14px;border-radius:8px;font-weight:600}
+.skip:focus{left:16px}
+
+/* header */
+.hdr{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:40}
+.hdr .wrap{display:flex;align-items:center;gap:36px;min-height:72px}
+.brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none;flex:none}
+.brand b{display:block;font-weight:600;font-size:16px;line-height:20px}
+.brand small{display:block;font-size:13px;line-height:17px;color:var(--muted)}
+.nav{display:flex;gap:2px}
+.nav a{display:flex;align-items:center;min-height:72px;padding:0 12px;font-size:15px;font-weight:500;color:var(--ink-2);text-decoration:none;box-shadow:inset 0 -2px 0 transparent;transition:color .15s,box-shadow .15s}
+.nav a:hover{color:var(--ink);box-shadow:inset 0 -2px 0 var(--line-2)}
+.nav a[aria-current="page"]{color:var(--purple);box-shadow:inset 0 -2px 0 var(--purple)}
+.tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.search{display:flex;align-items:center;gap:10px;min-height:42px;width:250px;padding:0 12px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);color:var(--muted);font-size:15px;text-decoration:none}
+.search kbd{margin-left:auto;font:500 13px/1 var(--sans);border:1px solid var(--line);border-radius:4px;padding:3px 6px;color:var(--muted)}
+.mywork{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 12px 0 14px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);text-decoration:none;font-size:15px;font-weight:500}
+.mywork:hover{background:var(--band);color:var(--ink)}
+.count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--purple);color:#fff;font-size:13px;font-weight:600}
+.avatar{width:42px;height:42px;border-radius:999px;background:var(--purple-tint);color:var(--purple);display:grid;place-items:center;font-weight:600;font-size:14px;text-decoration:none;flex:none}
+.only-phone{display:none}
+
+/* personal band */
+.mine{background:var(--band);border-bottom:1px solid var(--line)}
+.mine .g{padding-block:32px 34px;align-items:stretch}
+.hello{grid-column:1 / span 3;display:flex;flex-direction:column;gap:10px;padding-right:8px}
+.hello h1{font:600 28px/34px var(--sans);letter-spacing:-.02em}
+.hello .roles{font-size:15px;line-height:23px;color:var(--ink-2)}
+.hello .hl{margin-top:auto;padding-top:8px}
+.slots{grid-column:4 / span 9;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto auto;column-gap:var(--gap)}
+.slot{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:8px;align-content:start;padding-left:var(--gap);border-left:1px solid var(--line-2);min-width:0}
+.slot[hidden]{display:none}
+.slot .kind{align-self:start}
+.slot h2{font:600 18px/25px var(--sans);letter-spacing:-.005em}
+.slot h2 a{color:var(--ink);text-decoration:none}
+.slot h2 a:hover{color:var(--purple);text-decoration:underline}
+.slot p{font-size:15px;line-height:23px;color:var(--ink-2)}
+.slot .act{padding-top:8px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;align-self:end}
+.prog{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2)}
+.prog .bar{width:96px;height:6px;border-radius:999px;background:#e3ded5;overflow:hidden}
+.prog .bar i{display:block;height:100%;width:33%;background:var(--purple)}
+
+/* sections */
+.sec{padding-top:var(--sec)}
+.sec.lead-in{padding-top:48px}
+.sh{border-top:1px solid var(--line);padding-top:18px;margin-bottom:32px;align-items:baseline}
+.sh h2{grid-column:1 / span 3;font:600 22px/28px var(--sans);letter-spacing:-.015em}
+.sh p{grid-column:4 / span 6;font-size:15px;line-height:23px;color:var(--muted)}
+.sh .r{grid-column:10 / span 3;justify-self:end;display:flex;gap:20px;align-items:center}
+.sh.first{border-top:0;padding-top:0}
+
+/* feature */
+.feat{align-items:stretch}
+.feat .pic{grid-column:1 / span 7;align-self:start;position:relative;border-radius:4px;overflow:hidden;background:#1a1024;aspect-ratio:16/10}
+.feat .pic img{width:100%;height:100%;object-fit:cover;object-position:60% 45%}
+.cap{position:absolute;left:14px;bottom:14px;font-size:13px;line-height:17px;font-weight:500;color:#fff;background:rgba(20,12,30,.66);padding:5px 9px;border-radius:4px}
+.feat .txt{grid-column:8 / span 5;display:flex;flex-direction:column;gap:16px;min-width:0}
+.eyebrow{font-size:14px;line-height:20px;font-weight:600;color:var(--purple)}
+.feat h3{font:500 40px/47px var(--serif);letter-spacing:-.015em;text-wrap:balance}
+.feat h3.long{font-size:32px;line-height:40px}
+.feat h3 a{color:var(--ink);text-decoration:none}
+.feat h3 a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px}
+.deck{font-size:18px;line-height:29px;color:var(--ink-2)}
+.also{margin-top:auto;border-top:1px solid var(--line);padding-top:4px}
+.also a{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.also a:last-child{border-bottom:0;padding-bottom:0}
+.also b{font:500 18px/25px var(--serif)}
+.also a:hover b{color:var(--purple);text-decoration:underline}
+
+/* neurosync + agenda */
+.people{grid-column:1 / span 7;min-width:0}
+.spk-main{display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px}
+.portrait{aspect-ratio:4/5;border-radius:4px;background:#e8e2ef;display:flex;flex-direction:column;justify-content:space-between;padding:14px;color:var(--purple-ink);position:relative;overflow:hidden}
+.portrait .ini{font:500 64px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end;opacity:.9}
+.portrait .pl{font-size:13px;line-height:17px;font-weight:500}
+.people h3{font:500 28px/35px var(--serif);letter-spacing:-.01em;text-wrap:balance;margin:6px 0 8px}
+.people h3 a{color:var(--ink);text-decoration:none}
+.people h3 a:hover{text-decoration:underline}
+.who{font-size:16px;font-weight:600}
+.bio{font-size:16px;line-height:26px;color:var(--ink-2);margin-top:12px;max-width:52ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);font-size:14px;font-weight:500;color:var(--ink-2);background:var(--surface)}
+.chip.you{border-color:#9cc6c9;color:var(--teal);background:#eef6f6}
+.chip.you::before{content:"";width:6px;height:6px;border-radius:999px;background:currentColor}
+.lineup{margin-top:32px;border-top:1px solid var(--line);padding-top:16px}
+.lineup-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.lineup-h h4{margin:0;font:600 16px/22px var(--sans)}
+.lineup ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.lineup ol a{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink)}
+.lineup .dot{width:44px;height:44px;border-radius:999px;background:#e8e2ef;color:var(--purple-ink);display:grid;place-items:center;font:500 17px/1 var(--serif);margin-bottom:6px}
+.lineup b{font-size:15px;line-height:21px;font-weight:600}
+.lineup ol a:hover b{color:var(--purple);text-decoration:underline}
+.agenda{grid-column:9 / span 4;min-width:0}
+.agenda h3{font:600 16px/22px var(--sans);margin-bottom:4px}
+.day{padding-top:16px}
+.day h4{margin:0 0 4px;font:600 14px/20px var(--sans);color:var(--ink)}
+.ev{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;padding:10px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.ev .t{font-size:14px;line-height:22px;color:var(--ink-2);white-space:nowrap}
+.ev b{display:block;font-size:15px;line-height:22px;font-weight:500}
+.ev:hover b{color:var(--purple);text-decoration:underline}
+.ev .kind{font-size:13px;line-height:18px}
+.k-ns{color:var(--purple)} .k-you{color:var(--teal)} .k-due{color:var(--amber)} .k-cam{color:var(--ink-2)} .k-ctr{color:var(--purple)} .k-dev{color:var(--ink-2)}
+.agenda .more{border-top:1px solid var(--line);padding-top:12px;margin-top:2px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.quiet-note{background:var(--band);border-radius:4px;padding:20px 22px;display:flex;flex-direction:column;gap:6px}
+
+/* reel */
+.reel-band{background:var(--band);margin-top:var(--sec);padding:48px 0 52px;border-block:1px solid var(--line)}
+.reel-band .sh{border-top:0;padding-top:0;margin-bottom:28px}
+.reel{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-left:max(40px,calc((100% - 1360px)/2 + 40px));padding-right:40px;scroll-padding-left:max(40px,calc((100% - 1360px)/2 + 40px))}
+.reel::-webkit-scrollbar{display:none}
+.shot{flex:none;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px}
+.shot .im{position:relative;height:420px;border-radius:4px;overflow:hidden;background:#cfc8bf}
+.shot .im img{width:100%;height:100%;object-fit:cover}
+.shot .tag{position:absolute;left:12px;top:12px;font-size:13px;line-height:17px;font-weight:500;color:var(--ink);background:rgba(250,249,247,.9);padding:5px 9px;border-radius:4px}
+.shot figcaption{font-size:15px;line-height:22px;color:var(--ink-2);max-width:46ch}
+.shot figcaption b{color:var(--ink);font-weight:600}
+.w3{width:630px}.w2{width:315px}.w4{width:472px}
+.arrows{display:flex;gap:8px}
+.arrow{width:42px;height:42px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);display:grid;place-items:center;color:var(--ink);cursor:pointer}
+.arrow:hover{background:var(--paper)}
+.arrow:disabled{opacity:.4;cursor:default}
+.reel-meta{font-size:14px;color:var(--muted)}
+
+/* funding */
+.fund{grid-column:1 / span 8;min-width:0}
+.fund h3,.proposal h3{font:600 16px/22px var(--sans);margin-bottom:6px}
+.opp{display:grid;grid-template-columns:84px minmax(0,1fr) 172px;gap:24px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.opp .days{font:500 36px/36px var(--serif);color:var(--ink)}
+.opp .days small{display:block;font:400 14px/20px var(--sans);color:var(--muted);margin-top:4px}
+.opp .spon{font-size:14px;line-height:20px;color:var(--muted)}
+.opp b{display:block;font-size:18px;line-height:26px;font-weight:600;margin:2px 0 8px;text-wrap:pretty}
+a.opp:hover b{color:var(--purple);text-decoration:underline}
+.opp .side{text-align:right;font-size:14px;line-height:21px;color:var(--ink-2)}
+.opp .side strong{display:block;font-size:15px;font-weight:600;color:var(--ink)}
+.chk{display:block;margin-top:8px;color:var(--green);font-weight:500}
+.news{margin-top:28px;border-top:1px solid var(--line);padding-top:16px}
+.news ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:8px}
+.news a{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink)}
+.news b{font-size:15px;line-height:22px;font-weight:600}
+.news a:hover b{color:var(--purple);text-decoration:underline}
+.empty{border:1px dashed var(--line-2);border-radius:4px;padding:22px 24px;display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.proposal{grid-column:9 / span 4;min-width:0}
+.stages{counter-reset:s}
+.stages a{display:grid;grid-template-columns:28px minmax(0,1fr);gap:2px 10px;padding:11px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.stages a::before{counter-increment:s;content:counter(s);grid-row:1 / span 2;font:500 16px/22px var(--serif);color:var(--purple)}
+.stages b{font-size:15px;line-height:22px;font-weight:600}
+.stages span{font-size:14px;line-height:20px;color:var(--muted)}
+.stages a:hover b{color:var(--purple);text-decoration:underline}
+.consult{margin-top:18px;background:var(--purple-tint);border-radius:4px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.consult p{font-size:15px;line-height:23px;color:var(--purple-ink)}
+
+/* community */
+.ach{grid-column:1 / span 7;min-width:0}
+.ach h3,.talk h3{font:600 16px/22px var(--sans);margin-bottom:6px}
+.ach a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 20px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.ach .kind{grid-column:1}
+.ach b{grid-column:1;font:500 22px/30px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
+.ach a:hover b{color:var(--purple);text-decoration:underline}
+.ach .meta{grid-column:1}
+.ach .when{grid-column:2;grid-row:1;font-size:14px;color:var(--muted);white-space:nowrap}
+.talk{grid-column:9 / span 4;min-width:0}
+.talk a.conv{display:grid;grid-template-columns:40px minmax(0,1fr);gap:2px 12px;padding:14px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:#ebe7e0;color:var(--ink-2)}
+.talk b{font-size:15px;line-height:22px;font-weight:600}
+.talk a.conv:hover b{color:var(--purple);text-decoration:underline}
+.welcome-row{grid-column:1 / span 12;margin-top:28px;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.faces{display:flex}
+.faces span{width:34px;height:34px;border-radius:999px;border:2px solid var(--paper);margin-left:-8px;display:grid;place-items:center;font-size:12px;font-weight:600;background:#e8e2ef;color:var(--purple-ink)}
+.faces span:first-child{margin-left:0}
+
+/* footer */
+.foot{margin-top:var(--sec);border-top:1px solid var(--line);padding:36px 0 56px}
+.foot .g{row-gap:24px}
+.foot p{grid-column:1 / span 6;font-size:15px;line-height:24px;color:var(--ink-2)}
+.foot nav{display:flex;flex-direction:column;gap:2px}
+.foot nav a{display:inline-block;padding-block:4px;font-size:15px;color:var(--ink-2);text-decoration:none}
+.foot nav a:hover{color:var(--purple);text-decoration:underline}
+
+.tabbar{display:none}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){.reel{scroll-behavior:smooth}}
+
+/* narrower desktop */
+@media (max-width:1180px){
+  .search{width:44px;padding:0;justify-content:center}.search .st,.search kbd{display:none}
+  .nav a{padding:0 9px}.hdr .wrap{gap:20px}
+}
+/* tablet */
+@media (max-width:980px){
+  .nav{display:none}.only-phone{display:grid}
+  .hello{grid-column:1 / -1;padding:0 0 24px}
+  .slots{grid-column:1 / -1}
+  .slot:first-child{padding-left:0;border-left:0}
+  .feat .pic,.feat .txt{grid-column:1 / -1}.feat .txt{margin-top:24px}
+  .people,.agenda,.fund,.proposal,.ach,.talk{grid-column:1 / -1}
+  .agenda,.proposal,.talk{margin-top:40px}
+}
+/* phone */
+@media (max-width:640px){
+  :root{--gap:20px;--sec:56px;--side:max(20px,env(safe-area-inset-left,0px));--side-r:max(20px,env(safe-area-inset-right,0px))}
+  body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px))}
+  .proto label{margin-left:0}
+  .proto .hide-s{display:none}
+  .hdr .wrap{min-height:60px;gap:10px}
+  .brand small{display:none}
+  .search,.mywork{display:none}
+  .only-phone{display:grid;place-items:center;width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2)}
+  .mine .g{padding-block:24px 8px}
+  .hello{padding-bottom:12px}
+  .hello h1{font-size:26px;line-height:32px}
+  .hello .hl{display:none}
+  .slots{grid-template-columns:minmax(0,1fr);grid-template-rows:none}
+  .slot{grid-row:auto;grid-template-rows:none}
+  .slot{padding:18px 0;border-left:0;border-top:1px solid var(--line-2)}
+  .slot .act{padding-top:10px}
+  .sh{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:20px}
+  .sh .r{justify-self:auto}
+  .feat .pic{aspect-ratio:4/3;margin-inline:calc(var(--side) * -1);border-radius:0;width:auto}
+  .feat h3,.feat h3.long{font-size:28px;line-height:35px}
+  .deck{font-size:17px;line-height:27px}
+  .also b{font-size:17px}
+  .spk-main{grid-template-columns:minmax(0,1fr);gap:16px}
+  .portrait{width:132px}
+  .portrait .ini{font-size:40px}.portrait .pl{display:none}
+  .people h3{font-size:22px;line-height:29px;margin-top:4px}
+  .bio{display:none}
+  .lineup ol{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:16px;margin-right:calc(var(--side-r) * -1);padding-right:20px;scrollbar-width:none}
+  .lineup li{flex:none;width:68%;scroll-snap-align:start}
+  .reel{padding-left:20px;padding-right:20px;scroll-padding-left:20px;gap:12px}
+  .shot .im{height:300px}
+  .w3{width:86vw}.w2{width:64vw}.w4{width:78vw}
+  .reel-band .arrows{display:none}
+  .reel-band{padding:36px 0 40px}
+  .opp{grid-template-columns:60px minmax(0,1fr);gap:4px 14px}
+  .opp .side{grid-column:2;text-align:left}
+  .opp .days{font-size:28px;line-height:30px}
+  .opp b{font-size:17px;line-height:24px}
+  .news ul{grid-template-columns:minmax(0,1fr);gap:0}
+  .news li a{padding:12px 0;border-top:1px solid var(--line)}
+  .news li:first-child a{border-top:0}
+  .ach b{font-size:19px;line-height:26px}
+  .ach a{grid-template-columns:minmax(0,1fr)}
+  .ach .when{grid-column:1;grid-row:auto}
+  .foot p{grid-column:1 / -1}
+  .foot nav{grid-column:span 6!important}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(250,249,247,.97);border-top:1px solid var(--line);padding:4px max(6px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px));justify-content:space-around}
+  .tabbar a{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:62px;min-height:54px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none}
+  .tabbar a[aria-current="page"]{color:var(--purple)}
+  .tabbar .count{position:absolute;top:3px;left:calc(50% + 3px);min-width:18px;height:18px;font-size:11px;padding:0 5px}
+}
+</style>
+
+<a class="skip" href="#main">Skip to main content</a>
+<div class="proto" role="note"><div class="wrap">
+  <span>Design prototype. People, talks, funding, and dates are fictional.</span>
+  <span class="hide-s">Photos are placeholders. <a href="system.html">Design foundations</a></span>
+  <label>Scenario <select id="scenario" aria-label="Preview a scenario">
+    <option value="typical">Typical week, four reports due</option>
+    <option value="clear">Nothing due</option>
+    <option value="quiet">Quiet week, no NeuroSync</option>
+    <option value="busy">Busy week</option>
+    <option value="long">Long titles</option>
+    <option value="sparse">Three photos, no funding matches</option>
+  </select></label>
+</div></div>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="brand" href="#"><svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="8" fill="#512888"/><path d="M8.5 23.5c3.4-7.6 6.6-9.8 9.4-9.8 2.7 0 4.3 4.1 9.6 4.1" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="8.5" cy="23.5" r="2.4" fill="#fff"/><circle cx="27.5" cy="17.8" r="2.4" fill="#fff"/></svg><span><b>CNAP Member Hub</b><small>Kansas State University</small></span></a>
+    <nav class="nav" aria-label="Main"><a href="#" aria-current="page">Home</a><a href="#">Research</a><a href="#">Events</a><a href="#">Funding</a><a href="#">Community</a><a href="#">Resources</a></nav>
+    <div class="tools">
+      <a class="search" href="#" role="button" aria-label="Search people, events, resources, and funding"><svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><span class="st">Search CNAP</span><kbd>/</kbd></a>
+      <a class="mywork" href="#">My work <span class="count" data-unless="clear">4</span><span class="count" data-when="clear" hidden style="background:var(--green)">0</span></a>
+      <button class="only-phone" type="button" aria-label="Search"><svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg></button>
+      <a class="avatar" href="#" aria-label="Amara Okafor: profile, roles, and settings">AO</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="mine" aria-labelledby="hi">
+    <div class="wrap g">
+      <div class="hello">
+        <p class="meta">Friday, November 13 · Grant Year 10</p>
+        <h1 id="hi">Good morning, Amara.</h1>
+        <p class="roles">Pilot Project Leader<br>Behavioral Neuroscience Core user<br>Mentored by Dr. Elena Voss</p>
+        <div class="hl"><a class="lnk" href="#">All of my work</a></div>
+      </div>
+      <div class="slots" role="list" aria-label="Your week, most urgent first">
+        <article class="slot" role="listitem" data-unless="clear">
+          <span class="kind k-due"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Due in 17 days</span>
+          <h2><a href="#">Year 10 Fall reporting</a></h2>
+          <p>Closes Monday, November 30. Four surveys and reports are left, about 1 hour in all.</p>
+          <div class="act"><a class="btn pri" href="#">Continue</a><span class="prog"><span class="bar" aria-hidden="true"><i></i></span>2 of 6</span></div>
+        </article>
+        <article class="slot" role="listitem" data-when="clear" hidden>
+          <span class="kind" style="color:var(--green)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"/></svg>Fall reporting complete</span>
+          <h2><a href="#">Nothing is due</a></h2>
+          <p>All 6 surveys and reports are in. The next session opens in April.</p>
+          <div class="act"><a class="lnk" href="#">See what you submitted</a></div>
+        </article>
+        <article class="slot" role="listitem" data-unless="sparse">
+          <span class="kind" style="color:var(--teal)"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M7 1l1.8 3.7 4 .6-2.9 2.8.7 4L7 10.2 3.4 12.1l.7-4L1.2 5.3l4-.6z"/></svg>New funding match</span>
+          <h2><a href="#">Early-career award in sleep and cognition</a></h2>
+          <p>Due February 2, 2027. Picked because it fits your sleep and memory aims.</p>
+          <div class="act"><a class="lnk" href="#fund-h">Why it fits</a></div>
+        </article>
+        <article class="slot" role="listitem" data-when="sparse" hidden>
+          <span class="kind" style="color:var(--teal)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="5.5"/><path d="M7 4.5v3l2 1.5"/></svg>Help us pick funding for you</span>
+          <h2><a href="#">Add your research interests</a></h2>
+          <p>The CNAP team uses them to pick opportunities and speakers. It takes two minutes.</p>
+          <div class="act"><a class="lnk" href="#">Add interests</a></div>
+        </article>
+        <article class="slot" role="listitem">
+          <span class="kind" style="color:var(--purple)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="5" cy="4.5" r="2.2"/><circle cx="10" cy="5" r="1.8"/><path d="M1 12.5c.6-2.6 2.1-3.8 4-3.8s3.4 1.2 4 3.8M9.5 8.8c1.8 0 3 1 3.5 3"/></svg>Someone to meet</span>
+          <h2><a href="#">Jordan Lee is looking for an EEG collaborator</a></h2>
+          <p>Your pilot uses electroencephalography (EEG), and Jordan’s grant needs it.</p>
+          <div class="act"><a class="lnk" href="#">Read the request</a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec lead-in" aria-labelledby="res-h">
+      <div class="g sh first">
+        <h2 id="res-h">Research at CNAP</h2>
+        <p>Work from the Center’s pilot projects, cores, and investigators.</p>
+        <div class="r"><a class="lnk" href="#">All stories</a></div>
+      </div>
+      <article class="g feat">
+        <div class="pic"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"><span class="cap">Illustration, not research data</span></div>
+        <div class="txt">
+          <p class="eyebrow">Pilot project · Neurobiology of Learning and Memory</p>
+          <h3 data-unless="long"><a href="#">What a night of sleep does to a new memory</a></h3>
+          <h3 class="long" data-when="long" hidden><a href="#">Recording brain activity across a full night of sleep to see which of the day’s memories are strengthened, and which fade by morning</a></h3>
+          <p class="deck">A CNAP pilot project is recording brain activity during sleep to learn which memories are kept by morning. The team describes its design and what it plans to test next.</p>
+          <p class="meta">The CNAP team · November 10, 2026 · 4-minute read</p>
+          <div class="also" aria-label="Also from CNAP">
+            <a href="#"><span class="meta">Core capability</span><b>Transcranial magnetic stimulation in the Cognitive Neuroscience Core</b></a>
+            <a href="#"><span class="meta">Publications</span><b>Three new papers that cite CNAP this fall</b></a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="sec" aria-labelledby="ev-h">
+      <div class="g sh">
+        <h2 id="ev-h">Speakers and events</h2>
+        <p>NeuroSync, the Center calendar, and campus events that fit your work.</p>
+        <div class="r"><a class="lnk" href="#">Full calendar</a></div>
+      </div>
+      <div class="g">
+        <div class="people">
+          <div data-unless="quiet">
+            <div class="spk-main">
+              <div class="portrait" role="img" aria-label="Portrait of Dr. Priya Raman, to come"><span class="pl">Portrait to come</span><span class="ini">PR</span></div>
+              <div style="min-width:0">
+                <p class="eyebrow">NeuroSync · Tuesday, November 17 · 12:00 p.m.</p>
+                <h3><a href="#">Memory consolidation during sleep</a></h3>
+                <p class="who">Dr. Priya Raman</p>
+                <p class="meta">Department of Psychological Sciences · Room to be announced</p>
+                <p class="bio">Studies how slow waves and sleep spindles decide which memories last, in younger and older adults.</p>
+                <div class="chips"><span class="chip you">Sleep</span><span class="chip you">Memory consolidation</span><span class="chip">Aging</span></div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px"><a class="btn" href="#">Add to my calendar</a><a class="btn" href="#" style="border-color:transparent;background:transparent;color:var(--purple)">Speaker profile</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="quiet-note" data-when="quiet" hidden>
+            <p class="eyebrow">NeuroSync</p>
+            <p style="font:500 22px/30px var(--serif)">No NeuroSync talk this week.</p>
+            <p class="meta">The series returns Tuesday, November 24, with Dr. Daniel Kim on machine learning for spike sorting.</p>
+          </div>
+          <div class="lineup">
+            <div class="lineup-h"><h4>Coming to NeuroSync</h4><a class="lnk" href="#">All speakers</a></div>
+            <ol>
+              <li><a href="#"><span class="dot" aria-hidden="true">DK</span><span class="meta num">November 24</span><b>Machine learning for spike sorting</b><span class="meta">Dr. Daniel Kim</span></a></li>
+              <li><a href="#"><span class="dot" aria-hidden="true">AH</span><span class="meta num">December 1</span><b>Stress, the heart, and the aging brain</b><span class="meta">Dr. Ana Herrera</span></a></li>
+              <li><a href="#"><span class="dot" aria-hidden="true">SN</span><span class="meta num">December 8</span><b>Rodent models of memory decline</b><span class="meta">Dr. Sam Novak</span></a></li>
+              <li><a href="#"><span class="dot" aria-hidden="true">LT</span><span class="meta num">January 19</span><b>Learning across the lifespan</b><span class="meta">Dr. Lea Torres</span></a></li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="agenda">
+          <h3>This week and next</h3>
+          <div class="day"><h4>Tuesday, November 17</h4>
+            <a class="ev" href="#" data-unless="quiet"><span class="t">12:00 p.m.</span><span><span class="kind k-ns"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>NeuroSync</span><b>Memory consolidation during sleep</b></span></a>
+            <a class="ev" href="#"><span class="t">3:00 p.m.</span><span><span class="kind k-you"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="7" cy="4.5" r="2.5"/><path d="M2 13c.8-2.8 2.7-4 5-4s4.2 1.2 5 4"/></svg>Your meeting · only you see this</span><b>Mentor meeting with Dr. Elena Voss</b></span></a>
+            <a class="ev" href="#" data-when="busy" hidden><span class="t">4:00 p.m.</span><span><span class="kind k-dev"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M7 1.5v11M1.5 7h11"/></svg>Professional development</span><b>Writing a strong Specific Aims page</b></span></a>
+          </div>
+          <div class="day"><h4>Wednesday, November 18</h4>
+            <a class="ev" href="#"><span class="t">4:00 p.m.</span><span><span class="kind k-cam"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M1.5 12.5h11M2.5 12.5V6L7 3l4.5 3v6.5M5.5 12.5v-3h3v3"/></svg>Campus seminar</span><b>Neural circuits of fear learning</b></span></a>
+            <a class="ev" href="#" data-when="busy" hidden><span class="t">5:30 p.m.</span><span><span class="kind k-ctr"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M7 1.5l5.5 5.5L7 12.5 1.5 7z"/></svg>Center event</span><b>Fall social for members and students</b></span></a>
+          </div>
+          <div class="day" data-unless="quiet"><h4>Friday, November 20</h4>
+            <a class="ev" href="#"><span class="t">All day</span><span><span class="kind k-due"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Center deadline</span><b>Year 11 pilot letters of intent</b></span></a>
+          </div>
+          <div class="more"><span class="meta" data-unless="busy">Next: the annual Site Visit, late May 2027</span><a class="lnk" href="#" data-when="busy" hidden>5 more events this week</a><a class="lnk" href="#">Add to my calendar app</a></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="reel-band" aria-labelledby="ph-h">
+    <div class="wrap">
+      <div class="g sh">
+        <h2 id="ph-h">The 2026 Site Visit</h2>
+        <p>May 27 and 28 in Manhattan, Kansas: core tours, the keynote, project presentations, and the poster session.</p>
+        <div class="r"><div class="arrows"><button class="arrow" type="button" aria-label="Previous photos" data-dir="-1"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8.5 3L4.5 7l4 4"/></svg></button><button class="arrow" type="button" aria-label="Next photos" data-dir="1"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5.5 3l4 4-4 4"/></svg></button></div><a class="lnk" href="#">Full gallery</a></div>
+      </div>
+    </div>
+    <div class="reel" id="reel" tabindex="0" role="region" aria-label="Site Visit photos. Use the arrow buttons, or scroll or swipe sideways.">
+      <figure class="shot w3"><div class="im"><img src="img/reel-1.jpg" alt="Placeholder for a photo of the poster session" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Poster session.</b> Students and investigators present their work on day 2.</figcaption></figure>
+      <figure class="shot w2"><div class="im"><img src="img/reel-2.jpg" alt="Placeholder for a photo of a core tour" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Core tours.</b> Visitors see the cores at work on day 1.</figcaption></figure>
+      <figure class="shot w4"><div class="im"><img src="img/reel-3.jpg" alt="Placeholder for a photo of the keynote address" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Keynote address.</b> The evening talk before the banquet.</figcaption></figure>
+      <figure class="shot w2" data-unless="sparse"><div class="im"><img src="img/reel-4.jpg" alt="Placeholder for a photo of the banquet" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Banquet.</b> The Center together for dinner.</figcaption></figure>
+      <figure class="shot w3" data-unless="sparse"><div class="im"><img src="img/reel-5.jpg" alt="Placeholder for a photo of project presentations" loading="lazy"><span class="tag">Photo placeholder</span></div><figcaption><b>Project presentations.</b> Short updates from every funded project.</figcaption></figure>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec" aria-labelledby="fund-h">
+      <div class="g sh">
+        <h2 id="fund-h">Funding and proposals</h2>
+        <p>Opportunities the CNAP team picked for you, and help at each stage of a proposal.</p>
+        <div class="r"><a class="lnk" href="#">All funding</a></div>
+      </div>
+      <div class="g">
+        <div class="fund">
+          <h3>Picked for you</h3>
+          <div data-unless="sparse">
+            <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Checked November 9</span></span></a>
+            <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Checked November 9</span></span></a>
+            <a class="opp" href="#"><span class="days num">7<small>days left</small></span><span><span class="spon">CNAP · Pilot program</span><b>Year 11 pilot project letters of intent</b><span class="why">Open to all CNAP faculty. You could pass it on to a colleague.</span></span><span class="side"><strong class="num">November 20, 2026</strong>Center funding</span></a>
+          </div>
+          <div class="empty" data-when="sparse" hidden>
+            <p style="font-weight:600">No opportunities are picked for you yet.</p>
+            <p class="meta">The CNAP team picks funding from your research interests. Add yours, or browse every open opportunity.</p>
+            <div style="display:flex;gap:20px;flex-wrap:wrap"><a class="lnk" href="#">Add research interests</a><a class="lnk" href="#">Browse all funding</a></div>
+          </div>
+          <div class="news">
+            <h3>Funding news</h3>
+            <ul>
+              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 11</span> · K-State Research Weekly</span><b>New budget forms for spring proposals</b></a></li>
+              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 6</span> · National Institutes of Health</span><b>Biosketch format changes start in January</b></a></li>
+              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 3</span> · CNAP</span><b>Pre-submission review funds are open</b></a></li>
+            </ul>
+          </div>
+        </div>
+        <aside class="proposal" aria-labelledby="prop-h">
+          <h3 id="prop-h">Proposal support</h3>
+          <nav class="stages" aria-label="Grant writing resources by stage">
+            <a href="#"><b>Find funding</b><span>Sponsors, searches, and eligibility</span></a>
+            <a href="#"><b>Plan the proposal</b><span>Timelines, aims, and internal review</span></a>
+            <a href="#"><b>Write a competitive application</b><span>Specific Aims, approach, and significance</span></a>
+            <a href="#"><b>Prepare NIH documents</b><span>Biosketch, Other Support, and budget</span></a>
+            <a href="#"><b>Respond to reviews</b><span>Summary statements and resubmission</span></a>
+            <a href="#"><b>Manage the award</b><span>Progress reports and closeout</span></a>
+          </nav>
+          <div class="consult"><p>Talk through a draft, one on one, with the Assistant Director for Grants and Contracts.</p><a class="btn" href="#">Book a time</a></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="com-h">
+      <div class="g sh">
+        <h2 id="com-h">Around the Center</h2>
+        <p>Members’ achievements, requests for collaborators, and conversations.</p>
+        <div class="r"><a class="lnk" href="#">Community</a></div>
+      </div>
+      <div class="g">
+        <div class="ach">
+          <h3>Recent achievements</h3>
+          <a href="#"><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
+          <a href="#"><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
+          <a href="#"><span class="kind" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>Invited talk</span><b>Neuroinformatics Core pipeline presented at a national meeting</b><span class="meta">Dr. Wei Zhang · Neuroinformatics Core</span><span class="when">October 30</span></a>
+        </div>
+        <div class="talk">
+          <h3>Conversations</h3>
+          <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · Collaborations</span></a>
+          <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · Behavioral Neuroscience Core</span></a>
+          <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Neuroinformatics Core</span></a>
+          <div style="padding-top:16px;border-top:1px solid var(--line)"><a class="btn" href="#">Start a conversation</a></div>
+        </div>
+        <div class="welcome-row"><span class="faces" aria-hidden="true"><span>KB</span><span>NA</span><span>OM</span></span><p style="font-size:15px;color:var(--ink-2)">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p><a class="lnk" href="#" style="margin-left:auto">Member directory</a></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="g">
+        <p>The Cognitive and Neurobiological Approaches to Plasticity (CNAP) Center studies how brains and minds change, and helps early-career investigators build independently funded research programs. It is a Center of Biomedical Research Excellence supported by the National Institute of General Medical Sciences of the National Institutes of Health, grant P20GM113109.</p>
+        <nav aria-label="About CNAP" style="grid-column:8 / span 2"><a href="#">About CNAP</a><a href="#">Research cores</a><a href="#">Administrative Core</a></nav>
+        <nav aria-label="Help" style="grid-column:10 / span 3"><a href="#">Contact the Administrative Core</a><a href="#">Accessibility</a><a href="#">Kansas State University</a></nav>
+      </div>
+    </footer>
+  </div>
+</main>
+
+<nav class="tabbar" aria-label="Main, on phones">
+  <a href="#" aria-current="page"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3.5 10L11 4l7.5 6v8h-5v-5h-5v5h-5z"/></svg>Home</a>
+  <a href="#"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3.5" y="4.5" width="15" height="14" rx="2"/><path d="M3.5 9h15M8 3v3M14 3v3"/></svg>Events</a>
+  <a href="#"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M11 3l2.4 4.8 5.3.8-3.8 3.7.9 5.2L11 15l-4.8 2.5.9-5.2-3.8-3.7 5.3-.8z"/></svg>Funding</a>
+  <a href="#"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h14v10H10l-4 3v-3H4z"/></svg>Community</a>
+  <a href="#"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 11.5l4 4 8-9"/></svg>My work<span class="count" data-unless="clear">4</span></a>
+</nav>
+
+<script>
+(function(){
+  var reel=document.getElementById('reel');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('.arrow').forEach(function(b){
+    b.addEventListener('click',function(){reel.scrollBy({left:reel.clientWidth*0.75*Number(b.dataset.dir),behavior:reduce?'auto':'smooth'});});
+  });
+  function arrows(){var a=document.querySelectorAll('.arrow');if(!a.length)return;a[0].disabled=reel.scrollLeft<4;a[1].disabled=reel.scrollLeft+reel.clientWidth>=reel.scrollWidth-4;}
+  reel.addEventListener('scroll',arrows,{passive:true});addEventListener('resize',arrows);
+  function apply(s){
+    document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
+    document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
+    arrows();
+  }
+  var sel=document.getElementById('scenario');
+  var start=(location.hash||'').slice(1);
+  if(start&&[].some.call(sel.options,function(o){return o.value===start;}))sel.value=start;
+  sel.addEventListener('change',function(){apply(sel.value);try{history.replaceState(null,'','#'+sel.value);}catch(e){}});
+  apply(sel.value);
+})();
+</script>
