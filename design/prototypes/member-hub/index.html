@@ -10,7 +10,7 @@
   --paper:#faf9f7; --band:#f2efe9; --surface:#ffffff; --line:#e4e0d8; --line-2:#d3cdc3; --field:#8c8694;
   --ink:#1d1b21; --ink-2:#423e48; --muted:#57525e;
   --purple:#512888; --purple-ink:#3c1d66; --purple-tint:#f1ecf8;
-  --greet-bg:#22132f; --greet-ink:#f6f2fa; --greet-muted:#cbbfdb; --fiber:#c9a8f0; --spark:#f4ecff; --week:#ffffff; --wline:#e6e3e9; --wline-v:#efedf1; --track:#dedae3;
+  --greet-bg:#22132f; --greet-ink:#f6f2fa; --greet-muted:#cbbfdb; --fiber:#c9a8f0; --spark:#f4ecff; --week:#ffffff; --wline:#e6e3e9; --night:#1b1221; --mint:#e4efec; --lilac:#efebf5; --wline-v:#efedf1; --track:#dedae3;
   --tick:rgba(203,191,219,.22); --tick-past:rgba(203,191,219,.55); --tick-now:#f6f2fa;
   --teal:#0a6670; --amber:#8a4b00; --green:#1d6a4f; --red:#a1302a;
   --serif:"Lora Hub","Lora",Georgia,serif; --sans:"Inter Hub","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -150,37 +150,46 @@ img{max-width:100%;display:block}
 /* sections */
 .sec{padding-top:var(--sec)}
 .sec.lead-in{padding-top:48px}
-.sh{border-top:1px solid var(--line);padding-top:18px;margin-bottom:32px;align-items:baseline}
-.sh h2{grid-column:1 / span 3;font:600 22px/28px var(--sans);letter-spacing:-.015em}
-.sh p{grid-column:4 / span 6;font-size:15px;line-height:23px;color:var(--muted)}
-.sh .r{grid-column:10 / span 3;justify-self:end;display:flex;gap:20px;align-items:center}
-.sh.first{border-top:0;padding-top:0}
+.sh{position:relative;border-top:1px solid var(--line);padding-top:32px;margin-bottom:44px}
+.sh::before{content:"";position:absolute;left:0;top:-1px;width:40px;height:2px;background:var(--ink)}
+.sh h2{font:500 44px/50px var(--serif);letter-spacing:-.02em;color:var(--ink);text-wrap:balance}
+.sh p{margin-top:12px;font-size:18px;line-height:28px;color:var(--muted);max-width:56ch}
+.sf{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px 24px;flex-wrap:wrap}
+.sf .meta{font-size:15px;line-height:22px}
 
 /* feature */
-.feat{align-items:stretch}
-.feat .pic-wrap{grid-column:1 / span 7;align-self:start;margin:0;display:flex;flex-direction:column;gap:10px}
-.feat .pic{position:relative;border-radius:4px;overflow:hidden;background:#1a1024;aspect-ratio:16/10}
+.feat{align-items:stretch;grid-template-rows:auto auto;row-gap:10px}
+.feat .pic-wrap{display:contents}
+.feat .pic{grid-column:1 / span 7;grid-row:1;min-width:0;align-self:stretch}
+.feat .pic img{position:absolute;inset:0}
+.feat .credit{grid-column:1 / span 7;grid-row:2}
+.feat .pic{position:relative;border-radius:4px;overflow:hidden;background:#1a1024;min-height:380px}
 .credit{font-size:14px;line-height:20px;color:var(--muted)}
 .feat .pic img{width:100%;height:100%;object-fit:cover;object-position:60% 45%}
 .cap{position:absolute;left:14px;bottom:14px;font-size:13px;line-height:17px;font-weight:500;color:#fff;background:rgba(20,12,30,.66);padding:5px 9px;border-radius:4px}
-.feat .txt{grid-column:8 / span 5;display:flex;flex-direction:column;gap:16px;min-width:0}
+.feat .txt{grid-column:8 / span 5;grid-row:1;display:flex;flex-direction:column;gap:16px;min-width:0}
+.feat .act{display:flex;align-items:center;min-height:44px;margin-top:-6px}
 .eyebrow{font-size:14px;line-height:20px;font-weight:600;color:var(--purple)}
 .feat h3{font:500 40px/47px var(--serif);letter-spacing:-.015em;text-wrap:balance}
 .feat h3.long{font-size:32px;line-height:40px}
 .feat h3 a{color:var(--ink);text-decoration:none}
 .feat h3 a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px}
 .deck{font-size:18px;line-height:29px;color:var(--ink-2)}
-.also{margin-top:auto;border-top:1px solid var(--line);padding-top:4px}
-.also a{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.also{margin-top:auto;border-top:1px solid var(--line)}
+.also a{position:relative;display:flex;flex-direction:column;gap:4px;padding:14px 32px 14px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.also a::after{content:"";position:absolute;right:6px;top:50%;width:8px;height:8px;border-right:1.8px solid var(--muted);border-top:1.8px solid var(--muted);transform:translateY(-50%) rotate(45deg)}
+.also a:hover::after{border-color:var(--purple)}
 .also a:last-child{border-bottom:0;padding-bottom:0}
+.also a:last-child::after{top:calc(50% + 7px)}
 .also b{font:500 18px/25px var(--serif)}
 .also a:hover b{color:var(--purple);text-decoration:underline}
 
 /* neurosync + agenda */
-.people{grid-column:1 / span 7;min-width:0}
-.spk-main{display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px}
-.portrait{aspect-ratio:4/5;border-radius:4px;background:#e8e2ef;display:flex;flex-direction:column;justify-content:space-between;padding:14px;color:var(--purple-ink);position:relative;overflow:hidden}
-.portrait .ini{font:500 64px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end;opacity:.9}
+.people{grid-column:1 / span 7;min-width:0;display:flex;flex-direction:column}
+.people > [data-unless="quiet"]{flex:1;display:flex}
+.spk-main{flex:1;display:grid;grid-template-columns:minmax(200px,280px) minmax(0,1fr);gap:36px;align-items:center}
+.portrait{align-self:stretch;min-height:340px;border-radius:4px;background:#e8e2ef;display:flex;flex-direction:column;justify-content:space-between;padding:14px;color:var(--purple-ink);position:relative;overflow:hidden}
+.portrait .ini{font:500 88px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end;opacity:.9}
 .portrait .pl{font-size:13px;line-height:17px;font-weight:500}
 .people h3{font:500 28px/35px var(--serif);letter-spacing:-.01em;text-wrap:balance;margin:6px 0 8px}
 .people h3 a{color:var(--ink);text-decoration:none}
@@ -191,15 +200,28 @@ img{max-width:100%;display:block}
 .chip{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);font-size:14px;font-weight:500;color:var(--ink-2);background:var(--surface)}
 .chip.you{border-color:#9cc6c9;color:var(--teal);background:#eef6f6}
 .chip.you::before{content:"";width:6px;height:6px;border-radius:999px;background:currentColor}
-.lineup{margin-top:32px;border-top:1px solid var(--line);padding-top:16px}
-.lineup-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
-.lineup-h h4{margin:0;font:600 16px/22px var(--sans)}
-.lineup ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-.lineup ol a{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink)}
-.lineup .dot{width:44px;height:44px;border-radius:999px;background:#e8e2ef;color:var(--purple-ink);display:grid;place-items:center;font:500 17px/1 var(--serif);margin-bottom:6px}
-.lineup b{font-size:15px;line-height:21px;font-weight:600}
-.lineup ol a:hover b{color:var(--purple);text-decoration:underline}
-.agenda{grid-column:9 / span 4;min-width:0}
+.lineup{grid-column:1 / -1;min-width:0;margin-top:72px;border-top:1px solid var(--line);padding-top:20px}
+.lineup-h{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+.lineup-h h3{font:600 20px/26px var(--sans);letter-spacing:-.01em}
+.lu-ctl{display:flex;align-items:center;gap:10px}
+.lu-ctl .t3{margin-right:14px}
+.arrow{width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;transition:background-color .15s,border-color .15s}
+.arrow:hover{background:var(--band)}
+.arrow[aria-disabled="true"]{color:var(--field);border-color:var(--line);background:transparent;cursor:default}
+.lineup ol{display:flex;gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-block:4px}
+.lineup ol::-webkit-scrollbar{display:none}
+.lineup li{flex:none;width:calc((100% - 4 * var(--gap)) / 5);scroll-snap-align:start;min-width:0}
+.card{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink)}
+.card .sq{aspect-ratio:1;border-radius:4px;background:#e8e2ef;color:var(--purple-ink);display:flex;flex-direction:column;justify-content:space-between;padding:14px;margin-bottom:12px}
+.card .pl{font-size:13px;line-height:17px;font-weight:500}
+.card .ini{font:500 56px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end}
+.card b{font:500 18px/25px var(--serif);text-wrap:pretty}
+.card:hover b{color:var(--purple);text-decoration:underline}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media (prefers-reduced-motion:no-preference){.lineup ol{scroll-behavior:smooth}}
+.agenda{grid-column:8 / span 5;min-width:0;background:var(--night);border-radius:4px;padding:30px 32px 26px;color:var(--ink);--ink:#f6f2fa;--ink-2:#d9cfe6;--muted:#b9adc9;--line:rgba(246,242,250,.14);--purple:#d4bdf6;--purple-ink:#efe6fc}
+.agenda h3{font-size:18px}
+.agenda .k-ns,.agenda .k-ctr{color:#d4bdf6}.agenda .k-you{color:#8fd6d9}.agenda .k-due{color:#f2b866}
 .agenda h3{font:600 16px/22px var(--sans);margin-bottom:4px}
 .day{padding-top:16px}
 .day h4{margin:0 0 4px;font:600 14px/20px var(--sans);color:var(--ink)}
@@ -214,7 +236,7 @@ img{max-width:100%;display:block}
 
 /* gallery: one dominant photograph and two supporting ones, at true photographic ratios */
 .reel-band{background:var(--band);margin-top:var(--sec);padding:52px 0 48px;border-block:1px solid var(--line)}
-.reel-band .sh{border-top:0;padding-top:0;margin-bottom:28px}
+.reel-band .sh,.reel-band .sf{border-top-color:var(--line-2)}
 .mosaic{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:1fr 1fr;column-gap:var(--gap);row-gap:24px}
 .ph{display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);min-height:0;min-width:0}
 .ph.lead{grid-column:1 / span 8;grid-row:1 / span 2}
@@ -229,10 +251,11 @@ img{max-width:100%;display:block}
 .cap2{display:flex;flex-direction:column;gap:2px;font-size:15px;line-height:22px;color:var(--ink-2)}
 .cap2 b{font:500 18px/24px var(--serif);color:var(--ink)}
 .ph:hover .cap2 b{color:var(--purple);text-decoration:underline}
-.gal-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;padding-top:18px;border-top:1px solid var(--line-2)}
 
 /* funding */
-.fund{grid-column:1 / span 8;min-width:0}
+.fund{grid-column:1 / span 7;min-width:0;display:flex;flex-direction:column}
+.fund > [data-unless="sparse"]{flex:1;display:flex;flex-direction:column}
+.fund .opp{flex:1;align-content:center}
 .fund h3,.proposal h3{font:600 16px/22px var(--sans);margin-bottom:6px}
 .opp{display:grid;grid-template-columns:84px minmax(0,1fr) 172px;gap:24px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .opp .days{font:500 36px/36px var(--serif);color:var(--ink)}
@@ -244,24 +267,27 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .opp .side strong{display:block;font-size:15px;font-weight:600;color:var(--ink)}
 .chk{display:inline-flex;align-items:center;gap:6px;margin-top:10px;color:var(--green);font-weight:500}
 .chk::before{content:"";width:9px;height:5px;border-left:1.8px solid currentColor;border-bottom:1.8px solid currentColor;transform:rotate(-45deg) translateY(-2px)}
-.news{margin-top:28px;border-top:1px solid var(--line);padding-top:16px}
+.news{grid-column:1 / -1;min-width:0;margin-top:56px;border-top:1px solid var(--line);padding-top:20px}
+.news h3{font:600 20px/26px var(--sans);letter-spacing:-.01em;margin-bottom:10px}
 .news ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:8px}
 .news a{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink)}
 .news b{font-size:15px;line-height:22px;font-weight:600}
 .news a:hover b{color:var(--purple);text-decoration:underline}
 .empty{border:1px dashed var(--line-2);border-radius:4px;padding:22px 24px;display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.proposal{grid-column:9 / span 4;min-width:0}
+.proposal{grid-column:8 / span 5;min-width:0;background:var(--mint);border-radius:4px;padding:30px 32px 28px;--line:rgba(10,102,112,.16)}
+.proposal .stages a::before{color:var(--teal)}
 .stages{counter-reset:s}
 .stages a{display:grid;grid-template-columns:28px minmax(0,1fr);gap:2px 10px;padding:11px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .stages a::before{counter-increment:s;content:counter(s);grid-row:1 / span 2;font:500 16px/22px var(--serif);color:var(--purple)}
 .stages b{font-size:15px;line-height:22px;font-weight:600}
 .stages span{font-size:14px;line-height:20px;color:var(--muted)}
 .stages a:hover b{color:var(--purple);text-decoration:underline}
-.consult{margin-top:18px;background:var(--purple-tint);border-radius:4px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
-.consult p{font-size:15px;line-height:23px;color:var(--purple-ink)}
+.consult{margin-top:22px;background:var(--surface);border-radius:4px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.consult p{font-size:15px;line-height:23px;color:var(--ink-2)}
 
 /* community */
-.ach{grid-column:1 / span 7;min-width:0}
+.ach{grid-column:1 / span 7;min-width:0;display:flex;flex-direction:column}
+.ach > a{flex:1;align-content:center}
 .ach h3,.talk h3{font:600 16px/22px var(--sans);margin-bottom:6px}
 .ach a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:4px 18px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .ach .kind{grid-column:2}
@@ -270,12 +296,15 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .ach a:hover b{color:var(--purple);text-decoration:underline}
 .ach .meta{grid-column:2}
 .ach .when{grid-column:3;grid-row:1;font-size:14px;color:var(--muted);white-space:nowrap}
-.talk{grid-column:9 / span 4;min-width:0}
+.talk{grid-column:8 / span 5;min-width:0;display:flex;flex-direction:column;background:var(--lilac);border-radius:4px;padding:30px 32px 28px;--line:rgba(81,40,136,.14)}
 .talk a.conv{display:grid;grid-template-columns:40px minmax(0,1fr);gap:2px 12px;padding:14px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
-.talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:var(--band);color:var(--ink-2)}
+.talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:var(--surface);color:var(--ink-2)}
 .talk b{font-size:15px;line-height:22px;font-weight:600}
 .talk a.conv:hover b{color:var(--purple);text-decoration:underline}
-.welcome-row{grid-column:1 / span 12;margin-top:28px;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.talk-act{margin-top:auto;padding-top:20px;border-top:1px solid var(--line)}
+.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.wel .meta{font-size:15px;color:var(--ink-2)}
+.welcome-row{grid-column:1 / span 12;margin-top:56px;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .faces{display:flex}
 .faces span{width:34px;height:34px;border-radius:999px;border:2px solid var(--paper);margin-left:-8px;display:grid;place-items:center;font-size:13px;font-weight:600;background:#e8e2ef;color:var(--purple-ink)}
 .faces span:first-child{margin-left:0}
@@ -294,6 +323,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0s!important;animation-duration:0s!important;animation-iteration-count:1!important}}
 
 /* narrower desktop */
+@media (max-width:1300px){
+  .search{width:44px;padding:0;justify-content:center}.search .st,.search kbd{display:none}
+}
 @media (max-width:1180px){
   .brief{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto auto 1fr auto}
   .bi.intro{grid-column:1 / -1;grid-row:1;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:20px;row-gap:4px;padding-bottom:22px;margin-bottom:24px;border-bottom:1px solid var(--line-2)}
@@ -303,7 +335,6 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .bi:not(.intro){grid-row:2 / span 4}
   .bi.firstvis{padding-left:0;border-left:0}
   .fibers{-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 35%,#000 80%);mask-image:linear-gradient(90deg,transparent 0%,transparent 35%,#000 80%)}
-  .search{width:44px;padding:0;justify-content:center}.search .st,.search kbd{display:none}
   .nav a{padding:0 9px}.hdr .wrap{gap:20px}
 }
 /* tablet */
@@ -341,10 +372,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 @media (max-width:980px){
   .nav,.search{display:none}
   .only-phone{display:grid;place-items:center;width:44px;height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);cursor:pointer}
-  .sh{grid-template-columns:minmax(0,1fr) auto;row-gap:6px}
-  .sh h2{grid-column:1}
-  .sh .r{grid-column:2;grid-row:1}
-  .sh p{grid-column:1 / -1;grid-row:2}
+  .sh h2{font-size:38px;line-height:44px}
   .fibers{-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 45%,#000 85%);mask-image:linear-gradient(90deg,transparent 0%,transparent 45%,#000 85%)}
   body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
   html{scroll-padding-top:80px;scroll-padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
@@ -352,9 +380,14 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .tabbar a{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:62px;min-height:54px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none}
   .tabbar a[aria-current="page"]{color:var(--purple)}
   .tabbar .count{position:absolute;top:3px;left:calc(50% + 3px);min-width:20px;height:20px;font-size:13px;line-height:20px;padding:0 5px}
-  .feat .pic-wrap,.feat .txt{grid-column:1 / -1}.feat .txt{margin-top:24px}
+  .feat .pic,.feat .credit,.feat .txt{grid-column:1 / -1}.feat .txt{grid-row:3;margin-top:24px}
+  .feat .pic{aspect-ratio:16/10;min-height:0;align-self:start}
   .people,.agenda,.fund,.proposal,.ach,.talk{grid-column:1 / -1}
   .agenda,.proposal,.talk{margin-top:40px}
+  .lineup{margin-top:56px}
+  .lineup li{width:calc((100% - 2 * var(--gap)) / 2.4)}
+  .spk-main{grid-template-columns:200px minmax(0,1fr)}
+  .portrait{min-height:250px}
   .brief{display:block;padding-block:24px 8px}
   .bi{display:flex;flex-direction:column;gap:8px;padding:20px 0;border-left:0;border-top:1px solid var(--line-2)}
   .bi.intro{border-top:0;padding-top:0;display:flex;flex-direction:column;flex-wrap:nowrap;margin-bottom:0;border-bottom:0;padding-bottom:16px}
@@ -389,20 +422,23 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .fund [data-unless="sparse"] > .opp:nth-child(3),.ach a:nth-of-type(3),.talk a.conv:nth-of-type(3),.also a:nth-child(2){display:none}
   .stages span{display:none}
   .stages a{padding:10px 0}
-  .sh{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:20px}
-  .sh .r{justify-self:auto}
+  .sh{padding-top:24px;margin-bottom:28px}
+  .sh h2{font-size:31px;line-height:37px}
+  .sh p{font-size:16px;line-height:25px;margin-top:8px}
+  .sf{margin-top:32px;padding-top:20px}
   .feat .pic{aspect-ratio:4/3;margin-inline:calc(var(--side) * -1);border-radius:0}
   .credit{font-size:14px}
   .feat h3,.feat h3.long{font-size:28px;line-height:35px}
   .deck{font-size:17px;line-height:27px}
   .also b{font-size:17px}
   .spk-main{grid-template-columns:minmax(0,1fr);gap:16px}
-  .portrait{width:132px}
+  .portrait{width:132px;min-height:0;aspect-ratio:4/5;align-self:start}
   .portrait .ini{font-size:40px}.portrait .pl{display:none}
   .people h3{font-size:22px;line-height:29px;margin-top:4px}
   .bio{display:none}
-  .lineup ol{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:16px;margin-right:calc(var(--side-r) * -1);padding-right:20px;scrollbar-width:none}
-  .lineup li{flex:none;width:68%;scroll-snap-align:start}
+  .lineup li{width:72%}
+  .lineup-h{flex-wrap:wrap}
+  .lu-ctl .t3{margin-right:auto}
   .reel-band{padding:36px 0 36px}
   .mosaic{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto;gap:20px 12px}
   .ph.lead{grid-column:1 / -1;grid-row:auto}
@@ -411,8 +447,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .ph:not(.lead) .im{flex:none;aspect-ratio:1/1}
   .ph:not(.lead) .cap2 span{display:none}
   .cap2 b{font-size:16px;line-height:22px}
-  .gal-foot{margin-top:20px}
-  .opp{grid-template-columns:60px minmax(0,1fr);gap:4px 14px}
+    .opp{grid-template-columns:60px minmax(0,1fr);gap:4px 14px}
   .opp .side{grid-column:2;text-align:left}
   .opp .days{font-size:28px;line-height:30px}
   .opp b{font-size:17px;line-height:24px}
@@ -578,11 +613,10 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 
   <div class="wrap">
     <section class="sec lead-in" aria-labelledby="res-h">
-      <div class="g sh first">
+      <header class="sh">
         <h2 id="res-h">Research at CNAP</h2>
         <p>Work from the Center’s pilot projects, cores, and investigators.</p>
-        <div class="r"><a class="lnk" href="#">All stories</a></div>
-      </div>
+      </header>
       <article class="g feat">
         <figure class="pic-wrap"><div class="pic"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"></div><figcaption class="credit">Illustration made for this prototype. It is not research data, and a project image will replace it.</figcaption></figure>
         <div class="txt">
@@ -591,20 +625,21 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           <h3 class="long" data-when="long" hidden><a href="#">Recording brain activity across a full night of sleep to see which of the day’s memories are strengthened, and which fade by morning</a></h3>
           <p class="deck">A CNAP pilot project is recording brain activity during sleep to learn which memories are kept by morning. The team describes its design and what it plans to test next.</p>
           <p class="meta">The CNAP team · November 10, 2026 · 4-minute read</p>
-          <div class="also" aria-label="Also from CNAP">
-            <a href="#"><span class="meta">Core capability</span><b>Transcranial magnetic stimulation in the Cognitive Neuroscience Core</b></a>
-            <a href="#"><span class="meta">Publications</span><b>Three new papers that cite CNAP this fall</b></a>
+          <div class="act"><a class="t3" href="#">Read the story</a></div>
+          <div class="also" aria-label="More from CNAP research">
+            <a href="#"><span class="eyebrow">Core capability</span><b>Transcranial magnetic stimulation in the Cognitive Neuroscience Core</b></a>
+            <a href="#"><span class="eyebrow">Publications</span><b>Three new papers that cite CNAP this fall</b></a>
           </div>
         </div>
       </article>
+      <footer class="sf"><a class="btn" href="#">All stories</a></footer>
     </section>
 
     <section class="sec" aria-labelledby="ev-h">
-      <div class="g sh">
+      <header class="sh">
         <h2 id="ev-h">Speakers and events</h2>
         <p>NeuroSync, the Center calendar, and campus events that fit your work.</p>
-        <div class="r"><a class="lnk" href="#">Full calendar</a></div>
-      </div>
+      </header>
       <div class="g">
         <div class="people">
           <div data-unless="quiet">
@@ -626,15 +661,6 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
             <p style="font:500 22px/30px var(--serif)">No NeuroSync talk this week.</p>
             <p class="meta">The series returns Tuesday, November 24, with Dr. Daniel Kim on machine learning for spike sorting.</p>
           </div>
-          <div class="lineup">
-            <div class="lineup-h"><h4>Coming to NeuroSync</h4><a class="lnk" href="#">All speakers</a></div>
-            <ol>
-              <li><a href="#"><span class="dot" aria-hidden="true">DK</span><span class="meta num">November 24</span><b>Machine learning for spike sorting</b><span class="meta">Dr. Daniel Kim</span></a></li>
-              <li><a href="#"><span class="dot" aria-hidden="true">AH</span><span class="meta num">December 1</span><b>Stress, the heart, and the aging brain</b><span class="meta">Dr. Ana Herrera</span></a></li>
-              <li><a href="#"><span class="dot" aria-hidden="true">SN</span><span class="meta num">December 8</span><b>Rodent models of memory decline</b><span class="meta">Dr. Sam Novak</span></a></li>
-              <li><a href="#"><span class="dot" aria-hidden="true">LT</span><span class="meta num">January 19</span><b>Learning across the lifespan</b><span class="meta">Dr. Lea Torres</span></a></li>
-            </ol>
-          </div>
         </div>
 
         <div class="agenda">
@@ -653,36 +679,46 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           </div>
           <div class="more"><span class="meta" data-unless="busy">Next: the annual Site Visit, late May 2027</span><a class="lnk" href="#" data-when="busy" hidden>5 more events this week</a><a class="lnk" href="#">Add to my calendar app</a></div>
         </div>
+        <div class="lineup" role="region" aria-labelledby="lu-h">
+          <div class="lineup-h"><h3 id="lu-h">Coming to NeuroSync</h3>
+            <div class="lu-ctl"><a class="t3" href="#">All speakers</a><button type="button" class="arrow" data-dir="-1" aria-label="Previous speakers" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-dir="1" aria-label="Next speakers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
+          </div>
+          <ol>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">DK</span></span><span class="meta num">Tuesday, November 24</span><b>Machine learning for spike sorting</b><span class="meta">Dr. Daniel Kim</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">AH</span></span><span class="meta num">Tuesday, December 1</span><b>Stress, the heart, and the aging brain</b><span class="meta">Dr. Ana Herrera</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">SN</span></span><span class="meta num">Tuesday, December 8</span><b>Rodent models of memory decline</b><span class="meta">Dr. Sam Novak</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">LT</span></span><span class="meta num">Tuesday, January 19</span><b>Learning across the lifespan</b><span class="meta">Dr. Lea Torres</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">MO</span></span><span class="meta num">Tuesday, February 2</span><b>Attention and the sleeping brain</b><span class="meta">Dr. Maya Okafor</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">RB</span></span><span class="meta num">Tuesday, February 16</span><b>Imaging small circuits in behaving animals</b><span class="meta">Dr. Ravi Bhat</span></a></li>
+          </ol>
+          <p class="sr" aria-live="polite" id="lu-status"></p>
+        </div>
       </div>
+      <footer class="sf"><a class="btn" href="#">Full calendar</a><p class="meta">All times are Central Time.</p></footer>
     </section>
   </div>
 
   <section class="reel-band" aria-labelledby="ph-h">
     <div class="wrap">
-      <div class="g sh">
+      <header class="sh">
         <h2 id="ph-h">The 2026 Site Visit</h2>
         <p>May 27 and 28 in Manhattan, Kansas: core tours, the keynote, project presentations, and the poster session.</p>
-      </div>
+      </header>
       <div class="mosaic" id="reel" tabindex="-1">
         <a class="ph lead" href="#"><span class="im"><img src="img/reel-1.jpg" alt="Placeholder for a photo of the poster session" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Poster session</b><span>Students and investigators present their work. Day 2, May 28.</span></span></a>
         <a class="ph" href="#"><span class="im"><img src="img/reel-2.jpg" alt="Placeholder for a photo of a core tour" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Core tours</b><span>Day 1, May 27.</span></span></a>
         <a class="ph" href="#"><span class="im"><img src="img/reel-3.jpg" alt="Placeholder for a photo of the keynote address" loading="lazy"><span class="tag">Photo placeholder</span></span><span class="cap2"><b>Keynote address</b><span>Day 1, before the banquet.</span></span></a>
       </div>
-      <div class="gal-foot">
-        <p class="meta" data-unless="sparse">Showing 3 of 48 photographs. The rest include the banquet and every project presentation.</p>
-        <p class="meta" data-when="sparse" hidden>All 3 photographs from this event.</p>
-        <a class="btn" href="#">View the full gallery</a>
-      </div>
+      <footer class="sf"><a class="btn" href="#">View the full gallery</a><p class="meta" data-unless="sparse">Showing 3 of 48 photographs. The rest include the banquet and every project presentation.</p><p class="meta" data-when="sparse" hidden>All 3 photographs from this event.</p></footer>
     </div>
   </section>
 
   <div class="wrap">
     <section class="sec" aria-labelledby="fund-h">
-      <div class="g sh">
+      <header class="sh">
         <h2 id="fund-h">Funding and proposals</h2>
-        <p>Opportunities the CNAP team picked for your research, and help at each stage of a proposal. Eligibility is confirmed with each sponsor.</p>
-        <div class="r"><a class="lnk" href="#">All funding</a></div>
-      </div>
+        <p>Opportunities the CNAP team picked for your research, and help at each stage of a proposal.</p>
+      </header>
       <div class="g">
         <div class="fund">
           <h3>Picked for you</h3>
@@ -695,14 +731,6 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
             <p style="font-weight:600">No opportunities are picked for you yet.</p>
             <p class="meta">The CNAP team picks funding from your research interests. Add yours, or browse every open opportunity.</p>
             <div style="display:flex;gap:20px;flex-wrap:wrap"><a class="lnk" href="#">Add research interests</a><a class="lnk" href="#">Browse all funding</a></div>
-          </div>
-          <div class="news">
-            <h3>Funding news</h3>
-            <ul>
-              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 11</span> · K-State Research Weekly</span><b>New budget forms for spring proposals</b></a></li>
-              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 6</span> · National Institutes of Health</span><b>Biosketch format changes start in January</b></a></li>
-              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 3</span> · CNAP</span><b>Pre-submission review funds are open</b></a></li>
-            </ul>
           </div>
         </div>
         <aside class="proposal" aria-labelledby="prop-h">
@@ -717,15 +745,23 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           </nav>
           <div class="consult"><p>Talk through a draft, one on one, with the Assistant Director for Grants and Contracts.</p><a class="btn" href="#">Book a time</a></div>
         </aside>
+        <div class="news">
+            <h3>Funding news</h3>
+            <ul>
+              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 11</span> · K-State Research Weekly</span><b>New budget forms for spring proposals</b></a></li>
+              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 6</span> · National Institutes of Health</span><b>Biosketch format changes start in January</b></a></li>
+              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 3</span> · CNAP</span><b>Pre-submission review funds are open</b></a></li>
+            </ul>
+        </div>
       </div>
+      <footer class="sf"><a class="btn" href="#">All funding</a><p class="meta">Eligibility is confirmed with each sponsor.</p></footer>
     </section>
 
     <section class="sec" aria-labelledby="com-h">
-      <div class="g sh">
+      <header class="sh">
         <h2 id="com-h">Around the Center</h2>
         <p>Members’ achievements, requests for collaborators, and conversations.</p>
-        <div class="r"><a class="lnk" href="#">Community</a></div>
-      </div>
+      </header>
       <div class="g">
         <div class="ach">
           <h3>Recent achievements</h3>
@@ -738,10 +774,10 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           <a class="conv" href="#"><span class="av">JL</span><b>Looking for an EEG collaborator</b><span class="meta">Jordan Lee · Seeking: sleep EEG</span></a>
           <a class="conv" href="#"><span class="av">TB</span><b>Tips for the new electrophysiology rig</b><span class="meta">Tom Brandt · Behavioral Neuroscience Core</span></a>
           <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Seeking: high-performance computing</span></a>
-          <div style="padding-top:16px;border-top:1px solid var(--line)"><a class="btn" href="#">Start a conversation</a></div>
+          <div class="talk-act"><a class="btn" href="#">Start a conversation</a></div>
         </div>
-        <div class="welcome-row"><span class="faces" aria-hidden="true"><span>KB</span><span>NA</span><span>OM</span></span><p style="font-size:15px;color:var(--ink-2)">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p><a class="lnk" href="#" style="margin-left:auto">Member directory</a></div>
       </div>
+      <footer class="sf"><a class="btn" href="#">Visit the community</a><span class="wel"><span class="faces" aria-hidden="true"><span>KB</span><span>NA</span><span>OM</span></span><p class="meta">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p></span></footer>
     </section>
 
     <footer class="foot">
@@ -771,6 +807,11 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(still&&fs.pauseAnimations)fs.pauseAnimations();
   mb.addEventListener('click',function(){var p=mb.getAttribute('aria-pressed')!=='true';mb.setAttribute('aria-pressed',p);g.classList.toggle('paused',p);if(p)fs.pauseAnimations();else fs.unpauseAnimations();mb.querySelector('span').textContent=p?'Play motion':'Pause motion';mb.querySelector('svg').innerHTML=p?'<path d="M4 2l8 5-8 5z"/>':'<rect x="3" y="2" width="3" height="10" rx="1"/><rect x="8" y="2" width="3" height="10" rx="1"/>';});
+  var lol=document.querySelector('.lineup ol'),arr=document.querySelectorAll('.lineup .arrow'),lst=document.getElementById('lu-status');
+  function lupd(){var max=lol.scrollWidth-lol.clientWidth;arr[0].setAttribute('aria-disabled',lol.scrollLeft<=2);arr[1].setAttribute('aria-disabled',lol.scrollLeft>=max-2);
+    var items=lol.querySelectorAll('li'),r=lol.getBoundingClientRect(),vis=[];items.forEach(function(l,i){var b=l.getBoundingClientRect();if(b.left>=r.left-2&&b.right<=r.right+2)vis.push(i+1);});if(vis.length)lst.textContent='Showing speakers '+vis[0]+' to '+vis[vis.length-1]+' of '+items.length;}
+  arr.forEach(function(b){b.addEventListener('click',function(){if(b.getAttribute('aria-disabled')==='true')return;var li=lol.querySelector('li');var step=li.getBoundingClientRect().width+parseFloat(getComputedStyle(lol).columnGap||0);lol.scrollBy({left:step*+b.dataset.dir,behavior:still?'auto':'smooth'});});});
+  lol.addEventListener('scroll',function(){clearTimeout(lol._t);lol._t=setTimeout(lupd,80);},{passive:true});addEventListener('resize',lupd);lupd();
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
