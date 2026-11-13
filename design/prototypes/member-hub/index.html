@@ -185,6 +185,77 @@ img{max-width:100%;display:block}
 .also b{font:500 18px/25px var(--serif)}
 .also a:hover b{color:var(--purple);text-decoration:underline}
 
+
+/* NeuroSync feature: a big square portrait, the poster date and the talk beside it */
+.ns-feat .spk-main{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);row-gap:36px;align-items:start}
+.ns-feat .portrait{grid-column:1 / span 6;grid-row:1 / span 2;aspect-ratio:1;min-height:0}
+.ns-feat .portrait .ini{font-size:150px}
+.ns-feat .poster{grid-column:8 / span 5;grid-row:1;align-self:start}
+.ns-feat .poster .p-lab{margin-bottom:18px}
+.ns-feat .spk-txt{grid-column:8 / span 5;grid-row:2;align-self:end;max-width:none}
+.ns-feat .spk-txt h3{font:500 32px/39px var(--serif);letter-spacing:-.01em;margin:6px 0 10px}
+.ns-feat .spk-txt h3 a{color:var(--ink);text-decoration:none}
+.ns-feat .spk-txt h3 a:hover{text-decoration:underline}
+.ns-feat ~ .lineup{margin-top:80px}
+/* speaker strip: squares that touch */
+section .lineup ol{gap:0}
+section .lineup li{width:20%}
+.card > :not(.sq){padding-right:20px}
+.card .sq{border-radius:0;margin-bottom:14px}
+.lineup li:nth-child(5n+1) .sq{background:#e9e3f0}
+.lineup li:nth-child(5n+2) .sq{background:#ded5ea}
+.lineup li:nth-child(5n+3) .sq{background:#e5dfee}
+.lineup li:nth-child(5n+4) .sq{background:#d8cfe6}
+.lineup li:nth-child(5n+5) .sq{background:#e1daec}
+
+/* calendar */
+.k-ctr{color:var(--green)}
+.cal-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.cf{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);font:500 14px/1 var(--sans);color:var(--ink);cursor:pointer;transition:background-color .15s,border-color .15s}
+.cf svg{width:10px;height:10px;fill:currentColor;stroke:currentColor}
+.cf[data-k="ns"] svg{color:var(--purple)}.cf[data-k="ctr"] svg{color:var(--green)}.cf[data-k="due"] svg{color:var(--amber)}.cf[data-k="you"] svg{color:var(--teal)}.cf[data-k="cam"] svg{color:var(--ink-2)}
+.cf[aria-pressed="false"]{background:transparent;color:var(--muted);border-style:dashed}
+.cf[aria-pressed="false"] svg{opacity:.3}
+.cf:hover{border-color:var(--field)}
+.cal{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);align-items:start}
+.cal-list{grid-column:1 / span 5;min-width:0}
+.cl-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:6px}
+.cl-head h3{font:600 20px/26px var(--sans);letter-spacing:-.01em}
+.cl-today{border:0;background:none;padding:0;cursor:pointer}
+.cl-day{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:16px;padding:18px 0;border-top:1px solid var(--line)}
+.cl-date{display:flex;flex-direction:column}
+.cl-date .d-num{font:400 40px/1 var(--serif);letter-spacing:-.02em;color:var(--ink)}
+.cl-date .d-wd{font-size:13px;line-height:18px;font-weight:500;color:var(--muted);margin-top:6px}
+.cl-ev{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;row-gap:2px;align-items:baseline;padding:6px 0 10px;text-decoration:none;color:var(--ink)}
+.cl-ev + .cl-ev{border-top:1px solid var(--line);padding-top:10px}
+.cl-ev .t{font-size:14px;line-height:20px;color:var(--muted);white-space:nowrap}
+.cl-ev .kind{font-size:14px;line-height:20px}
+.cl-ev .kind svg{width:9px;height:9px;fill:currentColor;stroke:currentColor}
+.cl-ev b{grid-column:1 / -1;font-size:16px;line-height:23px;font-weight:500}
+.cl-ev:hover b{color:var(--purple);text-decoration:underline}
+.cl-empty{padding:18px 0;border-top:1px solid var(--line);color:var(--muted)}
+.cal-month{grid-column:6 / span 7;min-width:0;background:var(--surface);border-radius:6px;padding:26px 26px 18px;box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -18px rgba(29,27,33,.2)}
+.cm-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.cm-head h3{font:500 30px/36px var(--serif);letter-spacing:-.01em}
+.cm-nav{display:flex;gap:8px}
+.cm-grid{width:100%;border-collapse:collapse;table-layout:fixed}
+.cm-grid th{font-size:13px;line-height:18px;font-weight:600;color:var(--muted);text-align:left;padding:0 0 10px 10px}
+.cm-grid td{padding:0;border-top:1px solid var(--wline);vertical-align:top;height:86px}
+.cm-grid td + td{border-left:1px solid var(--wline)}
+.dbtn{position:relative;width:100%;height:100%;min-height:86px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:6px;padding:8px 8px 10px 10px;border:0;border-radius:0;background:transparent;font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.dbtn:hover{background:var(--paper)}
+.dbtn .dn{display:grid;place-items:center;min-width:28px;height:28px;margin:-3px 0 0 -6px;border-radius:999px;font:500 15px/1 var(--sans)}
+.dbtn.past .dn{color:var(--muted)}
+.dbtn.brk{background:var(--purple-tint)}
+.dbtn.brk:hover{background:#e9e1f4}
+.dbtn .bl{font-size:13px;line-height:16px;font-weight:500;color:var(--purple-ink)}
+.dbtn.today .dn{background:var(--purple);color:#fff}
+.dbtn[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--purple)}
+.mks{display:flex;flex-wrap:wrap;gap:5px}
+.mks svg{width:9px;height:9px;fill:currentColor;stroke:currentColor}
+.cm-note{margin-top:14px;font-size:14px;line-height:20px;color:var(--muted)}
+.sf .t3{margin-right:8px}
+
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -220,7 +291,7 @@ img{max-width:100%;display:block}
 .lineup ol::-webkit-scrollbar{display:none}
 .lineup li{flex:none;width:calc((100% - 4 * var(--gap)) / 5);scroll-snap-align:start;min-width:0}
 .card{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink)}
-.card .sq{aspect-ratio:1;border-radius:4px;background:#e8e2ef;color:var(--purple-ink);display:flex;flex-direction:column;justify-content:space-between;padding:14px;margin-bottom:12px}
+.card .sq{aspect-ratio:1;border-radius:0;background:#e8e2ef;color:var(--purple-ink);display:flex;flex-direction:column;justify-content:space-between;padding:14px;margin-bottom:12px}
 .card .pl{font-size:13px;line-height:17px;font-weight:500}
 .card .ini{font:500 56px/1 var(--serif);letter-spacing:-.02em;align-self:flex-end}
 .card b{font:500 18px/25px var(--serif);text-wrap:pretty}
@@ -246,7 +317,7 @@ img{max-width:100%;display:block}
 .ev b{display:block;font-size:15px;line-height:22px;font-weight:500}
 .ev:hover b{color:var(--purple);text-decoration:underline}
 .ev .kind{font-size:14px;line-height:20px}
-.k-ns{color:var(--purple)} .k-you{color:var(--teal)} .k-due{color:var(--amber)} .k-cam{color:var(--ink-2)} .k-ctr{color:var(--purple)} .k-dev{color:var(--ink-2)}
+.k-ns{color:var(--purple)} .k-you{color:var(--teal)} .k-due{color:var(--amber)} .k-cam{color:var(--ink-2)} .k-ctr{color:var(--green)} .k-dev{color:var(--ink-2)}
 .agenda .more{border-top:1px solid var(--line);padding-top:14px;margin-top:auto;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .quiet-note{background:var(--band);border-radius:4px;padding:20px 22px;display:flex;flex-direction:column;gap:6px}
 
@@ -402,6 +473,13 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .feat .pic{aspect-ratio:16/10;min-height:0;align-self:start}
   .people,.agenda,.fund,.proposal,.ach,.talk{grid-column:1 / -1}
   .people,.agenda{grid-row:auto}
+  .ns-feat .portrait{grid-column:1 / span 6}
+  .ns-feat .poster,.ns-feat .spk-txt{grid-column:7 / span 6}
+  .ns-feat .portrait .ini{font-size:96px}
+  .ns-feat .poster .p-num{font-size:110px}
+  .cal-list,.cal-month{grid-column:1 / -1}
+  .cal-month{order:-1;margin-bottom:40px}
+  section .lineup li{width:calc(100% / 2.4)}
   .spk-main{grid-template-columns:repeat(2,minmax(0,1fr))}
   .portrait{grid-column:1}
   .poster{grid-column:2}
@@ -456,6 +534,24 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .deck{font-size:17px;line-height:27px}
   .also b{font-size:17px}
   .spk-main{row-gap:22px;column-gap:20px}
+  .ns-feat .spk-main{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:24px}
+  .ns-feat .portrait{grid-column:1;grid-row:1}
+  .ns-feat .poster{grid-column:2;grid-row:1;align-self:end}
+  .ns-feat .spk-txt{grid-column:1 / -1;grid-row:2}
+  .ns-feat .spk-txt h3{font-size:26px;line-height:32px}
+  .ns-feat .portrait .ini{font-size:56px}
+  .ns-feat ~ .lineup{margin-top:48px}
+  .cal-month{padding:16px 12px 12px;margin-inline:-8px}
+  .cm-head h3{font-size:24px;line-height:30px}
+  .cm-grid th{padding-left:6px}
+  .cm-grid td{height:56px}
+  .dbtn{min-height:56px;padding:6px 4px 6px 6px;gap:4px}
+  .dbtn .dn{min-width:26px;height:26px;font-size:14px;margin:-2px 0 0 -3px}
+  .dbtn .bl{display:none}
+  .mks{gap:3px}
+  .mks svg{width:7px;height:7px}
+  .cl-day{grid-template-columns:76px minmax(0,1fr);column-gap:10px}
+  .cl-date .d-num{font-size:32px}
   .poster .p-num{font-size:84px;margin-left:-3px}
   .poster .p-day{font-size:18px;line-height:24px}
   .poster .p-mon{font-size:24px;line-height:30px}
@@ -464,7 +560,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .portrait .ini{font-size:40px}.portrait .pl{display:none}
   .people h3{font-size:22px;line-height:29px;margin-top:4px}
   .bio{display:none}
-  .lineup li{width:72%}
+  section .lineup li{width:62%}
   .lineup-h{flex-wrap:wrap}
   .lu-ctl .t3{margin-right:auto}
   .reel-band{padding:36px 0 36px}
@@ -563,7 +659,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
       <p class="line" data-unless="clear quiet urgent roles admin sparse returning">Fall reporting closes in 17 days. On Tuesday, NeuroSync welcomes a speaker who studies sleep and memory, as you do.</p>
       <p class="line" data-when="urgent" hidden>Two deadlines are close: Fall reporting closes Monday, and your NIH documents are due Thursday.</p>
       <p class="line" data-when="clear" hidden>Your Fall reporting is complete. On Tuesday, NeuroSync welcomes a speaker who studies sleep and memory, as you do.</p>
-      <p class="line" data-when="quiet" hidden>Fall reporting closes in 17 days. NeuroSync takes a week off and returns on November 24.</p>
+      <p class="line" data-when="quiet" hidden>Fall reporting closes in 17 days. NeuroSync takes a week off and returns on December 1.</p>
       <p class="line" data-when="roles" hidden>Across your five roles, one deadline is coming: Fall reporting closes in 17 days.</p>
       <p class="line" data-when="admin" hidden>38 of 61 members have submitted their Fall reports, and your own are done.</p>
       <p class="line" data-when="sparse" hidden>Fall reporting closes in 17 days. Add your research interests, and the CNAP team will start picking funding for you.</p>
@@ -665,12 +761,10 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 
     <section class="sec" aria-labelledby="ev-h">
       <header class="sh">
-        <h2 id="ev-h">Speakers and events</h2>
-        <p>NeuroSync, the Center calendar, and campus events that fit your work.</p>
+        <h2 id="ev-h">NeuroSync</h2>
+        <p>The Center’s seminar series. Talks are on Tuesdays at noon, and every member is welcome.</p>
       </header>
-      <div class="g">
-        <div class="people">
-          <div data-unless="quiet">
+      <div class="ns-feat" data-unless="quiet">
             <div class="spk-main">
               <div class="portrait" role="img" aria-label="Portrait of Dr. Priya Raman, to come"><span class="pl">Portrait to come</span><span class="ini">PR</span></div>
               <p class="poster"><span class="p-lab">This week at NeuroSync</span><span class="p-day">Tuesday</span><span class="p-num num">17</span><span class="p-mon">November</span><span class="p-time">12:00 p.m. · Room to be announced</span></p>
@@ -684,46 +778,55 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
                 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px"><a class="btn" href="#">Add to my calendar</a><a class="btn" href="#" style="border-color:transparent;background:transparent;color:var(--purple)">Speaker profile</a></div>
               </div>
             </div>
-          </div>
+      </div>
           <div class="quiet-note" data-when="quiet" hidden>
             <p class="eyebrow">NeuroSync</p>
             <p style="font:500 22px/30px var(--serif)">No NeuroSync talk this week.</p>
-            <p class="meta">The series returns Tuesday, November 24, with Dr. Daniel Kim on machine learning for spike sorting.</p>
+            <p class="meta">The series returns Tuesday, December 1, with Dr. Daniel Kim on machine learning for spike sorting.</p>
           </div>
-        </div>
-
-        <div class="agenda">
-          <h3>This week and next</h3>
-          <div class="day"><h4><span class="d-num num">17</span><span class="d-wd">Tuesday</span><span class="sr">, November 17</span></h4>
-            <a class="ev" href="#" data-unless="quiet"><span class="t">12:00 p.m.</span><span><span class="kind k-ns"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>NeuroSync</span><b>Memory consolidation during sleep</b></span></a>
-            <a class="ev" href="#"><span class="t">3:00 p.m.</span><span><span class="kind k-you"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><circle cx="7" cy="4.5" r="2.5"/><path d="M2 13c.8-2.8 2.7-4 5-4s4.2 1.2 5 4"/></svg>Your meeting · only you see this</span><b>Mentor meeting with Dr. Elena Voss</b></span></a>
-            <a class="ev" href="#" data-when="busy" hidden><span class="t">4:00 p.m.</span><span><span class="kind k-dev"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M7 1.5v11M1.5 7h11"/></svg>Professional development</span><b>Writing a strong Specific Aims page</b></span></a>
-          </div>
-          <div class="day"><h4><span class="d-num num">18</span><span class="d-wd">Wednesday</span><span class="sr">, November 18</span></h4>
-            <a class="ev" href="#"><span class="t">4:00 p.m.</span><span><span class="kind k-cam"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M1.5 12.5h11M2.5 12.5V6L7 3l4.5 3v6.5M5.5 12.5v-3h3v3"/></svg>Campus seminar</span><b>Neural circuits of fear learning</b></span></a>
-            <a class="ev" href="#" data-when="busy" hidden><span class="t">5:30 p.m.</span><span><span class="kind k-ctr"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M7 1.5l5.5 5.5L7 12.5 1.5 7z"/></svg>Center event</span><b>Fall social for members and students</b></span></a>
-          </div>
-          <div class="day" data-unless="quiet"><h4><span class="d-num num">20</span><span class="d-wd">Friday</span><span class="sr">, November 20</span></h4>
-            <a class="ev" href="#"><span class="t">All day</span><span><span class="kind k-due"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Center deadline</span><b>Year 11 pilot letters of intent</b></span></a>
-          </div>
-          <div class="more"><span class="meta" data-unless="busy">Next: the annual Site Visit, late May 2027</span><a class="lnk" href="#" data-when="busy" hidden>5 more events this week</a><a class="lnk" href="#">Add to my calendar app</a></div>
-        </div>
         <div class="lineup" role="region" aria-labelledby="lu-h">
           <div class="lineup-h"><h3 id="lu-h">Coming to NeuroSync</h3>
             <div class="lu-ctl"><a class="t3" href="#">All speakers</a><button type="button" class="arrow" data-dir="-1" aria-label="Previous speakers" aria-disabled="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-dir="1" aria-label="Next speakers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
           </div>
           <ol>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">DK</span></span><span class="meta num">Tuesday, November 24</span><b>Machine learning for spike sorting</b><span class="meta">Dr. Daniel Kim</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">AH</span></span><span class="meta num">Tuesday, December 1</span><b>Stress, the heart, and the aging brain</b><span class="meta">Dr. Ana Herrera</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">SN</span></span><span class="meta num">Tuesday, December 8</span><b>Rodent models of memory decline</b><span class="meta">Dr. Sam Novak</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">LT</span></span><span class="meta num">Tuesday, January 19</span><b>Learning across the lifespan</b><span class="meta">Dr. Lea Torres</span></a></li>
-              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">MO</span></span><span class="meta num">Tuesday, February 2</span><b>Attention and the sleeping brain</b><span class="meta">Dr. Maya Okafor</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">DK</span></span><span class="meta num">Tuesday, December 1</span><b>Machine learning for spike sorting</b><span class="meta">Dr. Daniel Kim</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">AH</span></span><span class="meta num">Tuesday, December 8</span><b>Stress, the heart, and the aging brain</b><span class="meta">Dr. Ana Herrera</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">SN</span></span><span class="meta num">Tuesday, January 26</span><b>Rodent models of memory decline</b><span class="meta">Dr. Sam Novak</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">LT</span></span><span class="meta num">Tuesday, February 2</span><b>Learning across the lifespan</b><span class="meta">Dr. Lea Torres</span></a></li>
+              <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">MO</span></span><span class="meta num">Tuesday, February 9</span><b>Attention and the sleeping brain</b><span class="meta">Dr. Maya Okafor</span></a></li>
               <li><a class="card" href="#"><span class="sq" aria-hidden="true"><span class="pl">Portrait to come</span><span class="ini">RB</span></span><span class="meta num">Tuesday, February 16</span><b>Imaging small circuits in behaving animals</b><span class="meta">Dr. Ravi Bhat</span></a></li>
           </ol>
           <p class="sr" aria-live="polite" id="lu-status"></p>
         </div>
+      <footer class="sf"><a class="btn" href="#">All NeuroSync talks</a><p class="meta">Past talks and recordings live on the full NeuroSync page.</p></footer>
+    </section>
+
+    <section class="sec" aria-labelledby="cal-h">
+      <header class="sh">
+        <h2 id="cal-h">Calendar</h2>
+        <p>Center events, deadlines, NeuroSync, and campus dates in one place. Your own meetings show only to you.</p>
+      </header>
+      <div class="cal-filters" role="group" aria-label="Show on the calendar">
+        <button type="button" class="cf" data-k="ns" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="4"/></svg>NeuroSync</button>
+        <button type="button" class="cf" data-k="ctr" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 .5L9.5 5 5 9.5 .5 5z"/></svg>Center events</button>
+        <button type="button" class="cf" data-k="due" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><rect x="1" y="1" width="8" height="8" rx="1"/></svg>Deadlines</button>
+        <button type="button" class="cf" data-k="you" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="3.4" fill="none" stroke-width="2"/></svg>My meetings</button>
+        <button type="button" class="cf" data-k="cam" aria-pressed="true"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 .8L9.4 9H.6z"/></svg>K-State dates</button>
       </div>
-      <footer class="sf"><a class="btn" href="#">Full calendar</a><p class="meta">All times are Central Time.</p></footer>
+      <div class="cal">
+        <div class="cal-list">
+          <div class="cl-head"><h3 id="cl-h" aria-live="polite">Today and ahead</h3><button type="button" class="t3 cl-today" hidden>Back to today</button></div>
+          <div id="cl-body"></div>
+        </div>
+        <div class="cal-month">
+          <div class="cm-head"><h3 id="cm-h">November 2026</h3>
+            <div class="cm-nav"><button type="button" class="arrow" data-m="-1" aria-label="Previous month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-m="1" aria-label="Next month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
+          </div>
+          <table class="cm-grid" aria-labelledby="cm-h"><thead><tr><th scope="col"><span aria-hidden="true">S</span><span class="sr">Sunday</span></th><th scope="col"><span aria-hidden="true">M</span><span class="sr">Monday</span></th><th scope="col"><span aria-hidden="true">T</span><span class="sr">Tuesday</span></th><th scope="col"><span aria-hidden="true">W</span><span class="sr">Wednesday</span></th><th scope="col"><span aria-hidden="true">T</span><span class="sr">Thursday</span></th><th scope="col"><span aria-hidden="true">F</span><span class="sr">Friday</span></th><th scope="col"><span aria-hidden="true">S</span><span class="sr">Saturday</span></th></tr></thead><tbody id="cm-body"></tbody></table>
+          <p class="cm-note">Choose a day to see what’s on it. Shaded days are the K-State fall break.</p>
+        </div>
+      </div>
+      <footer class="sf"><a class="btn" href="#">Open the full calendar</a><a class="t3" href="#">Subscribe in my calendar app</a><p class="meta">All times are Central Time. Break and exam dates come from the K-State academic calendar.</p></footer>
     </section>
   </div>
 
@@ -841,6 +944,42 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     var items=lol.querySelectorAll('li'),r=lol.getBoundingClientRect(),vis=[];items.forEach(function(l,i){var b=l.getBoundingClientRect();if(b.left>=r.left-2&&b.right<=r.right+2)vis.push(i+1);});if(vis.length)lst.textContent='Showing speakers '+vis[0]+' to '+vis[vis.length-1]+' of '+items.length;}
   arr.forEach(function(b){b.addEventListener('click',function(){if(b.getAttribute('aria-disabled')==='true')return;var li=lol.querySelector('li');var step=li.getBoundingClientRect().width+parseFloat(getComputedStyle(lol).columnGap||0);lol.scrollBy({left:step*+b.dataset.dir,behavior:still?'auto':'smooth'});});});
   lol.addEventListener('scroll',function(){clearTimeout(lol._t);lol._t=setTimeout(lupd,80);},{passive:true});addEventListener('resize',lupd);lupd();
+
+  /* calendar: prototype data only, nothing here is connected to a real calendar */
+  var KIND={ns:'NeuroSync',ctr:'Center event',due:'Deadline',you:'Your meeting · only you see this',cam:'K-State'};
+  var SHAPE={ns:'<circle cx="5" cy="5" r="4"/>',ctr:'<path d="M5 .5L9.5 5 5 9.5 .5 5z"/>',due:'<rect x="1" y="1" width="8" height="8" rx="1"/>',you:'<circle cx="5" cy="5" r="3.4" fill="none" stroke-width="2"/>',cam:'<path d="M5 .8L9.4 9H.6z"/>'};
+  var EV=[['2026-11-03','12:00 p.m.','ns','Dopamine and the speed of choice'],['2026-11-06','All day','due','Pre-submission review requests'],['2026-11-10','12:00 p.m.','ns','Glia and the timing of plasticity'],['2026-11-13','2:00 p.m.','ctr','Behavioral Neuroscience Core office hours'],['2026-11-17','12:00 p.m.','ns','Memory consolidation during sleep'],['2026-11-17','3:00 p.m.','you','Mentor meeting with Dr. Elena Voss'],['2026-11-18','4:00 p.m.','cam','Campus seminar: Neural circuits of fear learning'],['2026-11-19','12:00 p.m.','ctr','Workshop: Writing a strong Specific Aims page'],['2026-11-20','All day','due','Year 11 pilot letters of intent'],['2026-11-22','All week','cam','Fall break, no classes','2026-11-29'],['2026-11-26','All day','cam','Thanksgiving, campus closed','2026-11-27'],['2026-11-30','All day','due','Fall reporting closes'],['2026-12-01','12:00 p.m.','ns','Machine learning for spike sorting'],['2026-12-03','10:00 a.m.','you','Check-in with Dr. Elena Voss'],['2026-12-08','12:00 p.m.','ns','Stress, the heart, and the aging brain'],['2026-12-10','3:30 p.m.','ctr','Fall social for members and students'],['2026-12-11','All day','cam','Last day of fall classes'],['2026-12-14','All week','cam','Final examinations','2026-12-18'],['2026-12-24','All day','cam','Winter break, campus closed','2026-12-31']];
+  var MON=['January','February','March','April','May','June','July','August','September','October','November','December'],WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var TODAY='2026-11-13',sel=TODAY,ym=[2026,10],on={ns:1,ctr:1,due:1,you:1,cam:1};
+  function iso(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+  function dt(s){var a=s.split('-');return new Date(+a[0],a[1]-1,+a[2]);}
+  function evOn(d){return EV.filter(function(e){return on[e[2]]&&(e[0]===d||(e[4]&&e[0]<=d&&d<=e[4]));});}
+  function brk(d){return (d>='2026-11-22'&&d<='2026-11-29')||(d>='2026-12-24'&&d<='2026-12-31');}
+  function mk(k){return '<svg viewBox="0 0 10 10" class="k-'+k+'" aria-hidden="true">'+SHAPE[k]+'</svg>';}
+  var body=document.getElementById('cm-body'),cmh=document.getElementById('cm-h'),clb=document.getElementById('cl-body'),clh=document.getElementById('cl-h'),tb=document.querySelector('.cl-today');
+  function month(focus){var y=ym[0],m=ym[1],first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),h='',c=0;cmh.textContent=MON[m]+' '+y;
+    for(var i=0;i<first;i++){if(c%7===0)h+='<tr>';h+='<td></td>';c++;}
+    for(var d=1;d<=days;d++){if(c%7===0)h+='<tr>';var s=iso(y,m,d),es=evOn(s),cls='dbtn'+(s<TODAY?' past':'')+(s===TODAY?' today':'')+(brk(s)?' brk':''),ks=[];es.forEach(function(e){if(ks.indexOf(e[2])<0)ks.push(e[2]);});
+      var lab=(s==='2026-11-22'?'<span class="bl">Fall break</span>':s==='2026-12-24'?'<span class="bl">Winter break</span>':'');
+      h+='<td><button type="button" class="'+cls+'" data-d="'+s+'" tabindex="'+(s===sel?0:-1)+'" aria-pressed="'+(s===sel)+'"'+(s===TODAY?' aria-current="date"':'')+' aria-label="'+WD[new Date(y,m,d).getDay()]+', '+MON[m]+' '+d+(es.length?', '+es.length+(es.length>1?' items':' item'):', nothing scheduled')+'"><span class="dn">'+d+'</span>'+lab+'<span class="mks">'+ks.map(mk).join('')+'</span></button></td>';c++;if(c%7===0)h+='</tr>';}
+    while(c%7){h+='<td></td>';c++;if(c%7===0)h+='</tr>';}
+    body.innerHTML=h;document.querySelectorAll('.cm-nav .arrow').forEach(function(b){var lim=(+b.dataset.m<0&&m===10)||(+b.dataset.m>0&&m===11);b.setAttribute('aria-disabled',lim);});
+    if(focus){var f=body.querySelector('[tabindex="0"]')||body.querySelector('.dbtn');if(f){f.tabIndex=0;f.focus();}}}
+  function list(){var start=sel,out=[],seen={};EV.forEach(function(e,i){if(!on[e[2]])return;var end=e[4]||e[0];if(end<start)return;var shown=e[0]<start?start:e[0];out.push([shown,e,i]);});
+    out.sort(function(a,b){return a[0]<b[0]?-1:a[0]>b[0]?1:a[2]-b[2];});out=out.slice(0,7);
+    clh.textContent=sel===TODAY?'Today and ahead':'From '+WD[dt(sel).getDay()]+', '+MON[dt(sel).getMonth()]+' '+dt(sel).getDate();tb.hidden=sel===TODAY;
+    if(!out.length){clb.innerHTML='<p class="cl-empty">Nothing on the calendar from this day through December with these filters.</p>';return;}
+    var h='',cur='';out.forEach(function(o){var d=o[0],e=o[1],D=dt(d);if(d!==cur){if(cur)h+='</div></div>';cur=d;h+='<div class="cl-day"><div class="cl-date"><span class="d-num num">'+D.getDate()+'</span><span class="d-wd">'+WD[D.getDay()]+'<br>'+MON[D.getMonth()]+'</span></div><div>';}
+      h+='<a class="cl-ev" href="#"><span class="t">'+e[1]+'</span><span class="kind k-'+e[2]+'">'+mk(e[2])+KIND[e[2]]+'</span><b>'+e[3]+(e[4]?' <span class="meta">through '+MON[dt(e[4]).getMonth()]+' '+dt(e[4]).getDate()+'</span>':'')+'</b></a>';});
+    h+='</div></div>';clb.innerHTML=h;}
+  function pick(d,focus){sel=d;var D=dt(d);ym=[D.getFullYear(),D.getMonth()];month(focus);list();}
+  body.addEventListener('click',function(e){var b=e.target.closest('.dbtn');if(b)pick(b.dataset.d,true);});
+  body.addEventListener('keydown',function(e){var b=e.target.closest('.dbtn');if(!b)return;var mv={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];if(!mv)return;e.preventDefault();var D=dt(b.dataset.d);D.setDate(D.getDate()+mv);if(D<new Date(2026,10,1)||D>new Date(2026,11,31))return;var d=iso(D.getFullYear(),D.getMonth(),D.getDate());
+    if(D.getMonth()!==ym[1]){ym=[D.getFullYear(),D.getMonth()];sel=sel;month(false);}body.querySelectorAll('.dbtn').forEach(function(x){x.tabIndex=x.dataset.d===d?0:-1;});var t=body.querySelector('[data-d="'+d+'"]');if(t)t.focus();});
+  document.querySelectorAll('.cm-nav .arrow').forEach(function(b){b.addEventListener('click',function(){if(b.getAttribute('aria-disabled')==='true')return;ym=[2026,ym[1]+ +b.dataset.m];var f=iso(2026,ym[1],1);if(sel.slice(0,7)!==f.slice(0,7)){body.innerHTML='';}month(false);var x=body.querySelector('[data-d="'+sel+'"]')||body.querySelector('.dbtn');body.querySelectorAll('.dbtn').forEach(function(y){y.tabIndex=-1;});x.tabIndex=0;});});
+  tb.addEventListener('click',function(){pick(TODAY,false);});
+  document.querySelectorAll('.cf').forEach(function(b){b.addEventListener('click',function(){var v=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',v);on[b.dataset.k]=v?1:0;month(false);list();});});
+  month(false);list();
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
