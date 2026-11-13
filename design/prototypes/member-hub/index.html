@@ -554,6 +554,45 @@ details.wel{flex:1 1 520px;min-width:0}
 .sheet-meet{margin-top:28px;padding:48px 72px 52px}
 @media (max-width:980px){.sheet-meet{padding:32px}}
 @media (max-width:640px){.sheet-sec{padding-block:24px}.sheet-meet{padding:24px 20px;margin-inline:-8px;margin-top:20px}}
+.sheet-sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:48px;align-items:center}
+.sheet-sec > .sh{grid-column:1;grid-row:1 / span 2;align-self:center}
+.cm-x{display:none}
+.cm-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 24px;margin-top:26px;padding-top:20px;border-top:1px solid var(--line)}
+.cm-stats li{font-size:14px;line-height:20px;color:var(--muted)}
+.cm-stats b{display:block;font:400 36px/1 var(--serif);letter-spacing:-.02em;color:var(--purple-ink);margin-bottom:6px}
+.cm-match{margin-top:22px;font-size:16px;line-height:24px;color:var(--ink-2)}
+.cm-match a{color:var(--teal);font-weight:600;text-decoration:underline;text-decoration-color:rgba(10,102,112,.35);text-underline-offset:3px}
+.cm-match .cm-meet{margin-left:6px;color:var(--purple);text-decoration-color:rgba(81,40,136,.35)}
+.cm-web{grid-column:2;grid-row:1;position:relative;height:340px;margin:8px 24px 0}
+.cm-web svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.cm-web line{stroke:var(--purple);stroke-opacity:.22;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.nd{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f4f0fa,#ddd3ea);color:var(--purple-ink);font:500 14px/1 var(--serif);box-shadow:0 0 0 3px var(--surface),0 8px 18px -8px rgba(60,29,102,.45)}
+.nd-spot{font-size:20px;box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--teal),0 12px 26px -8px rgba(10,102,112,.5)}
+.nd-more{background:var(--purple);color:#fff;font:600 13px/1 var(--sans)}
+.cm-spot{grid-column:2;grid-row:2;justify-self:center;max-width:420px;margin-top:28px;padding:16px 18px;border-radius:8px;background:var(--surface);border-left:3px solid var(--teal);box-shadow:0 1px 2px rgba(29,27,33,.06),0 14px 32px -16px rgba(29,27,33,.3);position:relative;z-index:1}
+.cm-spot-l{font-size:13px;line-height:18px;font-weight:600;color:var(--teal)}
+.cm-spot-t{margin-top:4px;font-size:15px;line-height:22px;color:var(--ink-2)}
+.cm-spot-t b{font-family:var(--serif);font-weight:500;font-size:17px;color:var(--ink)}
+.cm-spot .t3{min-height:36px}
+@media (prefers-reduced-motion:no-preference){
+  .cm-web.wait line{stroke-dasharray:1;stroke-dashoffset:1}
+  .cm-web.go line{transition:stroke-dashoffset 1.4s cubic-bezier(.3,.6,.2,1);stroke-dashoffset:0}
+  .cm-web.go line:nth-child(odd){transition-delay:.25s}
+  .cm-web.wait .nd{opacity:0;transform:translate(-50%,-50%) scale(.6)}
+  .cm-web.go .nd{opacity:1;transform:translate(-50%,-50%);transition:opacity .6s,transform .6s cubic-bezier(.2,.7,.2,1)}
+  .cm-web.go .nd:nth-of-type(2n){transition-delay:.15s}.cm-web.go .nd:nth-of-type(3n){transition-delay:.3s}
+}
+@media (max-width:980px){
+  .sheet-sec{grid-template-columns:minmax(0,1fr)}
+  .cm-web{grid-column:1;grid-row:auto;height:240px;margin-top:28px}
+  .cm-spot{grid-column:1;grid-row:auto;justify-self:start;margin-top:12px}
+}
+@media (max-width:640px){
+  .cm-web{height:190px}
+  .nd{font-size:12px}
+  .cm-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 22px}
+  .cm-stats b{font-size:30px}
+}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1344,7 +1383,11 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       <header class="sh">
         <h2 id="com-h">Community</h2>
         <p>Meet members, celebrate their work, and ask for input.</p>
+        <ul class="cm-stats" aria-label="The community right now"><li><b class="num">61</b> members</li><li><b class="num">3</b> joined this month</li><li><b class="num">14</b> open threads</li><li><b class="num">2</b> grants awarded this fall</li></ul>
+        <p class="cm-match"><a href="#meet-h">4 members share your interest in sleep.</a> <a class="cm-meet" href="#meet-h">Meet them</a></p>
       </header>
+      <div class="cm-web" aria-hidden="true"><svg viewBox="0 0 500 300" preserveAspectRatio="none"><line x1="220" y1="90" x2="310" y2="78" pathLength="1"/><line x1="220" y1="90" x2="150" y2="48" pathLength="1"/><line x1="220" y1="90" x2="220" y2="174" pathLength="1"/><line x1="220" y1="90" x2="70" y2="156" pathLength="1"/><line x1="310" y1="78" x2="440" y2="54" pathLength="1"/><line x1="310" y1="78" x2="400" y2="174" pathLength="1"/><line x1="220" y1="174" x2="400" y2="174" pathLength="1"/><line x1="220" y1="174" x2="290" y2="264" pathLength="1"/><line x1="220" y1="174" x2="130" y2="252" pathLength="1"/><line x1="70" y1="156" x2="130" y2="252" pathLength="1"/><line x1="400" y1="174" x2="380" y2="270" pathLength="1"/><line x1="290" y1="264" x2="380" y2="270" pathLength="1"/><line x1="150" y1="48" x2="70" y2="156" pathLength="1"/><line x1="400" y1="174" x2="470" y2="246" pathLength="1"/><line x1="380" y1="270" x2="470" y2="246" pathLength="1"/><line x1="440" y1="54" x2="400" y2="174" pathLength="1"/></svg><span class="nd nd-spot" style="left:62%;top:26%;width:58px;height:58px" aria-hidden="true">KB</span><span class="nd" style="left:30%;top:16%;width:40px;height:40px" aria-hidden="true">NA</span><span class="nd" style="left:44%;top:58%;width:44px;height:44px" aria-hidden="true">OM</span><span class="nd" style="left:80%;top:58%;width:46px;height:46px" aria-hidden="true">MS</span><span class="nd" style="left:14%;top:52%;width:38px;height:38px" aria-hidden="true">DO</span><span class="nd" style="left:88%;top:18%;width:40px;height:40px" aria-hidden="true">WZ</span><span class="nd" style="left:26%;top:84%;width:36px;height:36px" aria-hidden="true">JL</span><span class="nd" style="left:44%;top:30%;width:42px;height:42px" aria-hidden="true">EV</span><span class="nd" style="left:58%;top:88%;width:38px;height:38px" aria-hidden="true">TB</span><span class="nd" style="left:76%;top:90%;width:34px;height:34px" aria-hidden="true">RG</span><span class="nd nd-more" style="left:94%;top:82%;width:44px;height:44px" aria-hidden="true">+48</span></div>
+      <aside class="cm-spot" aria-label="This week’s spotlight"><p class="cm-spot-l">This week’s spotlight</p><p class="cm-spot-t"><b>Kira Bauer</b> is studying how attention shifts during eye tracking.</p><a class="t3" href="#">Say hello</a></aside>
       </div>
       <div class="sheet sheet-meet">
       <div class="meet" role="region" aria-labelledby="meet-h">
@@ -1492,6 +1535,8 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   try{var ml=document.querySelector('.mp-list'),ma=document.querySelectorAll('.mp-arrow');function mupd(){var mx=ml.scrollWidth-ml.clientWidth;ma[0].setAttribute('aria-disabled',ml.scrollLeft<=2);ma[1].setAttribute('aria-disabled',ml.scrollLeft>=mx-2);}
     ma.forEach(function(b){b.addEventListener('click',function(){if(b.getAttribute('aria-disabled')==='true')return;ml.scrollBy({left:ml.clientWidth*0.8*+b.dataset.dir,behavior:still?'auto':'smooth'});});});
     ml.addEventListener('scroll',function(){clearTimeout(ml._t);ml._t=setTimeout(mupd,80);},{passive:true});addEventListener('resize',mupd);mupd();}catch(e){}
+
+  try{var web=document.querySelector('.cm-web');if(!still){web.classList.add('wait');new IntersectionObserver(function(es,o){if(es[0].isIntersecting){setTimeout(function(){web.classList.add('go');},150);o.disconnect();}},{threshold:.4}).observe(web);}}catch(e){}
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
