@@ -305,7 +305,6 @@ section .lineup li{width:20%}
 .sf .t3{margin-right:8px}
 
 .more-stories{margin-top:40px;padding-top:4px;border-top:1px solid var(--line)}
-.more-stories:not([open]){border-bottom:1px solid var(--line);padding-bottom:4px}
 .more-stories + .sf{margin-top:24px}
 /* closed: the story links share the More stories row, so the whole block is one line */
 @media (min-width:641px){.more-stories:not([open]) + .sf{margin-top:-47px;justify-content:flex-end;pointer-events:none;position:relative}.more-stories:not([open]) + .sf > *{pointer-events:auto}.more-stories:not([open]) + .sf > .share{margin-left:0}}
@@ -1064,6 +1063,17 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 }
 @keyframes grow{to{transform:scaleX(1)}}
 @keyframes corner{0%{clip-path:inset(0 0 100% 100%)}100%{clip-path:inset(0 0 0 0)}}
+/* after it grows in, each column's accent slides along the top rule, turns the corner, and comes to rest at the foot of the right rule */
+@keyframes trace{
+  0%{left:0;top:-.5px;width:40px;height:2px}
+  44%{left:calc(100% + var(--cg) / 2 - 40px);top:-.5px;width:40px;height:2px}
+  50%{left:calc(100% + var(--cg) / 2 - 1.5px);top:-.5px;width:2px;height:2px}
+  56%{left:calc(100% + var(--cg) / 2 - 1.5px);top:-.5px;width:2px;height:40px}
+  100%{left:calc(100% + var(--cg) / 2 - 1.5px);top:calc(100% - 40px);width:2px;height:40px}
+}
+@media (min-width:1181px) and (prefers-reduced-motion:no-preference){
+  .brief .bi::before{animation:grow .7s cubic-bezier(.2,.7,.2,1) forwards,trace 2.2s cubic-bezier(.65,0,.35,1) forwards;animation-delay:calc(1.6s + var(--n,0) * .18s),calc(2.5s + var(--n,0) * .18s)}
+}
 @media (max-width:980px){
   .sheet{padding:32px}
   .mine .brief{padding-inline:32px;margin-top:32px}
