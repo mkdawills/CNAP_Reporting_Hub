@@ -305,9 +305,10 @@ section .lineup li{width:20%}
 .sf .t3{margin-right:8px}
 
 .more-stories{margin-top:40px;padding-top:4px;border-top:1px solid var(--line)}
+.more-stories:not([open]){padding-block:12px}
 .more-stories + .sf{margin-top:24px}
 /* closed: the story links share the More stories row, so the whole block is one line */
-@media (min-width:641px){.more-stories:not([open]) + .sf{margin-top:-47px;justify-content:flex-end;pointer-events:none;position:relative}.more-stories:not([open]) + .sf > *{pointer-events:auto}.more-stories:not([open]) + .sf > .share{margin-left:0}}
+@media (min-width:641px){.more-stories:not([open]) + .sf{margin-top:-56px;column-gap:32px;justify-content:flex-end;pointer-events:none;position:relative}.more-stories:not([open]) + .sf > *{pointer-events:auto}.more-stories:not([open]) + .sf > .share{margin-left:0}}
 .more-stories h3{font:600 20px/26px var(--sans);letter-spacing:-.01em}
 /* collapsed by default: the heading opens the row of stories */
 .more-stories summary{display:flex;align-items:center;gap:12px;min-height:44px;cursor:pointer;list-style:none}
@@ -1300,6 +1301,33 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .hdr{position:relative;top:0}
   .greet .wrap{padding-top:48px;padding-bottom:48px}
 }
+
+/* "Your homepage" on smaller screens.
+   981 to 1839 wide: a slim rail of dots in the left margin that opens into the full menu on hover or keyboard focus.
+   980 and below: a Sections button above the bottom bar opens the same menu as a panel. */
+.otp-btn{display:none}
+@media (min-width:981px) and (max-width:1839px){
+  .otp{display:block;position:fixed;z-index:30;left:max(10px,env(safe-area-inset-left,0px));top:124px;width:28px;padding:10px 0;box-sizing:border-box;border-radius:10px;background:transparent;border:1px solid transparent;transition:width .25s cubic-bezier(.2,.7,.2,1),background .2s,box-shadow .2s,padding .25s}
+  .otp .otp-h,.otp .otp-act{display:none}
+  .otp ol a{height:26px;padding:3px 0 3px 18px!important;overflow:hidden;white-space:nowrap;color:transparent!important}
+  .otp ol a::before{top:9px!important;left:9px!important}
+  .otp .otp-track{left:13px!important}
+  .otp:hover,.otp:focus-within{width:240px;padding:18px 20px 14px;background:var(--surface);border-color:rgba(29,27,33,.07);box-shadow:0 1px 1px rgba(29,27,33,.04),0 4px 10px -2px rgba(29,27,33,.06),0 24px 48px -20px rgba(60,29,102,.22)}
+  .otp:hover .otp-h,.otp:focus-within .otp-h,.otp:hover .otp-act,.otp:focus-within .otp-act{display:flex}
+  .otp:hover .otp-h,.otp:focus-within .otp-h{display:block}
+  .otp:hover ol a,.otp:focus-within ol a{height:auto;padding:6px 0 6px 18px!important;white-space:normal;color:var(--ink-2)!important}
+  .otp:hover ol a[aria-current="true"],.otp:focus-within ol a[aria-current="true"]{color:var(--purple-ink)!important}
+  .otp:hover ol a::before,.otp:focus-within ol a::before{top:13px!important;left:-1px!important}
+  .otp:hover .otp-track,.otp:focus-within .otp-track{left:23px!important}
+}
+@media (max-width:980px){
+  .otp-btn{display:inline-flex;align-items:center;gap:8px;position:fixed;z-index:45;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(78px + env(safe-area-inset-bottom,0px));min-height:44px;padding:0 16px 0 14px;border-radius:999px;border:1px solid rgba(29,27,33,.08);background:var(--surface);color:var(--ink);font:600 14px/20px var(--sans);box-shadow:0 2px 4px rgba(29,27,33,.06),0 12px 28px -10px rgba(60,29,102,.3);cursor:pointer}
+  .otp-btn svg{width:16px;height:16px}
+  .otp-btn[aria-expanded="true"]{background:var(--purple);color:#fff;border-color:var(--purple)}
+  .otp.open{display:block;position:fixed;z-index:46;left:max(16px,env(safe-area-inset-left,0px));right:auto;top:auto!important;bottom:calc(132px + env(safe-area-inset-bottom,0px));width:min(280px,calc(100vw - 32px));max-height:calc(100vh - 220px);overflow:auto;box-sizing:border-box;padding:18px 20px 12px;border-radius:12px;background:var(--surface);border:1px solid rgba(29,27,33,.07);box-shadow:0 4px 10px -2px rgba(29,27,33,.08),0 28px 56px -18px rgba(60,29,102,.35)}
+  .otp.open ol a{min-height:24px}
+}
+@media (max-width:980px) and (prefers-reduced-motion:no-preference){.otp.open{animation:rise .25s cubic-bezier(.2,.7,.2,1)}}
 </style>
 
 <a class="skip" href="#main">Skip to main content</a>
@@ -1345,7 +1373,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#ph-h" data-t="ph-h">2026 Site Visit Photos</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
+<button type="button" class="otp-btn" aria-expanded="false" aria-controls="otp-menu"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h7"/></svg>Sections</button><nav class="otp" id="otp-menu" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#ph-h" data-t="ph-h">2026 Site Visit Photos</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
@@ -1840,7 +1868,13 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
     function spy(){var cur=links[0],ci=0;links.forEach(function(a,i){var h=document.getElementById(a.dataset.t);if(h&&h.getBoundingClientRect().top<innerHeight*0.35){cur=a;ci=i;}});links.forEach(function(a,i){a.setAttribute('aria-current',a===cur);a.classList.toggle('seen',i<ci);});
       try{var o=otp.getBoundingClientRect(),f=links[0].getBoundingClientRect(),l=links[links.length-1].getBoundingClientRect(),c=cur.getBoundingClientRect();var top=f.top-o.top+16,end=l.top-o.top+16;tr.style.setProperty('--tt',top+'px');tr.style.setProperty('--th',(end-top)+'px');tr.style.setProperty('--tf',(c.top-o.top+16-top)+'px');}catch(e){}}
     var gr=document.querySelector('.greet');function place(){otp.style.top=Math.max(124,Math.round(gr.getBoundingClientRect().bottom+48))+'px';}
-    addEventListener('scroll',function(){place();clearTimeout(otp._t);otp._t=setTimeout(spy,60);},{passive:true});addEventListener('resize',place);place();spy();}catch(e){}
+    addEventListener('scroll',function(){place();clearTimeout(otp._t);otp._t=setTimeout(spy,60);},{passive:true});addEventListener('resize',place);place();spy();
+    var ob=document.querySelector('.otp-btn');if(ob){function setOpen(v){otp.classList.toggle('open',v);ob.setAttribute('aria-expanded',v);if(v){spy();}}
+      ob.addEventListener('click',function(e){e.stopPropagation();setOpen(!otp.classList.contains('open'));});
+      otp.addEventListener('click',function(e){if(e.target.closest('a'))setOpen(false);});
+      document.addEventListener('click',function(e){if(otp.classList.contains('open')&&!otp.contains(e.target))setOpen(false);});
+      document.addEventListener('keydown',function(e){if(e.key==='Escape'&&otp.classList.contains('open')){setOpen(false);ob.focus();}});}
+    otp.addEventListener('mouseenter',function(){setTimeout(spy,260);});otp.addEventListener('mouseleave',function(){setTimeout(spy,260);});otp.addEventListener('focusin',function(){setTimeout(spy,260);});}catch(e){}
 
   try{if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){var fd=document.querySelector('.fund');fd.classList.add('grow-wait');var gt;new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){clearTimeout(gt);gt=setTimeout(function(){fd.classList.add('grown');},900);}else clearTimeout(gt);});},{threshold:.35}).observe(fd);}}catch(e){}
 
