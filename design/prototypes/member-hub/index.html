@@ -777,6 +777,7 @@ details.wel{flex:1 1 520px;min-width:0}
 .cx-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:48px}
 .cx{grid-column:1 / -1;position:relative;padding:28px 30px;border-radius:6px;background:var(--surface);box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -20px rgba(29,27,33,.22)}
 .cx::before{content:"";position:absolute;left:-12px;top:-12px;width:72px;height:72px;border-left:2px solid var(--corner);border-top:2px solid var(--corner);border-top-left-radius:2px;pointer-events:none}
+.cx::after{content:"";position:absolute;right:-12px;bottom:-12px;width:72px;height:72px;border-right:2px solid var(--corner);border-bottom:2px solid var(--corner);pointer-events:none}
 .cx-hd{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 16px}
 .cx-hd h3{font:500 32px/1.1 var(--serif);letter-spacing:.02em;color:var(--ink)}
 .cx-hd p{font-size:15px;line-height:22px;color:var(--muted)}
@@ -788,7 +789,7 @@ details.wel{flex:1 1 520px;min-width:0}
 .cx-two p{margin-top:6px;font-size:15px;line-height:23px;color:var(--ink-2)}
 .cx-ft{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 20px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:15px;line-height:22px;color:var(--ink-2)}
 @media (max-width:980px){.cx-row{grid-template-columns:minmax(0,1fr)}.cx{grid-column:1}}
-@media (max-width:640px){.cx{padding:24px 20px}.cx::before{left:-8px;top:-8px;width:52px;height:52px}.cx-two{grid-template-columns:minmax(0,1fr);row-gap:16px}.cx-two > div + div{border-left:0;margin-left:0;padding-left:0;padding-top:16px;border-top:1px solid var(--line)}}
+@media (max-width:640px){.cx{padding:24px 20px}.cx::before{left:-8px;top:-8px;width:52px;height:52px}.cx::after{right:-8px;bottom:-8px;width:52px;height:52px}.cx-two{grid-template-columns:minmax(0,1fr);row-gap:16px}.cx-two > div + div{border-left:0;margin-left:0;padding-left:0;padding-top:16px;border-top:1px solid var(--line)}}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1325,7 +1326,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
+<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#ph-h" data-t="ph-h">2026 Site Visit Photos</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
