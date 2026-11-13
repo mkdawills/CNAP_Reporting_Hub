@@ -765,8 +765,13 @@ details.wel{flex:1 1 520px;min-width:0}
 .poster{grid-column:5 / -1;align-self:end;display:flex;flex-direction:column;color:var(--ink);position:relative}
 /* two corner rules frame the NeuroSync date: top right and, opposite, bottom left */
 .ns-band .poster::before{content:"";position:absolute;right:-16px;top:-28px;width:120px;height:120px;border-top:2px solid var(--purple);border-right:2px solid var(--teal);pointer-events:none}
+.ns-band [aria-labelledby="ev-h"] > .sh{position:relative}
+/* corners at the top left and top right of the NeuroSync title block */
+.ns-band [aria-labelledby="ev-h"] > .sh h2{position:relative}
+.ns-band [aria-labelledby="ev-h"] > .sh h2::before{content:"";position:absolute;left:-28px;top:-28px;width:120px;height:120px;border-top:2px solid var(--purple);border-left:2px solid var(--teal);pointer-events:none}
+.ns-band [aria-labelledby="ev-h"] > .sh::after{content:"";position:absolute;right:-28px;top:-28px;width:120px;height:120px;border-top:2px solid var(--purple);border-right:2px solid var(--teal);pointer-events:none}
 .ns-band .poster::after{content:"";position:absolute;left:-16px;bottom:-28px;width:120px;height:120px;border-bottom:2px solid var(--purple);border-left:2px solid var(--teal);pointer-events:none}
-@media (max-width:980px){.ns-band .poster::before,.ns-band .poster::after{display:none}}
+@media (max-width:980px){.ns-band .poster::before,.ns-band .poster::after,.ns-band [aria-labelledby="ev-h"] > .sh::after,.ns-band [aria-labelledby="ev-h"] > .sh h2::before{display:none}}
 .poster .p-lab{font-size:14px;line-height:20px;font-weight:600;color:var(--purple);margin-bottom:auto}
 .poster .p-day{font:500 22px/28px var(--serif);color:var(--ink-2)}
 .poster .p-num{font:400 168px/.86 var(--serif);letter-spacing:-.04em;margin:8px 0 12px;color:var(--purple-ink)}
@@ -1236,7 +1241,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li class="otp-g" aria-hidden="true">Today</li><li><a href="#wk" data-t="wk">Your week</a></li><li class="otp-g" aria-hidden="true">Funding</li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li class="otp-g" aria-hidden="true">Events and people</li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li class="otp-g" aria-hidden="true">At the Center</li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
+<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li class="otp-g" aria-hidden="true">Today</li><li><a href="#wk" data-t="wk">Your week</a></li><li class="otp-g" aria-hidden="true">At the Center</li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li class="otp-g" aria-hidden="true">Funding</li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li class="otp-g" aria-hidden="true">Events and people</li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#com-h" data-t="com-h">Community</a></li><li><a href="#list-h" data-t="list-h">Emails from the CNAP listserv</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li class="otp-g" aria-hidden="true">Resources</li><li><a href="#cores-h" data-t="cores-h">Research cores</a></li><li><a href="#onb-h" data-t="onb-h">Getting started</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
@@ -1341,6 +1346,40 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       </div>
     </div>
   </section>
+
+  <div class="wrap">
+    <section class="sec lead-in" aria-labelledby="res-h">
+      <header class="sh">
+        <h2 id="res-h">Research at CNAP</h2>
+        <p>Work from the Center’s pilot projects, cores, and investigators.</p>
+      </header>
+      <article class="g feat">
+        <figure class="pic-wrap"><div class="pic"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"></div><figcaption class="credit">Illustration made for this prototype. It is not research data, and a project image will replace it.</figcaption></figure>
+        <div class="txt">
+          <p class="eyebrow">Pilot project · Neurobiology of Learning and Memory</p>
+          <h3 data-unless="long"><a href="#">What a night of sleep does to a new memory</a></h3>
+          <h3 class="long" data-when="long" hidden><a href="#">Recording brain activity across a full night of sleep to see which of the day’s memories are strengthened, and which fade by morning</a></h3>
+          <p class="deck">A CNAP pilot project is recording brain activity during sleep to learn which memories are kept by morning. The team describes its design and what it plans to test next.</p>
+          <p class="meta">The CNAP team · November 10, 2026 · 4-minute read</p>
+          <div class="act"><a class="t3" href="#">Read the story</a></div>
+          <div class="also" aria-label="More from CNAP research">
+            <a href="#"><span class="eyebrow">Core capability</span><b>Transcranial magnetic stimulation in the Cognitive Neuroscience Core</b></a>
+            <a href="#"><span class="eyebrow">Publications</span><b>Three new papers that cite CNAP this fall</b></a>
+          </div>
+        </div>
+      </article>
+      <div class="more-stories">
+        <h3>More stories</h3>
+        <ul>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/oscillations.jpg" alt="Generated illustration of brain oscillations" loading="lazy"><span class="tag">Illustration</span></span><span class="eyebrow">Pilot project</span><b>How a new pilot team is planning its first year</b><span class="meta">The CNAP team · November 6</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-4.jpg" alt="Placeholder for a portrait photograph" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Investigator profile</span><b>Meet the Center’s newest pilot project leader</b><span class="meta">The CNAP team · October 29</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-5.jpg" alt="Placeholder for a photograph of the Neuroinformatics Core" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Core capability</span><b>What the Neuroinformatics Core can process for your lab</b><span class="meta">The CNAP team · October 22</span></a></li>
+          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-2.jpg" alt="Placeholder for a photograph of a workshop" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Training</span><b>Inside the fall grant-writing workshop series</b><span class="meta">The CNAP team · October 15</span></a></li>
+        </ul>
+      </div>
+      <footer class="sf"><a class="btn" href="#">All stories</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a story</a></footer>
+    </section>
+  </div>
 
   <div class="wrap">
     <section class="sec" aria-labelledby="fund-h">
@@ -1573,40 +1612,6 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         <p>Onboarding guides for mentors and new project leaders, on primary or pilot projects. Each one walks through what to do first, step by step.</p>
       </header>
       <div class="ob-grid"><article class="ob ob-mentor"><p class="ob-l">For mentors</p><h3>Mentoring at CNAP</h3><p class="ob-d">What the Center asks of mentors, and how to support a primary or pilot project leader through the award.</p><ol class="ob-s"><li><span class="ob-n num">1</span>Your role and expectations</li><li><span class="ob-n num">2</span>Sign your mentoring agreement</li><li><span class="ob-n num">3</span>Plan your meeting schedule</li><li><span class="ob-n num">4</span>What mentors report, and when</li><li><span class="ob-n num">5</span>Learn about your role at the Site Visit</li></ol><div class="ob-a"><a class="btn" href="#">Start the mentor guide</a><span class="meta">5 steps · about 20 minutes to read</span></div></article><article class="ob ob-awardee"><p class="ob-l">For mentees</p><h3>Starting your project award</h3><p class="ob-d">For primary and pilot project leaders: what to do in your first months, from your mentoring agreement, finance guidelines, and approvals to orientations with the research cores.</p><ol class="ob-s"><li><span class="ob-n num">1</span>Welcome to the Center</li><li><span class="ob-n num">2</span>Sign your mentoring agreement</li><li><span class="ob-n num">3</span>Review CNAP’s finance expectations and guidelines</li><li><span class="ob-n num">4</span>Approvals before you begin</li><li><span class="ob-n num">5</span>Orientations with the research cores</li><li><span class="ob-n num">6</span>Your reporting schedule</li><li><span class="ob-n num">7</span>Learn about your role at the Site Visit</li></ol><div class="ob-a"><a class="btn" href="#">Start the mentee guide</a><span class="meta">7 steps · about 35 minutes to read</span></div></article></div>
-    </section>
-  </div>
-
-  <div class="wrap">
-    <section class="sec lead-in" aria-labelledby="res-h">
-      <header class="sh">
-        <h2 id="res-h">Research at CNAP</h2>
-        <p>Work from the Center’s pilot projects, cores, and investigators.</p>
-      </header>
-      <article class="g feat">
-        <figure class="pic-wrap"><div class="pic"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons in magenta and teal on a dark ground" width="1600" height="889" fetchpriority="high"></div><figcaption class="credit">Illustration made for this prototype. It is not research data, and a project image will replace it.</figcaption></figure>
-        <div class="txt">
-          <p class="eyebrow">Pilot project · Neurobiology of Learning and Memory</p>
-          <h3 data-unless="long"><a href="#">What a night of sleep does to a new memory</a></h3>
-          <h3 class="long" data-when="long" hidden><a href="#">Recording brain activity across a full night of sleep to see which of the day’s memories are strengthened, and which fade by morning</a></h3>
-          <p class="deck">A CNAP pilot project is recording brain activity during sleep to learn which memories are kept by morning. The team describes its design and what it plans to test next.</p>
-          <p class="meta">The CNAP team · November 10, 2026 · 4-minute read</p>
-          <div class="act"><a class="t3" href="#">Read the story</a></div>
-          <div class="also" aria-label="More from CNAP research">
-            <a href="#"><span class="eyebrow">Core capability</span><b>Transcranial magnetic stimulation in the Cognitive Neuroscience Core</b></a>
-            <a href="#"><span class="eyebrow">Publications</span><b>Three new papers that cite CNAP this fall</b></a>
-          </div>
-        </div>
-      </article>
-      <div class="more-stories">
-        <h3>More stories</h3>
-        <ul>
-          <li><a class="ms" href="#"><span class="ms-im"><img src="img/oscillations.jpg" alt="Generated illustration of brain oscillations" loading="lazy"><span class="tag">Illustration</span></span><span class="eyebrow">Pilot project</span><b>How a new pilot team is planning its first year</b><span class="meta">The CNAP team · November 6</span></a></li>
-          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-4.jpg" alt="Placeholder for a portrait photograph" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Investigator profile</span><b>Meet the Center’s newest pilot project leader</b><span class="meta">The CNAP team · October 29</span></a></li>
-          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-5.jpg" alt="Placeholder for a photograph of the Neuroinformatics Core" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Core capability</span><b>What the Neuroinformatics Core can process for your lab</b><span class="meta">The CNAP team · October 22</span></a></li>
-          <li><a class="ms" href="#"><span class="ms-im"><img src="img/reel-2.jpg" alt="Placeholder for a photograph of a workshop" loading="lazy"><span class="tag"><span class="t-l">Photo placeholder</span><span class="t-s">Placeholder</span></span></span><span class="eyebrow">Training</span><b>Inside the fall grant-writing workshop series</b><span class="meta">The CNAP team · October 15</span></a></li>
-        </ul>
-      </div>
-      <footer class="sf"><a class="btn" href="#">All stories</a><a class="share" href="#"><span class="plus" aria-hidden="true"></span>Suggest a story</a></footer>
     </section>
   </div>
 
