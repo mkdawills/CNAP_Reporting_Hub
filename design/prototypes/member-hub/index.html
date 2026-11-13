@@ -733,7 +733,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 /* community */
 .ach{grid-column:1 / span 7;min-width:0;display:flex;flex-direction:column}
 .ach > a{align-content:center}
-.ach h3,.talk h3{font:600 16px/22px var(--sans);margin-bottom:6px}
+.talk h3{font:600 16px/22px var(--sans);margin-bottom:6px}
+.ach h3{font:500 30px/36px var(--serif);letter-spacing:-.015em;margin-bottom:22px}
+@media (max-width:640px){.ach h3{font-size:24px;line-height:30px}}
 .ach > a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:4px 24px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .ach > a .kind{grid-column:2}
 .ach > a .who-av{grid-column:1;grid-row:1 / span 3;width:48px;height:48px;border-radius:999px;display:grid;place-items:center;font:500 17px/1 var(--serif);background:#e8e2ef;color:var(--purple-ink)}
