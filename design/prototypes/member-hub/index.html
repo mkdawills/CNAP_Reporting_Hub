@@ -484,11 +484,11 @@ details.wel{flex:1 1 520px;min-width:0}
   .sh-r p{max-width:none}
   .sh-r::before{left:calc(50% + var(--gap) / 2)}
 }
-.cal-band{margin-top:var(--sec);background:radial-gradient(120% 70% at 85% 0%,#2c1a3d 0%,#1d1226 55%,#170e1f 100%);color:#f3eef8;padding-bottom:var(--sec)}
+.cal-band{margin-top:var(--sec);background:radial-gradient(120% 70% at 85% 0%,#1f1229 0%,#140b1a 60%,#100815 100%);color:#f3eef8;padding-bottom:var(--sec)}
 .cal-band > .wrap > .sec{padding-top:var(--sec)}
 .cal-band .sh{border-top:0;padding-top:0}
 .cal-band .sh::before{display:none}
-.cal-band > .wrap > .sec > .sh,.cal-band .keys,.cal-band .sf,.cal-band .cal-filters{--ink:#f6f2fa;--ink-2:#d9cfe6;--muted:#b9adc9;--line:rgba(246,242,250,.16);--purple:#d4bdf6;--purple-ink:#efe6fc;--paper:#1d1226;--surface:#2a1c36;--line-2:rgba(246,242,250,.28);--field:rgba(246,242,250,.4);color:var(--ink)}
+.cal-band .sh,.cal-band .keys,.cal-band .sf,.cal-band .cal-filters{--ink:#f6f2fa;--ink-2:#d9cfe6;--muted:#b9adc9;--line:rgba(246,242,250,.16);--purple:#d4bdf6;--purple-ink:#efe6fc;--paper:#1d1226;--surface:#2a1c36;--line-2:rgba(246,242,250,.28);--field:rgba(246,242,250,.4);color:var(--ink)}
 .cal-band .sh h2{color:var(--ink)}
 .cal-band .k-num,.cal-band .k-num-s,.cal-band .k-big{color:#e4d4fa}
 .cal-band .btn{background:transparent;color:var(--ink);border-color:var(--line-2)}
@@ -517,6 +517,11 @@ details.wel{flex:1 1 520px;min-width:0}
 .mp:hover b{color:var(--purple);text-decoration:underline}
 @media (hover:hover) and (prefers-reduced-motion:no-preference){.mp:hover .mp-c{transform:translateY(-3px);box-shadow:0 0 0 4px var(--surface),0 0 0 5px var(--purple),0 18px 34px -14px rgba(60,29,102,.5)}}
 @media (prefers-reduced-motion:no-preference){.mp-list{scroll-behavior:smooth}}
+.cal-panel{position:relative;padding:56px 56px 48px;border-radius:10px;background:linear-gradient(180deg,#3a2650 0%,#2f1f42 100%);box-shadow:0 0 0 1px rgba(246,242,250,.08),0 40px 80px -30px rgba(0,0,0,.65)}
+.cal-band > .wrap > .sec{padding-top:var(--sec)}
+.cal-panel .sf{margin-top:36px}
+@media (max-width:980px){.cal-panel{padding:36px 28px 32px}}
+@media (max-width:640px){.cal-panel{padding:28px 16px 24px;margin-inline:-8px}}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -1173,6 +1178,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   <div class="cal-band">
   <div class="wrap">
     <section class="sec" aria-labelledby="cal-h">
+      <div class="cal-panel">
       <header class="sh">
         <h2 id="cal-h">Calendar</h2>
         <p>Center events, deadlines, NeuroSync, and campus dates in one place. Your own meetings show only to you.</p>
@@ -1220,6 +1226,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         </div>
       </div>
       <footer class="sf"><a class="btn" href="#">Open the full calendar</a><a class="t3" href="#">Subscribe in my calendar app</a><p class="meta">All times are Central Time. Break and exam dates come from the K-State academic calendar.</p></footer>
+      </div>
     </section>
   </div>
   </div>
