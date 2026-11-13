@@ -471,6 +471,7 @@ details.wel{flex:1 1 520px;min-width:0}
   .sheet-sec{padding-top:56px}
   .sheet-sec > .sh{padding-bottom:56px;margin-bottom:56px}
 }
+@media (min-width:981px){.mine .brief{padding-inline:calc(var(--cg) / 2 + 36px)}}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -657,7 +658,6 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .bi{position:relative;border-left:0;padding-left:0;padding-top:24px}
   /* corner bracket: a top rule and a fainter right rule that meet halfway into the gap */
   .bi::after{content:"";position:absolute;top:0;left:0;right:calc(var(--cg) / -2);bottom:0;border-top:1px solid var(--wline);border-right:1px solid var(--wline-v);pointer-events:none}
-  .bi.lastvis::after{right:0;border-right:0}
   .bi::before{content:"";position:absolute;z-index:1;left:0;top:-.5px;width:40px;height:2px;background:var(--k,var(--ink));transform-origin:left center}
   .bi.firstvis{border-left:0}
 }
