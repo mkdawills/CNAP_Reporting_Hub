@@ -239,11 +239,9 @@ section .lineup li{width:20%}
 .keys{grid-column:1 / -1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:var(--gap);margin-top:56px}
 .key{display:flex;flex-direction:column;gap:10px;padding-top:20px;padding-bottom:4px;border-top:1px solid var(--line);min-width:0}
 @media (min-width:981px){
-  .keys{column-gap:0}
-  .key{padding-inline:36px}
-  .key:first-child{padding-left:0}
-  .key:last-child{padding-right:0}
-  .key + .key{border-left:1px solid var(--line)}
+  .keys{column-gap:72px;border-top:1px solid var(--line)}
+  .key{position:relative;border-top:0}
+  .key + .key::before{content:"";position:absolute;left:-36px;top:0;bottom:0;border-left:1px solid var(--line)}
 }
 .k-lab{font-size:14px;line-height:20px;font-weight:600;color:var(--purple)}
 .k-date{display:flex;align-items:flex-end;gap:12px}
@@ -316,6 +314,51 @@ section .lineup li{width:20%}
 .ms b{font:500 19px/26px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
 .ms:hover b{color:var(--purple);text-decoration:underline}
 .sheet{background:var(--surface);border-radius:6px;padding:44px 48px;box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -18px rgba(29,27,33,.2)}
+.cm-tools{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.cm-views{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--paper);border:1px solid var(--line)}
+.cm-views button{min-height:38px;padding:0 16px;border:0;border-radius:999px;background:transparent;font:500 14px/1 var(--sans);color:var(--ink-2);cursor:pointer}
+.cm-views button:hover{color:var(--ink)}
+.cm-views button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(29,27,33,.14)}
+.wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--wline)}
+.wk-d{min-width:0;min-height:340px;padding:10px 8px 14px;border-left:1px solid var(--wline)}
+.wk-d:first-child{border-left:0}
+.wk-d.brk{background:var(--purple-tint)}
+.wk-h{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;padding:4px 2px 12px;border:0;background:none;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.wk-wd{font-size:13px;line-height:18px;font-weight:600;color:var(--muted)}
+.wk-h .dn{font:400 32px/1 var(--serif);letter-spacing:-.02em}
+.wk-d.today .dn{color:var(--purple)}
+.wk-d.sel .wk-h{box-shadow:inset 0 -2px 0 var(--purple)}
+.wk-evs{display:flex;flex-direction:column;gap:6px}
+.wk .ce .ci{display:block;-webkit-line-clamp:unset}
+.wk .ce .tm{display:block;margin:0 0 2px}
+.wk .ce .lead{white-space:normal}
+.wk-none{font-size:13px;line-height:18px;color:var(--muted)}
+.cv-list .ag{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gap)}
+.yr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px 36px;padding-top:6px}
+.ym h4{margin:0 0 8px;font:500 19px/24px var(--serif)}
+.ym-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.ym-w{font-size:13px;line-height:22px;font-weight:600;color:var(--muted);text-align:center}
+.ym-d{position:relative;aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:999px;background:none;font:400 13px/1 var(--sans);color:var(--ink-2);cursor:pointer}
+.ym-d:hover{background:var(--band)}
+.ym-d.brk{background:var(--purple-tint);border-radius:0}
+.ym-d.has{font-weight:700;color:var(--ink)}
+.ym-d.has::after{content:"";position:absolute;left:50%;bottom:3px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--purple)}
+.ym-d.today{background:var(--purple);color:#fff;border-radius:999px}
+.ym-d.today::after{background:#fff}
+.ach > a.ach-lead{flex:none;grid-template-columns:72px minmax(0,1fr) auto;column-gap:24px;padding:22px 0 28px}
+.ach > a.ach-lead .who-av{width:72px;height:72px;font-size:26px}
+.ach > a.ach-lead b{font-size:30px;line-height:37px;letter-spacing:-.01em}
+.ach > a.ach-lead .sum{grid-column:2;font-size:16px;line-height:25px;color:var(--ink-2);margin:4px 0 2px;max-width:52ch}
+.ach-row{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:56px;border-top:1px solid var(--line)}
+.ach-row a{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:14px;row-gap:4px;align-content:start;padding:20px 0 4px;text-decoration:none;color:var(--ink)}
+.ach-row a + a::before{content:"";position:absolute;left:-28px;top:20px;bottom:0;border-left:1px solid var(--line)}
+.ach-row .who-av{grid-row:1 / span 4;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font:500 15px/1 var(--serif);background:#e8e2ef;color:var(--purple-ink)}
+.ach-row .kind,.ach-row b,.ach-row .meta,.ach-row .when{grid-column:2}
+.ach-row b{font:500 19px/26px var(--serif);text-wrap:pretty}
+.ach-row a:hover b{color:var(--purple);text-decoration:underline}
+.ach-row .when{font-size:14px;color:var(--muted)}
+.sheet-sec .sh{border-top:0;padding-top:0}
+.sheet-sec .sh::before{display:none}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -404,9 +447,10 @@ section .lineup li{width:20%}
 .fund > [data-unless="sparse"]{flex:1;display:flex;flex-direction:column}
 .fund .opp{flex:1;align-content:center}
 .fund h3,.proposal h3{font:600 16px/22px var(--sans);margin-bottom:6px}
-.opp{display:grid;grid-template-columns:84px minmax(0,1fr) 172px;gap:36px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
-.opp .days{font:500 36px/36px var(--serif);color:var(--ink)}
-.opp .days small{display:block;font:400 14px/20px var(--sans);color:var(--muted);margin-top:4px}
+.opp{display:grid;grid-template-columns:96px minmax(0,1fr) 172px;gap:36px;padding:20px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.opp .days{width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--line-2);background:var(--paper);box-shadow:0 0 0 5px var(--surface),0 0 0 6px var(--line);font:500 30px/1 var(--serif);letter-spacing:-.02em;color:var(--ink);align-self:start}
+.opp .days.soon{border-color:var(--amber);box-shadow:0 0 0 5px var(--surface),0 0 0 6px rgba(138,75,0,.35);color:var(--amber)}
+.opp .days small{display:block;font:500 13px/16px var(--sans);letter-spacing:0;color:var(--muted);margin-top:4px}
 .opp .spon{font-size:14px;line-height:20px;color:var(--muted)}
 .opp b{display:block;font-size:18px;line-height:26px;font-weight:600;margin:2px 0 8px;text-wrap:pretty}
 a.opp:hover b{color:var(--purple);text-decoration:underline}
@@ -417,6 +461,11 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 .news{grid-column:1 / -1;min-width:0;margin-top:56px;border-top:1px solid var(--line);padding-top:20px}
 .news h3{font:600 20px/26px var(--sans);letter-spacing:-.01em;margin-bottom:10px}
 .news ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap);margin-top:8px}
+@media (min-width:981px){
+  .news ul{column-gap:72px;margin-top:14px}
+  .news li{position:relative;min-width:0}
+  .news li + li::before{content:"";position:absolute;left:-36px;top:0;bottom:0;border-left:1px solid var(--line)}
+}
 .news a{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink)}
 .news b{font-size:15px;line-height:22px;font-weight:600}
 .news a:hover b{color:var(--purple);text-decoration:underline}
@@ -434,16 +483,16 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 
 /* community */
 .ach{grid-column:1 / span 7;min-width:0;display:flex;flex-direction:column}
-.ach > a{flex:1;align-content:center}
+.ach > a{align-content:center}
 .ach h3,.talk h3{font:600 16px/22px var(--sans);margin-bottom:6px}
-.ach a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:4px 24px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
-.ach .kind{grid-column:2}
-.ach .who-av{grid-column:1;grid-row:1 / span 3;width:48px;height:48px;border-radius:999px;display:grid;place-items:center;font:500 17px/1 var(--serif);background:#e8e2ef;color:var(--purple-ink)}
-.ach b{grid-column:2;font:500 22px/30px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
+.ach > a{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:4px 24px;padding:18px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.ach > a .kind{grid-column:2}
+.ach > a .who-av{grid-column:1;grid-row:1 / span 3;width:48px;height:48px;border-radius:999px;display:grid;place-items:center;font:500 17px/1 var(--serif);background:#e8e2ef;color:var(--purple-ink)}
+.ach > a b{grid-column:2;font:500 22px/30px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
 .ach a:hover b{color:var(--purple);text-decoration:underline}
-.ach .meta{grid-column:2}
-.ach .when{grid-column:3;grid-row:1;font-size:14px;color:var(--muted);white-space:nowrap}
-.talk{grid-column:8 / span 5;min-width:0;display:flex;flex-direction:column;background:var(--lilac);border-radius:4px;padding:30px 32px 28px;--line:rgba(81,40,136,.14)}
+.ach > a .meta{grid-column:2}
+.ach > a .when{grid-column:3;grid-row:1;font-size:14px;color:var(--muted);white-space:nowrap}
+.talk{grid-column:8 / span 5;min-width:0;display:flex;flex-direction:column;background:radial-gradient(120% 90% at 100% 0%,#f8f4fd 0%,var(--lilac) 55%,#e9e3f3 100%);box-shadow:0 0 0 1px rgba(81,40,136,.06),0 22px 60px -18px rgba(81,40,136,.38),0 0 80px -20px rgba(140,100,200,.35);border-radius:4px;padding:30px 32px 28px;--line:rgba(81,40,136,.14)}
 .talk a.conv{display:grid;grid-template-columns:40px minmax(0,1fr);gap:2px 12px;padding:14px 0;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
 .talk .av{grid-row:1 / span 2;width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;background:var(--surface);color:var(--ink-2)}
 .talk b{font-size:15px;line-height:22px;font-weight:600}
@@ -541,11 +590,19 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .people,.agenda,.fund,.proposal,.ach,.talk{grid-column:1 / -1}
   .people,.agenda{grid-row:auto}
   .ns-feat .portrait{grid-column:1 / span 6}
-  .ns-feat .poster,.ns-feat .spk-txt{grid-column:7 / span 6}
+  .ns-feat .portrait{grid-row:1;align-self:start}
+  .ns-feat .poster{grid-column:7 / span 6;grid-row:1;align-self:end}
+  .ns-feat .spk-txt{grid-column:1 / -1;grid-row:2;max-width:62ch}
   .ns-feat .portrait .ini{font-size:96px}
   .ns-feat .poster .p-num{font-size:110px}
   .cal-month{grid-column:1 / -1}
   .more-stories ul{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:32px}
+  .yr{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .wk{grid-template-columns:minmax(0,1fr)}
+  .wk-d{min-height:0;border-left:0;border-top:1px solid var(--wline);display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:12px 4px}
+  .wk-d:first-child{border-top:0}
+  .wk-h{padding:0}
+  .cv-list .ag{grid-template-columns:minmax(0,1fr)}
   .keys{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:32px}
 
   section .lineup li{width:calc(100% / 2.4)}
@@ -586,7 +643,17 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .cm-grid td{height:72px}
   .dbtn{min-height:72px;justify-content:space-between}
 }
+@media (max-width:380px){
+  .yr{grid-template-columns:minmax(0,1fr)}
+}
 @media (max-width:640px){
+  .ach > a.ach-lead b{font-size:23px;line-height:30px}
+  .ach > a.ach-lead{grid-template-columns:52px minmax(0,1fr);column-gap:14px}
+  .ach > a.ach-lead .who-av{width:52px;height:52px;font-size:19px}
+  .ach > a.ach-lead .when{grid-column:2;grid-row:auto}
+  .ach-row{grid-template-columns:minmax(0,1fr)}
+  .ach-row a + a{border-top:1px solid var(--line);margin-top:16px}
+  .ach-row a + a::before{display:none}
   :root{--gap:20px;--sec:56px;--side:max(20px,env(safe-area-inset-left,0px));--side-r:max(20px,env(safe-area-inset-right,0px))}
   .hdr .wrap{min-height:60px;gap:10px}
   .brand small{display:none}
@@ -633,6 +700,11 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .wd-s{display:inline}
   .dbtn{justify-content:space-between;align-items:flex-start}
   #cl-body{flex-direction:column;gap:4px}
+  .cm-head{flex-wrap:wrap}
+  .cm-tools{width:100%;justify-content:space-between}
+  .cm-views button{padding:0 12px}
+  .yr{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}
+  .wk-d{grid-template-columns:80px minmax(0,1fr)}
   .more-stories{margin-top:44px}
   .more-stories ul{grid-template-columns:minmax(0,1fr);row-gap:0}
   .more-stories li + li{border-top:1px solid var(--line)}
@@ -667,17 +739,20 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .ph:not(.lead) .im{flex:none;aspect-ratio:1/1}
   .ph:not(.lead) .cap2 span{display:none}
   .cap2 b{font-size:16px;line-height:22px}
-    .opp{grid-template-columns:60px minmax(0,1fr);gap:4px 14px}
+    .opp{grid-template-columns:76px minmax(0,1fr);gap:4px 14px}
+    .opp .days{width:72px;height:72px;font-size:24px;box-shadow:0 0 0 4px var(--surface),0 0 0 5px var(--line)}
+    .opp .days.soon{box-shadow:0 0 0 4px var(--surface),0 0 0 5px rgba(138,75,0,.35)}
+    .opp .days small{margin-top:2px}
   .opp .side{grid-column:2;text-align:left}
   .opp .days{font-size:28px;line-height:30px}
   .opp b{font-size:17px;line-height:24px}
   .news ul{grid-template-columns:minmax(0,1fr);gap:0}
   .news li a{padding:12px 0;border-top:1px solid var(--line)}
   .news li:first-child a{border-top:0}
-  .ach b{font-size:19px;line-height:26px}
-  .ach a{grid-template-columns:40px minmax(0,1fr)}
-  .ach .who-av{width:40px;height:40px;font-size:15px}
-  .ach .when{grid-column:2;grid-row:auto}
+  .ach > a b{font-size:19px;line-height:26px}
+  .ach > a{grid-template-columns:40px minmax(0,1fr)}
+  .ach > a .who-av{width:40px;height:40px;font-size:15px}
+  .ach > a .when{grid-column:2;grid-row:auto}
   .foot p{grid-column:1 / -1}
   .foot nav{grid-column:span 6!important}
   .proto{position:static;transform:none;display:block;border-bottom:1px solid var(--line);background:var(--paper)}
@@ -920,10 +995,12 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
       </div>
       <div class="cal">
         <div class="cal-month">
-          <div class="cm-head"><h3 id="cm-h">November 2026</h3>
-            <div class="cm-nav"><button type="button" class="arrow" data-m="-1" aria-label="Previous month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-m="1" aria-label="Next month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>
+          <div class="cm-head"><h3 id="cm-h" aria-live="polite">November 2026</h3>
+            <div class="cm-tools"><div class="cm-views" role="group" aria-label="Calendar view"><button type="button" data-v="month" aria-pressed="true">Month</button><button type="button" data-v="week" aria-pressed="false">Week</button><button type="button" data-v="list" aria-pressed="false">List</button><button type="button" data-v="year" aria-pressed="false">Year</button></div>
+            <div class="cm-nav"><button type="button" class="arrow" data-m="-1" aria-label="Previous month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="arrow" data-m="1" aria-label="Next month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div></div>
           </div>
           <table class="cm-grid" aria-labelledby="cm-h"><thead><tr><th scope="col"><span class="wd-l">Sunday</span><span class="wd-s" aria-hidden="true">S</span></th><th scope="col"><span class="wd-l">Monday</span><span class="wd-s" aria-hidden="true">M</span></th><th scope="col"><span class="wd-l">Tuesday</span><span class="wd-s" aria-hidden="true">T</span></th><th scope="col"><span class="wd-l">Wednesday</span><span class="wd-s" aria-hidden="true">W</span></th><th scope="col"><span class="wd-l">Thursday</span><span class="wd-s" aria-hidden="true">T</span></th><th scope="col"><span class="wd-l">Friday</span><span class="wd-s" aria-hidden="true">F</span></th><th scope="col"><span class="wd-l">Saturday</span><span class="wd-s" aria-hidden="true">S</span></th></tr></thead><tbody id="cm-body"></tbody></table>
+          <div id="cv" hidden></div>
           <div class="cm-day">
             <div class="cd-head"><h4 id="cl-h" aria-live="polite">Today</h4><button type="button" class="t3 cl-today" hidden>Back to today</button></div>
             <div id="cl-body"></div>
@@ -976,13 +1053,13 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
         <h2 id="fund-h">Funding and proposals</h2>
         <p>Opportunities the CNAP team picked for your research, and help at each stage of a proposal.</p>
       </header>
-      <div class="g">
+      <div class="g sheet">
         <div class="fund">
           <h3>Picked for you</h3>
           <div data-unless="sparse">
             <a class="opp" href="#"><span class="days num">82<small>days left</small></span><span><span class="spon">Sample Foundation · Early-career award</span><b data-unless="long">Early-career award in sleep and cognition</b><b data-when="long" hidden>Early-career investigator award for interdisciplinary research on sleep, memory, and cognitive aging in human and animal models</b><span class="why">Fits your aims on sleep and memory, and counts toward your grant milestone.</span></span><span class="side"><strong class="num">February 2, 2027</strong>Up to $150,000<span class="chk">Details checked<br>November 9</span></span></a>
             <a class="opp" href="#"><span class="days num">123<small>days left</small></span><span><span class="spon">National Institutes of Health · R21</span><b>Exploratory research on sleep and plasticity</b><span class="why">A common next step after a pilot. Talk with your program officer first.</span></span><span class="side"><strong class="num">March 16, 2027</strong>Set by the notice<span class="chk">Details checked<br>November 9</span></span></a>
-            <a class="opp" href="#"><span class="days num">7<small>days left</small></span><span><span class="spon">CNAP · Pilot program</span><b>Year 11 pilot project letters of intent</b><span class="why">Open to all CNAP faculty. You could pass it on to a colleague.</span></span><span class="side"><strong class="num">November 20, 2026</strong>Center funding</span></a>
+            <a class="opp" href="#"><span class="days num soon">7<small>days left</small></span><span><span class="spon">CNAP · Pilot program</span><b>Year 11 pilot project letters of intent</b><span class="why">Open to all CNAP faculty. You could pass it on to a colleague.</span></span><span class="side"><strong class="num">November 20, 2026</strong>Center funding</span></a>
           </div>
           <div class="empty" data-when="sparse" hidden>
             <p style="font-weight:600">No opportunities are picked for you yet.</p>
@@ -1015,16 +1092,19 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     </section>
 
     <section class="sec" aria-labelledby="com-h">
+      <div class="sheet sheet-sec">
       <header class="sh">
         <h2 id="com-h">Around the Center</h2>
         <p>Members’ achievements, requests for collaborators, and conversations.</p>
       </header>
-      <div class="g sheet">
+      <div class="g">
         <div class="ach">
           <h3>Recent achievements</h3>
-          <a href="#"><span class="who-av" aria-hidden="true">MS</span><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
-          <a href="#"><span class="who-av" aria-hidden="true">DO</span><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
-          <a href="#"><span class="who-av" aria-hidden="true">WZ</span><span class="kind" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>Invited talk</span><b>Neuroinformatics Core pipeline presented at a national meeting</b><span class="meta">Dr. Wei Zhang · Neuroinformatics Core</span><span class="when">October 30</span></a>
+          <a class="ach-lead" href="#"><span class="who-av" aria-hidden="true">MS</span><span class="kind" style="color:var(--green)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 1.5h6l2.5 2.5v8.5H3z"/><path d="M5.5 7h4M5.5 9.5h4"/></svg>Publication</span><b>Attention and working memory in older adults: a two-year follow-up</b><span class="sum">A two-year study of attention and working memory in older adults, run with the Cognitive Neuroscience Core.</span><span class="meta">Maya Singh and colleagues · Cognitive Neuroscience Core · cites CNAP</span><span class="when">November 10</span></a>
+          <div class="ach-row">
+            <a href="#"><span class="who-av" aria-hidden="true">DO</span><span class="kind" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="5.5" r="3.5"/><path d="M4.8 8.5L4 13l3-1.5 3 1.5-.8-4.5"/></svg>Grant award</span><b>A first R01 for a former CNAP pilot project leader</b><span class="meta">Dr. David Osei · National Institute on Aging</span><span class="when">November 6</span></a>
+            <a href="#"><span class="who-av" aria-hidden="true">WZ</span><span class="kind" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>Invited talk</span><b>Neuroinformatics Core pipeline presented at a national meeting</b><span class="meta">Dr. Wei Zhang · Neuroinformatics Core</span><span class="when">October 30</span></a>
+          </div>
         </div>
         <div class="talk">
           <h3>Conversations</h3>
@@ -1033,6 +1113,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           <a class="conv" href="#"><span class="av">RG</span><b>Who has used the Beocat cluster for imaging?</b><span class="meta">Rosa García · Seeking: high-performance computing</span></a>
           <div class="talk-act"><a class="btn" href="#">Start a conversation</a></div>
         </div>
+      </div>
       </div>
       <footer class="sf"><a class="btn" href="#">Visit the community</a><span class="wel"><span class="faces" aria-hidden="true"><span>KB</span><span>NA</span><span>OM</span></span><p class="meta">Welcome to three graduate students who joined the Cognitive Neuroscience Core this month.</p></span></footer>
     </section>
@@ -1073,7 +1154,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   /* calendar: prototype data only, nothing here is connected to a real calendar */
   var KIND={ns:'NeuroSync',ctr:'Center event',due:'Deadline',you:'Your meeting · only you see this',cam:'K-State'};
   var SHAPE={ns:'<circle cx="5" cy="5" r="4"/>',ctr:'<path d="M5 .5L9.5 5 5 9.5 .5 5z"/>',due:'<rect x="1" y="1" width="8" height="8" rx="1"/>',you:'<circle cx="5" cy="5" r="3.4" fill="none" stroke-width="2"/>',cam:'<path d="M5 .8L9.4 9H.6z"/>'};
-  var EV=[['2026-11-04','2:30 p.m.','ns','Dopamine and the speed of choice'],['2026-11-06','All day','due','Pre-submission review requests'],['2026-11-11','2:30 p.m.','ns','Glia and the timing of plasticity'],['2026-11-13','2:00 p.m.','ctr','Behavioral Neuroscience Core office hours'],['2026-11-18','2:30 p.m.','ns','Memory consolidation during sleep'],['2026-11-17','3:00 p.m.','you','Mentor meeting with Dr. Elena Voss'],['2026-11-18','4:00 p.m.','cam','Campus seminar: Neural circuits of fear learning'],['2026-11-19','12:00 p.m.','ctr','Workshop: Writing a strong Specific Aims page'],['2026-11-20','All day','due','Year 11 pilot letters of intent'],['2026-11-22','All week','cam','Fall break, no classes','2026-11-29'],['2026-11-26','All day','cam','Thanksgiving, campus closed','2026-11-27'],['2026-11-30','All day','due','Fall reporting closes'],['2026-12-02','2:30 p.m.','ns','Machine learning for spike sorting'],['2026-12-03','10:00 a.m.','you','Check-in with Dr. Elena Voss'],['2026-12-09','2:30 p.m.','ns','Stress, the heart, and the aging brain'],['2026-12-10','3:30 p.m.','ctr','Fall social for members and students'],['2026-12-11','All day','cam','Last day of fall classes'],['2026-12-14','All week','cam','Final examinations','2026-12-18'],['2026-12-24','All day','cam','Winter break, campus closed','2026-12-31']];
+  var EV=[['2026-08-24','All day','cam','First day of fall classes'],['2026-11-04','2:30 p.m.','ns','Dopamine and the speed of choice'],['2026-11-06','All day','due','Pre-submission review requests'],['2026-11-11','2:30 p.m.','ns','Glia and the timing of plasticity'],['2026-11-13','2:00 p.m.','ctr','Behavioral Neuroscience Core office hours'],['2026-11-18','2:30 p.m.','ns','Memory consolidation during sleep'],['2026-11-17','3:00 p.m.','you','Mentor meeting with Dr. Elena Voss'],['2026-11-18','4:00 p.m.','cam','Campus seminar: Neural circuits of fear learning'],['2026-11-19','12:00 p.m.','ctr','Workshop: Writing a strong Specific Aims page'],['2026-11-20','All day','due','Year 11 pilot letters of intent'],['2026-11-22','All week','cam','Fall break, no classes','2026-11-29'],['2026-11-26','All day','cam','Thanksgiving, campus closed','2026-11-27'],['2026-11-30','All day','due','Fall reporting closes'],['2026-12-02','2:30 p.m.','ns','Machine learning for spike sorting'],['2026-12-03','10:00 a.m.','you','Check-in with Dr. Elena Voss'],['2026-12-09','2:30 p.m.','ns','Stress, the heart, and the aging brain'],['2026-12-10','3:30 p.m.','ctr','Fall social for members and students'],['2026-12-11','All day','cam','Last day of fall classes'],['2026-12-14','All week','cam','Final examinations','2026-12-18'],['2026-12-24','All day','cam','Winter break, campus closed','2026-12-31']];
   var MON=['January','February','March','April','May','June','July','August','September','October','November','December'],WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var TODAY='2026-11-13',sel=TODAY,ym=[2026,10],on={ns:1,ctr:1,due:1,you:1,cam:1};
   function iso(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
@@ -1088,19 +1169,49 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
       var lab='';
       h+='<td><button type="button" class="'+cls+'" data-d="'+s+'" tabindex="'+(s===sel?0:-1)+'" aria-pressed="'+(s===sel)+'"'+(s===TODAY?' aria-current="date"':'')+' aria-label="'+WD[new Date(y,m,d).getDay()]+', '+MON[m]+' '+d+(es.length?', '+es.length+(es.length>1?' items':' item'):', nothing scheduled')+'"><span class="dn">'+d+'</span>'+lab+'<span class="ces">'+es.filter(function(e){return !(e[4]&&/break/.test(e[3])&&e[0]!==s&&new Date(y,m,d).getDay()!==0);}).slice(0,3).map(function(e){var short=e[1]==='All day'||e[1]==='All week'?'':e[1].replace(' p.m.','').replace(' a.m.',' a.m.');return '<span class="ce k-'+e[2]+'"><span class="ci"><span class="lead">'+mk(e[2])+(short?'<span class="tm">'+short+'</span>':'')+'</span>'+(short?'':'')+'<span class="ct">'+e[3]+'</span></span></span>';}).join('')+(es.length>3?'<span class="ce-more">'+(es.length-3)+' more</span>':'')+'</span><span class="mks">'+ks.map(mk).join('')+'</span></button></td>';c++;if(c%7===0)h+='</tr>';}
     while(c%7){h+='<td></td>';c++;if(c%7===0)h+='</tr>';}
-    body.innerHTML=h;document.querySelectorAll('.cm-nav .arrow').forEach(function(b){var lim=(+b.dataset.m<0&&m===10)||(+b.dataset.m>0&&m===11);b.setAttribute('aria-disabled',lim);});
+    body.innerHTML=h;
     if(focus){var f=body.querySelector('[tabindex="0"]')||body.querySelector('.dbtn');if(f){f.tabIndex=0;f.focus();}}}
   function list(){var D=dt(sel),es=evOn(sel);
     clh.textContent=(sel===TODAY?'Today, ':'')+WD[D.getDay()]+', '+MON[D.getMonth()]+' '+D.getDate();tb.hidden=sel===TODAY;
     clb.innerHTML=es.length?es.map(function(e){return '<a class="cd-ev" href="#"><span class="t">'+e[1]+'</span><span class="kind k-'+e[2]+'">'+mk(e[2])+' '+KIND[e[2]]+'</span><b>'+e[3]+'</b></a>';}).join(''):'<p class="cd-empty">Nothing is scheduled. Choose another day, or turn on more types above.</p>';}
-  function pick(d,focus){sel=d;var D=dt(d);ym=[D.getFullYear(),D.getMonth()];month(focus);list();}
+  function pick(d,focus){sel=d;var D=dt(d);ym=[D.getFullYear(),D.getMonth()];render(focus);}
   body.addEventListener('click',function(e){var b=e.target.closest('.dbtn');if(b)pick(b.dataset.d,true);});
-  body.addEventListener('keydown',function(e){var b=e.target.closest('.dbtn');if(!b)return;var mv={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];if(!mv)return;e.preventDefault();var D=dt(b.dataset.d);D.setDate(D.getDate()+mv);if(D<new Date(2026,10,1)||D>new Date(2026,11,31))return;var d=iso(D.getFullYear(),D.getMonth(),D.getDate());
-    if(D.getMonth()!==ym[1]){ym=[D.getFullYear(),D.getMonth()];sel=sel;month(false);}body.querySelectorAll('.dbtn').forEach(function(x){x.tabIndex=x.dataset.d===d?0:-1;});var t=body.querySelector('[data-d="'+d+'"]');if(t)t.focus();});
-  document.querySelectorAll('.cm-nav .arrow').forEach(function(b){b.addEventListener('click',function(){if(b.getAttribute('aria-disabled')==='true')return;ym=[2026,ym[1]+ +b.dataset.m];var f=iso(2026,ym[1],1);if(sel.slice(0,7)!==f.slice(0,7)){body.innerHTML='';}month(false);var x=body.querySelector('[data-d="'+sel+'"]')||body.querySelector('.dbtn');body.querySelectorAll('.dbtn').forEach(function(y){y.tabIndex=-1;});x.tabIndex=0;});});
+  body.addEventListener('keydown',function(e){var b=e.target.closest('.dbtn');if(!b)return;var mv={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[e.key];if(!mv)return;e.preventDefault();var D=dt(b.dataset.d);D.setDate(D.getDate()+mv);if(D<MIN||D>MAX)return;var d=iso(D.getFullYear(),D.getMonth(),D.getDate());
+    if(D.getMonth()!==ym[1]){ym=[D.getFullYear(),D.getMonth()];month(false);updNav();}body.querySelectorAll('.dbtn').forEach(function(x){x.tabIndex=x.dataset.d===d?0:-1;});var t=body.querySelector('[data-d="'+d+'"]');if(t)t.focus();});
+
+  var view='month',tbl=document.querySelector('.cm-grid'),cv=document.getElementById('cv'),cday=document.querySelector('.cm-day'),MIN=new Date(2026,7,1),MAX=new Date(2027,6,31);
+  function chip(e){var t=e[1]==='All day'||e[1]==='All week'?'':e[1];return '<span class="ce k-'+e[2]+'"><span class="ci"><span class="lead">'+mk(e[2])+(t?'<span class="tm">'+t+'</span>':'')+'</span><span class="ct">'+e[3]+'</span></span></span>';}
+  function week(){var D=dt(sel);D.setDate(D.getDate()-D.getDay());var a=new Date(D),h='<div class="wk">';
+    for(var i=0;i<7;i++){var s=iso(D.getFullYear(),D.getMonth(),D.getDate()),es=evOn(s);
+      h+='<div class="wk-d'+(brk(s)?' brk':'')+(s===TODAY?' today':'')+(s===sel?' sel':'')+'"><button type="button" class="wk-h" data-d="'+s+'" aria-pressed="'+(s===sel)+'"'+(s===TODAY?' aria-current="date"':'')+'><span class="wk-wd">'+WD[D.getDay()]+'</span><span class="dn num">'+D.getDate()+'</span></button><div class="wk-evs">'+(es.length?es.map(chip).join(''):'<span class="wk-none">Nothing scheduled</span>')+'</div></div>';D.setDate(D.getDate()+1);}
+    var b=new Date(D);b.setDate(b.getDate()-1);cmh.textContent=MON[a.getMonth()]+' '+a.getDate()+' to '+(a.getMonth()!==b.getMonth()?MON[b.getMonth()]+' ':'')+b.getDate()+', '+b.getFullYear();cv.innerHTML=h+'</div>';}
+  function agenda(){var out=[];EV.forEach(function(e,i){if(!on[e[2]])return;var end=e[4]||e[0];if(end<sel)return;out.push([e[0]<sel?sel:e[0],e,i]);});
+    out.sort(function(a,b){return a[0]<b[0]?-1:a[0]>b[0]?1:a[2]-b[2];});var S=dt(sel);cmh.textContent='Coming up from '+MON[S.getMonth()]+' '+S.getDate();
+    if(!out.length){cv.innerHTML='<p class="cl-empty">Nothing else is on the calendar with these filters.</p>';return;}
+    var h='',cur='';out.forEach(function(o){var d=o[0],e=o[1],D=dt(d);if(d!==cur){if(cur)h+='</div></div>';cur=d;h+='<div class="cl-day"><div class="cl-date"><span class="d-num num">'+D.getDate()+'</span><span class="d-wd">'+WD[D.getDay()]+'<br>'+MON[D.getMonth()]+'</span></div><div>';}
+      h+='<a class="cl-ev" href="#"><span class="t">'+e[1]+'</span><span class="kind k-'+e[2]+'">'+mk(e[2])+' '+KIND[e[2]]+'</span><b>'+e[3]+(e[4]?' <span class="meta">through '+MON[dt(e[4]).getMonth()]+' '+dt(e[4]).getDate()+'</span>':'')+'</b></a>';});
+    cv.innerHTML='<div class="ag">'+h+'</div></div></div>';}
+  function year(){cmh.textContent='Academic year 2026 to 2027';var h='<div class="yr">';
+    for(var k=0;k<12;k++){var y=k<5?2026:2027,m=(k+7)%12,first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+      h+='<div class="ym"><h4>'+MON[m]+' '+y+'</h4><div class="ym-g">';['S','M','T','W','T','F','S'].forEach(function(x){h+='<span class="ym-w" aria-hidden="true">'+x+'</span>';});
+      for(var i=0;i<first;i++)h+='<span></span>';
+      for(var d=1;d<=days;d++){var s=iso(y,m,d),es=evOn(s);h+='<button type="button" class="ym-d'+(es.length?' has':'')+(brk(s)?' brk':'')+(s===TODAY?' today':'')+'" data-d="'+s+'" tabindex="'+(es.length||s===TODAY?0:-1)+'" aria-label="'+WD[new Date(y,m,d).getDay()]+', '+MON[m]+' '+d+(es.length?', '+es.length+(es.length>1?' items':' item'):'')+'">'+d+'</button>';}
+      h+='</div></div>';}
+    cv.innerHTML=h+'</div>';}
+  function updNav(){var a=document.querySelectorAll('.cm-nav .arrow'),nav=document.querySelector('.cm-nav');nav.hidden=(view==='list'||view==='year');var lo,hi;
+    if(view==='month'){lo=ym[0]===2026&&ym[1]<=7;hi=ym[0]===2027&&ym[1]>=6;}else{var D=dt(sel);lo=D-MIN<7*864e5;hi=MAX-D<7*864e5;}
+    a[0].setAttribute('aria-disabled',lo);a[1].setAttribute('aria-disabled',hi);a[0].setAttribute('aria-label',view==='week'?'Previous week':'Previous month');a[1].setAttribute('aria-label',view==='week'?'Next week':'Next month');}
+  function render(focus){tbl.hidden=view!=='month';cv.hidden=view==='month';cday.hidden=view!=='month';cv.className='cv cv-'+view;
+    if(view==='month'){month(focus);list();}else if(view==='week')week();else if(view==='list')agenda();else year();
+    updNav();document.querySelectorAll('.cm-views button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===view);});}
+  document.querySelectorAll('.cm-views button').forEach(function(b){b.addEventListener('click',function(){view=b.dataset.v;render(false);});});
+  document.querySelectorAll('.cm-nav .arrow').forEach(function(b){b.addEventListener('click',function(){if(b.getAttribute('aria-disabled')==='true')return;var dir=+b.dataset.m;
+    if(view==='month'){var D=new Date(ym[0],ym[1]+dir,1);ym=[D.getFullYear(),D.getMonth()];render(false);var x=body.querySelector('[data-d="'+sel+'"]')||body.querySelector('.dbtn');body.querySelectorAll('.dbtn').forEach(function(y){y.tabIndex=-1;});if(x)x.tabIndex=0;}
+    else{var W=dt(sel);W.setDate(W.getDate()+7*dir);sel=iso(W.getFullYear(),W.getMonth(),W.getDate());ym=[W.getFullYear(),W.getMonth()];render(false);}});});
+  cv.addEventListener('click',function(e){var b=e.target.closest('[data-d]');if(!b)return;sel=b.dataset.d;var D=dt(sel);ym=[D.getFullYear(),D.getMonth()];if(view==='year')view='month';render(view==='month');});
   tb.addEventListener('click',function(){pick(TODAY,false);});
-  document.querySelectorAll('.cf').forEach(function(b){b.addEventListener('click',function(){var v=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',v);on[b.dataset.k]=v?1:0;month(false);list();});});
-  month(false);list();
+  document.querySelectorAll('.cf').forEach(function(b){b.addEventListener('click',function(){var v=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',v);on[b.dataset.k]=v?1:0;render(false);});});
+  render(false);
   function apply(s){
     document.querySelectorAll('[data-when]').forEach(function(e){e.hidden=e.dataset.when.split(' ').indexOf(s)<0;});
     document.querySelectorAll('[data-unless]').forEach(function(e){e.hidden=e.dataset.unless.split(' ').indexOf(s)>=0;});
@@ -1110,10 +1221,10 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   }
   var look=document.getElementById('look');
   look.addEventListener('change',function(){if(look.value==='dark')delete document.documentElement.dataset.look;else document.documentElement.dataset.look=look.value;});
-  var sel=document.getElementById('scenario');
+  var scSel=document.getElementById('scenario');
   var start=(location.hash||'').slice(1);
-  if(start&&[].some.call(sel.options,function(o){return o.value===start;}))sel.value=start;
-  sel.addEventListener('change',function(){apply(sel.value);try{history.replaceState(null,'','#'+sel.value);}catch(e){}});
-  apply(sel.value);
+  if(start&&[].some.call(scSel.options,function(o){return o.value===start;}))scSel.value=start;
+  scSel.addEventListener('change',function(){apply(scSel.value);try{history.replaceState(null,'','#'+scSel.value);}catch(e){}});
+  apply(scSel.value);
 })();
 </script>
