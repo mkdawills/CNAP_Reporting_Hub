@@ -187,13 +187,19 @@ img{max-width:100%;display:block}
 
 
 /* NeuroSync feature: a big square portrait, the poster date and the talk beside it */
-.ns-feat .spk-main{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);row-gap:36px;align-items:start}
-.ns-feat .portrait{grid-column:1 / span 6;grid-row:1 / span 2;aspect-ratio:1;min-height:0}
+.ns-feat .spk-main{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:auto 1fr;column-gap:var(--gap);row-gap:28px;align-items:start}
+.ns-feat .portrait{grid-column:1 / span 6;grid-row:1 / span 2;aspect-ratio:1;min-height:0;align-self:stretch}
 .ns-feat .portrait .ini{font-size:150px}
 .ns-feat .poster{grid-column:8 / span 5;grid-row:1;align-self:start}
-.ns-feat .poster .p-lab{margin-bottom:18px}
+.ns-feat .poster .p-lab{margin-bottom:14px}
+.ns-feat .poster .p-num{font-size:128px}
+.ns-feat .poster .p-mon{font-size:30px;line-height:36px}
+.ns-feat .spk-txt .chips{margin-top:14px}
+.ns-feat .spk-txt .bio{margin-top:10px}
 .ns-feat .spk-txt{grid-column:8 / span 5;grid-row:2;align-self:end;max-width:none}
-.ns-feat .spk-txt h3{font:500 32px/39px var(--serif);letter-spacing:-.01em;margin:6px 0 10px}
+.spk-act{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.spk-act .btn{margin-bottom:0}
+.ns-feat .spk-txt h3{font:500 30px/36px var(--serif);letter-spacing:-.01em;margin:6px 0 8px}
 .ns-feat .spk-txt h3 a{color:var(--ink);text-decoration:none}
 .ns-feat .spk-txt h3 a:hover{text-decoration:underline}
 .ns-feat ~ .lineup{margin-top:80px}
@@ -441,6 +447,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .bi.intro .act{margin-top:auto;align-self:flex-start}
 }
 @media (min-width:981px) and (max-width:1180px){
+  .ns-feat .portrait{grid-row:1;align-self:start}
+  .ns-feat .poster{grid-column:7 / span 6;align-self:end}
+  .ns-feat .spk-txt{grid-column:1 / -1;grid-row:2;max-width:62ch}
   .bi.intro{border-bottom:0;padding-bottom:0;margin-bottom:36px}
   .bi.intro::after{right:0;border-right:0}
   .bi.intro{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:40px;row-gap:6px;align-items:start}
@@ -762,12 +771,12 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     <section class="sec" aria-labelledby="ev-h">
       <header class="sh">
         <h2 id="ev-h">NeuroSync</h2>
-        <p>The Center’s seminar series. Talks are on Wednesdays from 2:30 to 3:30 p.m. Refreshments are provided, and every member is welcome.</p>
+        <p>The Center’s seminar series. Talks are on Wednesdays from 2:30 to 3:30 p.m. in Leadership Room 127. Refreshments are provided, and every member is welcome.</p>
       </header>
       <div class="ns-feat" data-unless="quiet">
             <div class="spk-main">
               <div class="portrait" role="img" aria-label="Portrait of Dr. Priya Raman, to come"><span class="pl">Portrait to come</span><span class="ini">PR</span></div>
-              <p class="poster"><span class="p-lab">This week at NeuroSync</span><span class="p-day">Wednesday</span><span class="p-num num">18</span><span class="p-mon">November</span><span class="p-time">2:30 to 3:30 p.m. · Room to be announced<br>Refreshments provided</span></p>
+              <p class="poster"><span class="p-lab">This week at NeuroSync</span><span class="p-day">Wednesday</span><span class="p-num num">18</span><span class="p-mon">November</span><span class="p-time">2:30 to 3:30 p.m. · Leadership Room 127<br>Refreshments provided</span></p>
               <div class="spk-txt">
                 <p class="eyebrow">NeuroSync talk</p>
                 <h3><a href="#">Memory consolidation during sleep</a></h3>
@@ -775,7 +784,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
                 <p class="meta">Department of Psychological Sciences</p>
                 <p class="bio">Studies how slow waves and sleep spindles decide which memories last, in younger and older adults.</p>
                 <div class="chips"><span class="chip you">Sleep</span><span class="chip you">Memory consolidation</span><span class="chip">Aging</span></div>
-                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px"><a class="btn" href="#">Add to my calendar</a><a class="btn" href="#" style="border-color:transparent;background:transparent;color:var(--purple)">Speaker profile</a></div>
+                <div class="spk-act"><a class="btn" href="#">Add to my calendar</a><a class="btn" href="#" style="border-color:transparent;background:transparent;color:var(--purple)">Speaker profile</a></div>
               </div>
             </div>
       </div>
