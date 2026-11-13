@@ -381,6 +381,22 @@ section .lineup li{width:20%}
 .otp-act .plus::before,.otp-act .plus::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:1.6px;margin:-.8px 0 0 -5px;background:currentColor;border-radius:1px}
 .otp-act .plus::after{transform:rotate(90deg)}
 .talk-sub{font-size:15px;line-height:22px;color:var(--ink-2);margin:-2px 0 12px}
+.news-sheet{margin-top:32px;padding-block:40px 36px}
+.news-sheet .news{margin-top:0;border-top:0;padding-top:0}
+.news-sheet .news h3{font:500 34px/40px var(--serif);letter-spacing:-.015em;margin-bottom:24px}
+.news-sheet .news ul{margin-top:0}
+.news-sheet .news a{display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:18px;align-items:start;padding-block:4px}
+.nw-date{display:flex;flex-direction:column}
+.nw-num{font:400 44px/1 var(--serif);letter-spacing:-.02em;color:var(--purple-ink)}
+.nw-mon{font-size:13px;line-height:18px;color:var(--muted);margin-top:6px}
+.nw-body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.news-sheet .news b{font:500 21px/28px var(--serif);letter-spacing:-.005em;text-wrap:pretty}
+.nw-sum{font-size:15px;line-height:23px;color:var(--ink-2)}
+.pw{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:12px 24px;flex-wrap:wrap}
+.pw-h{font-size:15px;line-height:22px;font-weight:600;color:var(--ink)}
+.pw ul{display:flex;flex-wrap:wrap;gap:8px}
+.pw a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:var(--mint);color:var(--ink);font-size:14px;font-weight:500;text-decoration:none}
+.pw a:hover{background:#d6e8e3;text-decoration:underline}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -677,6 +693,9 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   .yr{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:640px){
+  .news-sheet .news h3{font-size:28px;line-height:34px}
+  .news-sheet .news ul{row-gap:22px}
+  .news-sheet{padding-block:28px}
   .opp-hd{display:none}
   .ach > a.ach-lead b{font-size:23px;line-height:30px}
   .ach > a.ach-lead{grid-template-columns:52px minmax(0,1fr);column-gap:14px}
@@ -1114,13 +1133,19 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
           </nav>
           <div class="consult"><p>Talk through a draft, one on one, with the Assistant Director for Grants and Contracts.</p><a class="btn" href="#">Book a time</a></div>
         </aside>
+      </div>
+      <div class="sheet news-sheet">
         <div class="news">
-            <h3>Funding news</h3>
-            <ul>
-              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 11</span> · K-State Research Weekly</span><b>New budget forms for spring proposals</b></a></li>
-              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 6</span> · National Institutes of Health</span><b>Biosketch format changes start in January</b></a></li>
-              <li><a href="#"><span class="meta num"><span style="white-space:nowrap">November 3</span> · CNAP</span><b>Pre-submission review funds are open</b></a></li>
-            </ul>
+          <h3>Funding news</h3>
+          <ul>
+<li><a href="#"><span class="nw-date"><span class="nw-num num">11</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">K-State Research Weekly</span><b>New budget forms for spring proposals</b><span class="nw-sum">Use the new forms for proposals routed after January 1.</span></span></a></li>
+<li><a href="#"><span class="nw-date"><span class="nw-num num">6</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">National Institutes of Health</span><b>Biosketch format changes start in January</b><span class="nw-sum">What changes, and where to find the updated template.</span></span></a></li>
+<li><a href="#"><span class="nw-date"><span class="nw-num num">3</span><span class="nw-mon">November</span></span><span class="nw-body"><span class="eyebrow">CNAP</span><b>Pre-submission review funds are open</b><span class="nw-sum">Support for an outside reviewer before you submit.</span></span></a></li>
+          </ul>
+        </div>
+        <div class="pw">
+          <p class="pw-h">Proposal writing resources</p>
+          <ul><li><a href="#">Specific Aims guide</a></li><li><a href="#">Biosketch template</a></li><li><a href="#">Budget justification</a></li><li><a href="#">Letters of support</a></li><li><a href="#">Internal review timeline</a></li><li><a href="#">Data management plan</a></li></ul>
         </div>
       </div>
       <footer class="sf"><a class="btn" href="#">All funding</a><p class="meta">Eligibility is confirmed with each sponsor.</p></footer>
