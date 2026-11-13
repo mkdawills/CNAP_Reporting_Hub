@@ -84,10 +84,10 @@ img{max-width:100%;display:block}
 
 /* greeting moment: one quiet line, with nerve-fiber curves that draw in once and then stay still */
 .greet{position:relative;overflow:hidden;background:var(--greet-bg,var(--paper));border-bottom:1px solid var(--line)}
-.greet .wrap{position:relative;z-index:1;padding-top:84px;padding-bottom:84px}
+.greet .wrap{position:relative;z-index:1;padding-top:136px;padding-bottom:128px}
 .greet .when{font-size:15px;line-height:22px;color:var(--greet-muted,var(--muted))}
-.greet h1{font:400 clamp(44px,6.2vw,88px)/1.04 var(--serif);letter-spacing:-.025em;margin-top:14px;color:var(--greet-ink,var(--ink));text-wrap:balance}
-.greet .line{margin-top:20px;font-size:18px;line-height:28px;color:var(--greet-muted,var(--ink-2));max-width:58ch}
+.greet h1{font:400 clamp(46px,7.4vw,112px)/1.02 var(--serif);letter-spacing:-.03em;margin-top:22px;color:var(--greet-ink,var(--ink));text-wrap:balance}
+.greet .line{margin-top:32px;font-size:20px;line-height:34px;color:var(--greet-muted,var(--ink-2));max-width:none}
 .fibers{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 30%,#000 60%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.35) 30%,#000 60%)}
 .fibers path{fill:none;stroke:var(--fiber,var(--purple));stroke-linecap:round}
 .fibers circle{fill:var(--fiber,var(--purple))}
@@ -113,7 +113,7 @@ img{max-width:100%;display:block}
 .motion:hover{color:var(--greet-ink);border-color:var(--greet-muted)}
 .motion:focus-visible{outline:2px solid var(--greet-ink);outline-offset:3px}
 .motion svg{width:14px;height:14px;fill:currentColor}
-.term{margin-top:32px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;font-size:15px;line-height:22px;color:var(--greet-muted)}
+.term{margin-top:48px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;font-size:15px;line-height:22px;color:var(--greet-muted)}
 .weeks{display:flex;align-items:center;gap:4px}
 .weeks i{display:block;width:12px;height:4px;border-radius:2px;background:var(--tick)}
 .weeks i.past{background:var(--tick-past)}
@@ -620,8 +620,8 @@ details.wel{flex:1 1 520px;min-width:0}
 .tk-you{align-self:flex-start;margin-top:2px;padding:3px 10px;border-radius:999px;background:#e3f1f1;color:var(--teal);font-size:13px;line-height:17px;font-weight:600}
 .tk-r{display:flex;flex-direction:column;gap:2px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
 .tk-r a{display:flex;align-items:center;min-height:32px;font-size:14px;line-height:20px;font-weight:500;color:var(--purple);text-decoration:underline;text-decoration-color:rgba(81,40,136,.3);text-underline-offset:3px}
-.tk-s.now{padding-inline:14px;margin-inline:-14px;padding-bottom:14px;border-radius:8px;background:linear-gradient(180deg,rgba(227,241,241,.9),rgba(227,241,241,0) 85%)}
-.tk-s.now .tk-n{left:14px}
+.tk-s.now{padding-inline:8px;margin-inline:-8px;padding-bottom:14px;border-radius:8px;background:linear-gradient(180deg,rgba(227,241,241,.9),rgba(227,241,241,0) 85%)}
+.tk-s.now .tk-n{left:8px}
 @media (max-width:1180px){
   .tk{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:36px}
   .tk::before,.tk::after{display:none}
@@ -636,6 +636,18 @@ details.wel{flex:1 1 520px;min-width:0}
   .tk-s.now .tk-n{left:8px}
 }
 .cal-panel .sh{padding-bottom:28px;margin-bottom:28px;border-bottom:1px solid rgba(255,255,255,.2)}
+@media (max-width:1180px){.sparks{display:none}}
+.otp-h{font:500 21px/26px var(--serif)!important;letter-spacing:-.01em;color:var(--ink)!important;padding-bottom:14px!important;margin-bottom:4px!important}
+.otp ol{position:relative;padding-left:2px}
+.otp-track{position:absolute;left:23px;width:1px;background:var(--line-2);top:var(--tt,0);height:var(--th,0)}
+.otp-fill{position:absolute;left:-.5px;top:0;width:2px;height:var(--tf,0);background:linear-gradient(var(--purple),#7c55b8);border-radius:2px;transition:height .4s cubic-bezier(.2,.7,.2,1)}
+.otp-g{padding:14px 0 4px 18px;font-size:13px;line-height:18px;font-weight:600;letter-spacing:.01em;color:var(--muted)}
+.otp-g:first-child{padding-top:6px}
+.otp ol a{padding:6px 0 6px 18px!important;font-size:14px;line-height:20px;color:var(--ink-2);transition:color .2s}
+.otp ol a::before{top:13px!important;width:7px!important;height:7px!important;left:-1px!important;background:var(--surface)!important;border:1.5px solid var(--line-2)!important;transition:all .25s}
+.otp ol a.seen::before{border-color:var(--purple)!important}
+.otp ol a[aria-current="true"]{font:500 17px/22px var(--serif);color:var(--purple-ink);font-weight:500}
+.otp ol a[aria-current="true"]::before{background:var(--purple)!important;border-color:var(--purple)!important;box-shadow:0 0 0 4px rgba(81,40,136,.14)}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -964,7 +976,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .hdr .wrap{min-height:60px;gap:10px}
   .brand small{display:none}
   .search,.mywork{display:none}
-  .greet .wrap{padding-top:36px;padding-bottom:40px}
+  .greet .wrap{padding-top:64px;padding-bottom:64px}
   .mine .brief{margin-top:20px;margin-inline:-8px;padding-inline:20px;border-radius:6px}
   .greet h1{font-size:clamp(40px,11.6vw,48px);line-height:1.06}
   .motion{bottom:auto;top:10px;right:max(12px,env(safe-area-inset-right,0px));width:44px;padding:0;justify-content:center}
@@ -1111,7 +1123,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing resources</a></li><li><a href="#com-h" data-t="com-h">Community</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
+<nav class="otp" aria-label="Your homepage"><p class="otp-h">Your homepage</p><div class="otp-track" aria-hidden="true"><span class="otp-fill"></span></div><ol><li class="otp-g" aria-hidden="true">Today</li><li><a href="#wk" data-t="wk">Your week</a></li><li class="otp-g" aria-hidden="true">At the Center</li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li class="otp-g" aria-hidden="true">Funding</li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#news-h" data-t="news-h">Funding news</a></li><li><a href="#pw-h" data-t="pw-h">Proposal writing toolkit</a></li><li class="otp-g" aria-hidden="true">People</li><li><a href="#com-h" data-t="com-h">Community</a></li></ol><a class="otp-act" href="#"><span class="plus" aria-hidden="true"></span>Start a conversation thread</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
@@ -1126,9 +1138,8 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         <circle class="node" cx="980" cy="140" r="3.2"/><circle class="node" cx="1120" cy="190" r="2.6"/><circle class="node" cx="1200" cy="118" r="2.4"/><circle class="node" cx="1040" cy="230" r="2"/>
       </g>
       <g class="sparks">
-      <g opacity="0"><circle class="halo" r="9"/><circle r="2.4"/><animateMotion dur="9s" begin="3s" repeatCount="indefinite" keyPoints=".5;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#f1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.82;1" dur="9s" begin="3s" repeatCount="indefinite"/></g>
-      <g opacity="0"><circle class="halo" r="9"/><circle r="2.4"/><animateMotion dur="12s" begin="5.5s" repeatCount="indefinite" keyPoints=".5;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#f2"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.82;1" dur="12s" begin="5.5s" repeatCount="indefinite"/></g>
-      <g opacity="0"><circle class="halo" r="9"/><circle r="2.4"/><animateMotion dur="10s" begin="8s" repeatCount="indefinite" keyPoints=".5;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#f5"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.82;1" dur="10s" begin="8s" repeatCount="indefinite"/></g>
+      <g opacity="0"><circle class="halo" r="9"/><circle r="2.4"/><animateMotion dur="12s" begin="5.5s" repeatCount="indefinite" keyPoints=".78;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#f2"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.82;1" dur="12s" begin="5.5s" repeatCount="indefinite"/></g>
+      <g opacity="0"><circle class="halo" r="9"/><circle r="2.4"/><animateMotion dur="10s" begin="8s" repeatCount="indefinite" keyPoints=".78;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#f5"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.12;.82;1" dur="10s" begin="8s" repeatCount="indefinite"/></g>
       </g>
     </svg>
     <button type="button" class="motion" aria-pressed="false"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="3" y="2" width="3" height="10" rx="1"/><rect x="8" y="2" width="3" height="10" rx="1"/></svg><span>Pause motion</span></button>
@@ -1136,13 +1147,13 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       <p class="when" id="when">Friday, November 13 · Grant Year 10</p>
       <h1 id="hi" data-unless="returning"><span id="tod">Good morning</span>, Amara.</h1>
       <h1 data-when="returning" hidden>Welcome back, Amara.</h1>
-      <p class="line" data-unless="clear quiet urgent roles admin sparse returning"><a href="#wk">Fall reporting closes in 17 days</a>. On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who studies sleep and memory</a>, as you do.</p>
+      <p class="line" data-unless="clear quiet urgent roles admin sparse returning"><a href="#wk">Fall reporting closes in 17 days</a>.<br>On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who studies sleep and memory</a>, as you do.</p>
       <p class="line" data-when="urgent" hidden>Two deadlines are close: <a href="#wk">Fall reporting closes Monday</a>, and <a href="#wk">your NIH documents are due Thursday</a>.</p>
-      <p class="line" data-when="clear" hidden><a href="#wk">Your Fall reporting is complete</a>. On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who studies sleep and memory</a>, as you do.</p>
-      <p class="line" data-when="quiet" hidden><a href="#wk">Fall reporting closes in 17 days</a>. <a href="#ev-h">NeuroSync takes a week off and returns on December 2</a>.</p>
+      <p class="line" data-when="clear" hidden><a href="#wk">Your Fall reporting is complete</a>.<br>On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who studies sleep and memory</a>, as you do.</p>
+      <p class="line" data-when="quiet" hidden><a href="#wk">Fall reporting closes in 17 days</a>.<br><a href="#ev-h">NeuroSync takes a week off and returns on December 2</a>.</p>
       <p class="line" data-when="roles" hidden>Across your five roles, one deadline is coming: <a href="#wk">Fall reporting closes in 17 days</a>.</p>
       <p class="line" data-when="admin" hidden><a href="#">38 of 61 members have submitted their Fall reports</a>, and your own are done.</p>
-      <p class="line" data-when="sparse" hidden><a href="#wk">Fall reporting closes in 17 days</a>. <a href="#">Add your research interests</a>, and the CNAP team will start picking funding for you.</p>
+      <p class="line" data-when="sparse" hidden><a href="#wk">Fall reporting closes in 17 days</a>.<br><a href="#">Add your research interests</a>, and the CNAP team will start picking funding for you.</p>
       <p class="line" data-when="returning" hidden>Since your last visit on October 2, <a href="#res-h">three papers citing CNAP were published</a>, and <a href="#fund-h">a funding match was added for you</a>.</p>
       <div class="term"><span>Week 12 of the fall semester</span><span class="weeks" aria-hidden="true"><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="past"></i><i class="now"></i><i></i><i class="brk"></i><i></i><i></i><i></i></span><a class="term-a" href="#cal-h">Fall break begins in 9 days</a></div>
     </div>
@@ -1412,7 +1423,7 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
         </div>
       </div>
       <div class="sheet tk-sheet">
-        <div class="tk-head"><div><h3 class="pw-h" id="pw-h">Proposal writing toolkit</h3><p class="tk-lead">Your <b>R21 is due in 123 days.</b> Most people are drafting their Specific Aims by now, so stage 3 is highlighted below.</p></div><a class="t3" href="#">All proposal writing resources</a></div>
+        <div class="tk-head"><div><h3 class="pw-h" id="pw-h">Proposal writing toolkit</h3><p class="tk-lead">Your <b>R21 is due in 123 days.</b> Your colleagues and fellow applicants may be writing their Specific Aims at this time, so stage 3 is highlighted below.</p></div><a class="t3" href="#">All proposal writing resources</a></div>
         <ol class="tk"><li class="tk-s"><span class="tk-n num">1</span><h4>Find funding</h4><p class="tk-d">Sponsors, searches, and eligibility</p><ul class="tk-r"><li><a href="#">Funding search guide</a></li><li><a href="#">Eligibility checklist</a></li></ul></li><li class="tk-s"><span class="tk-n num">2</span><h4>Plan the proposal</h4><p class="tk-d">Timelines, aims, and internal review</p><ul class="tk-r"><li><a href="#">Internal review timeline</a></li><li><a href="#">Proposal planning calendar</a></li></ul></li><li class="tk-s now" aria-current="step"><span class="tk-n num">3</span><h4>Write a competitive application</h4><p class="tk-d">Specific Aims, approach, and significance</p><p class="tk-you">You are here</p><ul class="tk-r"><li><a href="#">Specific Aims guide</a></li><li><a href="#">Example aims from funded CNAP pilots</a></li></ul></li><li class="tk-s"><span class="tk-n num">4</span><h4>Prepare NIH documents</h4><p class="tk-d">Biosketch, Other Support, and budget</p><ul class="tk-r"><li><a href="#">Biosketch template</a></li><li><a href="#">Budget justification</a></li><li><a href="#">Letters of support</a></li><li><a href="#">Data management plan</a></li></ul></li><li class="tk-s"><span class="tk-n num">5</span><h4>Respond to reviews</h4><p class="tk-d">Summary statements and resubmission</p><ul class="tk-r"><li><a href="#">Reading a summary statement</a></li><li><a href="#">Introduction to a resubmission</a></li></ul></li><li class="tk-s"><span class="tk-n num">6</span><h4>Manage the award</h4><p class="tk-d">Progress reports and closeout</p><ul class="tk-r"><li><a href="#">Progress report template</a></li><li><a href="#">Closeout checklist</a></li></ul></li></ol>
       </div>
       <footer class="sf"><a class="btn" href="#">All funding</a></footer>
@@ -1565,9 +1576,11 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   document.querySelectorAll('.cf').forEach(function(b){b.addEventListener('click',function(){var v=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',v);on[b.dataset.k]=v?1:0;render(false);});});
   render(false);
 
-  try{var otp=document.querySelector('.otp'),links=[].slice.call(otp.querySelectorAll('a'));
+  try{var otp=document.querySelector('.otp'),links=[].slice.call(otp.querySelectorAll('ol a'));
     
-    function spy(){var cur=links[0];links.forEach(function(a){var h=document.getElementById(a.dataset.t);if(h&&h.getBoundingClientRect().top<innerHeight*0.35)cur=a;});links.forEach(function(a){a.setAttribute('aria-current',a===cur);});}
+    var tr=otp.querySelector('.otp-track'),olx=otp.querySelector('ol');
+    function spy(){var cur=links[0],ci=0;links.forEach(function(a,i){var h=document.getElementById(a.dataset.t);if(h&&h.getBoundingClientRect().top<innerHeight*0.35){cur=a;ci=i;}});links.forEach(function(a,i){a.setAttribute('aria-current',a===cur);a.classList.toggle('seen',i<ci);});
+      try{var o=otp.getBoundingClientRect(),f=links[0].getBoundingClientRect(),l=links[links.length-1].getBoundingClientRect(),c=cur.getBoundingClientRect();var top=f.top-o.top+16,end=l.top-o.top+16;tr.style.setProperty('--tt',top+'px');tr.style.setProperty('--th',(end-top)+'px');tr.style.setProperty('--tf',(c.top-o.top+16-top)+'px');}catch(e){}}
     var gr=document.querySelector('.greet');function place(){otp.style.top=Math.max(124,Math.round(gr.getBoundingClientRect().bottom+48))+'px';}
     addEventListener('scroll',function(){place();clearTimeout(otp._t);otp._t=setTimeout(spy,60);},{passive:true});addEventListener('resize',place);place();spy();}catch(e){}
 
