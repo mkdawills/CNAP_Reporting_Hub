@@ -138,7 +138,7 @@ def request_link(email, ip=None):
         return None
     url = make_link(person, email, "request")
     _send(
-        subject="Your CNAP Reporting Hub sign-in link",
+        subject="Your CNAP Member Hub sign-in link",
         message=render_to_string(
             "email/signin_link.txt",
             {"person": person, "url": url, "days": LINK_DAYS, "site": settings.SITE_URL},
@@ -235,7 +235,7 @@ def send_code(person, email=None):
         expires_at=now + timedelta(minutes=CODE_MINUTES),
     )
     _send(
-        subject=f"Your CNAP Reporting Hub code: {code}",
+        subject=f"Your CNAP Member Hub code: {code}",
         message=render_to_string(
             "email/signin_code.txt", {"person": person, "code": code, "minutes": CODE_MINUTES}
         ),

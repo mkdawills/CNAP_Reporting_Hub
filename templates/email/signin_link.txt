@@ -1,6 +1,6 @@
 {% autoescape off %}Hello {{ person.first_name }},
 
-Here is your link to the CNAP Reporting Hub:
+Here is your link to the CNAP Member Hub:
 
 {{ url }}
 

@@ -102,9 +102,9 @@ def send(actor=None, now=None, dry_run=False):
         )
         if not dry_run:
             EmailMessage(
-                subject=f"Please update {len(lines)} publication{'s' if len(lines) != 1 else ''} or grant{'s' if len(lines) != 1 else ''} in the CNAP Reporting Hub"
+                subject=f"Please update {len(lines)} publication{'s' if len(lines) != 1 else ''} or grant{'s' if len(lines) != 1 else ''} in the CNAP Member Hub"
                 if len(lines) > 1
-                else "Please update a publication or grant in the CNAP Reporting Hub",
+                else "Please update a publication or grant in the CNAP Member Hub",
                 body=body,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=[to],

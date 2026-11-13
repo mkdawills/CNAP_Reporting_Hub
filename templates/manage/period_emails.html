@@ -83,7 +83,7 @@
   {% if skipped %}<details class="mt"><summary class="small">Not emailed ({{ skipped|length }})</summary><ul class="small">{% for r in skipped %}<li>{{ r.person }}: {{ r.skip }}</li>{% endfor %}</ul></details>{% endif %}
 </div>
 <details class="panel"><summary class="small"><strong>What the email says</strong></summary>
-  <pre class="small" style="white-space:pre-wrap;font-family:inherit">{% if kind == 'open' %}Subject: CNAP Reporting Hub: your {{ p.name }} reporting session is open
+  <pre class="small" style="white-space:pre-wrap;font-family:inherit">{% if kind == 'open' %}Subject: CNAP Member Hub: your {{ p.name }} reporting session is open
 
 Hello [first name],
 

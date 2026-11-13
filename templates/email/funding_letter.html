@@ -19,7 +19,7 @@
 {% if news %}<p style="margin: 22px 0 8px; font-weight: 600;">Funding news</p>
 <ul style="margin: 0 0 18px; padding-left: 20px;">{% for n in news %}<li style="margin: 0 0 6px;">{{ n.headline }}.</li>{% endfor %}</ul>{% endif %}
 <p style="margin: 0 0 14px;"><a href="{{ url }}" style="display: inline-block; background: #512888; color: #ffffff; text-decoration: none; font-weight: 600; padding: 10px 18px; border-radius: 8px;">Read the full letter</a></p>
-<p style="margin: 0 0 14px; color: #4d4658;">{% if with_link %}The button signs you in to the CNAP Reporting Hub.<br>The link works once and expires in {{ days }} days.<br>You can get a new one any time at {{ site }}/accounts/link/{% else %}Sign in with your K-State eID.{% endif %}<br>The full letter explains each option{% if cofund %} and the IDeA co-funding rules{% endif %}.</p>
+<p style="margin: 0 0 14px; color: #4d4658;">{% if with_link %}The button signs you in to the CNAP Member Hub.<br>The link works once and expires in {{ days }} days.<br>You can get a new one any time at {{ site }}/accounts/link/{% else %}Sign in with your K-State eID.{% endif %}<br>The full letter explains each option{% if cofund %} and the IDeA co-funding rules{% endif %}.</p>
 {% if closing %}<p style="margin: 0 0 14px;">{{ closing|linebreaksbr }}</p>{% endif %}
 <p style="margin: 0;">{{ signoff|linebreaksbr }}</p>
 </div>

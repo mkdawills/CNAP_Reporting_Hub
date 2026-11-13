@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CNAP Member Hub design system</title>
+<style>
+@font-face{font-family:"Inter Hub";src:url("fonts/inter-400.woff") format("woff");font-weight:400;font-display:swap}
+@font-face{font-family:"Inter Hub";src:url("fonts/inter-500.woff") format("woff");font-weight:500;font-display:swap}
+@font-face{font-family:"Inter Hub";src:url("fonts/inter-600.woff") format("woff");font-weight:600;font-display:swap}
+@font-face{font-family:"Lora Hub";src:url("fonts/lora.woff") format("woff");font-weight:400 700;font-display:swap}
+:root{
+  --paper:#faf9f7; --surface:#ffffff; --sunken:#f2efe9; --line:#e4e0d8; --line-2:#d3cdc3;
+  --ink:#1d1b21; --ink-2:#423e48; --muted:#57525e;
+  --purple:#512888; --purple-ink:#3e1f69; --purple-tint:#f2edf8;
+  --teal:#0a6670; --teal-tint:#e4f1f1; --amber:#8a4b00; --amber-tint:#fbf0de;
+  --green:#1d6a4f; --green-tint:#e3f1ea; --red:#a1302a; --red-tint:#f8e7e5;
+  --serif:"Lora Hub",Georgia,serif; --sans:"Inter Hub",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans);font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+a{color:var(--purple);text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--purple);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1360px;margin:0 auto;padding:0 max(40px,env(safe-area-inset-left,0px)) 80px max(40px,env(safe-area-inset-left,0px))}
+.top{padding:48px 0 32px;border-bottom:1px solid var(--line)}
+.top h1{font:400 36px/44px var(--serif)}
+.top p{margin-top:10px;max-width:70ch;color:var(--ink-2)}
+.sec{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;padding:40px 0;border-bottom:1px solid var(--line)}
+.sec>header h2{font:600 22px/28px var(--sans);letter-spacing:-.01em}
+.sec>header p{margin-top:8px;font-size:14px;line-height:21px;color:var(--muted)}
+.meta{font-size:14px;line-height:20px;color:var(--muted)}
+.lab{font-size:13px;line-height:18px;font-weight:500;color:var(--muted)}
+.row{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;align-items:baseline;padding:14px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0;padding-top:0}
+.sw{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.chip{border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.chip i{display:block;height:64px}
+.chip div{padding:10px 12px;background:var(--surface);font-size:13px;line-height:18px}
+.chip b{display:block;font-weight:600;font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:10px;font:500 15px/1 var(--sans);text-decoration:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.pri{background:var(--purple);border-color:var(--purple);color:#fff}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--purple)}
+.btn.sm{min-height:36px;padding:0 14px;font-size:14px;border-radius:8px}
+.btn[disabled]{background:var(--sunken);border-color:var(--line);color:#8a8592;cursor:not-allowed}
+.btn.fake-focus{outline:2px solid var(--purple);outline-offset:3px}
+.btn.hov{background:var(--sunken)}
+.btn.pri.hov{background:var(--purple-ink);border-color:var(--purple-ink)}
+.flex{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.st{display:inline-flex;align-items:center;gap:6px;min-height:26px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap}
+.sample{display:inline-flex;align-items:center;font:500 12px/1 var(--sans);color:var(--muted);border:1px dashed #a9a3b2;border-radius:4px;padding:4px 6px}
+.ty{display:inline-flex;align-items:center;gap:6px;font-size:13px;line-height:18px;font-weight:600}
+.alert{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;padding:14px 16px;border-radius:10px;font-size:15px;line-height:22px}
+.alert b{display:block}
+.panel{border-radius:4px;padding:20px;min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.field{display:flex;flex-direction:column;gap:6px;max-width:420px}
+.field label{font-size:14px;font-weight:600}
+.field .help{font-size:14px;color:var(--muted)}
+.inp{min-height:44px;border:1px solid #8c8694;border-radius:10px;padding:0 14px;font:400 15px/1 var(--sans);background:var(--surface);color:var(--ink)}
+.inp.err{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
+table{width:100%;border-collapse:collapse;font-size:14px;line-height:20px}
+th{text-align:left;font-size:13px;font-weight:600;color:var(--ink-2);padding:10px 12px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid var(--line)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover td{background:#f6f4f0}
+.sk{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--sunken),#ece9e3,var(--sunken))}
+.portrait{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/5;background:linear-gradient(165deg,#e9e3f1 0%,#d9d0e6 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:14px;color:var(--purple-ink)}
+.portrait::before{content:"";position:absolute;left:50%;top:22%;width:46%;aspect-ratio:1;border-radius:999px;transform:translateX(-50%);background:rgba(255,255,255,.45)}
+.portrait::after{content:"";position:absolute;left:50%;top:58%;width:84%;aspect-ratio:1.4;border-radius:50% 50% 0 0;transform:translateX(-50%);background:rgba(255,255,255,.35)}
+.portrait>*{position:relative;z-index:1}
+.ph-tag{position:absolute;left:10px;top:10px;font-size:12px;font-weight:500;color:#fff;background:rgba(20,12,30,.6);padding:5px 8px;border-radius:6px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tabs a{padding:10px 12px;font-size:15px;font-weight:500;color:var(--ink-2);text-decoration:none;box-shadow:inset 0 -2px 0 transparent}
+.tabs a[aria-current]{color:var(--purple);box-shadow:inset 0 -2px 0 var(--purple)}
+.seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--sunken);gap:2px}
+.seg span{min-height:34px;display:flex;align-items:center;padding:0 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--ink-2)}
+.seg span.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(30,28,34,.08)}
+.space{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.space div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.space i{display:block;background:var(--purple-tint);border:1px solid #d9cdea}
+@media (max-width:760px){.sec{grid-template-columns:minmax(0,1fr);gap:20px}.sw,.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}.row{grid-template-columns:minmax(0,1fr);gap:6px}.wrap{padding-left:20px;padding-right:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="lab" style="color:var(--purple)">CNAP Member Hub · Design foundations, Round 4 draft for review</p>
+    <h1>One design family, from the homepage to the audit log</h1>
+    <p>These foundations are meant for every one of the Hub’s screens. The homepage uses them generously, while data tables and long reporting forms use the same tokens more densely.</p>
+  </header>
+
+  <section class="sec" aria-labelledby="t">
+    <header><h2 id="t">Typography</h2><p>One rule decides the family. Lora, the serif the Hub already uses, belongs to the Center’s science and people: story headlines, talk titles, and achievements. Inter belongs to you and your tools: greetings, tasks, navigation, forms, and tables. Reading text is at least 14 pixels, and only type labels and tags use 13.</p></header>
+    <div>
+      <div class="row"><span class="lab">Feature headline<br>Lora 500 · 40/47<br>Over 70 characters: 32/40<br>Phone 28/35</span><span style="font:500 40px/47px var(--serif);letter-spacing:-.015em">What a night of sleep does to a new memory</span></div>
+      <div class="row"><span class="lab">Greeting and page title<br>Inter 600 · 28/34</span><span style="font:600 28px/34px var(--sans);letter-spacing:-.02em">Good morning, Amara.</span></div>
+      <div class="row"><span class="lab">Talk title, achievement<br>Lora 500 · 28/35 and 22/30</span><span style="font:500 28px/35px var(--serif);letter-spacing:-.01em">Memory consolidation during sleep</span></div>
+      <div class="row"><span class="lab">Section heading<br>Inter 600 · 22/28</span><span style="font:600 22px/28px var(--sans);letter-spacing:-.015em">Funding and proposals</span></div>
+      <div class="row"><span class="lab">Content title<br>Inter 600 · 18/25</span><span style="font:600 18px/25px var(--sans)">Early-career award in sleep and cognition</span></div>
+      <div class="row"><span class="lab">Body<br>Inter 400 · 16/26</span><span style="font:400 16px/26px var(--sans);max-width:62ch">A CNAP pilot project is recording brain activity during sleep to learn which memories are kept by morning.</span></div>
+      <div class="row"><span class="lab">Supporting text<br>Inter 400 · 14/21 · muted, 7.2 to 1</span><span class="meta">The CNAP team · November 10, 2026 · 4-minute read</span></div>
+      <div class="row"><span class="lab">Label<br>Inter 600 · 14/20</span><span style="font:600 14px/20px var(--sans);color:var(--purple)">Pilot project · Neurobiology of Learning and Memory</span></div>
+      <div class="row"><span class="lab">Data<br>Inter 400 · 14/20 · tabular</span><span style="font:400 14px/20px var(--sans);font-variant-numeric:tabular-nums">82 days · 124 days · $150,000 · 4 of 6</span></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="c">
+    <header><h2 id="c">Color</h2><p>Warm white, charcoal, and K-State purple. Each accent has one meaning and always comes with a word or an icon. Ratios are text contrast on the warm white page, computed from the values shown.</p></header>
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div class="sw">
+        <div class="chip"><i style="background:#faf9f7"></i><div><b>Paper</b>#FAF9F7 · page</div></div>
+        <div class="chip"><i style="background:#ffffff"></i><div><b>Surface</b>#FFFFFF · panels</div></div>
+        <div class="chip"><i style="background:#f2efe9"></i><div><b>Band</b>#F2EFE9 · your band, photo reel</div></div>
+        <div class="chip"><i style="background:#e4e0d8"></i><div><b>Line</b>#E4E0D8 · dividers</div></div>
+        <div class="chip"><i style="background:#1d1b21"></i><div><b>Charcoal</b>#1D1B21 · text · 16.2 to 1</div></div>
+        <div class="chip"><i style="background:#423e48"></i><div><b>Ink 2</b>#423E48 · body · 9.9 to 1</div></div>
+        <div class="chip"><i style="background:#57525e"></i><div><b>Muted</b>#57525E · metadata · 7.2 to 1</div></div>
+        <div class="chip"><i style="background:#512888"></i><div><b>K-State Purple</b>#512888 · action, Center · 9.9 to 1</div></div>
+      </div>
+      <div class="sw">
+        <div class="chip"><i style="background:#0a6670"></i><div><b>Teal · for you</b>Why something was picked · 6.3 to 1</div></div>
+        <div class="chip"><i style="background:#8a4b00"></i><div><b>Amber · due</b>Deadlines and time left · 6.5 to 1</div></div>
+        <div class="chip"><i style="background:#1d6a4f"></i><div><b>Green · done</b>Submitted, checked · 6.2 to 1</div></div>
+        <div class="chip"><i style="background:#a1302a"></i><div><b>Red · problem</b>Overdue, errors · 6.7 to 1</div></div>
+      </div>
+      <p class="meta">There is one dark surface, used only behind photographs and generated images. Large purple or dark bands are not used for emphasis.</p>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="s">
+    <header><h2 id="s">Spacing and grid</h2><p>A 4-pixel base. Twelve columns with 32-pixel gutters, at most 1,360 pixels wide including 40-pixel margins. One column with 20-pixel margins on phones. Sections are 88 pixels apart on desktop and 56 on phones. Every section opens the same way: a hairline with a short ink accent, a 44-pixel serif title, and one sentence under it. Every section closes the same way: a hairline, one outlined button to the full page, and an optional short note. Links never float in the header. A section’s side panel gets its own ground: mint for proposal help and lilac for conversations. The calendar is its own section, with a raised white month view on the right and the chosen day’s events on the left. Every day is a button, and each event type has its own shape as well as its color.</p></header>
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <div class="space">
+        <div><i style="width:4px;height:4px"></i>4</div><div><i style="width:8px;height:8px"></i>8</div><div><i style="width:12px;height:12px"></i>12</div><div><i style="width:16px;height:16px"></i>16</div><div><i style="width:24px;height:24px"></i>24</div><div><i style="width:32px;height:32px"></i>32</div><div><i style="width:48px;height:48px"></i>48</div><div><i style="width:72px;height:72px"></i>72</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;height:56px">
+        <i style="grid-column:span 7;background:var(--purple-tint);border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:13px;color:var(--purple-ink)">7 columns · story image, speaker, achievements</i>
+        <i style="grid-column:span 5;background:var(--sunken);border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:13px;color:var(--ink-2)">5 columns · story text (column 8 to 12)</i>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;height:56px">
+        <i style="grid-column:span 8;background:var(--purple-tint);border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:13px;color:var(--purple-ink)">8 columns · funding list, tables</i>
+        <i style="grid-column:span 4;background:var(--sunken);border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:13px;color:var(--ink-2)">4 columns · agenda, proposal support, conversations</i>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="d">
+    <header><h2 id="d">Dividers</h2><p>Hairlines do the organizing, not boxes. They line up exactly with the grid, and they’re never purple.</p></header>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div><p class="lab">Section boundary · 1px #E5E1DA, full content width, heading 20 pixels below</p><div style="border-top:1px solid var(--line);padding-top:20px;margin-top:8px;font:600 22px/28px var(--sans)">Coming up</div></div>
+      <div><p class="lab">List rows · 1px #E5E1DA between items, 16 pixels of space</p>
+        <div style="margin-top:8px"><div style="padding:12px 0;border-top:1px solid var(--line)">New budget forms for spring proposals</div><div style="padding:12px 0;border-top:1px solid var(--line)">Biosketch format changes start in January</div></div></div>
+      <div><p class="lab">Table header · 1px #D5D0C7, the one stronger line</p><div style="border-bottom:1px solid var(--line-2);padding:8px 0;margin-top:8px;font-size:13px;font-weight:600;color:var(--ink-2)">Item · Mean · Standard deviation</div></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="b">
+    <header><h2 id="b">Buttons and links</h2><p>One primary action per area. Every control is at least 44 pixels tall where it stands alone. Focus is a 2-pixel purple ring with space around it.</p></header>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="flex"><span class="btn pri">Continue</span><span class="btn pri hov">Continue · hover</span><span class="btn pri fake-focus">Continue · focus</span></div>
+      <div class="flex"><span class="btn">Add to my calendar</span><span class="btn hov">Hover</span><span class="btn fake-focus">Focus</span><span class="btn" disabled aria-disabled="true" style="background:var(--sunken);border-color:var(--line);color:#6f6a77">Not available yet</span></div>
+      <p class="meta" style="max-width:70ch">Three levels, chosen by importance, not by section. Primary, filled purple: the one required or time-critical action in an area, such as Continue reporting. Secondary, outlined: a useful action the member chooses, such as Review the match. Tertiary, an underlined link: going somewhere to read more, such as Read the request. Every standalone action is 44 pixels tall, so actions in a row share one baseline.</p>
+      <div class="flex"><span class="btn quiet">Read the biography</span><span class="btn sm pri">Book a time</span><span class="btn sm">Small secondary</span><a href="#" style="font-weight:500;text-decoration:none">Text link</a><a href="#" style="font-weight:500">Text link · hover</a></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="n">
+    <header><h2 id="n">Navigation</h2><p>Global navigation never changes between roles. Contextual navigation sits inside a page. Administrators get one more link in the header, in the same place every time.</p></header>
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div><p class="lab" style="margin-bottom:8px">Global · six destinations, search, My work, and the profile menu. The dashed Administration link appears only for administrators.</p>
+        <div style="display:flex;align-items:center;gap:24px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 16px;min-height:60px;flex-wrap:wrap">
+          <b style="font-weight:600">CNAP Member Hub</b>
+          <span style="display:flex;gap:16px;font-size:15px;font-weight:500;color:var(--ink-2)"><span style="color:var(--purple);box-shadow:inset 0 -2px 0 var(--purple);padding:18px 0">Home</span><span style="padding:18px 0">Research</span><span style="padding:18px 0">Funding</span><span style="padding:18px 0">Events</span><span style="padding:18px 0">Community</span><span style="padding:18px 0">Resources</span></span>
+          <span style="margin-left:auto;display:flex;gap:10px;align-items:center;font-size:14px"><span style="padding:8px 12px;border-radius:10px;background:var(--sunken);color:var(--muted)">Search CNAP</span><span style="padding:8px 12px;border-radius:10px;border:1px solid var(--line-2)">My work 4</span><span style="padding:8px 12px;border-radius:10px;border:1px dashed var(--line-2);color:var(--ink-2)">Administration</span></span>
+        </div></div>
+      <div><p class="lab" style="margin-bottom:8px">Contextual · tabs within a section, such as Funding</p><nav class="tabs" aria-label="Example tabs"><a href="#" aria-current="page">Picked for you</a><a href="#">All opportunities</a><a href="#">News</a><a href="#">Suggest an opportunity</a></nav></div>
+      <div class="flex"><div><p class="lab" style="margin-bottom:8px">Filter within a list</p><div class="seg"><span class="on">For you</span><span>All of CNAP</span></div></div>
+      <div><p class="lab" style="margin-bottom:8px">Location in deep pages</p><p class="meta">Funding / All opportunities / <span style="color:var(--ink)">Early-career award in sleep and cognition</span></p></div></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="rs">
+    <header><h2 id="rs">Breakpoints, motion, and the gallery</h2><p>Four layouts, tested at 1440, 1280, 1024, 768, 390, 360, and 320 pixels. Nothing scrolls sideways at any of them.</p></header>
+    <div style="display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:14px 28px;max-width:860px">
+      <p class="lab">Above 1,180</p><p class="meta">Full header with six destinations. “Your week” is four columns, with the intro beside the items.</p>
+      <p class="lab">981 to 1,180</p><p class="meta">Search becomes an icon. The “Your week” intro becomes a header row above three item columns, so no column is narrower than 280 pixels.</p>
+      <p class="lab">980 and below</p><p class="meta">The bottom tab bar replaces the header links, so there’s always primary navigation. The page reserves 64 pixels plus the device’s safe area under the content, and scrolling to a focused element leaves 84 pixels clear above the bar. “Your week” becomes a list: the most urgent item opens in full, and the rest show a marker and a title on one tap target with a chevron.</p>
+      <p class="lab">640 and below</p><p class="meta">One column with 20-pixel margins. Lower sections show their two most useful items, with a link to the rest.</p>
+      <p class="lab">Motion</p><p class="meta">On an aubergine ground, the greeting’s words come into focus one at a time and the pathway lines draw in once. Then a few signals travel slowly along the right half of the pathways, never behind text. A Pause motion button stops everything, and with reduced motion turned on, the greeting appears still and the signals never start. Hovers change color and outline only, except a 2 percent zoom on gallery photographs.</p>
+      <p class="lab">Greeting</p><p class="meta">The greeting scales with the screen, from 88 pixels on desktop to 42 on small phones. Under it, one line gives the week of the semester and the days until the next break, from the K-State academic calendar. “Your week” sits on white below it.</p>
+      <p class="lab">Gallery</p><p class="meta">One lead photograph across eight columns at 3 to 2, and two supporting photographs stacked in four columns. On phones, the lead runs edge to edge at 4 to 3 and the two supporting photographs sit side by side as squares. Nothing plays on its own, every photograph is a link with its caption as the name, and placeholders stay labeled until a permitted photograph replaces them.</p>
+      <p class="lab">Type floor</p><p class="meta">Reading text is at least 14 pixels. Tags, tab labels, initials, and counts use 13. Nothing is smaller.</p>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="st">
+    <header><h2 id="st">Status and type markers</h2><p>Every status pairs a color with a word, and type markers add an icon. Nothing depends on color alone.</p></header>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div><p class="lab" style="margin-bottom:8px">Reporting</p><div class="flex">
+        <span class="st" style="background:var(--sunken);color:var(--ink-2)">Not started</span>
+        <span class="st" style="background:var(--purple-tint);color:var(--purple)">In progress</span>
+        <span class="st" style="background:var(--amber-tint);color:var(--amber)">Due in 3 days</span>
+        <span class="st" style="background:var(--red-tint);color:var(--red)">Overdue</span>
+        <span class="st" style="background:var(--green-tint);color:var(--green)">Submitted</span>
+        <span class="st" style="background:var(--sunken);color:var(--ink-2)">Opted out</span></div></div>
+      <div><p class="lab" style="margin-bottom:8px">Content trust</p><div class="flex">
+        <span class="st" style="background:var(--green-tint);color:var(--green)">Checked November 9</span>
+        <span class="sample">Example</span><span class="sample">Sample</span>
+        <span class="st" style="background:var(--sunken);color:var(--muted);text-decoration:line-through">Closed October 1</span>
+        <span class="st" style="background:var(--teal-tint);color:var(--teal)">Picked for you</span>
+        <span class="st" style="background:var(--sunken);color:var(--ink-2)">Only you see this</span></div></div>
+      <div><p class="lab" style="margin-bottom:8px">Event types</p><div class="flex" style="gap:22px">
+        <span class="ty" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4.8" y="1" width="4.4" height="7" rx="2.2"/><path d="M2.6 6.5a4.4 4.4 0 008.8 0M7 11v2"/></svg>NeuroSync</span>
+        <span class="ty" style="color:var(--purple)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 1.5l5.5 5.5L7 12.5 1.5 7z"/></svg>Center event</span>
+        <span class="ty" style="color:var(--teal)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="4.5" r="2.5"/><path d="M2 13c.8-2.8 2.7-4 5-4s4.2 1.2 5 4"/></svg>Your meeting</span>
+        <span class="ty" style="color:var(--amber)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 12.5V1.5M3 2h7.5l-1.6 2.6L10.5 7.2H3"/></svg>Deadline</span>
+        <span class="ty" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1.5 12.5h11M2.5 12.5V6L7 3l4.5 3v6.5M5.5 12.5v-3h3v3"/></svg>Campus</span>
+        <span class="ty" style="color:var(--ink-2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 1.5v11M1.5 7h11"/></svg>Professional development</span></div></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="al">
+    <header><h2 id="al">Alerts</h2><p>Short, specific, and in the interface’s voice. The headline says what happened, and the next line says what to do.</p></header>
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:720px">
+      <div class="alert" style="background:var(--purple-tint);color:var(--purple-ink)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="9" cy="9" r="7.5"/><path d="M9 8v5M9 5.5v.1"/></svg><p><b>The Year 10 Fall reporting session is open.</b>Your answers are saved as you go.</p></div>
+      <div class="alert" style="background:var(--green-tint);color:var(--green)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9.5l3.2 3.2L14 5.5"/></svg><p><b>Submitted.</b>The Neuroinformatics Core survey is in. Three are left.</p></div>
+      <div class="alert" style="background:var(--amber-tint);color:var(--amber)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 2l7.5 13h-15z"/><path d="M9 7.5v3.5M9 13.2v.1"/></svg><p><b>This opportunity was last checked 140 days ago.</b>Confirm the deadline on the sponsor’s page before you plan around it.</p></div>
+      <div class="alert" style="background:var(--red-tint);color:var(--red)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="9" cy="9" r="7.5"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5"/></svg><p><b>The file didn’t upload.</b>Biosketches must be PDF files under 10 megabytes.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="cp">
+    <header><h2 id="cp">Bands, lists, and cards</h2><p>Lists with hairlines are the default. The warm band marks two places only: your own items at the top, and the photo reel. Cards are kept for objects people compare side by side. Images, bands, and panels share one 4-pixel corner. Numbers mark only real sequences, such as the six stages of a proposal.</p></header>
+    <div class="grid3">
+      <div class="panel" style="background:var(--surface);border:1px solid var(--line)"><p class="lab">Panel</p><p style="font-weight:600;margin-top:6px">Talk through a draft</p><p class="meta" style="margin-top:4px">A single service or tool, at most one per section.</p></div>
+      <div class="panel" style="background:var(--sunken)"><p class="lab">Warm band</p><p style="font-weight:600;margin-top:6px">Your week · Site Visit photos</p><p class="meta" style="margin-top:4px">Full width, hairlines above and below, twice per page at most.</p></div>
+      <div class="panel" style="padding:0"><p class="lab" style="padding-bottom:6px">List, the default</p><div style="padding:10px 0;border-top:1px solid var(--line);font-weight:500">Find funding</div><div style="padding:10px 0;border-top:1px solid var(--line);font-weight:500">Plan a proposal</div></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="im">
+    <header><h2 id="im">Image treatments</h2><p>Every image says what it is. Generated art is labeled as an illustration. Placeholders are labeled until a real, permitted photograph replaces them. Portraits share one frame and ratio.</p></header>
+    <div class="grid3" style="align-items:start">
+      <div><div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:2/1;background:#1a1024"><img src="img/neurons.jpg" alt="Generated illustration of branching neurons" style="width:100%;height:100%;object-fit:cover"><span class="ph-tag" style="top:auto;bottom:10px">Illustration, not research data</span></div><p class="meta" style="margin-top:8px">Story image · 2 to 1 · rounded 14</p></div>
+      <div><div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:3/2;background:#2a2230"><img src="img/reel-1.jpg" alt="Placeholder: out-of-focus lights" style="width:100%;height:100%;object-fit:cover"><span class="ph-tag">Photo placeholder</span></div><p class="meta" style="margin-top:8px">Photo reel · 3 to 2, 3 to 4, and 9 to 8 at one height</p></div>
+      <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:end"><div class="portrait"><span style="font:500 32px/1 var(--serif)">PR</span><span style="font-size:12px;font-weight:500;margin-top:6px">Portrait to come</span></div><p class="meta">Portrait · 4 to 5 · same crop for every speaker · initials until a photo is approved</p></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="fo">
+    <header><h2 id="fo">Forms and tables</h2><p>The same type and lines, set denser. Labels sit above fields, help text sits below the label, and errors say how to fix the problem. Field borders are darker than dividers so a field’s edge meets the 3 to 1 contrast rule.</p></header>
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <div class="flex" style="align-items:flex-start;gap:28px">
+        <div class="field"><label for="f1">Title of the talk</label><span class="help">As it appeared in the program.</span><input id="f1" class="inp" value="Memory consolidation during sleep"></div>
+        <div class="field"><label for="f2">Date of the talk</label><span class="help">Month, day, and year.</span><input id="f2" class="inp err" value="November 31, 2026" aria-invalid="true" aria-describedby="f2e"><span id="f2e" style="font-size:14px;color:var(--red);font-weight:500">November has 30 days. Check the date.</span></div>
+      </div>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th>Item</th><th class="n">Mean</th><th class="n">Standard deviation</th><th class="n">Responses</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Booking of shared facilities</td><td class="n">3.9</td><td class="n">0.9</td><td class="n">11</td><td><span class="st" style="background:var(--green-tint);color:var(--green);min-height:22px;font-size:12px">Final</span></td></tr>
+          <tr><td>Access to core facility functions</td><td class="n">4.2</td><td class="n">0.6</td><td class="n">11</td><td><span class="st" style="background:var(--green-tint);color:var(--green);min-height:22px;font-size:12px">Final</span></td></tr>
+          <tr><td>Space allocation</td><td class="n">4.3</td><td class="n">0.8</td><td class="n">10</td><td><span class="st" style="background:var(--purple-tint);color:var(--purple);min-height:22px;font-size:12px">Live</span></td></tr>
+        </tbody></table><p class="meta" style="margin-top:8px">Sample values.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="em" style="border-bottom:0">
+    <header><h2 id="em">Empty and loading states</h2><p>An empty area says why and offers the next useful thing. Loading keeps the layout still with quiet placeholders.</p></header>
+    <div class="grid3">
+      <div class="panel" style="background:var(--surface);border:1px solid var(--line)"><p style="font-weight:600">Nothing needs you this week</p><p class="meta" style="margin-top:6px">Your reporting is done. Here is what’s new instead: 2 talks in your area and 1 funding match.</p><a href="#" style="display:inline-block;margin-top:10px;font-weight:500;text-decoration:none">See what’s new</a></div>
+      <div class="panel" style="background:var(--surface);border:1px solid var(--line)"><p style="font-weight:600">No featured story this week</p><p class="meta" style="margin-top:6px">The space shows the newest work from one of the three research themes in turn, with its image.</p></div>
+      <div class="panel" style="background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:12px" aria-label="Loading example"><div class="sk" style="width:40%"></div><div class="sk" style="width:90%;height:16px"></div><div class="sk" style="width:70%"></div><div class="sk" style="width:85%;height:16px"></div><div class="sk" style="width:55%"></div></div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

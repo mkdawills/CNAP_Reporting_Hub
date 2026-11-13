@@ -38,6 +38,8 @@ SCREENS = {
     # Funding opportunities (MW 2026-11-10), built to the approved "Investigator Funding View" preview.
     "funding": "proto/portal/funding.html",
     "funding_letter": "proto/portal/funding_letter.html",
+    # The CNAP Member Hub homepage (MW 2026-11-13), built from design/prototypes/member-hub/.
+    "hub": "hub/home.html",
 }
 
 

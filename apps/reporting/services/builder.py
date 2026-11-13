@@ -261,7 +261,7 @@ def build(user, choice, *, tables_csv=None):
             for p in choice["periods"]:
                 if not p.assignments.exists():
                     notes.append(
-                        f"{p.name}: this reporting session predates the Reporting Hub, so there are only imported averages, no individual responses."
+                        f"{p.name}: this reporting session predates the Member Hub, so there are only imported averages, no individual responses."
                     )
                     continue
                 data = exports.form_answers(

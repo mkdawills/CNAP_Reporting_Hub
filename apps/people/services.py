@@ -399,7 +399,7 @@ def request_commons_help(actor, person, kind):
             else "isn’t sure whether they need an eRA Commons account"
         )
         send_mail(
-            subject=f"CNAP Reporting Hub: eRA Commons help for {person.full_name}",
+            subject=f"CNAP Member Hub: eRA Commons help for {person.full_name}",
             message=(
                 f"{person.full_name} ({person.primary_email or 'no email on file'}) {what}.\n\n"
                 f"Person page: {getattr(settings, 'SITE_URL', '').rstrip('/')}/manage/people/{person.pk}/"

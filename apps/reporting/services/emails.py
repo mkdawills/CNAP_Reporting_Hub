@@ -40,7 +40,7 @@ class EmailError(Exception):
 # The list of surveys and reports, the due date, and the sign-in link always stay automatic.
 STANDARD_WORDING = {
     "open": {
-        "subject": "CNAP Reporting Hub: your {session} reporting session is open",
+        "subject": "CNAP Member Hub: your {session} reporting session is open",
         "opening": "The {session} CNAP reporting session is open.",
         "closing": "Your answers are saved as you go, so you can finish across several sittings.\nSurveys you don't use have a one-click opt-out.",
     },

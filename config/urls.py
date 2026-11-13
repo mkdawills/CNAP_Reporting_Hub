@@ -8,8 +8,8 @@ from apps.accounts import views as account_views
 from apps.portal import roster_views
 from apps.portal.views import home
 
-admin.site.site_header = "CNAP Reporting Hub: database administration"
-admin.site.site_title = "CNAP Reporting Hub"
+admin.site.site_header = "CNAP Member Hub: database administration"
+admin.site.site_title = "CNAP Member Hub"
 admin.site.index_title = "Administration"
 
 from apps.common import prototype as ui_prototype  # noqa: E402

@@ -1,6 +1,6 @@
 {% autoescape off %}Dear {{ person.first_name }},
 
-Your CNAP Reporting Hub records below haven't been updated in {{ days }} days or more. Take a minute to confirm nothing has changed or update their status:
+Your CNAP Member Hub records below haven't been updated in {{ days }} days or more. Take a minute to confirm nothing has changed or update their status:
 
 {% for r in records %}  • {{ r.kind }}: {{ r.title }}
     Now: {{ r.status }} · last reviewed {{ r.last|date:"F j, Y" }}

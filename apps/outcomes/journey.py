@@ -283,7 +283,7 @@ def notify(kind, obj, actor_user, what, request=None, only=None):
                 f"{name} {what} for “{title}.”\n"
                 f"You’re receiving this because you’re listed as one of the CNAP people involved.\n\n"
                 f"Please see it here: {url}\n\n"
-                "CNAP Reporting Hub"
+                "CNAP Member Hub"
             ),
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[to],
