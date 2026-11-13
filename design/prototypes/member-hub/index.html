@@ -125,6 +125,8 @@ img{max-width:100%;display:block}
 /* personal band */
 .mine{position:relative;z-index:2;background:var(--paper);display:flow-root}
 .mine .brief{position:relative;background:var(--week);border-radius:6px;margin-top:48px;padding-inline:48px;box-shadow:0 1px 2px rgba(29,27,33,.05),0 18px 40px -18px rgba(29,27,33,.22)}
+/* Your week as a true oval on wide screens; the columns sit inside the inscribed rectangle */
+@media (min-width:1181px){.mine .brief{border-radius:50%;padding:104px 15.5%;box-shadow:0 1px 2px rgba(29,27,33,.05),0 30px 60px -28px rgba(29,27,33,.26)}}
 .brief{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:auto auto 1fr auto;column-gap:var(--gap);padding-block:36px 40px}
 .bi{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:10px;min-width:0;padding-left:var(--gap);border-left:1px solid var(--line-2)}
 .bi.intro{padding-left:0;border-left:0}
@@ -1242,9 +1244,9 @@ span.wel{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       <p class="when" id="when">Friday, November 13 · Grant Year 10</p>
       <h1 id="hi" data-unless="returning"><span id="tod">Good morning</span>, Amara.</h1>
       <h1 data-when="returning" hidden>Welcome back, Amara.</h1>
-      <p class="line" data-unless="clear quiet urgent roles admin sparse returning"><a href="#wk">Fall reporting closes in 17 days</a>.<br>On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who studies sleep and memory</a>, as you do.</p>
+      <p class="line" data-unless="clear quiet urgent roles admin sparse returning"><a href="#wk">Fall reporting closes in 17 days</a>.<br>On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who also studies memory</a>.</p>
       <p class="line" data-when="urgent" hidden>Two deadlines are close: <a href="#wk">Fall reporting closes Monday</a>, and <a href="#wk">your NIH documents are due Thursday</a>.</p>
-      <p class="line" data-when="clear" hidden><a href="#wk">Your Fall reporting is complete</a>.<br>On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who studies sleep and memory</a>, as you do.</p>
+      <p class="line" data-when="clear" hidden><a href="#wk">Your Fall reporting is complete</a>.<br>On Wednesday, <a href="#ev-h">NeuroSync welcomes a speaker who also studies memory</a>.</p>
       <p class="line" data-when="quiet" hidden><a href="#wk">Fall reporting closes in 17 days</a>.<br><a href="#ev-h">NeuroSync takes a week off and returns on December 2</a>.</p>
       <p class="line" data-when="roles" hidden>Across your five roles, one deadline is coming: <a href="#wk">Fall reporting closes in 17 days</a>.</p>
       <p class="line" data-when="admin" hidden><a href="#">38 of 61 members have submitted their Fall reports</a>, and your own are done.</p>
