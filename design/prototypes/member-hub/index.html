@@ -360,15 +360,14 @@ section .lineup li{width:20%}
 .sheet-sec .sh{border-top:0;padding-top:0}
 .sheet-sec .sh::before{display:none}
 .otp{display:none}
-@media (min-width:1700px){
-  .otp{display:block;position:fixed;z-index:5;top:132px;left:max(24px,calc(50vw - 680px - 232px));width:200px;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity .3s,transform .3s,visibility 0s .3s}
-  .otp.on{opacity:1;visibility:visible;transform:none;transition:opacity .3s,transform .3s}
+@media (min-width:1840px){
+  .otp{display:block;position:fixed;z-index:5;top:124px;left:max(20px,calc(50vw - 680px - 232px));width:212px;box-sizing:border-box;padding:20px 20px 18px;border-radius:8px;background:radial-gradient(130% 80% at 0% 0%,#ffffff 0%,#fbf9fe 55%,#f4effa 100%);box-shadow:0 0 0 1px rgba(81,40,136,.07),0 18px 48px -16px rgba(81,40,136,.32),0 0 70px -24px rgba(140,100,200,.4)}
 }
 .otp-h{font-size:13px;line-height:18px;font-weight:600;color:var(--muted);padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:6px}
 .otp ol{display:flex;flex-direction:column}
-.otp a{position:relative;display:flex;align-items:center;min-height:36px;padding-left:16px;font-size:14px;line-height:20px;color:var(--ink-2);text-decoration:none}
-.otp a::before{content:"";position:absolute;left:0;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;border:1px solid var(--line-2);background:var(--paper)}
-.otp a:hover{color:var(--purple)}
+.otp ol a{position:relative;display:flex;align-items:center;min-height:36px;padding-left:16px;font-size:14px;line-height:20px;color:var(--ink-2);text-decoration:none}
+.otp ol a::before{content:"";position:absolute;left:0;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;border:1px solid var(--line-2);background:var(--paper)}
+.otp ol a:hover{color:var(--purple)}
 .otp a[aria-current="true"]{color:var(--ink);font-weight:600}
 .otp a[aria-current="true"]::before{background:var(--purple);border-color:var(--purple)}
 .greet .line a{color:var(--greet-ink);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--greet-ink) 40%,transparent);text-decoration-thickness:1px;text-underline-offset:4px}
@@ -376,6 +375,7 @@ section .lineup li{width:20%}
 .greet .line a:focus-visible{outline-color:var(--greet-ink)}
 .term-a{color:var(--greet-muted);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--greet-muted) 40%,transparent);text-underline-offset:4px}
 .term-a:hover{color:var(--greet-ink)}
+.otp-act{margin-top:18px;width:100%;padding:0 10px;white-space:nowrap;font-size:14px}
 /* neurosync + agenda */
 .people{grid-column:5 / span 8;grid-row:1;min-width:0;display:flex;flex-direction:column}
 .people > [data-unless="quiet"]{flex:1;display:flex}
@@ -830,7 +830,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
 </header>
 
 <main id="main">
-<nav class="otp" aria-label="On this page"><p class="otp-h">On this page</p><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#com-h" data-t="com-h">Around the Center</a></li></ol></nav>
+<nav class="otp" aria-label="On this page"><p class="otp-h">On this page</p><ol><li><a href="#wk" data-t="wk">Your week</a></li><li><a href="#res-h" data-t="res-h">Research at CNAP</a></li><li><a href="#ev-h" data-t="ev-h">NeuroSync</a></li><li><a href="#cal-h" data-t="cal-h">Calendar</a></li><li><a href="#ph-h" data-t="ph-h">The 2026 Site Visit</a></li><li><a href="#fund-h" data-t="fund-h">Funding and proposals</a></li><li><a href="#com-h" data-t="com-h">Achievements and conversations</a></li></ol><a class="btn otp-act" href="#">Start a conversation</a></nav>
 
   <section class="greet" aria-labelledby="hi">
     <svg class="fibers" viewBox="0 0 1440 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
@@ -1124,7 +1124,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
     <section class="sec" aria-labelledby="com-h">
       <div class="sheet sheet-sec">
       <header class="sh">
-        <h2 id="com-h">Around the Center</h2>
+        <h2 id="com-h">Achievements and conversations</h2>
         <p>Members’ achievements, requests for collaborators, and conversations.</p>
       </header>
       <div class="g">
@@ -1244,7 +1244,7 @@ a.opp:hover b{color:var(--purple);text-decoration:underline}
   render(false);
 
   try{var otp=document.querySelector('.otp'),links=[].slice.call(otp.querySelectorAll('a'));
-    new IntersectionObserver(function(es){otp.classList.toggle('on',!es[0].isIntersecting);},{rootMargin:'-80px 0px 0px 0px'}).observe(document.querySelector('.greet'));
+    
     function spy(){var cur=links[0];links.forEach(function(a){var h=document.getElementById(a.dataset.t);if(h&&h.getBoundingClientRect().top<innerHeight*0.35)cur=a;});links.forEach(function(a){a.setAttribute('aria-current',a===cur);});}
     addEventListener('scroll',function(){clearTimeout(otp._t);otp._t=setTimeout(spy,60);},{passive:true});spy();}catch(e){}
   function apply(s){
